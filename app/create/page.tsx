@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -10,9 +10,7 @@ import {
     BookTypeInfo,
     BookThemeInfo,
     getAgeGroup,
-    createNewBook
 } from '@/lib/types';
-import { saveBook, setCurrentBook } from '@/lib/storage';
 import styles from './page.module.css';
 
 type WizardStep = 'child' | 'type' | 'theme' | 'title';
@@ -28,6 +26,10 @@ export default function CreateBookPage() {
         title: ''
     });
     const [isCreating, setIsCreating] = useState(false);
+    const [creatingStatus, setCreatingStatus] = useState('');
+    const [childPhoto, setChildPhoto] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string>('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const steps: WizardStep[] = ['child', 'type', 'theme', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
@@ -44,6 +46,18 @@ export default function CreateBookPage() {
                 return true; // Title is optional
             default:
                 return false;
+        }
+    };
+
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setChildPhoto(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPhotoPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -70,22 +84,55 @@ export default function CreateBookPage() {
     const handleCreate = async () => {
         setIsCreating(true);
 
-        const finalSettings: BookSettings = {
-            childName: settings.childName || 'My Child',
-            childAge: settings.childAge || 3,
-            ageGroup: getAgeGroup(settings.childAge || 3),
-            bookType: settings.bookType || 'picture',
-            bookTheme: settings.bookTheme || 'custom',
-            title: settings.title || `${settings.childName}'s Amazing Adventure`
-        };
+        try {
+            // Step 1: Extract character from photo if provided
+            let characterDescription = '';
+            if (childPhoto) {
+                setCreatingStatus('Analyzing photo...');
+                const formData = new FormData();
+                formData.append('photo', childPhoto);
 
-        const newBook = createNewBook(finalSettings);
-        saveBook(newBook);
-        setCurrentBook(newBook.id);
+                const extractRes = await fetch('/api/ai/extract-character', {
+                    method: 'POST',
+                    body: formData,
+                });
 
-        // Small delay for animation
-        await new Promise(resolve => setTimeout(resolve, 500));
-        router.push(`/create/${newBook.id}`);
+                if (extractRes.ok) {
+                    const extractData = await extractRes.json();
+                    characterDescription = extractData.characterDescription;
+                }
+            }
+
+            // Step 2: Generate the complete book with AI
+            setCreatingStatus('Creating your magical story...');
+            const response = await fetch('/api/ai/generate-book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    childName: settings.childName || 'My Child',
+                    childAge: settings.childAge || 3,
+                    bookTheme: settings.bookTheme || 'adventure',
+                    bookType: settings.bookType || 'picture',
+                    pageCount: 10,
+                    characterDescription,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate book');
+            }
+
+            const data = await response.json();
+
+            setCreatingStatus('Opening your book...');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            router.push(`/create/${data.bookId}`);
+        } catch (error) {
+            console.error('Error creating book:', error);
+            setCreatingStatus('');
+            setIsCreating(false);
+            alert('Failed to create book. Please try again.');
+        }
     };
 
     const updateSettings = <K extends keyof BookSettings>(key: K, value: BookSettings[K]) => {
@@ -183,6 +230,46 @@ export default function CreateBookPage() {
                                             <span>12</span>
                                         </div>
                                     </div>
+                                </div>
+
+                                {/* Photo upload for AI character */}
+                                <div className={styles.formGroup}>
+                                    <label className={styles.formLabel}>
+                                        📷 Upload a photo (optional)
+                                    </label>
+                                    <p className={styles.inputHint} style={{ marginBottom: '0.5rem' }}>
+                                        Upload a photo to create a character that looks like your child
+                                    </p>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        accept="image/*"
+                                        onChange={handlePhotoChange}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <button
+                                        type="button"
+                                        className={styles.secondaryButton}
+                                        onClick={() => fileInputRef.current?.click()}
+                                        style={{ width: '100%', marginTop: '0.5rem' }}
+                                    >
+                                        {childPhoto ? '📷 Change Photo' : '📷 Add Photo'}
+                                    </button>
+                                    {photoPreview && (
+                                        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                                            <img
+                                                src={photoPreview}
+                                                alt="Child preview"
+                                                style={{
+                                                    width: '120px',
+                                                    height: '120px',
+                                                    objectFit: 'cover',
+                                                    borderRadius: '50%',
+                                                    border: '4px solid var(--color-primary)'
+                                                }}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
@@ -343,11 +430,11 @@ export default function CreateBookPage() {
                     {isCreating ? (
                         <>
                             <span className={styles.spinner}></span>
-                            Creating...
+                            {creatingStatus || 'Creating...'}
                         </>
                     ) : currentStepIndex === steps.length - 1 ? (
                         <>
-                            Create Book
+                            ✨ Generate Book with AI
                             <span>🚀</span>
                         </>
                     ) : (
