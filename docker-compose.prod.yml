@@ -1,0 +1,20 @@
+# ============================================
+# KidBook Creator - Production Docker Compose
+# ============================================
+#
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# ============================================
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kidbook-app-prod
+    environment:
+      - NODE_ENV=production
+    volumes: []  # Override dev volumes - no source mounting in production
+    restart: always

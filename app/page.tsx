@@ -1,22 +1,56 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Book } from '@/lib/types';
-import { getBooks, deleteBook } from '@/lib/storage';
+import { getBooks, deleteBook as deleteLocalBook } from '@/lib/storage';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { AuthModal } from '@/components/AuthModal';
 import styles from './page.module.css';
 
 export default function Home() {
   const router = useRouter();
+  const { user, isLoading: authLoading, signOut } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+
+  // Load books - from API if logged in, otherwise from local storage
+  const loadBooks = useCallback(async () => {
+    if (authLoading) return;
+
+    setIsLoading(true);
+
+    if (user) {
+      // Load from API
+      try {
+        const response = await fetch('/api/books');
+        if (response.ok) {
+          const data = await response.json();
+          setBooks(data);
+        } else {
+          // Fall back to local storage
+          const localBooks = getBooks();
+          setBooks(localBooks);
+        }
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        const localBooks = getBooks();
+        setBooks(localBooks);
+      }
+    } else {
+      // Load from local storage
+      const localBooks = getBooks();
+      setBooks(localBooks);
+    }
+
+    setIsLoading(false);
+  }, [user, authLoading]);
 
   useEffect(() => {
-    // Load books from storage
-    const savedBooks = getBooks();
-    setBooks(savedBooks);
-    setIsLoading(false);
-  }, []);
+    loadBooks();
+  }, [loadBooks]);
 
   const handleCreateNew = () => {
     router.push('/create');
@@ -26,12 +60,35 @@ export default function Home() {
     router.push(`/create/${bookId}`);
   };
 
-  const handleDeleteBook = (bookId: string, e: React.MouseEvent) => {
+  const handleDeleteBook = async (bookId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this book?')) {
-      deleteBook(bookId);
+    if (!confirm('Are you sure you want to delete this book?')) return;
+
+    if (user) {
+      // Delete from API
+      try {
+        const response = await fetch(`/api/books/${bookId}`, { method: 'DELETE' });
+        if (response.ok) {
+          setBooks(books.filter(b => b.id !== bookId));
+        }
+      } catch (error) {
+        console.error('Error deleting book:', error);
+      }
+    } else {
+      // Delete from local storage
+      deleteLocalBook(bookId);
       setBooks(books.filter(b => b.id !== bookId));
     }
+  };
+
+  const handleAuthClick = (mode: 'login' | 'signup') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    loadBooks(); // Reload with local books
   };
 
   const formatDate = (date: Date) => {
@@ -44,6 +101,45 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
+      {/* Navigation Bar */}
+      <nav className={styles.navbar}>
+        <div className={styles.navBrand}>
+          <span className={styles.navLogo}>📚</span>
+          <span className={styles.navName}>KidBook Creator</span>
+        </div>
+
+        <div className={styles.navActions}>
+          {authLoading ? (
+            <div className={styles.navSkeleton}></div>
+          ) : user ? (
+            <div className={styles.userMenu}>
+              <span className={styles.userEmail}>{user.email}</span>
+              <button
+                className={styles.signOutBtn}
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                className={styles.navLoginBtn}
+                onClick={() => handleAuthClick('login')}
+              >
+                Sign In
+              </button>
+              <button
+                className={styles.navSignupBtn}
+                onClick={() => handleAuthClick('signup')}
+              >
+                Get Started
+              </button>
+            </>
+          )}
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroBackground}>
@@ -116,7 +212,17 @@ export default function Home() {
               <span className={styles.sectionIcon}>📚</span>
               My Books
             </h2>
-            <span className={styles.bookCount}>{books.length} book{books.length !== 1 ? 's' : ''}</span>
+            <div className={styles.sectionMeta}>
+              <span className={styles.bookCount}>{books.length} book{books.length !== 1 ? 's' : ''}</span>
+              {!user && (
+                <button
+                  className={styles.savePrompt}
+                  onClick={() => handleAuthClick('signup')}
+                >
+                  🔒 Sign in to save to cloud
+                </button>
+              )}
+            </div>
           </div>
 
           <div className={styles.booksGrid}>
@@ -278,6 +384,13 @@ export default function Home() {
           <div className={styles.spinner}></div>
         </div>
       )}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode={authMode}
+      />
     </main>
   );
 }

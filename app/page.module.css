@@ -8,6 +8,151 @@
 }
 
 /* ============================================
+   Navbar
+   ============================================ */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-2xl);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-gray-100);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.navBrand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.navLogo {
+  font-size: var(--font-size-2xl);
+}
+
+.navName {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.navSkeleton {
+  width: 100px;
+  height: 36px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.navLoginBtn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: transparent;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.navLoginBtn:hover {
+  background: var(--color-gray-100);
+}
+
+.navSignupBtn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--gradient-primary);
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.navSignupBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.userEmail {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.signOutBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-gray-100);
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.signOutBtn:hover {
+  background: var(--color-gray-200);
+}
+
+.sectionMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.savePrompt {
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.savePrompt:hover {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* ============================================
    Hero Section
    ============================================ */
 
@@ -17,7 +162,7 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-4xl);
   align-items: center;
-  min-height: 90vh;
+  min-height: 85vh;
   padding: var(--spacing-3xl) var(--spacing-2xl);
   max-width: 1400px;
   margin: 0 auto;
