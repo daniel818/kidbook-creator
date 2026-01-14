@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Book, BookTypeInfo, BookThemeInfo } from '@/lib/types';
 import { getBookById } from '@/lib/storage';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { getStripe } from '@/lib/stripe/client';
 import styles from './page.module.css';
 
 type BookFormat = 'softcover' | 'hardcover';
@@ -38,13 +40,17 @@ export default function OrderPage() {
     const router = useRouter();
     const params = useParams();
     const bookId = params.bookId as string;
+    const { user } = useAuth();
 
     const [book, setBook] = useState<Book | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
     const [format, setFormat] = useState<BookFormat>('softcover');
     const [size, setSize] = useState<BookSize>('8x8');
     const [quantity, setQuantity] = useState(1);
     const [step, setStep] = useState<'options' | 'shipping' | 'payment'>('options');
+    const [agreedToTerms, setAgreedToTerms] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Shipping form
     const [shipping, setShipping] = useState({
@@ -88,9 +94,59 @@ export default function OrderPage() {
             shipping.phone;
     };
 
-    const handleCheckout = () => {
-        // In production, this would integrate with Stripe
-        alert('🎉 Order placed! (Demo mode - no actual payment processed)\n\nIn production, this would:\n1. Create a Stripe checkout session\n2. Generate a print-ready PDF\n3. Submit order to Lulu API\n4. Send confirmation email');
+    const handleCheckout = async () => {
+        if (!user) {
+            setError('Please sign in to complete your order');
+            return;
+        }
+
+        if (!agreedToTerms) {
+            setError('Please agree to the Terms of Service');
+            return;
+        }
+
+        setError(null);
+        setIsProcessing(true);
+
+        try {
+            // Create Stripe checkout session
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bookId,
+                    format,
+                    size,
+                    quantity,
+                    shipping,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to create checkout session');
+            }
+
+            // Redirect to Stripe Checkout
+            const stripe = await getStripe();
+            if (stripe && data.sessionId) {
+                const { error: stripeError } = await stripe.redirectToCheckout({
+                    sessionId: data.sessionId,
+                });
+
+                if (stripeError) {
+                    throw new Error(stripeError.message);
+                }
+            } else if (data.url) {
+                // Fallback to direct URL redirect
+                window.location.href = data.url;
+            }
+        } catch (err) {
+            console.error('Checkout error:', err);
+            setError(err instanceof Error ? err.message : 'Payment failed. Please try again.');
+            setIsProcessing(false);
+        }
     };
 
     if (isLoading || !book) {
@@ -129,8 +185,8 @@ export default function OrderPage() {
                             <div
                                 key={s}
                                 className={`${styles.stepIndicator} ${step === s ? styles.active : ''} ${(s === 'shipping' && step === 'payment') ||
-                                        (s === 'options' && (step === 'shipping' || step === 'payment'))
-                                        ? styles.completed : ''
+                                    (s === 'options' && (step === 'shipping' || step === 'payment'))
+                                    ? styles.completed : ''
                                     }`}
                             >
                                 <span className={styles.stepNumber}>{i + 1}</span>
@@ -360,6 +416,13 @@ export default function OrderPage() {
                         >
                             <h2 className={styles.sectionTitle}>Payment</h2>
 
+                            {!user && (
+                                <div className={styles.loginNotice}>
+                                    <span>🔐</span>
+                                    <p>Please sign in to complete your order. Your book will be saved to your account.</p>
+                                </div>
+                            )}
+
                             <div className={styles.paymentBox}>
                                 <div className={styles.paymentIcon}>💳</div>
                                 <h3>Secure Checkout</h3>
@@ -375,23 +438,42 @@ export default function OrderPage() {
 
                             <div className={styles.termsBox}>
                                 <label className={styles.checkbox}>
-                                    <input type="checkbox" />
+                                    <input
+                                        type="checkbox"
+                                        checked={agreedToTerms}
+                                        onChange={(e) => setAgreedToTerms(e.target.checked)}
+                                    />
                                     <span>I agree to the Terms of Service and Privacy Policy</span>
                                 </label>
                             </div>
+
+                            {error && (
+                                <div className={styles.errorBox}>
+                                    ⚠️ {error}
+                                </div>
+                            )}
 
                             <div className={styles.buttonRow}>
                                 <button
                                     className={styles.backBtn}
                                     onClick={() => setStep('shipping')}
+                                    disabled={isProcessing}
                                 >
                                     ← Back
                                 </button>
                                 <button
                                     className={styles.payBtn}
                                     onClick={handleCheckout}
+                                    disabled={isProcessing || !user}
                                 >
-                                    Pay ${grandTotal.toFixed(2)} →
+                                    {isProcessing ? (
+                                        <>
+                                            <span className={styles.btnSpinner}></span>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        `Pay $${grandTotal.toFixed(2)} →`
+                                    )}
                                 </button>
                             </div>
                         </motion.div>
