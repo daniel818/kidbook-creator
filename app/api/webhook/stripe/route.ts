@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendOrderConfirmation, OrderEmailData } from '@/lib/email/client';
 import Stripe from 'stripe';
 
 // Create admin client for webhook (no user context)
@@ -77,13 +78,15 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     }
 
     // Update order status to 'paid'
-    const { error: orderError } = await supabaseAdmin
+    const { data: order, error: orderError } = await supabaseAdmin
         .from('orders')
         .update({
             status: 'paid',
             stripe_payment_intent_id: session.payment_intent as string,
         })
-        .eq('stripe_checkout_session_id', session.id);
+        .eq('stripe_checkout_session_id', session.id)
+        .select()
+        .single();
 
     if (orderError) {
         console.error('Failed to update order:', orderError);
@@ -91,12 +94,45 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     }
 
     // Update book status to 'ordered'
-    await supabaseAdmin
+    const { data: book } = await supabaseAdmin
         .from('books')
         .update({ status: 'ordered' })
-        .eq('id', metadata.bookId);
+        .eq('id', metadata.bookId)
+        .select()
+        .single();
 
     console.log(`Order completed for book ${metadata.bookId}`);
+
+    // Send order confirmation email
+    if (session.customer_email && order && book) {
+        const emailData: OrderEmailData = {
+            orderId: order.id,
+            customerEmail: session.customer_email,
+            customerName: metadata.shippingName || 'Customer',
+            bookTitle: book.title || 'Personalized Book',
+            childName: book.child_name || 'your child',
+            format: order.format,
+            size: order.size,
+            quantity: order.quantity,
+            total: order.total,
+            shippingAddress: {
+                fullName: order.shipping_full_name,
+                addressLine1: order.shipping_address_line1,
+                addressLine2: order.shipping_address_line2,
+                city: order.shipping_city,
+                state: order.shipping_state,
+                postalCode: order.shipping_postal_code,
+                country: order.shipping_country,
+            },
+        };
+
+        const emailResult = await sendOrderConfirmation(emailData);
+        if (emailResult.success) {
+            console.log('Order confirmation email sent:', emailResult.id);
+        } else {
+            console.error('Failed to send order confirmation email');
+        }
+    }
 
     // TODO: Trigger PDF generation and Lulu API submission
     // This would typically be done via a background job

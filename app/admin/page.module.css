@@ -1,0 +1,331 @@
+/* ============================================
+   Admin Dashboard - Styles
+   ============================================ */
+
+.main {
+    min-height: 100vh;
+    background: #0f172a;
+    color: white;
+}
+
+/* Loading */
+.loading {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    color: #64748b;
+    background: #0f172a;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #1e293b;
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+}
+
+.logo {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    text-decoration: none;
+    color: white;
+}
+
+.header h1 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: #94a3b8;
+}
+
+.nav {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.navLink,
+.navActive {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.navLink {
+    color: #94a3b8;
+}
+
+.navLink:hover {
+    color: white;
+    background: #334155;
+}
+
+.navActive {
+    color: white;
+    background: #6366f1;
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-2xl);
+}
+
+/* Stats Grid */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.statCard {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    background: #1e293b;
+    border-radius: var(--radius-xl);
+    border: 1px solid #334155;
+}
+
+.statIcon {
+    font-size: 2.5rem;
+}
+
+.statInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.statValue {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+}
+
+.statLabel {
+    font-size: var(--font-size-sm);
+    color: #64748b;
+}
+
+/* Quick Stats */
+.quickStats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.quickStatCard {
+    flex: 1;
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: var(--radius-xl);
+}
+
+.quickStatCard h3 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    opacity: 0.8;
+    margin-bottom: var(--spacing-sm);
+}
+
+.quickStatValue {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+}
+
+/* Status Section */
+.statusSection {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.statusSection h2 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-lg);
+}
+
+.statusGrid {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.statusCard {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: #1e293b;
+    border-radius: var(--radius-lg);
+    border-left: 4px solid;
+    min-width: 100px;
+}
+
+.statusCount {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+}
+
+.statusName {
+    font-size: var(--font-size-sm);
+    color: #94a3b8;
+    text-transform: capitalize;
+}
+
+/* Orders Section */
+.ordersSection {
+    background: #1e293b;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    border: 1px solid #334155;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+}
+
+.sectionHeader h2 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+}
+
+.viewAllBtn {
+    font-size: var(--font-size-sm);
+    color: #6366f1;
+    text-decoration: none;
+}
+
+.viewAllBtn:hover {
+    text-decoration: underline;
+}
+
+/* Orders Table */
+.ordersTable {
+    display: flex;
+    flex-direction: column;
+}
+
+.tableHeader {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1.5fr 0.8fr 0.8fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: #0f172a;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tableRow {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1.5fr 0.8fr 0.8fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    text-decoration: none;
+    color: white;
+    font-size: var(--font-size-sm);
+    border-bottom: 1px solid #334155;
+    transition: background var(--transition-fast);
+}
+
+.tableRow:hover {
+    background: #334155;
+}
+
+.orderId {
+    font-family: monospace;
+    color: #94a3b8;
+}
+
+.orderTotal {
+    font-weight: var(--font-weight-semibold);
+}
+
+.statusBadge {
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: capitalize;
+    text-align: center;
+    width: fit-content;
+}
+
+.orderDate {
+    color: #64748b;
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .quickStats {
+        flex-direction: column;
+    }
+
+    .tableHeader,
+    .tableRow {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .tableHeader span:nth-child(2),
+    .tableHeader span:nth-child(3),
+    .tableRow span:nth-child(2),
+    .tableRow span:nth-child(3) {
+        display: none;
+    }
+}
