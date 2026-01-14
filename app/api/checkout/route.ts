@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
                             description: `${format.charAt(0).toUpperCase() + format.slice(1)}, ${size}, ${book.pages.length} pages`,
                             images: book.thumbnail_url ? [book.thumbnail_url] : [],
                         },
-                        unit_amount: pricing.subtotal / quantity,
+                        unit_amount: Math.round(pricing.subtotal / quantity), // Must be integer (cents)
                     },
                     quantity: quantity,
                 },
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
                             name: 'Shipping & Handling',
                             description: 'Standard shipping (5-10 business days)',
                         },
-                        unit_amount: pricing.shipping,
+                        unit_amount: Math.round(pricing.shipping), // Must be integer (cents)
                     },
                     quantity: 1,
                 },

@@ -64,13 +64,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Get the public URL
-        const { data: { publicUrl } } = supabase.storage
+        // Get signed URL for private bucket (expires in 1 hour)
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
             .from('book-images')
-            .getPublicUrl(data.path);
+            .createSignedUrl(data.path, 60 * 60); // 1 hour expiry
+
+        if (signedUrlError) {
+            console.error('Signed URL error:', signedUrlError);
+            return NextResponse.json(
+                { error: 'Failed to generate image URL' },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
-            url: publicUrl,
+            url: signedUrlData.signedUrl,
             path: data.path,
         });
     } catch (error) {

@@ -97,8 +97,16 @@ export async function PUT(
         const body = await request.json();
         const { settings, pages, status } = body;
 
-        // Update book settings if provided
+        // Validate settings if provided
         if (settings) {
+            // Basic validation
+            if (settings.title && typeof settings.title !== 'string') {
+                return NextResponse.json({ error: 'Invalid title' }, { status: 400 });
+            }
+            if (settings.childAge !== undefined && (typeof settings.childAge !== 'number' || settings.childAge < 0 || settings.childAge > 18)) {
+                return NextResponse.json({ error: 'Invalid child age' }, { status: 400 });
+            }
+
             const { error: bookError } = await supabase
                 .from('books')
                 .update({
@@ -121,6 +129,11 @@ export async function PUT(
 
         // Update pages if provided
         if (pages && Array.isArray(pages)) {
+            // Validate pages array
+            if (pages.length === 0) {
+                return NextResponse.json({ error: 'Book must have at least one page' }, { status: 400 });
+            }
+
             // Get existing pages
             const { data: existingPages } = await supabase
                 .from('pages')
@@ -136,24 +149,34 @@ export async function PUT(
                 await supabase.from('pages').delete().in('id', toDelete);
             }
 
-            // Upsert all pages
-            for (const page of pages) {
-                const pageData = {
-                    id: page.id,
-                    book_id: bookId,
-                    page_number: page.pageNumber,
-                    page_type: page.type,
-                    background_color: page.backgroundColor,
-                    background_image: page.backgroundImage,
-                    text_elements: page.textElements,
-                    image_elements: page.imageElements,
-                };
+            // Prepare page data for upsert
+            const pageUpdates = pages.map((page: {
+                id: string;
+                pageNumber: number;
+                type: string;
+                backgroundColor: string;
+                backgroundImage?: string;
+                textElements: unknown[];
+                imageElements: unknown[];
+            }) => ({
+                id: page.id,
+                book_id: bookId,
+                page_number: page.pageNumber,
+                page_type: page.type,
+                background_color: page.backgroundColor,
+                background_image: page.backgroundImage,
+                text_elements: page.textElements,
+                image_elements: page.imageElements,
+            }));
 
-                if (existingIds.has(page.id)) {
-                    await supabase.from('pages').update(pageData).eq('id', page.id);
-                } else {
-                    await supabase.from('pages').insert(pageData);
-                }
+            // Use upsert for atomic operation (prevents race conditions)
+            const { error: pagesError } = await supabase
+                .from('pages')
+                .upsert(pageUpdates, { onConflict: 'id' });
+
+            if (pagesError) {
+                console.error('Error updating pages:', pagesError);
+                return NextResponse.json({ error: 'Failed to update pages' }, { status: 500 });
             }
         }
 

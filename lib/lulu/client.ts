@@ -130,8 +130,6 @@ class LuluClient {
 
     // Upload a print-ready file
     async uploadPrintFile(file: Blob, filename: string): Promise<string> {
-        const token = await this.getAccessToken();
-
         // Create the print file
         const createResponse = await this.request<{ id: string; upload_url: string }>(
             'POST',
