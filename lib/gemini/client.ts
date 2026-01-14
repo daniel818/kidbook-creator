@@ -15,6 +15,7 @@ export interface StoryGenerationInput {
     bookType: string;
     pageCount?: number;
     characterDescription?: string;
+    storyDescription?: string; // User's custom description of what the story should be about
 }
 
 export interface GeneratedPage {
@@ -33,36 +34,48 @@ export interface GeneratedStory {
 export async function generateStory(input: StoryGenerationInput): Promise<GeneratedStory> {
     const pageCount = input.pageCount || 10;
 
-    const prompt = `You are a children's book author. Create a personalized story for a child.
+    const prompt = `You are a talented children's book author creating a personalized, magical story.
 
-Child's Name: ${input.childName}
-Child's Age: ${input.childAge} years old
-Book Theme: ${input.bookTheme}
-Book Type: ${input.bookType}
-${input.characterDescription ? `Character Description: ${input.characterDescription}` : ''}
+CHILD'S DETAILS:
+- Name: ${input.childName}
+- Age: ${input.childAge} years old
+${input.characterDescription ? `- Appearance: ${input.characterDescription}` : ''}
 
-Create a ${pageCount}-page children's story. The story should:
-- Feature ${input.childName} as the main character
-- Be age-appropriate for a ${input.childAge}-year-old
-- Have a clear beginning, middle, and end
-- Include the theme of "${input.bookTheme}"
-- Have fun, engaging language
+BOOK SPECIFICATIONS:
+- Theme: ${input.bookTheme}
+- Type: ${input.bookType}
+- Page Count: ${pageCount} pages
+${input.storyDescription ? `
+STORY DESCRIPTION (follow this closely):
+${input.storyDescription}` : ''}
 
-Return the story as a JSON object with this exact format:
+CREATIVE GUIDELINES:
+1. Feature ${input.childName} as the heroic main character
+2. Make the story age-appropriate and engaging for a ${input.childAge}-year-old
+3. Create a clear narrative arc: exciting beginning, adventurous middle, satisfying end
+4. Include the "${input.bookTheme}" theme throughout
+5. Use vivid, imaginative language that sparks wonder
+6. Add gentle life lessons or positive messages
+7. Make the child feel special and brave
+${input.storyDescription ? `8. Follow the user's story description: "${input.storyDescription}"` : ''}
+
+RETURN FORMAT - Output ONLY this JSON structure:
 {
-    "title": "The Book Title",
+    "title": "An Exciting Book Title",
     "pages": [
         {
             "pageNumber": 1,
-            "title": "Chapter/Page Title (optional)",
-            "text": "The story text for this page (2-4 sentences)",
-            "imagePrompt": "A detailed prompt to generate an illustration for this page, including ${input.childName}'s appearance"
+            "title": "Optional Chapter Title",
+            "text": "Story text for this page (2-4 engaging sentences)",
+            "imagePrompt": "Detailed illustration prompt: describe the scene, ${input.childName}'s actions, expressions, surroundings, colors, mood. ${input.characterDescription ? `${input.childName} looks like: ${input.characterDescription}` : ''}"
         }
     ]
 }
 
-Make sure each imagePrompt describes the scene in detail for consistent illustration generation.
-Return ONLY valid JSON, no markdown or other text.`;
+IMPORTANT:
+- Each imagePrompt must be detailed enough to generate consistent, beautiful illustrations
+- Include ${input.childName}'s appearance in every imagePrompt for consistency
+- Return ONLY valid JSON, no markdown or explanations`;
 
     const model = genAI.models.generateContent({
         model: 'gemini-2.0-flash',

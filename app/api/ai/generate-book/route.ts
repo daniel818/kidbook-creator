@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription } = body;
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription } = body;
 
         if (!childName || !bookTheme || !bookType) {
             return NextResponse.json(
@@ -32,10 +32,19 @@ export async function POST(request: NextRequest) {
             bookType,
             pageCount: pageCount || 10,
             characterDescription,
+            storyDescription,
         };
 
         // Generate the complete book (story + illustrations)
         const result = await generateCompleteBook(input);
+
+        // Helper to get age group
+        const getAgeGroup = (age: number) => {
+            if (age <= 2) return '0-2';
+            if (age <= 5) return '3-5';
+            if (age <= 8) return '6-8';
+            return '9-12';
+        };
 
         // Create the book in the database
         const { data: book, error: bookError } = await supabase
@@ -45,6 +54,7 @@ export async function POST(request: NextRequest) {
                 title: result.story.title,
                 child_name: childName,
                 child_age: childAge,
+                age_group: getAgeGroup(childAge || 5),
                 book_theme: bookTheme,
                 book_type: bookType,
                 status: 'draft',

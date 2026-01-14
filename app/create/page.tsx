@@ -18,12 +18,13 @@ type WizardStep = 'child' | 'type' | 'theme' | 'title';
 export default function CreateBookPage() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState<WizardStep>('child');
-    const [settings, setSettings] = useState<Partial<BookSettings>>({
+    const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string }>({
         childName: '',
         childAge: 3,
         bookType: undefined,
         bookTheme: undefined,
-        title: ''
+        title: '',
+        storyDescription: ''
     });
     const [isCreating, setIsCreating] = useState(false);
     const [creatingStatus, setCreatingStatus] = useState('');
@@ -115,8 +116,10 @@ export default function CreateBookPage() {
                     bookType: settings.bookType || 'picture',
                     pageCount: 10,
                     characterDescription,
+                    storyDescription: settings.storyDescription,
                 }),
             });
+
 
             if (!response.ok) {
                 throw new Error('Failed to generate book');
@@ -350,6 +353,25 @@ export default function CreateBookPage() {
                                         </button>
                                     );
                                 })}
+                            </div>
+
+                            <div className={styles.formFields} style={{ marginTop: '2rem' }}>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.formLabel}>
+                                        Tell us more about the story (optional)
+                                    </label>
+                                    <textarea
+                                        className={styles.formInput}
+                                        placeholder="e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
+                                        value={settings.storyDescription || ''}
+                                        onChange={(e) => updateSettings('storyDescription', e.target.value)}
+                                        rows={3}
+                                        style={{ resize: 'vertical' }}
+                                    />
+                                    <p className={styles.inputHint}>
+                                        We&apos;ll use this to make the story even more personal!
+                                    </p>
+                                </div>
                             </div>
                         </motion.div>
                     )}
