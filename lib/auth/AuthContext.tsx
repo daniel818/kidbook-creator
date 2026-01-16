@@ -26,10 +26,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         // Get initial session
         const getSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setSession(session);
-            setUser(session?.user ?? null);
-            setIsLoading(false);
+            try {
+                // Timeout logic to prevent app freeze if Supabase is down
+                const timeoutPromise = new Promise<{ data: { session: Session | null } }>((_, reject) => {
+                    setTimeout(() => reject(new Error('Session check timed out')), 5000);
+                });
+
+                const { data: { session } } = await Promise.race([
+                    supabase.auth.getSession(),
+                    timeoutPromise
+                ]) as { data: { session: Session | null } };
+
+                setSession(session);
+                setUser(session?.user ?? null);
+            } catch (error) {
+                console.warn('Auth session check failed or timed out:', error);
+                // Fallback to logged out state so app can render
+                setSession(null);
+                setUser(null);
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         getSession();

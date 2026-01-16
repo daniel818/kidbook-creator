@@ -33,8 +33,13 @@ yarn-error.log*
 # env files
 .env
 .env.local
+.env.cloud
 .env.*.local
 !.env.example
+
+# supabase local
+supabase/.temp/
+supabase_status.txt
 
 # vercel
 .vercel

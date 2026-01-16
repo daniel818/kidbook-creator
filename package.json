@@ -25,9 +25,11 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "next": "16.1.1",
+    "pg": "^8.17.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-dropzone": "^14.3.8",
+    "react-pageflip": "^2.0.3",
     "resend": "^4.0.0",
     "stripe": "^17.5.0",
     "uuid": "^13.0.0"

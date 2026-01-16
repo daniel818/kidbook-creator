@@ -578,7 +578,8 @@
   color: var(--color-warning);
 }
 
-.deleteBtn {
+.deleteBtn,
+.editBtn {
   background: none;
   border: none;
   font-size: var(--font-size-base);
@@ -588,7 +589,8 @@
   padding: var(--spacing-xs);
 }
 
-.deleteBtn:hover {
+.deleteBtn:hover,
+.editBtn:hover {
   opacity: 1;
 }
 

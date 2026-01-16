@@ -47,7 +47,7 @@ export function saveBooks(books: Book[]): void {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
     } catch (error) {
-        console.error('Error saving books to storage:', error);
+        console.warn('Storage quota exceeded, could not save to local storage (ignoring in online mode):', error);
     }
 }
 

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { AuthError } from '@supabase/supabase-js';
 import styles from './AuthModal.module.css';
 
 interface AuthModalProps {
@@ -28,30 +29,53 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
         setIsLoading(true);
 
         try {
+            // Create a timeout promise to prevent infinite loading
+            const timeoutPromise = new Promise<{ error: { message: string } | null }>((_, reject) => {
+                setTimeout(() => reject(new Error('Request timed out')), 15000);
+            });
+
+            let result: { error: AuthError | null } | { error: { message: string } | null };
+
             if (mode === 'login') {
-                const { error } = await signInWithEmail(email, password);
-                if (error) {
-                    setError(error.message);
+                result = await Promise.race([
+                    signInWithEmail(email, password),
+                    timeoutPromise
+                ]) as { error: AuthError | null };
+
+                if (result.error) {
+                    console.error('Login error:', result.error);
+                    setError(result.error.message);
                 } else {
                     onClose();
                 }
             } else if (mode === 'signup') {
-                const { error } = await signUpWithEmail(email, password);
-                if (error) {
-                    setError(error.message);
+                result = await Promise.race([
+                    signUpWithEmail(email, password),
+                    timeoutPromise
+                ]) as { error: AuthError | null };
+
+                if (result.error) {
+                    console.error('Signup error:', result.error);
+                    setError(result.error.message);
                 } else {
                     setSuccess('Check your email to confirm your account!');
                 }
             } else if (mode === 'forgot') {
-                const { error } = await resetPassword(email);
-                if (error) {
-                    setError(error.message);
+                result = await Promise.race([
+                    resetPassword(email),
+                    timeoutPromise
+                ]) as { error: AuthError | null };
+
+                if (result.error) {
+                    console.error('Reset password error:', result.error);
+                    setError(result.error.message);
                 } else {
                     setSuccess('Check your email for a password reset link!');
                 }
             }
-        } catch {
-            setError('An unexpected error occurred');
+        } catch (err: any) {
+            console.error('Auth unexpected error:', err);
+            setError(err.message || 'An unexpected error occurred');
         } finally {
             setIsLoading(false);
         }

@@ -16,7 +16,7 @@ export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
-  // Load books - from API if logged in, otherwise from local storage
+  // Load books - from API if logged in
   const loadBooks = useCallback(async () => {
     if (authLoading) return;
 
@@ -30,19 +30,16 @@ export default function Home() {
           const data = await response.json();
           setBooks(data);
         } else {
-          // Fall back to local storage
-          const localBooks = getBooks();
-          setBooks(localBooks);
+          console.error('Failed to fetch books');
+          setBooks([]);
         }
       } catch (error) {
         console.error('Error fetching books:', error);
-        const localBooks = getBooks();
-        setBooks(localBooks);
+        setBooks([]);
       }
     } else {
-      // Load from local storage
-      const localBooks = getBooks();
-      setBooks(localBooks);
+      // Unauthenticated
+      setBooks([]);
     }
 
     setIsLoading(false);
@@ -58,6 +55,10 @@ export default function Home() {
 
   const handleEditBook = (bookId: string) => {
     router.push(`/create/${bookId}`);
+  };
+
+  const handleViewBook = (bookId: string) => {
+    router.push(`/book/${bookId}`);
   };
 
   const handleDeleteBook = async (bookId: string, e: React.MouseEvent) => {
@@ -230,7 +231,7 @@ export default function Home() {
               <div
                 key={book.id}
                 className={styles.bookCard}
-                onClick={() => handleEditBook(book.id)}
+                onClick={() => handleViewBook(book.id)}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div
@@ -263,6 +264,13 @@ export default function Home() {
                   <span className={`${styles.statusBadge} ${styles[book.status]}`}>
                     {book.status}
                   </span>
+                  <button
+                    className={styles.editBtn}
+                    onClick={(e) => { e.stopPropagation(); handleEditBook(book.id); }}
+                    aria-label="Edit book"
+                  >
+                    ✏️
+                  </button>
                   <button
                     className={styles.deleteBtn}
                     onClick={(e) => handleDeleteBook(book.id, e)}

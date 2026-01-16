@@ -1,0 +1,626 @@
+/* ============================================
+   StoryBook Viewer - Premium Gemini-Inspired Design
+   Phase 2: Visual Polish Edition
+   ============================================ */
+
+/* ============================================
+   CSS Custom Properties (Design Tokens)
+   ============================================ */
+:root {
+    /* Premium Color Palette */
+    --viewer-bg-start: #f9f7f4;
+    --viewer-bg-end: #ebe8e2;
+    --header-bg: rgba(255, 255, 255, 0.92);
+    --header-border: rgba(0, 0, 0, 0.05);
+
+    /* Page Colors */
+    --page-bg: #fefcf9;
+    --page-shadow-soft: rgba(0, 0, 0, 0.04);
+    --page-border: rgba(0, 0, 0, 0.03);
+
+    /* Text Colors */
+    --text-primary: #1a1b1e;
+    --text-secondary: #4a4d52;
+    --text-muted: rgba(0, 0, 0, 0.35);
+
+    /* Accent Colors */
+    --accent-primary: #6366f1;
+    --accent-secondary: #ec4899;
+    --accent-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+
+    /* Shadows */
+    --shadow-book:
+        0 30px 60px rgba(0, 0, 0, 0.12),
+        0 15px 30px rgba(0, 0, 0, 0.08),
+        0 5px 10px rgba(0, 0, 0, 0.04);
+    --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s ease;
+    --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   Container & Layout
+   ============================================ */
+.viewer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--viewer-bg-start) 0%, var(--viewer-bg-end) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle grain texture overlay */
+.viewer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.fullScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+}
+
+/* ============================================
+   Header Controls - Glass Morphism Style
+   ============================================ */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 2rem;
+    background: var(--header-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--header-border);
+    z-index: 10;
+}
+
+.headerLeft,
+.headerRight {
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.headerRight {
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.headerCenter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Navigation Buttons */
+.navBtn {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 300;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-button);
+}
+
+.navBtn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navBtn:active {
+    transform: scale(0.96);
+}
+
+.pageIndicator {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    min-width: 80px;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* Action Buttons */
+.closeBtn,
+.actionBtn {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.closeBtn:hover,
+.actionBtn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.actionBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   Progress Bar - Gradient Accent
+   ============================================ */
+.progressContainer {
+    height: 3px;
+    background: rgba(0, 0, 0, 0.04);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: var(--accent-gradient);
+    transition: width var(--transition-slow);
+    border-radius: 0 3px 3px 0;
+    position: relative;
+}
+
+/* Shimmer effect */
+.progressBar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            transparent 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(200%);
+    }
+}
+
+/* ============================================
+   Book Container
+   ============================================ */
+.bookContainer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    overflow: auto;
+    position: relative;
+}
+
+.flipBook {
+    box-shadow: var(--shadow-book);
+    border-radius: 4px 8px 8px 4px;
+    position: relative;
+}
+
+/* Book spine effect */
+.flipBook::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(90deg,
+            rgba(0, 0, 0, 0.08) 0%,
+            rgba(0, 0, 0, 0.02) 50%,
+            rgba(0, 0, 0, 0.08) 100%);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* ============================================
+   Generic Page Styling
+   ============================================ */
+.page {
+    background-color: var(--page-bg);
+    box-shadow: inset 0 0 60px var(--page-shadow-soft);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Paper edge effect */
+.page::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg,
+            transparent 0%,
+            rgba(0, 0, 0, 0.06) 10%,
+            rgba(0, 0, 0, 0.06) 90%,
+            transparent 100%);
+}
+
+.illustrationPageWrapper,
+.textPageWrapper {
+    height: 100%;
+}
+
+/* ============================================
+   Illustration Page (Left side of spread)
+   Full-bleed with subtle vignette
+   ============================================ */
+.illustrationPage {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #f8f6f2;
+    overflow: hidden;
+}
+
+.fullBleedImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--transition-slow);
+}
+
+/* Subtle zoom on hover */
+.illustrationPage:hover .fullBleedImage {
+    transform: scale(1.02);
+}
+
+/* Vignette overlay for depth */
+.illustrationPage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center,
+            transparent 60%,
+            rgba(0, 0, 0, 0.08) 100%);
+    pointer-events: none;
+}
+
+.illustrationPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f0ede7 0%, #e8e4dd 100%);
+    position: relative;
+}
+
+/* Decorative pattern for placeholder */
+.illustrationPlaceholder::before {
+    content: '';
+    position: absolute;
+    inset: 2rem;
+    border: 2px dashed rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+}
+
+.placeholderIcon {
+    font-size: 4rem;
+    opacity: 0.25;
+    filter: grayscale(0.5);
+}
+
+.illustrationPageNumber {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 1.75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.05em;
+    z-index: 5;
+}
+
+/* ============================================
+   Text Page (Right side of spread)
+   Elegant typography with paper lines
+   ============================================ */
+.textPage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: var(--page-bg);
+
+    /* Subtle ruled paper effect */
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.015) 1px,
+            transparent 1px);
+    background-size: 100% 2rem;
+    background-position: 0 2rem;
+}
+
+/* Margin line */
+.textPage::before {
+    content: '';
+    position: absolute;
+    left: 2rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(210, 180, 160, 0.2);
+}
+
+.textPageContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 2.75rem 3rem 3rem;
+    overflow-y: auto;
+}
+
+/* Custom scrollbar */
+.textPageContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+.textPageContent::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.textPageContent::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.storyParagraph {
+    font-family: 'Crimson Text', 'Crimson Pro', 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 2rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    text-indent: 2rem;
+    hyphens: auto;
+    -webkit-font-smoothing: antialiased;
+}
+
+.storyParagraph:first-child {
+    text-indent: 0;
+}
+
+/* Elegant drop cap for first letter */
+.storyParagraph:first-child::first-letter {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    float: left;
+    line-height: 0.85;
+    margin-right: 0.5rem;
+    margin-top: 0.15rem;
+    color: var(--accent-primary);
+    text-shadow: 2px 2px 0 rgba(99, 102, 241, 0.1);
+}
+
+.storyParagraph:last-child {
+    margin-bottom: 0;
+}
+
+.textPageNumber {
+    position: absolute;
+    bottom: 1.25rem;
+    right: 1.75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    font-style: italic;
+    letter-spacing: 0.05em;
+}
+
+/* ============================================
+   Cover Styling - Premium Book Cover
+   ============================================ */
+.cover {
+    background-color: #1a1d23;
+    color: white;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Leather texture effect */
+.cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.coverInner {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Elegant gradient overlay */
+.coverOverlay {
+    background: linear-gradient(0deg,
+            rgba(0, 0, 0, 0.85) 0%,
+            rgba(0, 0, 0, 0.6) 40%,
+            rgba(0, 0, 0, 0.2) 70%,
+            transparent 100%);
+    width: 100%;
+    padding: 5rem 2.5rem 3rem;
+    text-align: center;
+}
+
+.coverTitle {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.coverSubtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    opacity: 0.85;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.coverContent {
+    height: 100%;
+    width: 100%;
+}
+
+/* ============================================
+   Keyboard Hint - Subtle & Elegant
+   ============================================ */
+.keyboardHint {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1.25rem;
+    border-radius: 24px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+    transition: opacity var(--transition-normal);
+}
+
+.keyboardHint:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   Legacy Support - Keep for backwards compat
+   ============================================ */
+.pageContent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.pageLayout {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.illustrationSection {
+    flex: 1;
+    max-height: 50%;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.pageImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholderImage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.2);
+}
+
+.textSection {
+    flex: 1;
+    padding: 2rem;
+    position: relative;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    background-size: 100% 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.storyText {
+    font-family: 'Georgia', serif;
+    font-size: 1.1rem;
+    line-height: 2rem;
+    color: #2d3436;
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.pageNumber {
+    position: absolute;
+    bottom: 1rem;
+    width: 100%;
+    text-align: center;
+    left: 0;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.textPageContent {
+    animation: fadeIn 0.5s ease-out;
+}

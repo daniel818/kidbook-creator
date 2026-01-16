@@ -1,11 +1,15 @@
 // ============================================
 // Google Gemini AI Client
 // ============================================
-// AI-powered story and image generation
+// AI-powered story and image generation using Gemini 3 Pro
 
-import { GoogleGenAI, Modality } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
+import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
 
-// Initialize Gemini client
+// Re-export art styles for convenience
+export { ART_STYLES, type ArtStyle } from '@/lib/art-styles';
+
+// Initialize Gemini client (server-side only)
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 export interface StoryGenerationInput {
@@ -15,8 +19,12 @@ export interface StoryGenerationInput {
     bookType: string;
     pageCount?: number;
     characterDescription?: string;
-    storyDescription?: string; // User's custom description of what the story should be about
+    storyDescription?: string;
+    artStyle?: ArtStyle;
+    imageQuality?: ImageQuality; // [NEW]
 }
+
+// ... (keep generatedPage/story interfaces same)
 
 export interface GeneratedPage {
     pageNumber: number;
@@ -28,133 +36,158 @@ export interface GeneratedPage {
 export interface GeneratedStory {
     title: string;
     pages: GeneratedPage[];
+    characterDescription?: string;
 }
 
-// Generate a complete story based on inputs
+// Generate a story script
 export async function generateStory(input: StoryGenerationInput): Promise<GeneratedStory> {
-    const pageCount = input.pageCount || 10;
+    console.log('Generating story with Gemini 3 Pro Preview...');
 
-    const prompt = `You are a talented children's book author creating a personalized, magical story.
+    // Use Gemini 3 Pro Preview for high quality text generation
+    const textModel = 'gemini-3-pro-preview';
 
-CHILD'S DETAILS:
-- Name: ${input.childName}
-- Age: ${input.childAge} years old
-${input.characterDescription ? `- Appearance: ${input.characterDescription}` : ''}
+    const prompt = `
+    Create a children's book story based on the following details:
+    - Child's Name: ${input.childName}
+    - Age: ${input.childAge}
+    - Theme: ${input.bookTheme}
+    - Type: ${input.bookType}
+    - Page Count: ${input.pageCount || 10}
+    ${input.characterDescription ? `- Character Description: ${input.characterDescription}` : ''}
+    ${input.storyDescription ? `- Specific Story Request: ${input.storyDescription}` : ''}
 
-BOOK SPECIFICATIONS:
-- Theme: ${input.bookTheme}
-- Type: ${input.bookType}
-- Page Count: ${pageCount} pages
-${input.storyDescription ? `
-STORY DESCRIPTION (follow this closely):
-${input.storyDescription}` : ''}
+    The story should be engaging, age-appropriate, and magical.
+    
+    OUTPUT FORMAT:
+    Return ONLY a valid JSON object with the following structure:
+    {
+        "title": "Title of the book",
+        "characterDescription": "A detailed physical description of the main character (if not provided)",
+        "pages": [
+            {
+                "pageNumber": 1,
+                "text": "Story text for this page (keep it short for children)",
+                "imagePrompt": "A detailed description of the illustration for this page, describing the scene and action"
+            },
+            ...
+        ]
+    }
+    `;
 
-CREATIVE GUIDELINES:
-1. Feature ${input.childName} as the heroic main character
-2. Make the story age-appropriate and engaging for a ${input.childAge}-year-old
-3. Create a clear narrative arc: exciting beginning, adventurous middle, satisfying end
-4. Include the "${input.bookTheme}" theme throughout
-5. Use vivid, imaginative language that sparks wonder
-6. Add gentle life lessons or positive messages
-7. Make the child feel special and brave
-${input.storyDescription ? `8. Follow the user's story description: "${input.storyDescription}"` : ''}
-
-RETURN FORMAT - Output ONLY this JSON structure:
-{
-    "title": "An Exciting Book Title",
-    "pages": [
-        {
-            "pageNumber": 1,
-            "title": "Optional Chapter Title",
-            "text": "Story text for this page (2-4 engaging sentences)",
-            "imagePrompt": "Detailed illustration prompt: describe the scene, ${input.childName}'s actions, expressions, surroundings, colors, mood. ${input.characterDescription ? `${input.childName} looks like: ${input.characterDescription}` : ''}"
-        }
-    ]
-}
-
-IMPORTANT:
-- Each imagePrompt must be detailed enough to generate consistent, beautiful illustrations
-- Include ${input.childName}'s appearance in every imagePrompt for consistency
-- Return ONLY valid JSON, no markdown or explanations`;
-
-    const model = genAI.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents: prompt,
-    });
-
-    const response = await model;
-    const text = response.text || '';
-
-    // Parse the JSON response
     try {
-        // Remove markdown code blocks if present
-        const cleanedText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-        const story = JSON.parse(cleanedText) as GeneratedStory;
-        return story;
-    } catch {
-        console.error('Failed to parse story JSON:', text);
-        throw new Error('Failed to generate story - invalid JSON response');
+        const result = await genAI.models.generateContent({
+            model: textModel,
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            config: {
+                responseMimeType: 'application/json',
+            }
+        });
+
+        // The new SDK response structure might differ. 
+        // Based on generateIllustration usage, it returns a response object directly or wrapper?
+        // Let's assume result is the response or has data.
+        // generateIllustration accesses result.candidates?.[0]?.content?.parts
+
+        const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!responseText) {
+            throw new Error('Empty response from Gemini');
+        }
+
+        const storyData = JSON.parse(responseText) as GeneratedStory;
+        return storyData;
+    } catch (error) {
+        console.error('Error generating story:', error);
+        throw error;
     }
 }
 
-// Generate an illustration using Gemini's image generation
+// Generate an illustration using Gemini
 export async function generateIllustration(
-    prompt: string,
-    style: string = 'colorful children\'s book illustration'
+    scenePrompt: string,
+    characterDescription: string,
+    artStyle: ArtStyle = 'storybook_classic',
+    quality: ImageQuality = 'fast' // [NEW]
 ): Promise<string> {
-    const fullPrompt = `${style}, ${prompt}. High quality, professional children's book art, vibrant colors, friendly and engaging.`;
+    const styleInfo = ART_STYLES[artStyle] || ART_STYLES.storybook_classic;
 
-    const response = await genAI.models.generateContent({
-        model: 'gemini-2.0-flash-preview-image-generation',
-        contents: fullPrompt,
-        config: {
-            responseModalities: [Modality.TEXT, Modality.IMAGE],
-        },
-    });
+    const fullPrompt = `Create a children's book illustration.
 
-    // Extract the image from the response
-    if (response.candidates?.[0]?.content?.parts) {
-        for (const part of response.candidates[0].content.parts) {
-            if (part.inlineData?.mimeType?.startsWith('image/')) {
-                // Return base64 image data
-                return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+ART STYLE: ${styleInfo.prompt}
+
+MAIN CHARACTER: ${characterDescription}
+
+SCENE: ${scenePrompt}
+
+REQUIREMENTS:
+- The main character should match the description exactly and be recognizable
+- High quality, professional children's book art
+- Friendly, warm, and engaging for young children
+- Clear and expressive character faces with appropriate emotions
+- Rich, detailed backgrounds that enhance the story
+- Safe for children, no scary or inappropriate content`;
+
+    // Select Model based on Quality
+    // Pro: gemini-3-pro-image-preview
+    // Fast: gemini-2.5-flash-image
+    const imageModel = quality === 'pro' ? 'gemini-3-pro-image-preview' : 'gemini-2.5-flash-image';
+
+    try {
+        console.log(`Generating illustration with ${imageModel}...`);
+        console.log('Prompt (first 100 chars):', fullPrompt.slice(0, 100) + '...');
+
+        const response = await genAI.models.generateContent({
+            model: imageModel,
+            contents: fullPrompt,
+        });
+
+        console.log('Gemini response received, checking for image...');
+
+        if (response.candidates?.[0]?.content?.parts) {
+            for (const part of response.candidates[0].content.parts) {
+                if (part.inlineData?.mimeType?.startsWith('image/')) {
+                    console.log('Image found in response!');
+                    return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                }
             }
         }
-    }
 
-    throw new Error('No image generated');
+        console.error('No image in Gemini response');
+        throw new Error('No image in response');
+    } catch (error) {
+        console.error('Gemini image generation error:', error);
+        throw error;
+    }
 }
 
-// Extract character description from an uploaded photo
-export async function extractCharacterFromPhoto(photoBase64: string): Promise<string> {
-    const response = await genAI.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents: [
-            {
-                role: 'user',
-                parts: [
-                    {
-                        text: `Look at this photo of a child. Describe their appearance in detail for use in generating consistent illustrations. Include:
-- Hair color and style
-- Eye color
-- Skin tone
-- Any distinctive features
-- Clothing (if relevant)
+// Extract character description from a photo
+export async function extractCharacterFromPhoto(base64Image: string): Promise<string> {
+    console.log('Extracting character from photo...');
+    try {
+        const result = await genAI.models.generateContent({
+            model: 'gemini-1.5-flash', // Using Flash for speed/vision
+            contents: [
+                {
+                    role: 'user',
+                    parts: [
+                        { text: "Describe the child in this photo for a children's book character description. Focus on hair color, eye color, hairstyle, and distinctive features. Keep it brief and positive." },
+                        {
+                            inlineData: {
+                                mimeType: 'image/jpeg',
+                                data: base64Image
+                            }
+                        }
+                    ]
+                }
+            ]
+        });
 
-Be specific but keep descriptions suitable for children's book illustrations. Return only the description, no other text.`,
-                    },
-                    {
-                        inlineData: {
-                            mimeType: 'image/jpeg',
-                            data: photoBase64,
-                        },
-                    },
-                ],
-            },
-        ],
-    });
-
-    return response.text || 'A cheerful child';
+        const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        return text || "A happy child";
+    } catch (error) {
+        console.error("Error extracting character:", error);
+        return "A happy child";
+    }
 }
 
 // Generate a complete book with story and illustrations
@@ -165,9 +198,17 @@ export async function generateCompleteBook(
     story: GeneratedStory;
     illustrations: string[];
 }> {
+    const artStyle = input.artStyle || 'storybook_classic';
+    const imageQuality = input.imageQuality || 'fast'; // [NEW]
+
     // Step 1: Generate the story
-    onProgress?.('Generating story...', 10);
+    onProgress?.('Generating your magical story...', 10);
     const story = await generateStory(input);
+
+    // Use the character description from the story or input
+    const characterDescription = story.characterDescription ||
+        input.characterDescription ||
+        `A cheerful ${input.childAge}-year-old child named ${input.childName} with a bright smile and friendly expression`;
 
     // Step 2: Generate illustrations for each page
     const illustrations: string[] = [];
@@ -175,15 +216,24 @@ export async function generateCompleteBook(
 
     for (let i = 0; i < story.pages.length; i++) {
         const page = story.pages[i];
-        onProgress?.(`Creating illustration ${i + 1} of ${totalPages}...`, 10 + (80 * (i + 1) / totalPages));
+        onProgress?.(`Creating illustration ${i + 1} of ${totalPages} (${imageQuality} mode)...`, 10 + (80 * (i + 1) / totalPages));
 
         try {
-            const illustration = await generateIllustration(page.imagePrompt);
+            const illustration = await generateIllustration(
+                page.imagePrompt,
+                characterDescription,
+                artStyle,
+                imageQuality // [NEW]
+            );
             illustrations.push(illustration);
         } catch (error) {
             console.error(`Failed to generate illustration for page ${i + 1}:`, error);
-            // Use a placeholder if illustration fails
             illustrations.push('');
+        }
+
+        // Small delay between image generations to avoid rate limiting
+        if (i < story.pages.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
     }
 

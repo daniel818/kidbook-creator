@@ -26,13 +26,25 @@ export default function BookEditorPage() {
 
     // Load book on mount
     useEffect(() => {
-        const loadedBook = getBookById(bookId);
-        if (loadedBook) {
-            setBook(loadedBook);
-        } else {
+        const loadBook = async () => {
+            // Try to fetch from API first (for logged-in users)
+            try {
+                const response = await fetch(`/api/books/${bookId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setBook(data);
+                    setIsLoading(false);
+                    return;
+                }
+            } catch (error) {
+                console.error('Error fetching book from API:', error);
+            }
+
             router.push('/');
-        }
-        setIsLoading(false);
+            setIsLoading(false);
+        };
+
+        loadBook();
     }, [bookId, router]);
 
     // Auto-save when book changes
@@ -457,7 +469,7 @@ export default function BookEditorPage() {
                     <div className={styles.canvasTools}>
                         <button
                             className={styles.tool}
-                            onClick={() => document.querySelector('input[type="file"]')?.click()}
+                            onClick={() => (document.querySelector('input[type="file"]') as HTMLElement)?.click()}
                             title="Add Image"
                         >
                             🖼️ Add Image

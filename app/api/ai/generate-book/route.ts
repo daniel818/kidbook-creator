@@ -8,21 +8,22 @@ import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client'
 
 export async function POST(request: NextRequest) {
     try {
-        const supabase = await createClient();
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-        if (authError || !user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription } = body;
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality } = body;
 
         if (!childName || !bookTheme || !bookType) {
             return NextResponse.json(
                 { error: 'Missing required fields: childName, bookTheme, bookType' },
                 { status: 400 }
             );
+        }
+
+        // Authenticate User
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const input: StoryGenerationInput = {
@@ -33,12 +34,57 @@ export async function POST(request: NextRequest) {
             pageCount: pageCount || 10,
             characterDescription,
             storyDescription,
+            artStyle: artStyle || 'storybook_classic',
+            imageQuality: imageQuality || 'fast', // [NEW]
         };
 
         // Generate the complete book (story + illustrations)
+        console.log('Starting book generation...');
         const result = await generateCompleteBook(input);
 
-        // Helper to get age group
+        // Identifiers
+        const userId = user.id;
+        const bookId = crypto.randomUUID();
+
+        // ---------------------------------------------------------
+        // IMAGE UPLOAD LOGIC
+        // ---------------------------------------------------------
+        console.log('Processing and uploading images...');
+        for (let i = 0; i < result.illustrations.length; i++) {
+            const base64Image = result.illustrations[i];
+            if (!base64Image || base64Image.length < 100) continue;
+
+            try {
+                const matches = base64Image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+
+                if (matches && matches.length === 3) {
+                    const contentType = matches[1];
+                    const buffer = Buffer.from(matches[2], 'base64');
+                    const fileName = `${userId}/${bookId}/${i}.png`;
+
+                    const { error: uploadError } = await supabase.storage
+                        .from('book-images')
+                        .upload(fileName, buffer, {
+                            contentType,
+                            upsert: true
+                        });
+
+                    if (uploadError) {
+                        console.warn(`Failed to upload image ${i}:`, uploadError);
+                    } else {
+                        const { data: { publicUrl } } = supabase.storage
+                            .from('book-images')
+                            .getPublicUrl(fileName);
+
+                        console.log(`Image ${i} uploaded -> ${publicUrl}`);
+                        result.illustrations[i] = publicUrl;
+                    }
+                }
+            } catch (imageError) {
+                console.error(`Error processing image ${i}:`, imageError);
+            }
+        }
+
         const getAgeGroup = (age: number) => {
             if (age <= 2) return '0-2';
             if (age <= 5) return '3-5';
@@ -46,65 +92,49 @@ export async function POST(request: NextRequest) {
             return '9-12';
         };
 
-        // Create the book in the database
-        const { data: book, error: bookError } = await supabase
-            .from('books')
-            .insert({
-                user_id: user.id,
-                title: result.story.title,
-                child_name: childName,
-                child_age: childAge,
-                age_group: getAgeGroup(childAge || 5),
-                book_theme: bookTheme,
-                book_type: bookType,
-                status: 'draft',
-            })
-            .select()
-            .single();
+        // Insert into Database
+        const { error: dbError } = await supabase.from('books').insert({
+            id: bookId,
+            user_id: userId,
+            title: result.story.title,
+            child_name: childName,
+            child_age: childAge,
+            age_group: getAgeGroup(childAge || 5),
+            book_theme: bookTheme,
+            book_type: bookType,
+            status: 'draft',
+        });
 
-        if (bookError) {
-            console.error('Error creating book:', bookError);
-            return NextResponse.json({ error: 'Failed to create book' }, { status: 500 });
-        }
+        if (dbError) throw dbError;
 
-        // Create pages with generated content
         const pagesData = result.story.pages.map((page, index) => ({
-            book_id: book.id,
+            book_id: bookId,
             page_number: page.pageNumber,
-            page_type: page.pageNumber === 1 ? 'cover' : 'content',
+            page_type: page.pageNumber === 1 ? 'cover' : 'inside',
             background_color: '#ffffff',
-            background_image: result.illustrations[index] || null,
             text_elements: page.text ? [{
                 id: crypto.randomUUID(),
                 content: page.text,
-                x: 10,
-                y: 70,
-                width: 80,
-                fontSize: 18,
-                fontFamily: 'Inter',
-                color: '#333333',
-                textAlign: 'center',
+                x: 10, y: 70, width: 80, fontSize: 18,
+                fontFamily: 'Inter', color: '#333333', textAlign: 'center', fontWeight: 'normal'
             }] : [],
-            image_elements: [],
+            image_elements: result.illustrations[index] ? [{
+                id: crypto.randomUUID(),
+                src: result.illustrations[index],
+                x: 0, y: 0, width: 100, height: 100,
+                rotation: 0
+            }] : []
         }));
 
-        const { error: pagesError } = await supabase
-            .from('pages')
-            .insert(pagesData);
+        const { error: pagesError } = await supabase.from('pages').insert(pagesData);
 
-        if (pagesError) {
-            console.error('Error creating pages:', pagesError);
-            // Rollback: delete the book
-            await supabase.from('books').delete().eq('id', book.id);
-            return NextResponse.json({ error: 'Failed to create pages' }, { status: 500 });
-        }
+        if (pagesError) throw pagesError;
 
         return NextResponse.json({
             success: true,
-            bookId: book.id,
-            title: result.story.title,
-            pageCount: result.story.pages.length,
+            bookId: bookId
         });
+
     } catch (error) {
         console.error('Book generation error:', error);
         return NextResponse.json(

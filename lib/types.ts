@@ -15,6 +15,9 @@ export interface BookSettings {
   bookType: BookType;
   bookTheme: BookTheme;
   title: string;
+  storyDescription?: string;
+  artStyle?: import('@/lib/art-styles').ArtStyle;
+  imageQuality?: import('@/lib/art-styles').ImageQuality;
 }
 
 export interface TextElement {
@@ -96,9 +99,9 @@ export interface Order {
 }
 
 // Book Type Display Info
-export const BookTypeInfo: Record<BookType, { 
-  label: string; 
-  description: string; 
+export const BookTypeInfo: Record<BookType, {
+  label: string;
+  description: string;
   icon: string;
   color: string;
   ageRange: string;
@@ -207,7 +210,7 @@ export function createNewBook(settings: BookSettings): Book {
     textAlign: 'center',
     width: 80
   });
-  
+
   return {
     id: crypto.randomUUID(),
     settings,

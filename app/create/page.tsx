@@ -11,20 +11,23 @@ import {
     BookThemeInfo,
     getAgeGroup,
 } from '@/lib/types';
+import { saveBook } from '@/lib/storage';
+import { ART_STYLES, ArtStyle, ImageQuality } from '@/lib/art-styles';
 import styles from './page.module.css';
 
-type WizardStep = 'child' | 'type' | 'theme' | 'title';
+type WizardStep = 'child' | 'type' | 'theme' | 'style' | 'title';
 
 export default function CreateBookPage() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState<WizardStep>('child');
-    const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string }>({
+    const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string; artStyle?: ArtStyle }>({
         childName: '',
         childAge: 3,
         bookType: undefined,
         bookTheme: undefined,
         title: '',
-        storyDescription: ''
+        storyDescription: '',
+        artStyle: 'storybook_classic'
     });
     const [isCreating, setIsCreating] = useState(false);
     const [creatingStatus, setCreatingStatus] = useState('');
@@ -32,7 +35,7 @@ export default function CreateBookPage() {
     const [photoPreview, setPhotoPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const steps: WizardStep[] = ['child', 'type', 'theme', 'title'];
+    const steps: WizardStep[] = ['child', 'type', 'theme', 'style', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
 
     const canProceed = () => {
@@ -43,6 +46,8 @@ export default function CreateBookPage() {
                 return settings.bookType !== undefined;
             case 'theme':
                 return settings.bookTheme !== undefined;
+            case 'style':
+                return settings.artStyle !== undefined;
             case 'title':
                 return true; // Title is optional
             default:
@@ -117,6 +122,8 @@ export default function CreateBookPage() {
                     pageCount: 10,
                     characterDescription,
                     storyDescription: settings.storyDescription,
+                    artStyle: settings.artStyle || 'storybook_classic',
+                    imageQuality: settings.imageQuality || 'fast', // [NEW]
                 }),
             });
 
@@ -126,6 +133,7 @@ export default function CreateBookPage() {
             }
 
             const data = await response.json();
+
 
             setCreatingStatus('Opening your book...');
             await new Promise(resolve => setTimeout(resolve, 500));
@@ -364,7 +372,7 @@ export default function CreateBookPage() {
                                         className={styles.formInput}
                                         placeholder="e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
                                         value={settings.storyDescription || ''}
-                                        onChange={(e) => updateSettings('storyDescription', e.target.value)}
+                                        onChange={(e) => setSettings(prev => ({ ...prev, storyDescription: e.target.value }))}
                                         rows={3}
                                         style={{ resize: 'vertical' }}
                                     />
@@ -372,6 +380,107 @@ export default function CreateBookPage() {
                                         We&apos;ll use this to make the story even more personal!
                                     </p>
                                 </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {currentStep === 'style' && (
+                        <motion.div
+                            key="style"
+                            className={styles.stepContent}
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -50 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <div className={styles.stepIcon}>🎨</div>
+                            <h1 className={styles.stepTitle}>Choose an art style</h1>
+                            <p className={styles.stepSubtitle}>
+                                How should your book&apos;s illustrations look?
+                            </p>
+
+                            <div className={styles.themeGrid}>
+                                {(Object.keys(ART_STYLES) as ArtStyle[]).map((style) => {
+                                    const info = ART_STYLES[style];
+                                    const emojis: Record<string, string> = {
+                                        storybook_classic: '📚',
+                                        watercolor: '🖼️',
+                                        digital_art: '💻',
+                                        cartoon: '🎬',
+                                        pixel_art: '👾',
+                                        coloring_book: '✏️'
+                                    };
+                                    return (
+                                        <button
+                                            key={style}
+                                            className={`${styles.themeCard} ${settings.artStyle === style ? styles.selected : ''}`}
+                                            onClick={() => setSettings(prev => ({ ...prev, artStyle: style }))}
+                                            style={{
+                                                '--theme-color-1': style === 'storybook_classic' ? '#8b5cf6' :
+                                                    style === 'watercolor' ? '#06b6d4' :
+                                                        style === 'digital_art' ? '#3b82f6' :
+                                                            style === 'cartoon' ? '#f59e0b' :
+                                                                style === 'pixel_art' ? '#10b981' : '#6b7280',
+                                                '--theme-color-2': style === 'storybook_classic' ? '#ec4899' :
+                                                    style === 'watercolor' ? '#a855f7' :
+                                                        style === 'digital_art' ? '#8b5cf6' :
+                                                            style === 'cartoon' ? '#ef4444' :
+                                                                style === 'pixel_art' ? '#22d3ee' : '#9ca3af'
+                                            } as React.CSSProperties}
+                                        >
+                                            <span className={styles.themeEmoji}>{emojis[style]}</span>
+                                            <span className={styles.themeName}>{info.label}</span>
+                                            {settings.artStyle === style && (
+                                                <span className={styles.checkmark}>✓</span>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className={styles.qualitySection} style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                <label className={styles.fieldLabel} style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                                    ✨ Image Quality
+                                </label>
+                                <div className={styles.qualityToggle} style={{ display: 'flex', gap: '1rem' }}>
+                                    <button
+                                        onClick={() => setSettings(prev => ({ ...prev, imageQuality: 'fast' }))}
+                                        style={{
+                                            flex: 1,
+                                            padding: '0.75rem',
+                                            borderRadius: '8px',
+                                            border: settings.imageQuality === 'fast' || !settings.imageQuality ? '2px solid #6366f1' : '1px solid #cbd5e1',
+                                            background: settings.imageQuality === 'fast' || !settings.imageQuality ? '#e0e7ff' : 'white',
+                                            color: settings.imageQuality === 'fast' || !settings.imageQuality ? '#4338ca' : '#64748b',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        ⚡ Fast (Standard)
+                                    </button>
+                                    <button
+                                        onClick={() => setSettings(prev => ({ ...prev, imageQuality: 'pro' }))}
+                                        style={{
+                                            flex: 1,
+                                            padding: '0.75rem',
+                                            borderRadius: '8px',
+                                            border: settings.imageQuality === 'pro' ? '2px solid #ec4899' : '1px solid #cbd5e1',
+                                            background: settings.imageQuality === 'pro' ? '#fce7f3' : 'white',
+                                            color: settings.imageQuality === 'pro' ? '#be185d' : '#64748b',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        💎 Pro (Gemini 3 - 4K)
+                                    </button>
+                                </div>
+                                <p style={{ marginTop: '0.75rem', fontSize: '0.875rem', color: '#64748b' }}>
+                                    {settings.imageQuality === 'pro'
+                                        ? "Pro mode uses Gemini 3 Pro for stunning, high-definition illustrations. Takes a bit longer to generate."
+                                        : "Standard mode generates beautiful images quickly using Gemini Flash."}
+                                </p>
                             </div>
                         </motion.div>
                     )}
