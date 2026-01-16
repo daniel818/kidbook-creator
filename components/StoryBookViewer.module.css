@@ -313,6 +313,11 @@
     background-size: 110%;
     background-position: calc(50% + 9px) top;
     background-repeat: no-repeat;
+
+    /* Clip the overflowing 110% image to the page shape */
+    overflow: hidden;
+    /* Match the book's outer rounded corners (straight on left/spine, rounded on right) */
+    border-radius: 0 24px 24px 0;
 }
 
 /* Reset when not in cover mode - smooth transition to spread view */
@@ -400,6 +405,11 @@
 .coverMode .flipBook {
     box-shadow: none !important;
     background: transparent !important;
+}
+
+/* Hide the right-side page edge (pages thickness) in cover mode */
+.coverMode .flipBook::after {
+    display: none !important;
 }
 
 /* ============================================
@@ -623,8 +633,11 @@
 .cover {
     background-color: #1a1d23;
     color: white;
+    /* Allow spine to show (overridden by specific rules but good to keep flexible) */
     overflow: hidden;
     position: relative;
+    /* Match rounded corners of the book */
+    border-radius: 0 24px 24px 0;
 }
 
 /* Leather texture effect */
