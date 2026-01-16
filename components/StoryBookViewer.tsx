@@ -324,7 +324,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             </div>
 
             {/* Book Container */}
-            <div className={styles.bookContainer}>
+            <div className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''}`}>
                 {/* @ts-ignore - Library types are tricky */}
                 <HTMLFlipBook
                     width={550}

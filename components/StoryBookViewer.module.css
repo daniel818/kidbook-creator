@@ -28,12 +28,17 @@
     --accent-secondary: #ec4899;
     --accent-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
 
-    /* Shadows */
+    /* Shadows - Enhanced for realistic 3D hardcover book */
     --shadow-book:
-        0 30px 60px rgba(0, 0, 0, 0.12),
-        0 15px 30px rgba(0, 0, 0, 0.08),
-        0 5px 10px rgba(0, 0, 0, 0.04);
+        0 50px 100px rgba(0, 0, 0, 0.25),
+        0 30px 60px rgba(0, 0, 0, 0.15),
+        0 15px 30px rgba(0, 0, 0, 0.10),
+        0 5px 15px rgba(0, 0, 0, 0.08),
+        0 2px 5px rgba(0, 0, 0, 0.05);
     --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    /* Book edge effect */
+    --book-edge-width: 8px;
 
     /* Transitions */
     --transition-fast: 0.15s ease;
@@ -224,8 +229,42 @@
 
 .flipBook {
     box-shadow: var(--shadow-book);
-    border-radius: 4px 8px 8px 4px;
+    /* Rounded corners on BOTH outer sides - like a real open book */
+    border-radius: 24px;
     position: relative;
+    overflow: hidden;
+}
+
+/* Right edge effect - book page edges/thickness */
+.flipBook::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 8px;
+    bottom: 8px;
+    width: var(--book-edge-width);
+    background: linear-gradient(90deg,
+            #f5f3f0 0%,
+            #e8e5e0 30%,
+            #ddd9d4 50%,
+            #ccc8c3 70%,
+            #bbb7b1 100%);
+    border-radius: 0 16px 16px 0;
+    /* Book page lines texture */
+    background-image:
+        linear-gradient(90deg,
+            #f5f3f0 0%,
+            #e8e5e0 30%,
+            #ddd9d4 50%,
+            #ccc8c3 70%,
+            #bbb7b1 100%),
+        repeating-linear-gradient(180deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 3px);
+    z-index: 5;
+    pointer-events: none;
 }
 
 /* Book spine effect */
@@ -245,6 +284,75 @@
 }
 
 /* ============================================
+   Cover Mode - Centered single-page cover display
+   ============================================ */
+
+/* Remove main book shadow when on cover - only side shadow */
+.coverMode .flipBook {
+    box-shadow: none !important;
+}
+
+/* Hide the spine/fold shadow when on cover */
+.coverMode .flipBook::before {
+    opacity: 0;
+}
+
+/* Center the cover by shifting the whole spread left (cover is on right side) */
+.coverMode :global(.stf__parent) {
+    transform: translateX(-25%) !important;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hide the empty left side of the spread when showing cover */
+.coverMode :global(.stf__block.stf__block--left) {
+    display: none !important;
+}
+
+/* Reset when not in cover mode - smooth transition to spread view */
+.bookContainer :global(.stf__parent) {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Side shadow effect for cover - hardcover book edge look */
+.coverMode .flipBook::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    top: 4px;
+    bottom: 4px;
+    width: 12px;
+    background: linear-gradient(90deg,
+            #d4d0c8 0%,
+            #c8c4bc 20%,
+            #b8b4ac 40%,
+            #a8a49c 60%,
+            #989488 80%,
+            #888480 100%);
+    border-radius: 0 4px 4px 0;
+    /* Book page lines texture */
+    background-image:
+        linear-gradient(90deg,
+            #d4d0c8 0%,
+            #c8c4bc 20%,
+            #b8b4ac 40%,
+            #a8a49c 60%,
+            #989488 80%,
+            #888480 100%),
+        repeating-linear-gradient(180deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.04) 2px,
+            rgba(0, 0, 0, 0.04) 3px);
+    /* Side shadow */
+    box-shadow:
+        4px 0 8px rgba(0, 0, 0, 0.15),
+        8px 2px 16px rgba(0, 0, 0, 0.1),
+        12px 4px 24px rgba(0, 0, 0, 0.08);
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* ============================================
    Generic Page Styling
    ============================================ */
 .page {
@@ -252,6 +360,18 @@
     box-shadow: inset 0 0 60px var(--page-shadow-soft);
     overflow: hidden;
     position: relative;
+    /* Default: no rounded corners (will be overridden by left/right specific styles) */
+    border-radius: 0;
+}
+
+/* Left page - rounded on LEFT (outer), straight on RIGHT (spine) */
+:global(.stf__block--left) .page {
+    border-radius: 24px 0 0 24px !important;
+}
+
+/* Right page - straight on LEFT (spine), rounded on RIGHT (outer) */
+:global(.stf__block--right) .page {
+    border-radius: 0 24px 24px 0 !important;
 }
 
 /* Paper edge effect */
@@ -476,33 +596,33 @@
     background-position: center;
 }
 
-/* Elegant gradient overlay */
+/* Frosted glass title bar at bottom */
 .coverOverlay {
-    background: linear-gradient(0deg,
-            rgba(0, 0, 0, 0.85) 0%,
-            rgba(0, 0, 0, 0.6) 40%,
-            rgba(0, 0, 0, 0.2) 70%,
-            transparent 100%);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     width: 100%;
-    padding: 5rem 2.5rem 3rem;
+    padding: 1.5rem 2rem;
     text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
 }
 
 .coverTitle {
     font-family: 'Playfair Display', 'Georgia', serif;
-    font-size: 2.25rem;
+    font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: 0.75rem;
-    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0.5rem;
+    color: #1a1d23;
     letter-spacing: -0.01em;
     line-height: 1.2;
 }
 
 .coverSubtitle {
     font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    opacity: 0.85;
-    font-weight: 400;
+    font-size: 0.9rem;
+    color: #4a4d52;
+    font-weight: 500;
     letter-spacing: 0.02em;
 }
 

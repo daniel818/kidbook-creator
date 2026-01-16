@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -35,6 +35,15 @@ export default function CreateBookPage() {
     const [photoPreview, setPhotoPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Cleanup object URL to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (photoPreview && photoPreview.startsWith('blob:')) {
+                URL.revokeObjectURL(photoPreview);
+            }
+        };
+    }, [photoPreview]);
+
     const steps: WizardStep[] = ['child', 'type', 'theme', 'style', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
 
@@ -59,11 +68,9 @@ export default function CreateBookPage() {
         const file = e.target.files?.[0];
         if (file) {
             setChildPhoto(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPhotoPreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+            // Use createObjectURL for better performance and reliability
+            const objectUrl = URL.createObjectURL(file);
+            setPhotoPreview(objectUrl);
         }
     };
 

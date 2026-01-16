@@ -1,0 +1,181 @@
+/* ============================================
+   StoryBook Viewer 3D - WebGL Hardcover Edition
+   ============================================ */
+
+/* ============================================
+   CSS Custom Properties (Design Tokens)
+   ============================================ */
+:root {
+    --viewer-bg-start: #f0ede7;
+    --viewer-bg-end: #e4e0d8;
+    --header-bg: rgba(255, 255, 255, 0.92);
+    --header-border: rgba(0, 0, 0, 0.05);
+    --text-primary: #1a1b1e;
+    --text-secondary: #4a4d52;
+    --text-muted: rgba(0, 0, 0, 0.35);
+    --accent-primary: #6366f1;
+    --accent-secondary: #ec4899;
+    --accent-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s ease;
+}
+
+/* ============================================
+   Container & Layout
+   ============================================ */
+.viewer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--viewer-bg-start) 0%, var(--viewer-bg-end) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.fullScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+}
+
+/* ============================================
+   Header Controls
+   ============================================ */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 2rem;
+    background: var(--header-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--header-border);
+    z-index: 10;
+}
+
+.headerLeft,
+.headerRight {
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.headerRight {
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.headerCenter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pageIndicator {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    min-width: 80px;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* Action Buttons */
+.closeBtn,
+.actionBtn {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.closeBtn:hover,
+.actionBtn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.actionBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   Progress Bar
+   ============================================ */
+.progressContainer {
+    height: 3px;
+    background: rgba(0, 0, 0, 0.04);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: var(--accent-gradient);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0 3px 3px 0;
+}
+
+/* ============================================
+   3D Flipbook Container
+   ============================================ */
+.flipbookContainer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+}
+
+/* Style overrides for react-3d-flipbook */
+.flipbookContainer :global(.flipbook-container) {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: calc(100vh - 120px);
+}
+
+.flipbookContainer :global(canvas) {
+    border-radius: 8px;
+}
+
+/* ============================================
+   Keyboard Hint
+   ============================================ */
+.keyboardHint {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1.25rem;
+    border-radius: 24px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+    transition: opacity var(--transition-normal);
+    z-index: 5;
+}
+
+.keyboardHint:hover {
+    opacity: 1;
+}
