@@ -5,6 +5,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
+// Helper function for logging with timestamps
+const log = (message: string, data?: unknown) => {
+    const timestamp = new Date().toISOString();
+    console.log(`[API books/${timestamp}] ${message}`);
+    if (data !== undefined) {
+        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 300));
+    }
+};
+
 interface RouteContext {
     params: Promise<{ bookId: string }>;
 }
@@ -14,28 +23,49 @@ export async function GET(
     request: NextRequest,
     context: RouteContext
 ) {
-    try {
-        const { bookId } = await context.params;
-        const supabase = await createClient();
+    const requestStartTime = Date.now();
+    let bookId = 'unknown';
 
+    try {
+        const params = await context.params;
+        bookId = params.bookId;
+        log(`=== GET /api/books/${bookId} STARTED ===`);
+
+        log('Step 1: Creating Supabase client...');
+        const supabaseStartTime = Date.now();
+        const supabase = await createClient();
+        log(`Supabase client created in ${Date.now() - supabaseStartTime}ms`);
+
+        log('Step 2: Authenticating user...');
+        const authStartTime = Date.now();
         const { data: { user }, error: authError } = await supabase.auth.getUser();
+        log(`Authentication completed in ${Date.now() - authStartTime}ms`);
 
         if (authError || !user) {
+            log('ERROR: Unauthorized', authError?.message);
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
+        log(`User authenticated: ${user.id}`);
 
+        log('Step 3: Fetching book from database...');
+        const dbStartTime = Date.now();
         const { data: book, error } = await supabase
             .from('books')
             .select(`*, pages (*)`)
             .eq('id', bookId)
             .eq('user_id', user.id)
             .single();
+        log(`Database query completed in ${Date.now() - dbStartTime}ms`);
 
         if (error || !book) {
+            log('ERROR: Book not found', error?.message);
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
+        log(`Book found: "${book.title}", ${book.pages?.length || 0} pages`);
 
-        return NextResponse.json({
+        log('Step 4: Transforming response...');
+        const transformStartTime = Date.now();
+        const response = {
             id: book.id,
             settings: {
                 title: book.title,
@@ -72,9 +102,17 @@ export async function GET(
             thumbnailUrl: book.thumbnail_url,
             createdAt: new Date(book.created_at),
             updatedAt: new Date(book.updated_at),
-        });
+        };
+        log(`Transform completed in ${Date.now() - transformStartTime}ms`);
+
+        const totalDuration = Date.now() - requestStartTime;
+        log(`=== GET /api/books/${bookId} COMPLETE in ${totalDuration}ms ===`);
+
+        return NextResponse.json(response);
     } catch (error) {
-        console.error('Error:', error);
+        const totalDuration = Date.now() - requestStartTime;
+        log(`=== GET /api/books/${bookId} FAILED after ${totalDuration}ms ===`);
+        console.error('[API books ERROR]', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

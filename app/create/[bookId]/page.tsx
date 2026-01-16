@@ -27,19 +27,41 @@ export default function BookEditorPage() {
     // Load book on mount
     useEffect(() => {
         const loadBook = async () => {
+            const startTime = Date.now();
+            console.log('[EDITOR] ========================================');
+            console.log(`[EDITOR] === BOOK EDITOR LOADING STARTED (bookId: ${bookId}) ===`);
+            console.log('[EDITOR] ========================================');
+
             // Try to fetch from API first (for logged-in users)
             try {
+                console.log('[EDITOR] Step 1: Fetching from API...');
+                const apiStartTime = Date.now();
                 const response = await fetch(`/api/books/${bookId}`);
+                console.log(`[EDITOR] API response status: ${response.status} in ${Date.now() - apiStartTime}ms`);
+
                 if (response.ok) {
+                    console.log('[EDITOR] Step 2: Parsing API response...');
+                    const parseStartTime = Date.now();
                     const data = await response.json();
+                    console.log(`[EDITOR] Response parsed in ${Date.now() - parseStartTime}ms`);
+                    console.log(`[EDITOR] Book data: title="${data.settings?.title}", pages=${data.pages?.length || 0}`);
+
                     setBook(data);
                     setIsLoading(false);
+
+                    const totalDuration = Date.now() - startTime;
+                    console.log('[EDITOR] ========================================');
+                    console.log(`[EDITOR] === BOOK LOADED in ${totalDuration}ms ===`);
+                    console.log('[EDITOR] ========================================');
                     return;
                 }
+
+                console.log('[EDITOR] API request failed, response not ok');
             } catch (error) {
-                console.error('Error fetching book from API:', error);
+                console.error('[EDITOR] Error fetching book from API:', error);
             }
 
+            console.log('[EDITOR] Redirecting to home page...');
             router.push('/');
             setIsLoading(false);
         };

@@ -88,12 +88,20 @@ export default function CreateBookPage() {
     };
 
     const handleCreate = async () => {
+        const startTime = Date.now();
+        console.log('[CLIENT] ========================================');
+        console.log('[CLIENT] === BOOK CREATION STARTED ===');
+        console.log('[CLIENT] ========================================');
+        console.log('[CLIENT] Settings:', settings);
+
         setIsCreating(true);
 
         try {
             // Step 1: Extract character from photo if provided
             let characterDescription = '';
             if (childPhoto) {
+                console.log('[CLIENT] Step 1: Extracting character from photo...');
+                const extractStart = Date.now();
                 setCreatingStatus('Analyzing photo...');
                 const formData = new FormData();
                 formData.append('photo', childPhoto);
@@ -102,44 +110,70 @@ export default function CreateBookPage() {
                     method: 'POST',
                     body: formData,
                 });
+                console.log(`[CLIENT] Photo extraction response status: ${extractRes.status} in ${Date.now() - extractStart}ms`);
 
                 if (extractRes.ok) {
                     const extractData = await extractRes.json();
                     characterDescription = extractData.characterDescription;
+                    console.log('[CLIENT] Character description:', characterDescription?.slice(0, 100));
+                } else {
+                    console.log('[CLIENT] Photo extraction failed:', await extractRes.text());
                 }
+            } else {
+                console.log('[CLIENT] Step 1: No photo provided, skipping extraction');
             }
 
             // Step 2: Generate the complete book with AI
+            console.log('[CLIENT] Step 2: Calling generate-book API...');
+            const genStart = Date.now();
             setCreatingStatus('Creating your magical story...');
+
+            const requestBody = {
+                childName: settings.childName || 'My Child',
+                childAge: settings.childAge || 3,
+                bookTheme: settings.bookTheme || 'adventure',
+                bookType: settings.bookType || 'picture',
+                pageCount: 10,
+                characterDescription,
+                storyDescription: settings.storyDescription,
+                artStyle: settings.artStyle || 'storybook_classic',
+                imageQuality: settings.imageQuality || 'fast',
+            };
+            console.log('[CLIENT] Request body:', requestBody);
+
             const response = await fetch('/api/ai/generate-book', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    childName: settings.childName || 'My Child',
-                    childAge: settings.childAge || 3,
-                    bookTheme: settings.bookTheme || 'adventure',
-                    bookType: settings.bookType || 'picture',
-                    pageCount: 10,
-                    characterDescription,
-                    storyDescription: settings.storyDescription,
-                    artStyle: settings.artStyle || 'storybook_classic',
-                    imageQuality: settings.imageQuality || 'fast', // [NEW]
-                }),
+                body: JSON.stringify(requestBody),
             });
 
+            console.log(`[CLIENT] API response status: ${response.status} in ${Date.now() - genStart}ms`);
 
             if (!response.ok) {
+                const errorText = await response.text();
+                console.log('[CLIENT] API error response:', errorText);
                 throw new Error('Failed to generate book');
             }
 
             const data = await response.json();
+            console.log('[CLIENT] API response data:', data);
 
-
+            console.log('[CLIENT] Step 3: Navigating to book page...');
             setCreatingStatus('Opening your book...');
             await new Promise(resolve => setTimeout(resolve, 500));
+
+            const totalDuration = Date.now() - startTime;
+            console.log('[CLIENT] ========================================');
+            console.log(`[CLIENT] === BOOK CREATION COMPLETE in ${totalDuration}ms ===`);
+            console.log('[CLIENT] ========================================');
+
             router.push(`/create/${data.bookId}`);
         } catch (error) {
-            console.error('Error creating book:', error);
+            const totalDuration = Date.now() - startTime;
+            console.log('[CLIENT] ========================================');
+            console.log(`[CLIENT] === BOOK CREATION FAILED after ${totalDuration}ms ===`);
+            console.log('[CLIENT] ========================================');
+            console.error('[CLIENT] Error:', error);
             setCreatingStatus('');
             setIsCreating(false);
             alert('Failed to create book. Please try again.');

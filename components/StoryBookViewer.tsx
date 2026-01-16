@@ -168,6 +168,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
     };
 
     const getPageImage = (page: BookPage) => {
+        // Try imageElements first (where AI-generated images are stored)
+        if (page.imageElements && page.imageElements.length > 0 && page.imageElements[0].src) {
+            return page.imageElements[0].src;
+        }
+        // Fallback to backgroundImage for manually uploaded images
         return page.backgroundImage || (page as unknown as { background_image?: string }).background_image || null;
     };
 

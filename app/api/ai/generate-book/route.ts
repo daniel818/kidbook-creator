@@ -6,12 +6,29 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client';
 
+// Helper function for logging with timestamps
+const log = (message: string, data?: unknown) => {
+    const timestamp = new Date().toISOString();
+    console.log(`[API generate-book ${timestamp}] ${message}`);
+    if (data !== undefined) {
+        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 500));
+    }
+};
+
 export async function POST(request: NextRequest) {
+    const requestStartTime = Date.now();
+    log('========================================');
+    log('=== GENERATE-BOOK API REQUEST STARTED ===');
+    log('========================================');
+
     try {
+        log('Step 1: Parsing request body...');
         const body = await request.json();
         const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality } = body;
+        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality });
 
         if (!childName || !bookTheme || !bookType) {
+            log('ERROR: Missing required fields');
             return NextResponse.json(
                 { error: 'Missing required fields: childName, bookTheme, bookType' },
                 { status: 400 }
@@ -19,12 +36,17 @@ export async function POST(request: NextRequest) {
         }
 
         // Authenticate User
+        log('Step 2: Authenticating user...');
+        const authStartTime = Date.now();
         const supabase = await createClient();
         const { data: { user }, error: authError } = await supabase.auth.getUser();
+        log(`Authentication completed in ${Date.now() - authStartTime}ms`);
 
         if (authError || !user) {
+            log('ERROR: Unauthorized', authError);
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
+        log(`User authenticated: ${user.id}`);
 
         const input: StoryGenerationInput = {
             childName,
@@ -35,24 +57,34 @@ export async function POST(request: NextRequest) {
             characterDescription,
             storyDescription,
             artStyle: artStyle || 'storybook_classic',
-            imageQuality: imageQuality || 'fast', // [NEW]
+            imageQuality: imageQuality || 'fast',
         };
 
         // Generate the complete book (story + illustrations)
-        console.log('Starting book generation...');
+        log('Step 3: Starting book generation...');
+        const genStartTime = Date.now();
         const result = await generateCompleteBook(input);
+        log(`Book generation completed in ${Date.now() - genStartTime}ms`);
+        log(`Generated: ${result.story.pages.length} pages, ${result.illustrations.filter(i => i).length} images`);
 
         // Identifiers
         const userId = user.id;
         const bookId = crypto.randomUUID();
+        log(`Created bookId: ${bookId}`);
 
         // ---------------------------------------------------------
         // IMAGE UPLOAD LOGIC
         // ---------------------------------------------------------
-        console.log('Processing and uploading images...');
+        log('Step 4: Processing and uploading images...');
+        const uploadStartTime = Date.now();
+        let uploadedCount = 0;
+
         for (let i = 0; i < result.illustrations.length; i++) {
             const base64Image = result.illustrations[i];
-            if (!base64Image || base64Image.length < 100) continue;
+            if (!base64Image || base64Image.length < 100) {
+                log(`Image ${i}: Skipped (empty or too short)`);
+                continue;
+            }
 
             try {
                 const matches = base64Image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
@@ -61,7 +93,9 @@ export async function POST(request: NextRequest) {
                     const contentType = matches[1];
                     const buffer = Buffer.from(matches[2], 'base64');
                     const fileName = `${userId}/${bookId}/${i}.png`;
+                    log(`Image ${i}: Uploading ${Math.round(buffer.length / 1024)}KB as ${fileName}`);
 
+                    const imgUploadStart = Date.now();
                     const { error: uploadError } = await supabase.storage
                         .from('book-images')
                         .upload(fileName, buffer, {
@@ -70,20 +104,22 @@ export async function POST(request: NextRequest) {
                         });
 
                     if (uploadError) {
-                        console.warn(`Failed to upload image ${i}:`, uploadError);
+                        log(`Image ${i}: Upload FAILED in ${Date.now() - imgUploadStart}ms`, uploadError.message);
                     } else {
                         const { data: { publicUrl } } = supabase.storage
                             .from('book-images')
                             .getPublicUrl(fileName);
 
-                        console.log(`Image ${i} uploaded -> ${publicUrl}`);
+                        log(`Image ${i}: Upload SUCCESS in ${Date.now() - imgUploadStart}ms -> ${publicUrl.slice(0, 50)}...`);
                         result.illustrations[i] = publicUrl;
+                        uploadedCount++;
                     }
                 }
             } catch (imageError) {
-                console.error(`Error processing image ${i}:`, imageError);
+                log(`Image ${i}: Processing ERROR`, imageError);
             }
         }
+        log(`Image upload complete: ${uploadedCount}/${result.illustrations.length} in ${Date.now() - uploadStartTime}ms`);
 
         const getAgeGroup = (age: number) => {
             if (age <= 2) return '0-2';
@@ -93,6 +129,9 @@ export async function POST(request: NextRequest) {
         };
 
         // Insert into Database
+        log('Step 5: Saving to database...');
+        const dbStartTime = Date.now();
+
         const { error: dbError } = await supabase.from('books').insert({
             id: bookId,
             user_id: userId,
@@ -105,7 +144,11 @@ export async function POST(request: NextRequest) {
             status: 'draft',
         });
 
-        if (dbError) throw dbError;
+        if (dbError) {
+            log('ERROR: Database insert failed', dbError);
+            throw dbError;
+        }
+        log(`Book record saved in ${Date.now() - dbStartTime}ms`);
 
         const pagesData = result.story.pages.map((page, index) => ({
             book_id: bookId,
@@ -126,9 +169,20 @@ export async function POST(request: NextRequest) {
             }] : []
         }));
 
+        log(`Saving ${pagesData.length} pages to database...`);
+        const pagesStartTime = Date.now();
         const { error: pagesError } = await supabase.from('pages').insert(pagesData);
 
-        if (pagesError) throw pagesError;
+        if (pagesError) {
+            log('ERROR: Pages insert failed', pagesError);
+            throw pagesError;
+        }
+        log(`Pages saved in ${Date.now() - pagesStartTime}ms`);
+
+        const totalDuration = Date.now() - requestStartTime;
+        log('========================================');
+        log(`=== GENERATE-BOOK API REQUEST COMPLETE in ${totalDuration}ms ===`);
+        log('========================================');
 
         return NextResponse.json({
             success: true,
@@ -136,7 +190,11 @@ export async function POST(request: NextRequest) {
         });
 
     } catch (error) {
-        console.error('Book generation error:', error);
+        const totalDuration = Date.now() - requestStartTime;
+        log('========================================');
+        log(`=== GENERATE-BOOK API REQUEST FAILED after ${totalDuration}ms ===`);
+        log('========================================');
+        console.error('[API generate-book ERROR]', error);
         return NextResponse.json(
             { error: 'Failed to generate book' },
             { status: 500 }
