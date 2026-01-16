@@ -287,15 +287,9 @@
    Cover Mode - Centered single-page cover display
    ============================================ */
 
-/* Remove main book shadow when on cover - only side shadow */
-.coverMode .flipBook {
-    box-shadow: none !important;
-}
-
-/* Hide the spine/fold shadow when on cover */
-.coverMode .flipBook::before {
-    opacity: 0;
-}
+/* ============================================
+   Cover Mode - Centered single-page cover display
+   ============================================ */
 
 /* Center the cover by shifting the whole spread left (cover is on right side) */
 .coverMode :global(.stf__parent) {
@@ -303,9 +297,22 @@
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hide the empty left side of the spread when showing cover */
-.coverMode :global(.stf__block.stf__block--left) {
-    display: none !important;
+.coverInner {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+    background-size: cover;
+    /* 
+       Zoom in slightly (110%) to ensure we have room to pan vertically.
+       Horizontal: Center + 9px for spine compensation.
+       Vertical: Align to TOP (0%) to pull the image down as much as possible,
+                 bringing the subject away from the top edge.
+    */
+    background-size: 110%;
+    background-position: calc(50% + 9px) top;
+    background-repeat: no-repeat;
 }
 
 /* Reset when not in cover mode - smooth transition to spread view */
@@ -313,43 +320,86 @@
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Side shadow effect for cover - hardcover book edge look */
-.coverMode .flipBook::after {
+/* ============================================
+   Cover Mode - 3D Spine & Shadow Fix
+   ============================================ */
+
+/* 1. Unclip everything in the 3D rendering context for the cover */
+.coverMode :global(.stf__wrapper),
+.coverMode :global(.stf__parent),
+.coverMode :global(.stf__block),
+.coverMode :global(.stf__item),
+.coverMode :global(.page),
+.coverMode .cover {
+    overflow: visible !important;
+    transform-style: preserve-3d;
+}
+
+/* 2. Target the Cover Page specifically using library classes */
+/* The cover is always a "hard" page on the "right" (or single) */
+.coverMode :global(.stf__item.--right[data-density="hard"]) .cover {
+    box-shadow:
+        /* Deep drop shadow for the whole book */
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 10px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 3. The 3D Spine - attached to the LEFT of the cover */
+.coverMode :global(.stf__item.--right[data-density="hard"]) .cover::before {
     content: '';
     position: absolute;
-    right: -12px;
-    top: 4px;
-    bottom: 4px;
-    width: 12px;
+    /* Position exactly at the left edge, moving outward */
+    right: 100%;
+    top: 0;
+    bottom: 0;
+    width: 18px;
+    /* Spine thickness */
+
+    /* Spine styling */
     background: linear-gradient(90deg,
-            #d4d0c8 0%,
-            #c8c4bc 20%,
-            #b8b4ac 40%,
-            #a8a49c 60%,
-            #989488 80%,
-            #888480 100%);
-    border-radius: 0 4px 4px 0;
-    /* Book page lines texture */
+            #8e8a85 0%,
+            /* Darker edge furthest left */
+            #d4d0c8 20%,
+            /* Highlight */
+            #e8e5e0 45%,
+            /* Middle light */
+            #d4d0c8 80%,
+            /* Shadow near binding */
+            #989488 100%
+            /* Binding crease */
+        );
+
+    /* Texture overlay */
     background-image:
-        linear-gradient(90deg,
-            #d4d0c8 0%,
-            #c8c4bc 20%,
-            #b8b4ac 40%,
-            #a8a49c 60%,
-            #989488 80%,
-            #888480 100%),
-        repeating-linear-gradient(180deg,
+        repeating-linear-gradient(0deg,
             transparent 0px,
             transparent 2px,
-            rgba(0, 0, 0, 0.04) 2px,
-            rgba(0, 0, 0, 0.04) 3px);
-    /* Side shadow */
+            rgba(0, 0, 0, 0.02) 2px,
+            rgba(0, 0, 0, 0.02) 4px);
+
+    /* Rounded outer edge (left side of spine) */
+    border-radius: 4px 0 0 4px;
+
+    /* Spine Shadow */
     box-shadow:
-        4px 0 8px rgba(0, 0, 0, 0.15),
-        8px 2px 16px rgba(0, 0, 0, 0.1),
-        12px 4px 24px rgba(0, 0, 0, 0.08);
-    z-index: 5;
-    pointer-events: none;
+        -2px 0 5px rgba(0, 0, 0, 0.1),
+        /* Outer shadow */
+        inset -1px 0 1px rgba(0, 0, 0, 0.2);
+    /* Crease depth */
+
+    z-index: -1;
+}
+
+/* 4. Hide appropriate elements to ensure clean look */
+.coverMode :global(.stf__item.--left),
+.coverMode :global(.stf__block--left) {
+    display: none !important;
+}
+
+/* Remove default shadows in cover mode to prevent double-shadowing */
+.coverMode .flipBook {
+    box-shadow: none !important;
+    background: transparent !important;
 }
 
 /* ============================================
