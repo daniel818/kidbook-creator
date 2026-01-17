@@ -589,14 +589,14 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    background: var(--page-bg);
+    background-color: #ffffff;
+    /* crisper white base for the image */
 
-    /* Subtle ruled paper effect */
-    background-image:
-        linear-gradient(rgba(0, 0, 0, 0.015) 1px,
-            transparent 1px);
-    background-size: 100% 2rem;
-    background-position: 0 2rem;
+    /* Custom Paper Texture */
+    background-image: url("/textures/paper-texture.png");
+    background-size: 300px 300px;
+    /* Adjust scale to look natural */
+    background-repeat: repeat;
 }
 
 /* Margin line */
@@ -710,16 +710,53 @@
     background-position: center;
 }
 
-/* Frosted glass title bar at bottom */
+/* Solid Paper Band title at bottom - matching reference */
 .coverOverlay {
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    /* Background logic moved to ::after for proper texture opacity */
+    background: transparent;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
     width: 100%;
-    padding: 1.5rem 2rem;
+    padding: 2.5rem 2rem 1.5rem 2rem;
     text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    /* More visible border */
+    box-shadow:
+        0 -4px 10px rgba(0, 0, 0, 0.08),
+        0 0 20px rgba(0, 0, 0, 0.04);
+    position: relative;
+    margin-bottom: 20%;
+    /* Move up by 20% of container height */
+    z-index: 2;
+}
+
+/* Background Texture Layer (allows transparency without affecting text) */
+.coverOverlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: #ffffff;
+    background-image: url("/textures/paper-texture.png");
+    background-size: 300px 300px;
+    background-repeat: repeat;
+    opacity: 0.85;
+    /* The fix: Opacity applies to the solid texture image */
+    z-index: -1;
+}
+
+/* Add a subtle top shadow to create depth for the paper band */
+.coverOverlay::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.15), transparent);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .coverTitle {
