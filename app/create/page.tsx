@@ -184,7 +184,7 @@ export default function CreateBookPage() {
             const data = await response.json();
             console.log('[CLIENT] API response data:', data);
 
-            console.log('[CLIENT] Step 3: Navigating to book page...');
+            console.log('[CLIENT] Step 3: Navigating to book viewer...');
             setCreatingStatus('Opening your book...');
             await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -193,7 +193,7 @@ export default function CreateBookPage() {
             console.log(`[CLIENT] === BOOK CREATION COMPLETE in ${totalDuration}ms ===`);
             console.log('[CLIENT] ========================================');
 
-            router.push(`/create/${data.bookId}`);
+            router.push(`/book/${data.bookId}`);
         } catch (error) {
             const totalDuration = Date.now() - startTime;
             console.log('[CLIENT] ========================================');
