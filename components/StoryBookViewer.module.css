@@ -434,6 +434,44 @@
     border-radius: 0 24px 24px 0 !important;
 }
 
+/* ============================================
+   Gutter Shadows (Spine Depth)
+   ============================================ */
+
+/* Left Page - Shadow on the RIGHT edge (spine side) */
+:global(.stf__block--left) .page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    background: linear-gradient(to right,
+            transparent 0%,
+            rgba(0, 0, 0, 0.02) 40%,
+            rgba(0, 0, 0, 0.06) 70%,
+            rgba(0, 0, 0, 0.15) 100%);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* Right Page - Shadow on the LEFT edge (spine side) */
+:global(.stf__block--right) .page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    background: linear-gradient(to left,
+            transparent 0%,
+            rgba(0, 0, 0, 0.02) 40%,
+            rgba(0, 0, 0, 0.06) 70%,
+            rgba(0, 0, 0, 0.15) 100%);
+    z-index: 10;
+    pointer-events: none;
+}
+
 /* Paper edge effect */
 .page::after {
     content: '';
