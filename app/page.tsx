@@ -22,6 +22,9 @@ export default function Home() {
   const [bookToDelete, setBookToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Opening Animation State
+  const [openingBookId, setOpeningBookId] = useState<string | null>(null);
+
   // Load books - from API if logged in
   const loadBooks = useCallback(async () => {
     if (authLoading) return;
@@ -64,7 +67,11 @@ export default function Home() {
   };
 
   const handleViewBook = (bookId: string) => {
-    router.push(`/book/${bookId}`);
+    setOpeningBookId(bookId);
+    // Delay navigation to allow animation to play
+    setTimeout(() => {
+      router.push(`/book/${bookId}`);
+    }, 500);
   };
 
   const handleDeleteBook = (bookId: string, e: React.MouseEvent) => {
@@ -251,7 +258,7 @@ export default function Home() {
               return (
                 <div
                   key={book.id}
-                  className={styles.bookItem}
+                  className={`${styles.bookItem} ${openingBookId === book.id ? styles.isOpening : ''}`}
                   onClick={() => handleViewBook(book.id)}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
