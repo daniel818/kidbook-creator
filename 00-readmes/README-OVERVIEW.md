@@ -113,7 +113,44 @@ See `.env.example` for required variables:
 4. **PDF Export** - Download books as PDF
 5. **Print Ordering** - Stripe checkout + Lulu print-on-demand
 6. **User Authentication** - Email/password + Google OAuth
+7. **User Profile & Navigation** - Initials-based dropdown menu with profile management
+8. **Global Navigation** - Consistent navbar across all pages with logo integration
 
 ---
 
-**Last Updated**: January 2025
+## Recent Updates (January 2025)
+
+### UI/UX Improvements
+- **Global Navbar**: Implemented consistent navigation bar across all pages
+  - Logo integration from `/public/media/logo.png`
+  - Brand colors: Purple gradient (#7C3AED → #6366F1)
+  - Middle navigation: Community Books, FAQ, About Us (disabled until implemented)
+  - Right actions: Create Book button + User profile dropdown
+  
+- **User Profile System**:
+  - Initials-based dropdown navigation (e.g., "DC" for Daniel Cohen)
+  - Profile page with sections: General Info, Child Profiles, My Books, Purchases, Account Settings
+  - My Books page (`/mybooks`) with 3D book cards and grid layout
+  - Books now display on profile page (first 3 books with "View All" link)
+
+- **Create Flow Enhancements**:
+  - Added global navbar to creation wizard
+  - Removed redundant header logo (navbar provides branding)
+  - Moved back button below progress bar for better UX
+  - Unsaved changes warning when leaving creation flow
+  - Browser warning on tab close with unsaved data
+
+### Navigation Structure
+```
+Navbar: [Logo] KidBook Creator | Community Books | FAQ | About Us | [Create Book] [User Initials ▼]
+
+User Dropdown:
+  📚 My Books → /mybooks
+  📦 Purchases → /purchases
+  👤 Profile → /profile
+  🚪 Sign Out
+```
+
+---
+
+**Last Updated**: January 17, 2025

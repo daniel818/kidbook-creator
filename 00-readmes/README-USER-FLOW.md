@@ -46,21 +46,30 @@ This document describes the end-to-end user flow for creating and ordering a per
 
 ---
 
-## 2. Book Creation Form
+## 2. Book Creation Wizard
 
 **Route:** `/create`
 
 **User Actions:**
-- Enters child's name and age
-- Selects book type (board, picture, story)
-- Chooses theme (adventure, bedtime, fantasy, etc.)
-- Optionally uploads child's photo
-- Optionally describes custom story
+- **Step 1**: Enters child's name and age (with photo upload option)
+- **Step 2**: Selects book type (board, picture, story, alphabet)
+- **Step 3**: Chooses theme (adventure, bedtime, fantasy, learning, animals)
+- **Step 4**: Selects art style (storybook classic, watercolor, digital art, etc.)
+- **Step 5**: Adds custom title and story description (optional)
+
+**UI Features:**
+- Global navbar with logo and navigation
+- Progress bar with step indicators (1-5)
+- Back button below progress bar
+- Unsaved changes warning on exit
+- Browser warning on tab close with unsaved data
 
 **Technical:**
-- Form validation with Zod
+- Multi-step wizard with state management
+- Form validation per step
 - Photo upload to Supabase Storage
 - Character extraction via Gemini (optional)
+- Deferred authentication (register after generation)
 
 ---
 
@@ -192,12 +201,13 @@ This document describes the end-to-end user flow for creating and ordering a per
 | Route | Purpose | Auth Required |
 |-------|---------|---------------|
 | `/` | Landing page | No |
-| `/create` | Book creation form | No |
-| `/create/generating` | Generation progress | No |
+| `/create` | Book creation wizard (5 steps) | No |
 | `/book/[bookId]` | Book preview | Yes |
+| `/mybooks` | User's book library | Yes |
+| `/profile` | User profile & settings | Yes |
+| `/purchases` | Order history | Yes |
 | `/create/[bookId]/order` | Order configuration | Yes |
 | `/order/success` | Order confirmation | Yes |
-| `/orders` | Order history | Yes |
 | `/admin` | Admin dashboard | Admin only |
 
 ---

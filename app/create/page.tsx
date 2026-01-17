@@ -14,6 +14,7 @@ import {
 import { saveBook } from '@/lib/storage';
 import { ART_STYLES, ArtStyle, ImageQuality } from '@/lib/art-styles';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
 import styles from './page.module.css';
 
@@ -39,6 +40,7 @@ export default function CreateBookPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [pendingCreate, setPendingCreate] = useState(false);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     // Cleanup object URL to prevent memory leaks
     useEffect(() => {
@@ -51,6 +53,40 @@ export default function CreateBookPage() {
 
     const steps: WizardStep[] = ['child', 'type', 'theme', 'style', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
+
+    // Track unsaved changes
+    useEffect(() => {
+        const hasData = settings.childName || settings.bookType || settings.bookTheme || settings.artStyle || settings.title || childPhoto;
+        setHasUnsavedChanges(!!hasData);
+    }, [settings, childPhoto]);
+
+    // Warn before leaving if there are unsaved changes
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [hasUnsavedChanges]);
+
+    const handleBack = () => {
+        if (currentStepIndex === 0) {
+            // On first step, check for unsaved changes before going back
+            if (hasUnsavedChanges) {
+                const confirmLeave = window.confirm(
+                    'You have unsaved changes. Are you sure you want to leave? Your progress will be lost.'
+                );
+                if (!confirmLeave) return;
+            }
+            router.push('/');
+        } else {
+            setCurrentStep(steps[currentStepIndex - 1]);
+        }
+    };
 
     const canProceed = () => {
         switch (currentStep) {
@@ -103,15 +139,6 @@ export default function CreateBookPage() {
             handleCreate();
         }
     }, [user, pendingCreate, showAuthModal]);
-
-    const handleBack = () => {
-        const prevIndex = currentStepIndex - 1;
-        if (prevIndex >= 0) {
-            setCurrentStep(steps[prevIndex]);
-        } else {
-            router.push('/');
-        }
-    };
 
     const handleCreate = async () => {
         const startTime = Date.now();
@@ -211,32 +238,20 @@ export default function CreateBookPage() {
     };
 
     return (
-        <main className={styles.main}>
-            {/* Auth Modal for deferred authentication */}
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-                initialMode="signup"
-                customTitle="Just one more step!"
-                customSubtitle="Please sign in or create an account to generate your magical book"
-            />
+        <>
+            <Navbar />
+            <main className={styles.main}>
+                {/* Auth Modal for deferred authentication */}
+                <AuthModal
+                    isOpen={showAuthModal}
+                    onClose={() => setShowAuthModal(false)}
+                />
 
             {/* Background */}
             <div className={styles.background}>
                 <div className={styles.bgShape1}></div>
                 <div className={styles.bgShape2}></div>
             </div>
-
-            {/* Header */}
-            <header className={styles.header}>
-                <button className={styles.backButton} onClick={handleBack}>
-                    ← Back
-                </button>
-                <div className={styles.logo}>
-                    <span>📚</span> KidBook Creator
-                </div>
-                <div className={styles.placeholder}></div>
-            </header>
 
             {/* Progress bar */}
             <div className={styles.progressContainer}>
@@ -256,6 +271,9 @@ export default function CreateBookPage() {
                         </div>
                     ))}
                 </div>
+                <button className={styles.backButton} onClick={handleBack}>
+                    ← Back
+                </button>
             </div>
 
             {/* Wizard Content */}
@@ -646,5 +664,6 @@ export default function CreateBookPage() {
                 </button>
             </div>
         </main>
+        </>
     );
 }

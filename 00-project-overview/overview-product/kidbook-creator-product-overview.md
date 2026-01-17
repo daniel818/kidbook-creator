@@ -103,6 +103,64 @@
 
 ---
 
+### **User Profile & Account Management**
+
+#### **Navigation Menu (Post-Login)**
+```
+[Logo] Create Story    My Books    Purchases    Profile    [DC ▼]
+                                                     ├─ My Books
+                                                     ├─ Purchases  
+                                                     ├─ Profile
+                                                     └─ Sign Out
+```
+
+#### **Profile Page Elements**
+
+**1. General Information**
+- Name (First, Last)
+- Email address
+- Profile picture/initials (auto-generated)
+- Account created date
+- Language preference (DE/HE/EN)
+
+**2. Child Profiles**
+- Add/edit children
+- Name, age, gender, interests
+- Profile picture per child
+- Default child for new stories
+
+**3. Books Created**
+- List of all created stories
+- Story status (Draft, Completed, Ordered)
+- Quick actions (Edit, Order, Share)
+- Filter by child or date
+
+**4. Purchases/Order History**
+- Order details with dates
+- Tracking information
+- Download receipts
+- Reorder options
+
+**5. Account Settings**
+- Email and password
+- Payment methods (Stripe)
+- Shipping addresses
+- Notification preferences
+- Subscription management (RevenueCat)
+
+**6. Child Profiles Management**
+- Add/edit children profiles
+- Name, age, interests
+- Appearance preferences for stories
+
+**7. Support & Help**
+- Contact information
+- FAQ access
+- Order issues
+- Live chat (Intercom)
+
+---
+
 ## **User Journey**
 
 ### **Discovery → Creation (5-15 minutes)**
