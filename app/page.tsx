@@ -6,6 +6,7 @@ import { Book } from '@/lib/types';
 import { getBooks, deleteBook as deleteLocalBook } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { AuthModal } from '@/components/AuthModal';
+import { ConfirmModal } from '@/components/ConfirmModal';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -15,6 +16,14 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+
+  // Delete Modal State
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Opening Animation State
+  const [openingBookId, setOpeningBookId] = useState<string | null>(null);
 
   // Load books - from API if logged in
   const loadBooks = useCallback(async () => {
@@ -58,28 +67,43 @@ export default function Home() {
   };
 
   const handleViewBook = (bookId: string) => {
-    router.push(`/book/${bookId}`);
+    setOpeningBookId(bookId);
+    // Delay navigation to allow animation to play
+    setTimeout(() => {
+      router.push(`/book/${bookId}`);
+    }, 500);
   };
 
-  const handleDeleteBook = async (bookId: string, e: React.MouseEvent) => {
+  const handleDeleteBook = (bookId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Are you sure you want to delete this book?')) return;
+    setBookToDelete(bookId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteBook = async () => {
+    if (!bookToDelete) return;
+
+    setIsDeleting(true);
 
     if (user) {
       // Delete from API
       try {
-        const response = await fetch(`/api/books/${bookId}`, { method: 'DELETE' });
+        const response = await fetch(`/api/books/${bookToDelete}`, { method: 'DELETE' });
         if (response.ok) {
-          setBooks(books.filter(b => b.id !== bookId));
+          setBooks(books.filter(b => b.id !== bookToDelete));
         }
       } catch (error) {
         console.error('Error deleting book:', error);
       }
     } else {
       // Delete from local storage
-      deleteLocalBook(bookId);
-      setBooks(books.filter(b => b.id !== bookId));
+      deleteLocalBook(bookToDelete);
+      setBooks(books.filter(b => b.id !== bookToDelete));
     }
+
+    setIsDeleting(false);
+    setShowDeleteModal(false);
+    setBookToDelete(null);
   };
 
   const handleAuthClick = (mode: 'login' | 'signup') => {
@@ -227,60 +251,96 @@ export default function Home() {
           </div>
 
           <div className={styles.booksGrid}>
-            {books.map((book, index) => (
-              <div
-                key={book.id}
-                className={styles.bookCard}
-                onClick={() => handleViewBook(book.id)}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
+            {books.map((book, index) => {
+              const coverImage = getBookCoverImage(book);
+              const themeColor = getBookColor(book.settings.bookTheme);
+
+              return (
                 <div
-                  className={styles.bookCardCover}
-                  style={{
-                    background: `linear-gradient(135deg, ${getBookColor(book.settings.bookTheme)} 0%, ${getBookColorSecondary(book.settings.bookTheme)} 100%)`
-                  }}
+                  key={book.id}
+                  className={`${styles.bookItem} ${openingBookId === book.id ? styles.isOpening : ''}`}
+                  onClick={() => handleViewBook(book.id)}
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <span className={styles.bookCardEmoji}>
-                    {getBookEmoji(book.settings.bookType)}
-                  </span>
-                  <span className={styles.pageCount}>
-                    {book.pages.length} page{book.pages.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
+                  {/* 3D Book Container */}
+                  <div className={styles.book3DContainer}>
+                    <div className={styles.book3D}>
+                      {/* Spine */}
+                      <div
+                        className={styles.book3DSpine}
+                        style={{
+                          background: `linear-gradient(90deg, ${getBookColorSecondary(book.settings.bookTheme)} 0%, ${themeColor} 100%)`
+                        }}
+                      ></div>
 
-                <div className={styles.bookCardInfo}>
-                  <h3 className={styles.bookCardTitle}>
-                    {book.settings.title || `${book.settings.childName}'s Book`}
-                  </h3>
-                  <p className={styles.bookCardMeta}>
-                    For {book.settings.childName}, age {book.settings.childAge}
-                  </p>
-                  <p className={styles.bookCardDate}>
-                    Updated {formatDate(book.updatedAt)}
-                  </p>
-                </div>
+                      {/* Front Cover */}
+                      <div
+                        className={styles.book3DFront}
+                        style={{
+                          background: coverImage
+                            ? `url(${coverImage}) center/cover`
+                            : `linear-gradient(135deg, ${themeColor} 0%, ${getBookColorSecondary(book.settings.bookTheme)} 100%)`
+                        }}
+                      >
+                        {!coverImage && (
+                          <>
+                            <span className={styles.book3DEmoji}>
+                              {getBookEmoji(book.settings.bookType)}
+                            </span>
+                            <span className={styles.book3DTitle}>
+                              {book.settings.title}
+                            </span>
+                          </>
+                        )}
+                        {/* Overlay gradient for realism even with image */}
+                        <div className={styles.bookCoverOverlay}></div>
+                      </div>
+                    </div>
+                    <div className={styles.book3DShadow}></div>
+                  </div>
 
-                <div className={styles.bookCardActions}>
-                  <span className={`${styles.statusBadge} ${styles[book.status]}`}>
-                    {book.status}
-                  </span>
-                  <button
-                    className={styles.editBtn}
-                    onClick={(e) => { e.stopPropagation(); handleEditBook(book.id); }}
-                    aria-label="Edit book"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    className={styles.deleteBtn}
-                    onClick={(e) => handleDeleteBook(book.id, e)}
-                    aria-label="Delete book"
-                  >
-                    🗑️
-                  </button>
+                  {/* Book Info below 3D object */}
+                  <div className={styles.bookItemInfo}>
+                    <div className={styles.bookMetaTop}>
+                      <h3 className={styles.bookCardTitle}>
+                        {book.settings.title || `${book.settings.childName}'s Book`}
+                      </h3>
+                      <span className={styles.pageCountBadge}>
+                        {book.pages.length} pgs
+                      </span>
+                    </div>
+
+                    <p className={styles.bookCardMeta}>
+                      For {book.settings.childName}, age {book.settings.childAge}
+                    </p>
+
+                    <div className={styles.bookItemActions}>
+                      <span className={`${styles.statusBadge} ${styles[book.status]}`}>
+                        {book.status}
+                      </span>
+                      <div className={styles.actionButtons}>
+                        <button
+                          className={styles.editBtn}
+                          onClick={(e) => { e.stopPropagation(); handleEditBook(book.id); }}
+                          aria-label="Edit book"
+                          title="Edit book"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          className={styles.deleteBtn}
+                          onClick={(e) => handleDeleteBook(book.id, e)}
+                          aria-label="Delete book"
+                          title="Delete book"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {/* Add New Book Card */}
             <div
@@ -399,6 +459,17 @@ export default function Home() {
         onClose={() => setShowAuthModal(false)}
         initialMode={authMode}
       />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeleteBook}
+        title="Delete Book"
+        message="Are you sure you want to delete this book? This action cannot be undone."
+        confirmText="Delete"
+        isLoading={isDeleting}
+      />
     </main>
   );
 }
@@ -435,5 +506,23 @@ function getBookEmoji(type: string): string {
     story: '📖',
     alphabet: '🔤'
   };
+  // ... existing emoji helper
   return emojis[type] || '📚';
+}
+
+function getBookCoverImage(book: Book) {
+  // Try imageElements first (where AI-generated images are stored)
+  const coverPage = book.pages[0];
+  if (!coverPage) return null;
+
+  if (coverPage.imageElements && coverPage.imageElements.length > 0 && coverPage.imageElements[0].src) {
+    return coverPage.imageElements[0].src;
+  }
+  // Fallback to backgroundImage for manually uploaded images
+  // @ts-ignore - Backend sometimes sends snake_case
+  if (coverPage.backgroundImage || coverPage.background_image) {
+    // @ts-ignore
+    return coverPage.backgroundImage || coverPage.background_image;
+  }
+  return null;
 }

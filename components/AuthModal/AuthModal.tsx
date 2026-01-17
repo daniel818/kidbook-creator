@@ -10,9 +10,11 @@ interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     initialMode?: 'login' | 'signup';
+    customTitle?: string;
+    customSubtitle?: string;
 }
 
-export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle, customSubtitle }: AuthModalProps) {
     const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>(initialMode);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -112,14 +114,22 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
                     <div className={styles.header}>
                         <span className={styles.icon}>📚</span>
                         <h2 className={styles.title}>
-                            {mode === 'login' && 'Welcome Back!'}
-                            {mode === 'signup' && 'Create Account'}
-                            {mode === 'forgot' && 'Reset Password'}
+                            {customTitle ? customTitle : (
+                                <>
+                                    {mode === 'login' && 'Welcome Back!'}
+                                    {mode === 'signup' && 'Create Account'}
+                                    {mode === 'forgot' && 'Reset Password'}
+                                </>
+                            )}
                         </h2>
                         <p className={styles.subtitle}>
-                            {mode === 'login' && 'Sign in to save your books and order prints'}
-                            {mode === 'signup' && 'Join us to create amazing books for your kids'}
-                            {mode === 'forgot' && "Enter your email and we'll send you a reset link"}
+                            {customSubtitle ? customSubtitle : (
+                                <>
+                                    {mode === 'login' && 'Sign in to save your books and order prints'}
+                                    {mode === 'signup' && 'Join us to create amazing books for your kids'}
+                                    {mode === 'forgot' && "Enter your email and we'll send you a reset link"}
+                                </>
+                            )}
                         </p>
                     </div>
 

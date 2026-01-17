@@ -188,6 +188,19 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
         bookRef.current?.pageFlip().flipNext();
     }, []);
 
+    // Auto-open book on mount (simulation of "taking and opening")
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            // Only flip if we are on the cover (page 0)
+            if (currentPageIndex === 0 && bookRef.current) {
+                // Use a slightly longer delay to match the "pickup" animation
+                bookRef.current.pageFlip().flipNext();
+            }
+        }, 1200); // 800ms animation + 400ms pause before opening
+
+        return () => clearTimeout(timer);
+    }, []); // Run only once on mount
+
     // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {

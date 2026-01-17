@@ -13,12 +13,15 @@ import {
 } from '@/lib/types';
 import { saveBook } from '@/lib/storage';
 import { ART_STYLES, ArtStyle, ImageQuality } from '@/lib/art-styles';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { AuthModal } from '@/components/AuthModal';
 import styles from './page.module.css';
 
 type WizardStep = 'child' | 'type' | 'theme' | 'style' | 'title';
 
 export default function CreateBookPage() {
     const router = useRouter();
+    const { user, isLoading: isAuthLoading } = useAuth();
     const [currentStep, setCurrentStep] = useState<WizardStep>('child');
     const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string; artStyle?: ArtStyle }>({
         childName: '',
@@ -34,6 +37,8 @@ export default function CreateBookPage() {
     const [childPhoto, setChildPhoto] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [pendingCreate, setPendingCreate] = useState(false);
 
     // Cleanup object URL to prevent memory leaks
     useEffect(() => {
@@ -81,9 +86,23 @@ export default function CreateBookPage() {
         if (nextIndex < steps.length) {
             setCurrentStep(steps[nextIndex]);
         } else {
-            handleCreate();
+            // Check if user is authenticated before generating
+            if (!user && !isAuthLoading) {
+                setPendingCreate(true);
+                setShowAuthModal(true);
+            } else {
+                handleCreate();
+            }
         }
     };
+
+    // Handle auth modal close - if user just authenticated and we have a pending create, proceed
+    useEffect(() => {
+        if (pendingCreate && user && !showAuthModal) {
+            setPendingCreate(false);
+            handleCreate();
+        }
+    }, [user, pendingCreate, showAuthModal]);
 
     const handleBack = () => {
         const prevIndex = currentStepIndex - 1;
@@ -193,6 +212,15 @@ export default function CreateBookPage() {
 
     return (
         <main className={styles.main}>
+            {/* Auth Modal for deferred authentication */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                initialMode="signup"
+                customTitle="Just one more step!"
+                customSubtitle="Please sign in or create an account to generate your magical book"
+            />
+
             {/* Background */}
             <div className={styles.background}>
                 <div className={styles.bgShape1}></div>

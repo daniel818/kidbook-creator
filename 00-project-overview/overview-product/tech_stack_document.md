@@ -94,8 +94,9 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
 
 ## **4. Email & Communication**
 
-### **Email Service**
-- **Provider**: Resend or SendGrid
+### **Email & Push Notification Service**
+- **Primary Provider**: OneSignal (Email + Push Notifications)
+- **Backup Provider**: Resend or SendGrid (email fallback)
 - **Templates**: React Email components
 - **Use Cases**:
   - Welcome email (new user registration)
@@ -103,6 +104,8 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
   - Shipping notification (book shipped)
   - Subscription confirmation
   - Post-delivery follow-up
+  - Push notifications: "Your story is ready!", "Your book shipped!"
+  - Re-engagement campaigns for inactive users
 
 ### **Email Types**
 1. **Welcome Email**: "Your first book is free! Start creating"
@@ -131,7 +134,12 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
   - Subscription status tracking
   - Automatic renewal
   - Cancellation handling
-  - Analytics and reporting
+  - Revenue analytics and reporting
+  - A/B testing for pricing
+  - Promotional offers and discounts
+  - Revenue recognition (ASC 606)
+  - Tax calculation (VAT for EU customers)
+  - Webhook integration for real-time updates
 
 ---
 
@@ -139,6 +147,14 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
 
 ### **Product Analytics**
 - **Platform**: Mixpanel (user behavior tracking)
+- **Features**:
+  - Real-time event tracking
+  - User segmentation (by country, age group, subscription status)
+  - Funnel analysis
+  - Cohort analysis
+  - A/B testing framework
+  - Custom dashboards
+  - Data export capabilities
 - **Events Tracked**:
   - page_view
   - story_creation_start
@@ -151,6 +167,9 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
   - subscription_cancelled
   - social_share
   - referral_link_clicked
+  - push_notification_opened
+  - email_opened
+  - email_clicked
 
 ### **Conversion Tracking**
 - **Goals**:
@@ -165,13 +184,18 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
   - First order → Repeat order
 
 ### **Revenue Analytics**
-- **Platform**: RevenueCat
+- **Platform**: RevenueCat + Mixpanel Integration
 - **Metrics**:
   - Monthly Recurring Revenue (MRR)
+  - Annual Recurring Revenue (ARR)
   - Customer Lifetime Value (LTV)
-  - Churn rate
+  - Customer Acquisition Cost (CAC)
+  - Churn rate (by plan type, country)
   - Subscription cohorts
-  - Revenue by plan type
+  - Revenue by plan type (Monthly vs Annual)
+  - Conversion rates (free to paid)
+  - Revenue attribution (marketing channels)
+  - Average Revenue Per User (ARPU)
 
 ---
 
@@ -324,8 +348,9 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
 - **Google Gemini**: AI story generation
 - **Google Imagen**: AI illustration generation
 - **Stripe**: Payment processing
-- **RevenueCat**: Subscription management
-- **Mixpanel**: User analytics
+- **RevenueCat**: Subscription management & revenue tracking
+- **Mixpanel**: User analytics & behavior tracking
+- **OneSignal**: Email & push notifications
 - **Supabase**: Backend, database, auth, storage
 - **Print Partners**: Print-on-demand fulfillment
 
@@ -333,6 +358,8 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
 - **Intercom**: Customer support chat
 - **Hotjar**: UX optimization
 - **Zapier**: Workflow automation
+- **Google Analytics 4**: SEO analytics (supplement to Mixpanel)
+- **Postmark**: High-deliverability email (backup to OneSignal)
 
 ---
 
@@ -369,7 +396,8 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
 - **Stripe**: 2.9% + €0.30 per transaction
 - **RevenueCat**: $0 (Free tier up to $10k MRR)
 - **Mixpanel**: $0 (Free tier up to 20M events)
-- **Email**: $20 (SendGrid or Resend)
+- **OneSignal**: $0 (Free tier up to 10,000 subscribers)
+- **Email**: $20 (SendGrid or Resend backup)
 - **Domain**: ~$15/year (~$1.25/month)
 - **Total**: ~$215-565/month (variable with usage)
 
@@ -381,8 +409,9 @@ This document outlines the technology stack for KidBook Creator, an AI-powered p
 - **Stripe**: 2.9% + €0.30 per transaction (~€300-500 in fees)
 - **RevenueCat**: $0-250 (scales with MRR)
 - **Mixpanel**: $0-89 (Growth plan)
-- **Email**: $80-200 (higher volume)
-- **Total**: ~$1,425-3,084/month (variable with usage)
+- **OneSignal**: $0-35 (Growth plan for 10K-50K subscribers)
+- **Email**: $80-200 (higher volume, backup)
+- **Total**: ~$1,425-3,119/month (variable with usage)
 
 ---
 
@@ -437,9 +466,11 @@ NEXT_PUBLIC_REVENUECAT_PUBLIC_KEY=
 # Mixpanel
 NEXT_PUBLIC_MIXPANEL_TOKEN=
 
-# Email
+# Email & Push
 SENDGRID_API_KEY=
 RESEND_API_KEY=
+ONESIGNAL_APP_ID=
+ONESIGNAL_API_KEY=
 
 # Print Partners
 PRINT_PARTNER_API_KEY=
