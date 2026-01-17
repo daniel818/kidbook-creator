@@ -286,6 +286,23 @@ export async function DELETE(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        // Delete images from Storage first (clean up assets)
+        const storagePath = `${user.id}/${bookId}`;
+        const { data: listData, error: listError } = await supabase.storage
+            .from('book-images')
+            .list(storagePath);
+
+        if (!listError && listData && listData.length > 0) {
+            const filesToRemove = listData.map(file => `${storagePath}/${file.name}`);
+            const { error: removeError } = await supabase.storage
+                .from('book-images')
+                .remove(filesToRemove);
+
+            if (removeError) {
+                console.error('Error removing book images:', removeError);
+            }
+        }
+
         // Delete the book (pages will be cascade deleted)
         const { error } = await supabase
             .from('books')
