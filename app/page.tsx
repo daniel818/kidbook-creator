@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Book } from '@/lib/types';
 import { getBooks, deleteBook as deleteLocalBook } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import styles from './page.module.css';
@@ -125,352 +126,316 @@ export default function Home() {
   };
 
   return (
-    <main className={styles.main}>
-      {/* Navigation Bar */}
-      <nav className={styles.navbar}>
-        <div className={styles.navBrand}>
-          <span className={styles.navLogo}>📚</span>
-          <span className={styles.navName}>KidBook Creator</span>
-        </div>
-
-        <div className={styles.navActions}>
-          {authLoading ? (
-            <div className={styles.navSkeleton}></div>
-          ) : user ? (
-            <div className={styles.userMenu}>
-              <span className={styles.userEmail}>{user.email}</span>
-              <button
-                className={styles.signOutBtn}
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </button>
-            </div>
-          ) : (
-            <>
-              <button
-                className={styles.navLoginBtn}
-                onClick={() => handleAuthClick('login')}
-              >
-                Sign In
-              </button>
-              <button
-                className={styles.navSignupBtn}
-                onClick={() => handleAuthClick('signup')}
-              >
-                Get Started
-              </button>
-            </>
-          )}
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className={styles.hero}>
-        <div className={styles.heroBackground}>
-          <div className={styles.floatingShape1}></div>
-          <div className={styles.floatingShape2}></div>
-          <div className={styles.floatingShape3}></div>
-        </div>
-
-        <div className={styles.heroContent}>
-          <div className={styles.badge}>
-            <span className={styles.badgeIcon}>✨</span>
-            <span>Create magical stories</span>
+    <>
+      <Navbar />
+      <main className={styles.main}>
+        {/* Hero Section */}
+        <section className={styles.hero}>
+          <div className={styles.heroBackground}>
+            <div className={styles.floatingShape1}></div>
+            <div className={styles.floatingShape2}></div>
+            <div className={styles.floatingShape3}></div>
           </div>
 
-          <h1 className={styles.heroTitle}>
-            Create{' '}
-            <span className={styles.gradientText}>Personalized</span>
-            <br />
-            Children&apos;s Books
-          </h1>
-
-          <p className={styles.heroSubtitle}>
-            Design beautiful custom books for your little ones. Upload photos,
-            write stories, and order professionally printed books delivered to your door.
-          </p>
-
-          <div className={styles.heroActions}>
-            <button onClick={handleCreateNew} className={styles.ctaButton}>
-              <span className={styles.ctaIcon}>📖</span>
-              Create Your Book
-              <span className={styles.ctaArrow}>→</span>
-            </button>
-
-            <div className={styles.ctaFeatures}>
-              <span className={styles.feature}>
-                <span className={styles.featureIcon}>🎨</span>
-                Easy to use
-              </span>
-              <span className={styles.feature}>
-                <span className={styles.featureIcon}>📦</span>
-                Print & ship
-              </span>
-              <span className={styles.feature}>
-                <span className={styles.featureIcon}>💝</span>
-                Perfect gift
-              </span>
+          <div className={styles.heroContent}>
+            <div className={styles.badge}>
+              <span className={styles.badgeIcon}>✨</span>
+              <span>Create magical stories</span>
             </div>
-          </div>
-        </div>
 
-        <div className={styles.heroVisual}>
-          <div className={styles.bookPreview}>
-            <div className={styles.bookCover}>
-              <div className={styles.bookSpine}></div>
-              <div className={styles.bookFront}>
-                <span className={styles.bookEmoji}>📚</span>
-                <span className={styles.bookTitle}>My Story</span>
+            <h1 className={styles.heroTitle}>
+              Create{' '}
+              <span className={styles.gradientText}>Personalized</span>
+              <br />
+              Children&apos;s Books
+            </h1>
+
+            <p className={styles.heroSubtitle}>
+              Design beautiful custom books for your little ones. Upload photos,
+              write stories, and order professionally printed books delivered to your door.
+            </p>
+
+            <div className={styles.heroActions}>
+              <button onClick={handleCreateNew} className={styles.ctaButton}>
+                <span className={styles.ctaIcon}>📖</span>
+                Create Your Book
+                <span className={styles.ctaArrow}>→</span>
+              </button>
+
+              <div className={styles.ctaFeatures}>
+                <span className={styles.feature}>
+                  <span className={styles.featureIcon}>🎨</span>
+                  Easy to use
+                </span>
+                <span className={styles.feature}>
+                  <span className={styles.featureIcon}>📦</span>
+                  Print & ship
+                </span>
+                <span className={styles.feature}>
+                  <span className={styles.featureIcon}>💝</span>
+                  Perfect gift
+                </span>
               </div>
             </div>
-            <div className={styles.bookShadow}></div>
-          </div>
-        </div>
-      </section>
-
-      {/* My Books Section */}
-      {books.length > 0 && (
-        <section className={styles.myBooks}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              <span className={styles.sectionIcon}>📚</span>
-              My Books
-            </h2>
-            <div className={styles.sectionMeta}>
-              <span className={styles.bookCount}>{books.length} book{books.length !== 1 ? 's' : ''}</span>
-              {!user && (
-                <button
-                  className={styles.savePrompt}
-                  onClick={() => handleAuthClick('signup')}
-                >
-                  🔒 Sign in to save to cloud
-                </button>
-              )}
-            </div>
           </div>
 
-          <div className={styles.booksGrid}>
-            {books.map((book, index) => {
-              const coverImage = getBookCoverImage(book);
-              const themeColor = getBookColor(book.settings.bookTheme);
-
-              return (
-                <div
-                  key={book.id}
-                  className={`${styles.bookItem} ${openingBookId === book.id ? styles.isOpening : ''}`}
-                  onClick={() => handleViewBook(book.id)}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {/* 3D Book Container */}
-                  <div className={styles.book3DContainer}>
-                    <div className={styles.book3D}>
-                      {/* Spine */}
-                      <div
-                        className={styles.book3DSpine}
-                        style={{
-                          background: `linear-gradient(90deg, ${getBookColorSecondary(book.settings.bookTheme)} 0%, ${themeColor} 100%)`
-                        }}
-                      ></div>
-
-                      {/* Front Cover */}
-                      <div
-                        className={styles.book3DFront}
-                        style={{
-                          background: coverImage
-                            ? `url(${coverImage}) center/cover`
-                            : `linear-gradient(135deg, ${themeColor} 0%, ${getBookColorSecondary(book.settings.bookTheme)} 100%)`
-                        }}
-                      >
-                        {!coverImage && (
-                          <>
-                            <span className={styles.book3DEmoji}>
-                              {getBookEmoji(book.settings.bookType)}
-                            </span>
-                            <span className={styles.book3DTitle}>
-                              {book.settings.title}
-                            </span>
-                          </>
-                        )}
-                        {/* Overlay gradient for realism even with image */}
-                        <div className={styles.bookCoverOverlay}></div>
-                      </div>
-                    </div>
-                    <div className={styles.book3DShadow}></div>
-                  </div>
-
-                  {/* Book Info below 3D object */}
-                  <div className={styles.bookItemInfo}>
-                    <div className={styles.bookMetaTop}>
-                      <h3 className={styles.bookCardTitle}>
-                        {book.settings.title || `${book.settings.childName}'s Book`}
-                      </h3>
-                      <span className={styles.pageCountBadge}>
-                        {book.pages.length} pgs
-                      </span>
-                    </div>
-
-                    <p className={styles.bookCardMeta}>
-                      For {book.settings.childName}, age {book.settings.childAge}
-                    </p>
-
-                    <div className={styles.bookItemActions}>
-                      <span className={`${styles.statusBadge} ${styles[book.status]}`}>
-                        {book.status}
-                      </span>
-                      <div className={styles.actionButtons}>
-                        <button
-                          className={styles.editBtn}
-                          onClick={(e) => { e.stopPropagation(); handleEditBook(book.id); }}
-                          aria-label="Edit book"
-                          title="Edit book"
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className={styles.deleteBtn}
-                          onClick={(e) => handleDeleteBook(book.id, e)}
-                          aria-label="Delete book"
-                          title="Delete book"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+          <div className={styles.heroVisual}>
+            <div className={styles.bookPreview}>
+              <div className={styles.bookCover}>
+                <div className={styles.bookSpine}></div>
+                <div className={styles.bookFront}>
+                  <span className={styles.bookEmoji}>📚</span>
+                  <span className={styles.bookTitle}>My Story</span>
                 </div>
-              );
-            })}
-
-            {/* Add New Book Card */}
-            <div
-              className={`${styles.bookCard} ${styles.addNew}`}
-              onClick={handleCreateNew}
-            >
-              <div className={styles.addNewContent}>
-                <span className={styles.addIcon}>+</span>
-                <span className={styles.addText}>Create New Book</span>
               </div>
+              <div className={styles.bookShadow}></div>
             </div>
           </div>
         </section>
-      )}
 
-      {/* Features Section */}
-      <section className={styles.features}>
-        <h2 className={styles.featuresTitle}>How It Works</h2>
+        {/* My Books Section */}
+        {books.length > 0 && (
+          <section className={styles.myBooks}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                <span className={styles.sectionIcon}>📚</span>
+                My Books
+              </h2>
+              <div className={styles.sectionMeta}>
+                <span className={styles.bookCount}>{books.length} book{books.length !== 1 ? 's' : ''}</span>
+                {!user && (
+                  <button
+                    className={styles.savePrompt}
+                    onClick={() => handleAuthClick('signup')}
+                  >
+                    🔒 Sign in to save to cloud
+                  </button>
+                )}
+              </div>
+            </div>
 
-        <div className={styles.stepsContainer}>
-          <div className={styles.stepCard}>
-            <div className={styles.stepNumber}>1</div>
-            <div className={styles.stepIcon}>👶</div>
-            <h3 className={styles.stepTitle}>Setup Your Book</h3>
-            <p className={styles.stepDesc}>
-              Enter your child&apos;s name, age, and choose the perfect book type and theme.
+            <div className={styles.booksGrid}>
+              {books.map((book, index) => {
+                const coverImage = getBookCoverImage(book);
+                const themeColor = getBookColor(book.settings.bookTheme);
+
+                return (
+                  <div
+                    key={book.id}
+                    className={`${styles.bookItem} ${openingBookId === book.id ? styles.isOpening : ''}`}
+                    onClick={() => handleViewBook(book.id)}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    {/* 3D Book Container */}
+                    <div className={styles.book3DContainer}>
+                      <div className={styles.book3D}>
+                        {/* Spine */}
+                        <div
+                          className={styles.book3DSpine}
+                          style={{
+                            background: `linear-gradient(90deg, ${getBookColorSecondary(book.settings.bookTheme)} 0%, ${themeColor} 100%)`
+                          }}
+                        ></div>
+
+                        {/* Front Cover */}
+                        <div
+                          className={styles.book3DFront}
+                          style={{
+                            background: coverImage
+                              ? `url(${coverImage}) center/cover`
+                              : `linear-gradient(135deg, ${themeColor} 0%, ${getBookColorSecondary(book.settings.bookTheme)} 100%)`
+                          }}
+                        >
+                          {!coverImage && (
+                            <>
+                              <span className={styles.book3DEmoji}>
+                                {getBookEmoji(book.settings.bookType)}
+                              </span>
+                              <span className={styles.book3DTitle}>
+                                {book.settings.title}
+                              </span>
+                            </>
+                          )}
+                          {/* Overlay gradient for realism even with image */}
+                          <div className={styles.bookCoverOverlay}></div>
+                        </div>
+                      </div>
+                      <div className={styles.book3DShadow}></div>
+                    </div>
+
+                    {/* Book Info below 3D object */}
+                    <div className={styles.bookItemInfo}>
+                      <div className={styles.bookMetaTop}>
+                        <h3 className={styles.bookCardTitle}>
+                          {book.settings.title || `${book.settings.childName}'s Book`}
+                        </h3>
+                        <span className={styles.pageCountBadge}>
+                          {book.pages.length} pgs
+                        </span>
+                      </div>
+
+                      <p className={styles.bookCardMeta}>
+                        For {book.settings.childName}, age {book.settings.childAge}
+                      </p>
+
+                      <div className={styles.bookItemActions}>
+                        <span className={`${styles.statusBadge} ${styles[book.status]}`}>
+                          {book.status}
+                        </span>
+                        <div className={styles.actionButtons}>
+                          <button
+                            className={styles.editBtn}
+                            onClick={(e) => { e.stopPropagation(); handleEditBook(book.id); }}
+                            aria-label="Edit book"
+                            title="Edit book"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className={styles.deleteBtn}
+                            onClick={(e) => handleDeleteBook(book.id, e)}
+                            aria-label="Delete book"
+                            title="Delete book"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Add New Book Card */}
+              <div
+                className={`${styles.bookCard} ${styles.addNew}`}
+                onClick={handleCreateNew}
+              >
+                <div className={styles.addNewContent}>
+                  <span className={styles.addIcon}>+</span>
+                  <span className={styles.addText}>Create New Book</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Features Section */}
+        <section className={styles.features}>
+          <h2 className={styles.featuresTitle}>How It Works</h2>
+
+          <div className={styles.stepsContainer}>
+            <div className={styles.stepCard}>
+              <div className={styles.stepNumber}>1</div>
+              <div className={styles.stepIcon}>👶</div>
+              <h3 className={styles.stepTitle}>Setup Your Book</h3>
+              <p className={styles.stepDesc}>
+                Enter your child&apos;s name, age, and choose the perfect book type and theme.
+              </p>
+            </div>
+
+            <div className={styles.stepConnector}>
+              <span>→</span>
+            </div>
+
+            <div className={styles.stepCard}>
+              <div className={styles.stepNumber}>2</div>
+              <div className={styles.stepIcon}>🖼️</div>
+              <h3 className={styles.stepTitle}>Add Content</h3>
+              <p className={styles.stepDesc}>
+                Upload photos and write your story. Arrange pages exactly how you want.
+              </p>
+            </div>
+
+            <div className={styles.stepConnector}>
+              <span>→</span>
+            </div>
+
+            <div className={styles.stepCard}>
+              <div className={styles.stepNumber}>3</div>
+              <div className={styles.stepIcon}>📬</div>
+              <h3 className={styles.stepTitle}>Order & Enjoy</h3>
+              <p className={styles.stepDesc}>
+                Preview your book, place your order, and receive a beautiful printed book.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Book Types Section */}
+        <section className={styles.bookTypes}>
+          <h2 className={styles.typesTitle}>Choose Your Book Type</h2>
+
+          <div className={styles.typesGrid}>
+            <div className={styles.typeCard} style={{ '--type-color': '#10b981' } as React.CSSProperties}>
+              <span className={styles.typeEmoji}>📘</span>
+              <h3>Board Book</h3>
+              <p>Durable pages for little hands</p>
+              <span className={styles.typeAge}>Ages 0-3</span>
+            </div>
+
+            <div className={styles.typeCard} style={{ '--type-color': '#6366f1' } as React.CSSProperties}>
+              <span className={styles.typeEmoji}>🎨</span>
+              <h3>Picture Book</h3>
+              <p>Beautiful illustrations with short text</p>
+              <span className={styles.typeAge}>Ages 3-6</span>
+            </div>
+
+            <div className={styles.typeCard} style={{ '--type-color': '#ec4899' } as React.CSSProperties}>
+              <span className={styles.typeEmoji}>📖</span>
+              <h3>Story Book</h3>
+              <p>Engaging stories for growing readers</p>
+              <span className={styles.typeAge}>Ages 5-10</span>
+            </div>
+
+            <div className={styles.typeCard} style={{ '--type-color': '#f59e0b' } as React.CSSProperties}>
+              <span className={styles.typeEmoji}>🔤</span>
+              <h3>Alphabet Book</h3>
+              <p>Learn letters in a fun way</p>
+              <span className={styles.typeAge}>Ages 2-5</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className={styles.footer}>
+          <div className={styles.footerContent}>
+            <div className={styles.footerBrand}>
+              <span className={styles.footerLogo}>📚</span>
+              <span className={styles.footerName}>KidBook Creator</span>
+            </div>
+            <p className={styles.footerCopy}>
+              Made with ❤️ for parents who want to create magical memories
             </p>
           </div>
+        </footer>
 
-          <div className={styles.stepConnector}>
-            <span>→</span>
+        {/* Loading overlay */}
+        {isLoading && (
+          <div className={styles.loadingOverlay}>
+            <div className={styles.spinner}></div>
           </div>
+        )}
 
-          <div className={styles.stepCard}>
-            <div className={styles.stepNumber}>2</div>
-            <div className={styles.stepIcon}>🖼️</div>
-            <h3 className={styles.stepTitle}>Add Content</h3>
-            <p className={styles.stepDesc}>
-              Upload photos and write your story. Arrange pages exactly how you want.
-            </p>
-          </div>
+        {/* Auth Modal */}
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          mode={authMode}
+        />
 
-          <div className={styles.stepConnector}>
-            <span>→</span>
-          </div>
-
-          <div className={styles.stepCard}>
-            <div className={styles.stepNumber}>3</div>
-            <div className={styles.stepIcon}>📬</div>
-            <h3 className={styles.stepTitle}>Order & Enjoy</h3>
-            <p className={styles.stepDesc}>
-              Preview your book, place your order, and receive a beautiful printed book.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Book Types Section */}
-      <section className={styles.bookTypes}>
-        <h2 className={styles.typesTitle}>Choose Your Book Type</h2>
-
-        <div className={styles.typesGrid}>
-          <div className={styles.typeCard} style={{ '--type-color': '#10b981' } as React.CSSProperties}>
-            <span className={styles.typeEmoji}>📘</span>
-            <h3>Board Book</h3>
-            <p>Durable pages for little hands</p>
-            <span className={styles.typeAge}>Ages 0-3</span>
-          </div>
-
-          <div className={styles.typeCard} style={{ '--type-color': '#6366f1' } as React.CSSProperties}>
-            <span className={styles.typeEmoji}>🎨</span>
-            <h3>Picture Book</h3>
-            <p>Beautiful illustrations with short text</p>
-            <span className={styles.typeAge}>Ages 3-6</span>
-          </div>
-
-          <div className={styles.typeCard} style={{ '--type-color': '#ec4899' } as React.CSSProperties}>
-            <span className={styles.typeEmoji}>📖</span>
-            <h3>Story Book</h3>
-            <p>Engaging stories for growing readers</p>
-            <span className={styles.typeAge}>Ages 5-10</span>
-          </div>
-
-          <div className={styles.typeCard} style={{ '--type-color': '#f59e0b' } as React.CSSProperties}>
-            <span className={styles.typeEmoji}>🔤</span>
-            <h3>Alphabet Book</h3>
-            <p>Learn letters in a fun way</p>
-            <span className={styles.typeAge}>Ages 2-5</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footerContent}>
-          <div className={styles.footerBrand}>
-            <span className={styles.footerLogo}>📚</span>
-            <span className={styles.footerName}>KidBook Creator</span>
-          </div>
-          <p className={styles.footerCopy}>
-            Made with ❤️ for parents who want to create magical memories
-          </p>
-        </div>
-      </footer>
-
-      {/* Loading overlay */}
-      {isLoading && (
-        <div className={styles.loadingOverlay}>
-          <div className={styles.spinner}></div>
-        </div>
-      )}
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        initialMode={authMode}
-      />
-
-      {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={confirmDeleteBook}
-        title="Delete Book"
-        message="Are you sure you want to delete this book? This action cannot be undone."
-        confirmText="Delete"
-        isLoading={isDeleting}
-      />
-    </main>
+        {/* Delete Confirmation Modal */}
+        <ConfirmModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={confirmDeleteBook}
+          title="Delete Book"
+          message="Are you sure you want to delete this book? This action cannot be undone."
+          confirmText="Delete"
+          isLoading={isDeleting}
+        />
+      </main>
+    </>
   );
 }
 
