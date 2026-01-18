@@ -118,12 +118,19 @@ CREATE TABLE IF NOT EXISTS orders (
   shipping_phone TEXT NOT NULL,
   
   -- Status
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'processing', 'printed', 'shipped', 'delivered', 'cancelled')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'payment_failed', 'processing', 'printed', 'shipped', 'delivered', 'cancelled')),
   
-  -- External IDs
+  -- Stripe integration
   stripe_payment_intent_id TEXT,
   stripe_checkout_session_id TEXT,
+  payment_error TEXT,
+  
+  -- Lulu fulfillment
   lulu_order_id TEXT,
+  lulu_print_job_id TEXT,
+  lulu_status TEXT,
+  fulfillment_status TEXT DEFAULT 'pending' CHECK (fulfillment_status IN ('pending', 'PENDING', 'GENERATING_PDFS', 'UPLOADING', 'CREATING_JOB', 'SUCCESS', 'FAILED')),
+  fulfillment_error TEXT,
   tracking_number TEXT,
   pdf_url TEXT,
   
