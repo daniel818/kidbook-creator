@@ -5,11 +5,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Helper function for logging with timestamps
 const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
-    console.log(`[API generate-book ${timestamp}] ${message}`);
+    const logMsg = `[API generate-book ${timestamp}] ${message}`;
+    console.log(logMsg);
+
+    // Also write to file for deeper debugging
+    try {
+        const logPath = path.join(process.cwd(), 'api_debug.log');
+        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
+        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
+    } catch (e) {
+        // ignore write error
+    }
+
     if (data !== undefined) {
         console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 500));
     }

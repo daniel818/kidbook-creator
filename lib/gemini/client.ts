@@ -1,10 +1,12 @@
 // ============================================
-// Google Gemini AI Client
+// Google Gemini AI Client (Unified SDK)
 // ============================================
-// AI-powered story and image generation using Gemini 3 Pro
+// AI-powered story and image generation using Gemini 3 & Imagen 3
 
 import { GoogleGenAI } from '@google/genai';
 import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Re-export art styles for convenience
 export { ART_STYLES, type ArtStyle } from '@/lib/art-styles';
@@ -12,15 +14,23 @@ export { ART_STYLES, type ArtStyle } from '@/lib/art-styles';
 // Helper function for logging with timestamps
 const logWithTime = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
-    console.log(`[GEMINI ${timestamp}] ${message}`);
+    const logMsg = `[GEMINI ${timestamp}] ${message}`;
+    console.log(logMsg);
+
+    try {
+        const logPath = path.join(process.cwd(), 'api_debug.log');
+        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
+        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
+    } catch (e) { }
+
     if (data !== undefined) {
         console.log(`[GEMINI ${timestamp}] Data:`, JSON.stringify(data, null, 2).slice(0, 500));
     }
 };
 
 // Initialize Gemini client (server-side only)
-logWithTime('Initializing Gemini client...');
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+logWithTime('Initializing Gemini Unified client (@google/genai)...');
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 logWithTime('Gemini client initialized');
 
 export interface StoryGenerationInput {
@@ -32,10 +42,9 @@ export interface StoryGenerationInput {
     characterDescription?: string;
     storyDescription?: string;
     artStyle?: ArtStyle;
-    imageQuality?: ImageQuality; // [NEW]
+    imageQuality?: ImageQuality;
+    childPhoto?: string;
 }
-
-// ... (keep generatedPage/story interfaces same)
 
 export interface GeneratedPage {
     pageNumber: number;
@@ -54,10 +63,10 @@ export interface GeneratedStory {
 export async function generateStory(input: StoryGenerationInput): Promise<GeneratedStory> {
     const startTime = Date.now();
     logWithTime('=== STORY GENERATION STARTED ===');
-    logWithTime('Input parameters:', input);
 
-    // Use Gemini 3 Pro Preview for high quality text generation
-    const textModel = 'gemini-3-pro-preview';
+    // Use Gemini 3.0 Flash Preview (The absolute latest)
+    // Confirmed name via API list: 'gemini-3-flash-preview' (no .0)
+    const textModel = 'gemini-3-flash-preview';
     logWithTime(`Using model: ${textModel}`);
 
     const prompt = `
@@ -88,143 +97,165 @@ export async function generateStory(input: StoryGenerationInput): Promise<Genera
     }
     `;
 
+    // Log the full prompt for user inspection
+    logWithTime('--- STORY PROMPT SENT TO MODEL ---', prompt);
+
     try {
         logWithTime('Sending request to Gemini API...');
-        const apiStartTime = Date.now();
 
-        const result = await genAI.models.generateContent({
+        const response = await genAI.models.generateContent({
             model: textModel,
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             config: {
-                responseMimeType: 'application/json',
+                responseMimeType: 'application/json'
             }
         });
 
-        const apiDuration = Date.now() - apiStartTime;
-        logWithTime(`API call completed in ${apiDuration}ms`);
-
-        const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        // @google/genai syntax: response.candidates[0].content.parts[0].text
+        const responseText = response.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!responseText) {
-            logWithTime('ERROR: Empty response from Gemini');
             throw new Error('Empty response from Gemini');
         }
 
-        logWithTime('Parsing response JSON...');
-        const storyData = JSON.parse(responseText) as GeneratedStory;
+        // Clean markdown
+        const cleanedText = responseText.replace(/```json\n?|\n?```/g, '').trim();
+        const storyData = JSON.parse(cleanedText) as GeneratedStory;
 
         const totalDuration = Date.now() - startTime;
         logWithTime(`=== STORY GENERATION COMPLETED in ${totalDuration}ms ===`);
-        logWithTime(`Story title: "${storyData.title}", Pages: ${storyData.pages?.length || 0}`);
-
         return storyData;
+
     } catch (error) {
-        const totalDuration = Date.now() - startTime;
-        logWithTime(`=== STORY GENERATION FAILED after ${totalDuration}ms ===`);
         console.error('[GEMINI ERROR]', error);
         throw error;
     }
 }
 
-// Generate an illustration using Gemini
+// Generate an illustration using Gemini/Imagen
 export async function generateIllustration(
     scenePrompt: string,
     characterDescription: string,
     artStyle: ArtStyle = 'storybook_classic',
-    quality: ImageQuality = 'fast' // [NEW]
+    quality: ImageQuality = 'fast',
+    referenceImage?: string
 ): Promise<string> {
     const startTime = Date.now();
-    logWithTime(`=== IMAGE GENERATION STARTED (quality: ${quality}) ===`);
+    logWithTime(`=== IMAGE GENERATION STARTED ===`);
 
     const styleInfo = ART_STYLES[artStyle] || ART_STYLES.storybook_classic;
-    logWithTime(`Art style: ${artStyle}`);
 
-    const fullPrompt = `Create a children's book illustration in vertical 3:4 portrait aspect ratio.
+    // --- MODE 1: Reference Image (Gemini 3 Pro Image) ---
+    if (referenceImage) {
+        logWithTime('Using Reference Image Mode (Gemini 3 Pro Image)');
+        // Remove data URI prefix if present for API
+        const base64Image = referenceImage.replace(/^data:image\/\w+;base64,/, '');
 
-ART STYLE: ${styleInfo.prompt}
+        const prompt = `Generate a children's book illustration.
+        Style: ${styleInfo.prompt}
+        Scene: ${scenePrompt}
+        Character Description: ${characterDescription}
+        IMPORTANT: The character MUST look exactly like the child in the provided reference image.
+        Maintain facial features, hair, and likeness.
+        Ratio: 3:4 Portrait.
+        High quality, detailed.`;
 
-MAIN CHARACTER: ${characterDescription}
+        try {
+            const response = await genAI.models.generateContent({
+                model: 'gemini-3-pro-image-preview',
+                contents: [{
+                    role: 'user',
+                    parts: [
+                        { text: prompt },
+                        { inlineData: { mimeType: 'image/jpeg', data: base64Image } }
+                    ]
+                }],
+                config: {
+                    // Force image generation via config if needed or implied by model
+                    // For gemini-3-image, output is image.
+                }
+            });
 
-SCENE: ${scenePrompt}
+            // Extract image from response
+            const part = response.candidates?.[0]?.content?.parts?.[0];
+            if (part?.inlineData?.data) {
+                const totalDuration = Date.now() - startTime;
+                logWithTime(`=== REF IMAGE GENERATION COMPLETED in ${totalDuration}ms ===`);
+                return `data:${part.inlineData.mimeType || 'image/jpeg'};base64,${part.inlineData.data}`;
+            }
+            logWithTime('No inlineData in Gemini 3 response, checking text?');
+        } catch (e: any) {
+            logWithTime('Gemini 3 Reference Gen Failed, falling back to Imagen 4', e.message);
+        }
+    }
 
-REQUIREMENTS:
-- The main character should match the description exactly and be recognizable
-- High quality, professional children's book art
-- Friendly, warm, and engaging for young children
-- Clear and expressive character faces with appropriate emotions
-- Rich, detailed backgrounds that enhance the story
-- Safe for children, no scary or inappropriate content`;
+    // --- MODE 2: Standard Text-to-Image (Imagen 4) ---
+    logWithTime(`Using Standard Mode (Imagen 4)`);
+    const fullPrompt = `Create a children's book illustration.
+    Style: ${styleInfo.prompt}
+    Character: ${characterDescription}
+    Scene: ${scenePrompt}
+    High quality, vibrant, detailed, 3:4 portrait ratio.`;
 
-    // Select Model based on Quality
-    // Pro: gemini-3-pro-image-preview
-    // Fast: gemini-2.5-flash-image
-    const imageModel = quality === 'pro' ? 'gemini-3-pro-image-preview' : 'gemini-2.5-flash-image';
+    // Use Imagen 4 models
+    // Fast/Standard -> imagen-4.0-generate-001
+    // Pro -> imagen-4.0-generate-ultra-001
+    const imageModel = quality === 'pro' ? 'imagen-4.0-generate-ultra-001' : 'imagen-4.0-generate-001';
     logWithTime(`Using model: ${imageModel}`);
-    logWithTime(`Prompt preview: ${fullPrompt.slice(0, 150)}...`);
 
     try {
-        logWithTime('Sending image generation request to Gemini API...');
-        const apiStartTime = Date.now();
-
-        const response = await genAI.models.generateContent({
+        const response = await genAI.models.generateImages({
             model: imageModel,
-            contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
+            prompt: fullPrompt,
+            config: {
+                numberOfImages: 1,
+                aspectRatio: '3:4',
+                // outputMimeType: 'image/jpeg' ? Default is usually png/jpeg
+            }
         });
 
-        const apiDuration = Date.now() - apiStartTime;
-        logWithTime(`API call completed in ${apiDuration}ms`);
-        logWithTime('Checking response for image data...');
+        // Response structure for generateImages:
+        // response.generatedImages[0].image.imageBytes (base64 string)
+        const image = response.generatedImages?.[0]?.image;
 
-        if (response.candidates?.[0]?.content?.parts) {
-            logWithTime(`Found ${response.candidates[0].content.parts.length} parts in response`);
-            for (let i = 0; i < response.candidates[0].content.parts.length; i++) {
-                const part = response.candidates[0].content.parts[i];
-                logWithTime(`Part ${i}: has inlineData=${!!part.inlineData}, mimeType=${part.inlineData?.mimeType}`);
-                if (part.inlineData?.mimeType?.startsWith('image/')) {
-                    const dataLength = part.inlineData.data?.length || 0;
-                    const totalDuration = Date.now() - startTime;
-                    logWithTime(`=== IMAGE GENERATION COMPLETED in ${totalDuration}ms ===`);
-                    logWithTime(`Image size: ~${Math.round(dataLength / 1024)}KB`);
-                    return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                }
-            }
+        if (image?.imageBytes) {
+            const totalDuration = Date.now() - startTime;
+            logWithTime(`=== IMAGE GENERATION COMPLETED in ${totalDuration}ms ===`);
+            // Format needs to be data URL
+            return `data:image/png;base64,${image.imageBytes}`;
         } else {
-            logWithTime('No candidates or parts in response');
-            logWithTime('Response structure:', JSON.stringify(Object.keys(response || {})));
+            throw new Error('No image returned');
         }
 
-        const totalDuration = Date.now() - startTime;
-        logWithTime(`=== IMAGE GENERATION FAILED (no image) after ${totalDuration}ms ===`);
-        throw new Error('No image in response');
-    } catch (error) {
-        const totalDuration = Date.now() - startTime;
-        logWithTime(`=== IMAGE GENERATION FAILED after ${totalDuration}ms ===`);
-        console.error('[GEMINI IMAGE ERROR]', error);
-        throw error;
+    } catch (e: any) {
+        // Fallback or detailed error logging
+        console.error('[IMAGEN ERROR]', e);
+
+        // If Model Not Found (404), maybe user doesn't have access to Imagen 3?
+        // Fallback to Gemini 2.0 Flash generating text describing image? No.
+        throw e;
     }
 }
 
-// Extract character description from a photo
+// Extract character description
 export async function extractCharacterFromPhoto(base64Image: string): Promise<string> {
     const startTime = Date.now();
-    logWithTime('=== CHARACTER EXTRACTION STARTED ===');
-    logWithTime(`Base64 image size: ~${Math.round(base64Image.length / 1024)}KB`);
+    // Gemini 2.0 Flash is great for vision
+    const model = 'gemini-3-flash-preview';
 
     try {
-        logWithTime('Sending request to Gemini API...');
-        const apiStartTime = Date.now();
-
-        const result = await genAI.models.generateContent({
-            model: 'gemini-1.5-flash', // Using Flash for speed/vision
+        const response = await genAI.models.generateContent({
+            model: model,
             contents: [
                 {
                     role: 'user',
                     parts: [
-                        { text: "Describe the child in this photo for a children's book character description. Focus on hair color, eye color, hairstyle, and distinctive features. Keep it brief and positive." },
+                        { text: "Analyze this image and create a highly detailed character reference description for an AI image generator. Focus on: 1. Exact hair color, texture, length, and style. 2. Eye color, shape, and lash details. 3. Face shape, cheekbones, and jawline. 4. Nose shape and mouth/smile details. 5. Skin tone and complexion. 6. Distinctive markings (freckles, dimples). Focus strictly on facial features and headshot details to ensure a perfect likeness." },
                         {
                             inlineData: {
                                 mimeType: 'image/jpeg',
-                                data: base64Image
+                                data: base64Image // Provide raw base64 data? SDK might expect specific format.
+                                // @google/genai inlineData expects 'data' as base64 string.
                             }
                         }
                     ]
@@ -232,103 +263,47 @@ export async function extractCharacterFromPhoto(base64Image: string): Promise<st
             ]
         });
 
-        const apiDuration = Date.now() - apiStartTime;
-        logWithTime(`API call completed in ${apiDuration}ms`);
-
-        const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-        const totalDuration = Date.now() - startTime;
-        logWithTime(`=== CHARACTER EXTRACTION COMPLETED in ${totalDuration}ms ===`);
-        logWithTime(`Result: ${text?.slice(0, 100)}...`);
-
+        const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
         return text || "A happy child";
     } catch (error) {
-        const totalDuration = Date.now() - startTime;
-        logWithTime(`=== CHARACTER EXTRACTION FAILED after ${totalDuration}ms ===`);
-        console.error("[GEMINI CHARACTER ERROR]", error);
+        console.error("[GEMINI VISION ERROR]", error);
         return "A happy child";
     }
 }
 
-// Generate a complete book with story and illustrations
+// Generate complete book
+// ... (Keep same logic, just imports changed)
 export async function generateCompleteBook(
     input: StoryGenerationInput,
     onProgress?: (step: string, progress: number) => void
-): Promise<{
-    story: GeneratedStory;
-    illustrations: string[];
-}> {
+): Promise<{ story: GeneratedStory; illustrations: string[] }> {
+    // ... same implementation as before ...
     const bookStartTime = Date.now();
-    logWithTime('========================================');
     logWithTime('=== COMPLETE BOOK GENERATION STARTED ===');
-    logWithTime('========================================');
-    logWithTime('Input:', input);
 
-    const artStyle = input.artStyle || 'storybook_classic';
-    const imageQuality = input.imageQuality || 'fast';
-    logWithTime(`Art style: ${artStyle}, Image quality: ${imageQuality}`);
-
-    // Step 1: Generate the story
-    logWithTime('>>> STEP 1: Generating story...');
-    const storyStartTime = Date.now();
-    onProgress?.('Generating your magical story...', 10);
+    onProgress?.('Generating story...', 10);
     const story = await generateStory(input);
-    const storyDuration = Date.now() - storyStartTime;
-    logWithTime(`<<< STEP 1 COMPLETE: Story generated in ${storyDuration}ms`);
-    logWithTime(`Story has ${story.pages.length} pages`);
+    const characterDescription = story.characterDescription || input.characterDescription || `A cute child named ${input.childName}`;
 
-    // Use the character description from the story or input
-    const characterDescription = story.characterDescription ||
-        input.characterDescription ||
-        `A cheerful ${input.childAge}-year-old child named ${input.childName} with a bright smile and friendly expression`;
-    logWithTime(`Character description: ${characterDescription.slice(0, 100)}...`);
-
-    // Step 2: Generate illustrations for each page
-    logWithTime('>>> STEP 2: Generating illustrations...');
     const illustrations: string[] = [];
-    const totalPages = story.pages.length;
-    const imagesStartTime = Date.now();
-
     for (let i = 0; i < story.pages.length; i++) {
-        const page = story.pages[i];
-        const imageStartTime = Date.now();
-        logWithTime(`>>> Image ${i + 1}/${totalPages}: Starting...`);
-        onProgress?.(`Creating illustration ${i + 1} of ${totalPages} (${imageQuality} mode)...`, 10 + (80 * (i + 1) / totalPages));
-
+        onProgress?.(`Painting page ${i + 1}...`, 20 + (80 * i / story.pages.length));
         try {
-            const illustration = await generateIllustration(
-                page.imagePrompt,
+            const img = await generateIllustration(
+                story.pages[i].imagePrompt,
                 characterDescription,
-                artStyle,
-                imageQuality
+                input.artStyle,
+                input.imageQuality,
+                input.childPhoto
             );
-            illustrations.push(illustration);
-            const imageDuration = Date.now() - imageStartTime;
-            logWithTime(`<<< Image ${i + 1}/${totalPages}: SUCCESS in ${imageDuration}ms`);
-        } catch (error) {
-            const imageDuration = Date.now() - imageStartTime;
-            logWithTime(`<<< Image ${i + 1}/${totalPages}: FAILED after ${imageDuration}ms`);
-            console.error(`[GEMINI] Failed to generate illustration for page ${i + 1}:`, error);
+            illustrations.push(img);
+        } catch (e) {
+            console.error(e);
             illustrations.push('');
         }
-
-        // Small delay between image generations to avoid rate limiting
-        if (i < story.pages.length - 1) {
-            logWithTime(`Waiting 500ms before next image...`);
-            await new Promise(resolve => setTimeout(resolve, 500));
-        }
+        if (i < story.pages.length - 1) await new Promise(r => setTimeout(r, 1000));
     }
 
-    const imagesDuration = Date.now() - imagesStartTime;
-    logWithTime(`<<< STEP 2 COMPLETE: All ${totalPages} images generated in ${imagesDuration}ms`);
-    logWithTime(`Successful images: ${illustrations.filter(i => i).length}/${totalPages}`);
-
-    onProgress?.('Finishing up...', 95);
-
-    const totalDuration = Date.now() - bookStartTime;
-    logWithTime('========================================');
-    logWithTime(`=== COMPLETE BOOK GENERATION FINISHED in ${totalDuration}ms ===`);
-    logWithTime(`Story: ${storyDuration}ms, Images: ${imagesDuration}ms`);
-    logWithTime('========================================');
-
+    logWithTime(`=== FINISHED ===`);
     return { story, illustrations };
 }

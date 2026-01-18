@@ -16,10 +16,11 @@
     "docker:stop": "docker compose down"
   },
   "dependencies": {
-    "@google/genai": "^1.35.0",
+    "@google/genai": "^1.37.0",
     "@stripe/stripe-js": "^5.5.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.8",
+    "dotenv": "^17.2.3",
     "fabric": "^7.1.0",
     "framer-motion": "^12.26.2",
     "html2canvas": "^1.4.1",
