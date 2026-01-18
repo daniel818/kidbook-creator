@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Book, BookTypeInfo, BookThemeInfo } from '@/lib/types';
@@ -12,22 +12,10 @@ import styles from './page.module.css';
 type BookFormat = 'softcover' | 'hardcover';
 type BookSize = '6x6' | '8x8' | '8x10';
 
-interface PriceInfo {
-    basePrice: number;
-    perPage: number;
-}
-
-const PRICING: Record<BookFormat, Record<BookSize, PriceInfo>> = {
-    softcover: {
-        '6x6': { basePrice: 8.99, perPage: 0.35 },
-        '8x8': { basePrice: 12.99, perPage: 0.45 },
-        '8x10': { basePrice: 14.99, perPage: 0.55 }
-    },
-    hardcover: {
-        '6x6': { basePrice: 18.99, perPage: 0.45 },
-        '8x8': { basePrice: 24.99, perPage: 0.55 },
-        '8x10': { basePrice: 29.99, perPage: 0.65 }
-    }
+// Fallback prices for display only (real prices come from API)
+const FALLBACK_BASE_PRICES: Record<BookFormat, Record<BookSize, number>> = {
+    softcover: { '6x6': 8.99, '8x8': 12.99, '8x10': 14.99 },
+    hardcover: { '6x6': 18.99, '8x8': 24.99, '8x10': 29.99 }
 };
 
 const SIZE_LABELS: Record<BookSize, string> = {
@@ -52,6 +40,15 @@ export default function OrderPage() {
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Dynamic pricing state
+    const [priceData, setPriceData] = useState<{
+        subtotal: number;
+        shipping: number;
+        total: number;
+        isEstimate: boolean;
+    } | null>(null);
+    const [isPriceLoading, setIsPriceLoading] = useState(false);
+
     // Shipping form
     const [shipping, setShipping] = useState({
         fullName: '',
@@ -64,6 +61,7 @@ export default function OrderPage() {
         phone: ''
     });
 
+    // Load book on mount
     useEffect(() => {
         const loadedBook = getBookById(bookId);
         if (loadedBook) {
@@ -74,16 +72,68 @@ export default function OrderPage() {
         setIsLoading(false);
     }, [bookId, router]);
 
-    const calculatePrice = () => {
-        if (!book) return 0;
-        const pricing = PRICING[format][size];
-        const pagePrice = book.pages.length * pricing.perPage;
-        return (pricing.basePrice + pagePrice) * quantity;
-    };
+    // Fetch price from API when options change
+    const fetchPrice = useCallback(async () => {
+        if (!book) return;
 
-    const totalPrice = calculatePrice();
-    const shippingCost = 4.99;
-    const grandTotal = totalPrice + shippingCost;
+        setIsPriceLoading(true);
+        try {
+            const response = await fetch('/api/lulu/calculate-cost', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    format,
+                    size,
+                    pageCount: book.pages.length,
+                    quantity,
+                    countryCode: 'US', // TODO: derive from shipping.country
+                    postalCode: shipping.postalCode || '10001',
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setPriceData({
+                    subtotal: data.subtotal / 100, // Convert cents to dollars
+                    shipping: data.shipping / 100,
+                    total: data.total / 100,
+                    isEstimate: data.isEstimate,
+                });
+            } else {
+                // Fallback to basic estimate on error
+                const basePrice = FALLBACK_BASE_PRICES[format][size];
+                const subtotal = basePrice * quantity;
+                setPriceData({
+                    subtotal,
+                    shipping: 4.99,
+                    total: subtotal + 4.99,
+                    isEstimate: true,
+                });
+            }
+        } catch (err) {
+            console.error('Price fetch error:', err);
+            const basePrice = FALLBACK_BASE_PRICES[format][size];
+            const subtotal = basePrice * quantity;
+            setPriceData({
+                subtotal,
+                shipping: 4.99,
+                total: subtotal + 4.99,
+                isEstimate: true,
+            });
+        } finally {
+            setIsPriceLoading(false);
+        }
+    }, [book, format, size, quantity, shipping.postalCode]);
+
+    // Debounced price fetch
+    useEffect(() => {
+        const timer = setTimeout(fetchPrice, 300);
+        return () => clearTimeout(timer);
+    }, [fetchPrice]);
+
+    const totalPrice = priceData?.subtotal ?? 0;
+    const shippingCost = priceData?.shipping ?? 4.99;
+    const grandTotal = priceData?.total ?? 0;
 
     const isShippingValid = () => {
         return shipping.fullName &&
@@ -224,7 +274,7 @@ export default function OrderPage() {
                                             }
                                         </span>
                                         <span className={styles.formatPrice}>
-                                            from ${PRICING[f]['6x6'].basePrice}
+                                            from ${FALLBACK_BASE_PRICES[f]['6x6']}
                                         </span>
                                         {format === f && <span className={styles.checkmark}>✓</span>}
                                     </button>
