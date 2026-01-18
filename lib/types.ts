@@ -18,6 +18,7 @@ export interface BookSettings {
   storyDescription?: string;
   artStyle?: import('@/lib/art-styles').ArtStyle;
   imageQuality?: import('@/lib/art-styles').ImageQuality;
+  printFormat?: 'square' | 'portrait';
 }
 
 export interface TextElement {

@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto } = body;
-        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto });
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat } = body;
+        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat });
 
         if (!childName || !bookTheme || !bookType) {
             log('ERROR: Missing required fields');
@@ -61,6 +61,13 @@ export async function POST(request: NextRequest) {
         }
         log(`User authenticated: ${user.id}`);
 
+        // Determine aspect ratio from print format
+        let aspectRatio: '1:1' | '3:4' = '3:4';
+        if (printFormat === 'square' || printFormat?.includes('square')) {
+            aspectRatio = '1:1';
+        }
+        log(`Selected Aspect Ratio: ${aspectRatio} (Format: ${printFormat})`);
+
         const input: StoryGenerationInput = {
             childName,
             childAge: childAge || 5,
@@ -72,6 +79,7 @@ export async function POST(request: NextRequest) {
             artStyle: artStyle || 'storybook_classic',
             imageQuality: imageQuality || 'fast',
             childPhoto,
+            aspectRatio,
         };
 
         // Generate the complete book (story + illustrations)
@@ -93,47 +101,52 @@ export async function POST(request: NextRequest) {
         const uploadStartTime = Date.now();
         let uploadedCount = 0;
 
-        for (let i = 0; i < result.illustrations.length; i++) {
-            const base64Image = result.illustrations[i];
-            if (!base64Image || base64Image.length < 100) {
-                log(`Image ${i}: Skipped (empty or too short)`);
-                continue;
-            }
-
+        // Helper to upload base64
+        const uploadBase64 = async (base64Str: string, filename: string) => {
+            if (!base64Str || base64Str.length < 100) return null;
             try {
-                const matches = base64Image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-
+                const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
                 if (matches && matches.length === 3) {
                     const contentType = matches[1];
                     const buffer = Buffer.from(matches[2], 'base64');
-                    const fileName = `${userId}/${bookId}/${i}.png`;
-                    log(`Image ${i}: Uploading ${Math.round(buffer.length / 1024)}KB as ${fileName}`);
+                    log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
 
-                    const imgUploadStart = Date.now();
                     const { error: uploadError } = await supabase.storage
                         .from('book-images')
-                        .upload(fileName, buffer, {
-                            contentType,
-                            upsert: true
-                        });
+                        .upload(filename, buffer, { contentType, upsert: true });
 
                     if (uploadError) {
-                        log(`Image ${i}: Upload FAILED in ${Date.now() - imgUploadStart}ms`, uploadError.message);
-                    } else {
-                        const { data: { publicUrl } } = supabase.storage
-                            .from('book-images')
-                            .getPublicUrl(fileName);
-
-                        log(`Image ${i}: Upload SUCCESS in ${Date.now() - imgUploadStart}ms -> ${publicUrl.slice(0, 50)}...`);
-                        result.illustrations[i] = publicUrl;
-                        uploadedCount++;
+                        log(`Upload FAILED for ${filename}`, uploadError.message);
+                        return null;
                     }
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('book-images')
+                        .getPublicUrl(filename);
+                    return publicUrl;
                 }
-            } catch (imageError) {
-                log(`Image ${i}: Processing ERROR`, imageError);
+            } catch (e) {
+                log(`Processing ERROR for ${filename}`, e);
+            }
+            return null;
+        };
+
+        // 1. Upload Story Illustrations
+        for (let i = 0; i < result.illustrations.length; i++) {
+            const publicUrl = await uploadBase64(result.illustrations[i], `${userId}/${bookId}/${i}.png`);
+            if (publicUrl) {
+                result.illustrations[i] = publicUrl;
+                uploadedCount++;
             }
         }
-        log(`Image upload complete: ${uploadedCount}/${result.illustrations.length} in ${Date.now() - uploadStartTime}ms`);
+
+        // 2. Upload Back Cover Image
+        let backCoverUrl = '';
+        if (result.backCoverImage) {
+            const url = await uploadBase64(result.backCoverImage, `${userId}/${bookId}/back_cover.png`);
+            if (url) backCoverUrl = url;
+        }
+
+        log(`Image upload complete: ${uploadedCount} images + back cover in ${Date.now() - uploadStartTime}ms`);
 
         const getAgeGroup = (age: number) => {
             if (age <= 2) return '0-2';
@@ -146,10 +159,16 @@ export async function POST(request: NextRequest) {
         log('Step 5: Saving to database...');
         const dbStartTime = Date.now();
 
+        // Hack: Append [Square] to title to persist format without schema change
+        let finalTitle = result.story.title;
+        if (aspectRatio === '1:1') {
+            finalTitle += ' [Square]';
+        }
+
         const { error: dbError } = await supabase.from('books').insert({
             id: bookId,
             user_id: userId,
-            title: result.story.title,
+            title: finalTitle,
             child_name: childName,
             child_age: childAge,
             age_group: getAgeGroup(childAge || 5),
@@ -182,6 +201,28 @@ export async function POST(request: NextRequest) {
                 rotation: 0
             }] : []
         }));
+
+        // Add Back Cover Page
+        if (result.story.backCoverBlurb || backCoverUrl) {
+            pagesData.push({
+                book_id: bookId,
+                page_number: pagesData.length + 1,
+                page_type: 'back',
+                background_color: '#ffffff',
+                text_elements: result.story.backCoverBlurb ? [{
+                    id: crypto.randomUUID(),
+                    content: result.story.backCoverBlurb,
+                    x: 15, y: 30, width: 70, fontSize: 14,
+                    fontFamily: 'Inter', color: '#000000', textAlign: 'center', fontWeight: 'normal'
+                }] : [],
+                image_elements: backCoverUrl ? [{
+                    id: crypto.randomUUID(),
+                    src: backCoverUrl,
+                    x: 0, y: 0, width: 100, height: 100,
+                    rotation: 0
+                }] : []
+            });
+        }
 
         log(`Saving ${pagesData.length} pages to database...`);
         const pagesStartTime = Date.now();
