@@ -135,6 +135,16 @@ export default function CreateBookPage() {
             const genStart = Date.now();
             setCreatingStatus('Creating your magical story...');
 
+            // Convert photo to base64 if present for the generation API
+            let base64Photo: string | undefined;
+            if (childPhoto) {
+                base64Photo = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result as string);
+                    reader.readAsDataURL(childPhoto);
+                });
+            }
+
             const requestBody = {
                 childName: settings.childName || 'My Child',
                 childAge: settings.childAge || 3,
@@ -145,7 +155,7 @@ export default function CreateBookPage() {
                 storyDescription: settings.storyDescription,
                 artStyle: settings.artStyle || 'storybook_classic',
                 imageQuality: settings.imageQuality || 'fast',
-                childPhoto: childPhoto || undefined,
+                childPhoto: base64Photo,
             };
             console.log('[CLIENT] Request body:', requestBody);
 
