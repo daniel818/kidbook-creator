@@ -464,6 +464,21 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
         return spreads;
     };
 
+
+
+    // Calculate dimensions based on format
+    // Check both settings (session) and title hack (persistence)
+    const isSquare = book.settings.printFormat === 'square' || book.settings.title.includes('[Square]');
+    const displayTitle = book.settings.title.replace(' [Square]', '');
+
+    const bookWidth = 550;
+    const bookHeight = isSquare ? 550 : 733; // 1:1 vs 3:4
+
+    // Find custom back cover if it exists
+    const backCoverPage = book.pages.find(p => p.type === 'back');
+    const backCoverImage = backCoverPage ? getPageImage(backCoverPage) : null;
+    const backCoverText = backCoverPage?.textElements?.[0]?.content || "Create your own book at KidBook Creator";
+
     return (
         <div
             ref={viewerRef}
@@ -548,8 +563,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             <div className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''}`}>
                 {/* @ts-ignore - Library types are tricky */}
                 <HTMLFlipBook
-                    width={550}
-                    height={733}
+                    width={bookWidth}
+                    height={bookHeight}
                     size="fixed"
                     minWidth={315}
                     maxWidth={1000}
@@ -583,7 +598,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                             }}
                         >
                             <div className={styles.coverOverlay}>
-                                <h1 className={styles.coverTitle}>{book.settings.title}</h1>
+                                <h1 className={styles.coverTitle}>{displayTitle}</h1>
                                 <p className={styles.coverSubtitle}>
                                     For {book.settings.childName}, age {book.settings.childAge}
                                 </p>
@@ -595,16 +610,21 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                     {renderSpreads()}
 
                     {/* Back Cover */}
+                    {/* Back Cover */}
                     <Cover>
                         <div
                             className={styles.coverInner}
                             style={{
-                                background: `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
+                                background: backCoverImage
+                                    ? `url(${backCoverImage}) center/cover`
+                                    : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
                             }}
                         >
                             <div className={styles.coverOverlay}>
                                 <h2 className={styles.coverTitle}>The End</h2>
-                                <p className={styles.coverSubtitle}>Create your own book at KidBook Creator</p>
+                                <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
+                                    {backCoverText}
+                                </p>
                             </div>
                         </div>
                     </Cover>

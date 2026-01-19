@@ -44,6 +44,7 @@ export interface StoryGenerationInput {
     artStyle?: ArtStyle;
     imageQuality?: ImageQuality;
     childPhoto?: string;
+    aspectRatio?: '1:1' | '3:4';
 }
 
 export interface GeneratedPage {
@@ -57,6 +58,7 @@ export interface GeneratedStory {
     title: string;
     pages: GeneratedPage[];
     characterDescription?: string;
+    backCoverBlurb?: string;
 }
 
 // Generate a story script
@@ -85,6 +87,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<Genera
     Return ONLY a valid JSON object with the following structure:
     {
         "title": "Title of the book",
+        "backCoverBlurb": "A short, engaging summary of the story for the back cover (2-3 sentences max)",
         "characterDescription": "A detailed physical description of the main character (if not provided)",
         "pages": [
             {
@@ -138,7 +141,8 @@ export async function generateIllustration(
     characterDescription: string,
     artStyle: ArtStyle = 'storybook_classic',
     quality: ImageQuality = 'fast',
-    referenceImage?: string
+    referenceImage?: string,
+    aspectRatio: '1:1' | '3:4' = '3:4'
 ): Promise<string> {
     const startTime = Date.now();
     logWithTime(`=== IMAGE GENERATION STARTED ===`);
@@ -157,7 +161,7 @@ export async function generateIllustration(
         Character Description: ${characterDescription}
         IMPORTANT: The character MUST look exactly like the child in the provided reference image.
         Maintain facial features, hair, and likeness.
-        Ratio: 3:4 Portrait.
+        Ratio: ${aspectRatio === '1:1' ? 'Square 1:1' : '3:4 Portrait'}.
         High quality, detailed.`;
 
         try {
@@ -191,26 +195,25 @@ export async function generateIllustration(
 
     // --- MODE 2: Standard Text-to-Image (Imagen 4) ---
     logWithTime(`Using Standard Mode (Imagen 4)`);
+
     const fullPrompt = `Create a children's book illustration.
     Style: ${styleInfo.prompt}
     Character: ${characterDescription}
     Scene: ${scenePrompt}
-    High quality, vibrant, detailed, 3:4 portrait ratio.`;
+    High quality, vibrant, detailed, ${aspectRatio === '1:1' ? 'square 1:1' : '3:4 portrait'} ratio.`;
 
     // Use Imagen 4 models
     // Fast/Standard -> imagen-4.0-generate-001
     // Pro -> imagen-4.0-generate-ultra-001
     const imageModel = quality === 'pro' ? 'imagen-4.0-generate-ultra-001' : 'imagen-4.0-generate-001';
-    logWithTime(`Using model: ${imageModel}`);
+    logWithTime(`Using model: ${imageModel} with ratio ${aspectRatio}`);
 
     try {
         const response = await genAI.models.generateImages({
             model: imageModel,
             prompt: fullPrompt,
             config: {
-                numberOfImages: 1,
-                aspectRatio: '3:4',
-                // outputMimeType: 'image/jpeg' ? Default is usually png/jpeg
+                aspectRatio: aspectRatio,
             }
         });
 
@@ -272,12 +275,10 @@ export async function extractCharacterFromPhoto(base64Image: string): Promise<st
 }
 
 // Generate complete book
-// ... (Keep same logic, just imports changed)
 export async function generateCompleteBook(
     input: StoryGenerationInput,
     onProgress?: (step: string, progress: number) => void
-): Promise<{ story: GeneratedStory; illustrations: string[] }> {
-    // ... same implementation as before ...
+): Promise<{ story: GeneratedStory; illustrations: string[]; backCoverImage?: string }> {
     const bookStartTime = Date.now();
     logWithTime('=== COMPLETE BOOK GENERATION STARTED ===');
 
@@ -287,14 +288,15 @@ export async function generateCompleteBook(
 
     const illustrations: string[] = [];
     for (let i = 0; i < story.pages.length; i++) {
-        onProgress?.(`Painting page ${i + 1}...`, 20 + (80 * i / story.pages.length));
+        onProgress?.(`Painting page ${i + 1}...`, 20 + (70 * i / story.pages.length));
         try {
             const img = await generateIllustration(
                 story.pages[i].imagePrompt,
                 characterDescription,
                 input.artStyle,
                 input.imageQuality,
-                input.childPhoto
+                input.childPhoto,
+                input.aspectRatio
             );
             illustrations.push(img);
         } catch (e) {
@@ -304,6 +306,23 @@ export async function generateCompleteBook(
         if (i < story.pages.length - 1) await new Promise(r => setTimeout(r, 1000));
     }
 
+    // Generate Back Cover
+    onProgress?.('Creating back cover...', 95);
+    let backCoverImage: string | undefined;
+    try {
+        const backCoverPrompt = "A magical background pattern or simple scenic view suitable for a book back cover. No characters, just atmosphere matching the book theme.";
+        backCoverImage = await generateIllustration(
+            backCoverPrompt, // Scene
+            "", // No character description needed for back cover background usually
+            input.artStyle,
+            input.imageQuality,
+            undefined, // No reference
+            input.aspectRatio
+        );
+    } catch (e) {
+        logWithTime('Failed to generate back cover', e);
+    }
+
     logWithTime(`=== FINISHED ===`);
-    return { story, illustrations };
+    return { story, illustrations, backCoverImage };
 }

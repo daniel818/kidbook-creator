@@ -195,6 +195,79 @@ class LuluClient {
     static getProductId(format: 'softcover' | 'hardcover', size: '6x6' | '8x8' | '8x10'): string {
         return PRODUCT_IDS[format][size];
     }
+
+    // Calculate print job cost without creating an order
+    async calculateCost(options: CostCalculationOptions): Promise<CostCalculationResult> {
+        const podPackageId = PRODUCT_IDS[options.format]?.[options.size];
+        if (!podPackageId) {
+            throw new Error(`Invalid format/size combination: ${options.format}/${options.size}`);
+        }
+
+        const payload = {
+            line_items: [{
+                page_count: options.pageCount,
+                pod_package_id: podPackageId,
+                quantity: options.quantity,
+            }],
+            shipping_address: {
+                city: options.shippingCity || 'New York',
+                country_code: options.countryCode || 'US',
+                postal_code: options.postalCode || '10001',
+                state_code: options.stateCode || 'NY',
+            },
+            shipping_level: options.shippingLevel || 'MAIL',
+        };
+
+        const response = await this.request<LuluCostResponse>('POST', '/print-job-cost-calculations/', payload);
+
+        // Extract costs from response
+        const lineItemCost = response.line_item_costs?.[0];
+        const productCost = parseFloat(lineItemCost?.total_cost_incl_tax || '0') * 100; // Convert to cents
+        const shippingCost = parseFloat(response.shipping_cost?.total_cost_incl_tax || '0') * 100;
+        const totalWholesale = parseFloat(response.total_cost_incl_tax || '0') * 100;
+
+        return {
+            productCost,      // cents
+            shippingCost,     // cents
+            totalWholesale,   // cents (Lulu's price before your markup)
+            currency: response.currency || 'USD',
+        };
+    }
+}
+
+// Cost calculation types
+export interface CostCalculationOptions {
+    format: 'softcover' | 'hardcover';
+    size: '6x6' | '8x8' | '8x10';
+    pageCount: number;
+    quantity: number;
+    countryCode?: string;
+    stateCode?: string;
+    postalCode?: string;
+    shippingCity?: string;
+    shippingLevel?: 'MAIL' | 'PRIORITY_MAIL' | 'GROUND' | 'EXPEDITED' | 'EXPRESS';
+}
+
+export interface CostCalculationResult {
+    productCost: number;      // cents
+    shippingCost: number;     // cents
+    totalWholesale: number;   // cents
+    currency: string;
+}
+
+interface LuluCostResponse {
+    line_item_costs?: Array<{
+        cost_excl_tax?: string;
+        tax_amount?: string;
+        total_cost_incl_tax?: string;
+    }>;
+    shipping_cost?: {
+        cost_excl_tax?: string;
+        tax_amount?: string;
+        total_cost_incl_tax?: string;
+    };
+    total_cost_incl_tax?: string;
+    currency?: string;
 }
 
 // Factory function to create client

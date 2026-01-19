@@ -18,7 +18,7 @@ import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
 import styles from './page.module.css';
 
-type WizardStep = 'child' | 'type' | 'theme' | 'style' | 'title';
+type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
 
 export default function CreateBookPage() {
     const router = useRouter();
@@ -28,6 +28,7 @@ export default function CreateBookPage() {
         childName: '',
         childAge: 3,
         bookType: undefined,
+        printFormat: undefined,
         bookTheme: undefined,
         title: '',
         storyDescription: '',
@@ -51,7 +52,7 @@ export default function CreateBookPage() {
         };
     }, [photoPreview]);
 
-    const steps: WizardStep[] = ['child', 'type', 'theme', 'style', 'title'];
+    const steps: WizardStep[] = ['child', 'type', 'format', 'theme', 'style', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
 
     // Track unsaved changes
@@ -94,6 +95,8 @@ export default function CreateBookPage() {
                 return settings.childName && settings.childName.trim().length > 0;
             case 'type':
                 return settings.bookType !== undefined;
+            case 'format':
+                return settings.printFormat !== undefined;
             case 'theme':
                 return settings.bookTheme !== undefined;
             case 'style':
@@ -196,7 +199,8 @@ export default function CreateBookPage() {
                 childAge: settings.childAge || 3,
                 bookTheme: settings.bookTheme || 'adventure',
                 bookType: settings.bookType || 'picture',
-                pageCount: 10,
+                printFormat: settings.printFormat || 'portrait',
+                pageCount: (settings.printFormat === 'square' || settings.bookType === 'story') ? 12 : 10, // 12 Story Beats = 24 Physical Pages (Image + Text)
                 characterDescription,
                 storyDescription: settings.storyDescription,
                 artStyle: settings.artStyle || 'storybook_classic',
@@ -419,6 +423,53 @@ export default function CreateBookPage() {
                                         </button>
                                     );
                                 })}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {currentStep === 'format' && (
+                        <motion.div
+                            key="format"
+                            className={styles.stepContent}
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -50 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <div className={styles.stepIcon}>📏</div>
+                            <h1 className={styles.stepTitle}>Choose a Format</h1>
+                            <p className={styles.stepSubtitle}>
+                                Prepare your book for professional printing
+                            </p>
+
+                            <div className={styles.optionsGrid}>
+                                <button
+                                    className={`${styles.optionCard} ${settings.printFormat === 'square' ? styles.selected : ''}`}
+                                    onClick={() => updateSettings('printFormat', 'square')}
+                                    style={{ '--option-color': '#ec4899' } as React.CSSProperties}
+                                >
+                                    <span className={styles.optionEmoji}>✨</span>
+                                    <h3 className={styles.optionTitle}>Square Hardcover</h3>
+                                    <p className={styles.optionDesc}>8.5&quot; x 8.5&quot; Premium. The gold standard for kids&apos; books.</p>
+                                    <span className={styles.optionAge}>Min 24 Pages (Auto-set)</span>
+                                    {settings.printFormat === 'square' && (
+                                        <span className={styles.checkmark}>✓</span>
+                                    )}
+                                </button>
+
+                                <button
+                                    className={`${styles.optionCard} ${settings.printFormat === 'portrait' ? styles.selected : ''}`}
+                                    onClick={() => updateSettings('printFormat', 'portrait')}
+                                    style={{ '--option-color': '#3b82f6' } as React.CSSProperties}
+                                >
+                                    <span className={styles.optionEmoji}>📱</span>
+                                    <h3 className={styles.optionTitle}>Portrait / Digital</h3>
+                                    <p className={styles.optionDesc}>6&quot; x 9&quot; Standard. Great for softcover or phones.</p>
+                                    <span className={styles.optionAge}>Flexible Pages</span>
+                                    {settings.printFormat === 'portrait' && (
+                                        <span className={styles.checkmark}>✓</span>
+                                    )}
+                                </button>
                             </div>
                         </motion.div>
                     )}
