@@ -1,0 +1,257 @@
+[GEMINI 2026-01-18T19:45:35.762Z] Initializing Gemini Unified client (@google/genai)... 
+[GEMINI 2026-01-18T19:45:35.766Z] Gemini client initialized 
+[GEMINI 2026-01-18T19:45:36.965Z] Initializing Gemini Unified client (@google/genai)... 
+[GEMINI 2026-01-18T19:45:36.967Z] Gemini client initialized 
+[API generate-book 2026-01-18T19:45:36.973Z] ======================================== 
+[API generate-book 2026-01-18T19:45:36.973Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-18T19:45:36.973Z] ======================================== 
+[API generate-book 2026-01-18T19:45:36.974Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-18T19:45:36.974Z] Request body parsed {
+  "childName": "Ilay",
+  "childAge": 1,
+  "bookTheme": "adventure",
+  "bookType": "story",
+  "artStyle": "digital_art",
+  "imageQuality": "pro"
+}
+[API generate-book 2026-01-18T19:45:36.974Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-18T19:45:37.036Z] Authentication completed in 62ms 
+[API generate-book 2026-01-18T19:45:37.036Z] User authenticated: 1dae612b-91e0-4173-b3d2-8503a32d9dc7 
+[API generate-book 2026-01-18T19:45:37.036Z] Step 3: Starting book generation... 
+[GEMINI 2026-01-18T19:45:37.037Z] === COMPLETE BOOK GENERATION STARTED === 
+[GEMINI 2026-01-18T19:45:37.037Z] === STORY GENERATION STARTED === 
+[GEMINI 2026-01-18T19:45:37.037Z] Using model: gemini-3.0-flash-preview 
+[GEMINI 2026-01-18T19:45:37.037Z] Sending request to Gemini API... 
+[API generate-book 2026-01-18T19:45:37.271Z] ======================================== 
+[API generate-book 2026-01-18T19:45:37.272Z] === GENERATE-BOOK API REQUEST FAILED after 298ms === 
+[API generate-book 2026-01-18T19:45:37.272Z] ======================================== 
+[GEMINI 2026-01-18T19:50:41.493Z] Initializing Gemini Unified client (@google/genai)... 
+[GEMINI 2026-01-18T19:50:41.495Z] Gemini client initialized 
+[API generate-book 2026-01-18T19:50:48.475Z] ======================================== 
+[API generate-book 2026-01-18T19:50:48.476Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-18T19:50:48.476Z] ======================================== 
+[API generate-book 2026-01-18T19:50:48.476Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-18T19:50:48.476Z] Request body parsed {
+  "childName": "Ilay",
+  "childAge": 1,
+  "bookTheme": "adventure",
+  "bookType": "story",
+  "artStyle": "digital_art",
+  "imageQuality": "pro"
+}
+[API generate-book 2026-01-18T19:50:48.477Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-18T19:50:48.527Z] Authentication completed in 50ms 
+[API generate-book 2026-01-18T19:50:48.528Z] User authenticated: 1dae612b-91e0-4173-b3d2-8503a32d9dc7 
+[API generate-book 2026-01-18T19:50:48.529Z] Step 3: Starting book generation... 
+[GEMINI 2026-01-18T19:50:48.529Z] === COMPLETE BOOK GENERATION STARTED === 
+[GEMINI 2026-01-18T19:50:48.530Z] === STORY GENERATION STARTED === 
+[GEMINI 2026-01-18T19:50:48.530Z] Using model: gemini-3-flash-preview 
+[GEMINI 2026-01-18T19:50:48.530Z] Sending request to Gemini API... 
+[GEMINI 2026-01-18T19:50:59.237Z] === STORY GENERATION COMPLETED in 10707ms === 
+[GEMINI 2026-01-18T19:50:59.238Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:50:59.239Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:51:06.333Z] === IMAGE GENERATION COMPLETED in 7095ms === 
+[GEMINI 2026-01-18T19:51:07.335Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:51:07.338Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:51:14.327Z] === IMAGE GENERATION COMPLETED in 6992ms === 
+[GEMINI 2026-01-18T19:51:15.331Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:51:15.332Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:51:22.576Z] === IMAGE GENERATION COMPLETED in 7245ms === 
+[GEMINI 2026-01-18T19:51:23.581Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:51:23.582Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:51:31.618Z] === IMAGE GENERATION COMPLETED in 8037ms === 
+[GEMINI 2026-01-18T19:51:32.620Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:51:32.621Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:51:39.292Z] === IMAGE GENERATION COMPLETED in 6672ms === 
+[GEMINI 2026-01-18T19:51:40.293Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:51:40.295Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:51:46.824Z] === IMAGE GENERATION COMPLETED in 6531ms === 
+[GEMINI 2026-01-18T19:51:47.827Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:51:47.829Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:51:55.704Z] === IMAGE GENERATION COMPLETED in 7877ms === 
+[GEMINI 2026-01-18T19:51:56.707Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:51:56.708Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:52:05.420Z] === IMAGE GENERATION COMPLETED in 8713ms === 
+[GEMINI 2026-01-18T19:52:06.424Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:52:06.425Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:52:13.192Z] === IMAGE GENERATION COMPLETED in 6768ms === 
+[GEMINI 2026-01-18T19:52:14.194Z] === IMAGE GENERATION STARTED (Imagen 4) === 
+[GEMINI 2026-01-18T19:52:14.195Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T19:52:22.916Z] === IMAGE GENERATION COMPLETED in 8722ms === 
+[GEMINI 2026-01-18T19:52:22.916Z] === FINISHED === 
+[API generate-book 2026-01-18T19:52:22.917Z] Book generation completed in 94388ms 
+[API generate-book 2026-01-18T19:52:22.917Z] Generated: 10 pages, 10 images 
+[API generate-book 2026-01-18T19:52:22.917Z] Created bookId: 49f6597a-7b89-4c7b-9f3d-0c31cac121d5 
+[API generate-book 2026-01-18T19:52:22.917Z] Step 4: Processing and uploading images... 
+[API generate-book 2026-01-18T19:52:22.920Z] Image 0: Uploading 1278KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/0.png 
+[API generate-book 2026-01-18T19:52:22.999Z] Image 0: Upload SUCCESS in 78ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.002Z] Image 1: Uploading 1408KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/1.png 
+[API generate-book 2026-01-18T19:52:23.044Z] Image 1: Upload SUCCESS in 42ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.047Z] Image 2: Uploading 1338KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/2.png 
+[API generate-book 2026-01-18T19:52:23.079Z] Image 2: Upload SUCCESS in 31ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.082Z] Image 3: Uploading 1374KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/3.png 
+[API generate-book 2026-01-18T19:52:23.122Z] Image 3: Upload SUCCESS in 40ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.124Z] Image 4: Uploading 1289KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/4.png 
+[API generate-book 2026-01-18T19:52:23.157Z] Image 4: Upload SUCCESS in 33ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.159Z] Image 5: Uploading 1286KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/5.png 
+[API generate-book 2026-01-18T19:52:23.192Z] Image 5: Upload SUCCESS in 33ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.194Z] Image 6: Uploading 1185KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/6.png 
+[API generate-book 2026-01-18T19:52:23.223Z] Image 6: Upload SUCCESS in 29ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.226Z] Image 7: Uploading 1323KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/7.png 
+[API generate-book 2026-01-18T19:52:23.267Z] Image 7: Upload SUCCESS in 41ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.270Z] Image 8: Uploading 1181KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/8.png 
+[API generate-book 2026-01-18T19:52:23.303Z] Image 8: Upload SUCCESS in 33ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.306Z] Image 9: Uploading 1454KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/49f6597a-7b89-4c7b-9f3d-0c31cac121d5/9.png 
+[API generate-book 2026-01-18T19:52:23.338Z] Image 9: Upload SUCCESS in 32ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T19:52:23.338Z] Image upload complete: 10/10 in 420ms 
+[API generate-book 2026-01-18T19:52:23.338Z] Step 5: Saving to database... 
+[API generate-book 2026-01-18T19:52:23.357Z] Book record saved in 18ms 
+[API generate-book 2026-01-18T19:52:23.358Z] Saving 10 pages to database... 
+[API generate-book 2026-01-18T19:52:23.376Z] Pages saved in 18ms 
+[API generate-book 2026-01-18T19:52:23.377Z] ======================================== 
+[API generate-book 2026-01-18T19:52:23.377Z] === GENERATE-BOOK API REQUEST COMPLETE in 94902ms === 
+[API generate-book 2026-01-18T19:52:23.377Z] ======================================== 
+[GEMINI 2026-01-18T20:36:35.938Z] Initializing Gemini Unified client (@google/genai)... 
+[GEMINI 2026-01-18T20:36:35.941Z] Gemini client initialized 
+[API generate-book 2026-01-18T20:36:49.342Z] ======================================== 
+[API generate-book 2026-01-18T20:36:49.343Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-18T20:36:49.344Z] ======================================== 
+[API generate-book 2026-01-18T20:36:49.344Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-18T20:36:49.344Z] Request body parsed {
+  "childName": "Ilay",
+  "childAge": 1,
+  "bookTheme": "adventure",
+  "bookType": "story",
+  "artStyle": "storybook_classic",
+  "imageQuality": "fast"
+}
+[API generate-book 2026-01-18T20:36:49.346Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-18T20:36:49.379Z] Authentication completed in 32ms 
+[API generate-book 2026-01-18T20:36:49.380Z] User authenticated: 1dae612b-91e0-4173-b3d2-8503a32d9dc7 
+[API generate-book 2026-01-18T20:36:49.380Z] Step 3: Starting book generation... 
+[GEMINI 2026-01-18T20:36:49.381Z] === COMPLETE BOOK GENERATION STARTED === 
+[GEMINI 2026-01-18T20:36:49.381Z] === STORY GENERATION STARTED === 
+[GEMINI 2026-01-18T20:36:49.381Z] Using model: gemini-3-flash-preview 
+[GEMINI 2026-01-18T20:36:49.381Z] --- STORY PROMPT SENT TO MODEL --- 
+    Create a children's book story based on the following details:
+    - Child's Name: Ilay
+    - Age: 1
+    - Theme: adventure
+    - Type: story
+    - Page Count: 10
+    - Character Description: To create a perfect likeness for an AI image generator, here are the detailed character reference descriptions for the two individuals in the image.
+
+### Character Reference 1: The Baby
+
+*   **Hair:** Fine, soft baby hair. The color is a medium-to-dark chestnut brown. The style is very short, slightly wispy, and brushed forward toward the forehead with a natural, unstyled texture.
+*   **Eyes:** Large, dark, and soulfully expressive. The shape is a rounded almond. The iris color is a very deep, dark brown, appearing almost black. The eyelashes are short but thick and dark, framing the eyes clearly. The eyebrows are thin, straight, and dark brown.
+*   **Face Shape, Cheekbones, & Jawline:** A classic, very round baby face. Extremely full, plump, and chubby cheeks that are the most prominent feature of the face. The jawline is soft and rounded, blending into a slight double chin typical of infancy.
+*   **Nose & Mouth:** A tiny, delicate "button" nose with a soft, rounded bridge and small nostrils. The mouth is small with full, well-defined pink lips. He has a gentle, closed-mouth "mona lisa" smile.
+*   **Skin Tone & Complexion:** A light olive skin tone with a smooth, velvety texture. 
+*   **Distinctive Markings:** Very prominent, bright rosy-pink flushed patches on the lower part of both cheeks (teething flush or wind-burn look). No visible freckles or deep dimples.
+
+### Character Reference 2: The Woman
+
+*   **Hair:** Thick, voluminous, and wavy texture. The color is a rich, deep espresso brown, appearing almost black in shadows. The hair is long, cascading naturally with a slightly tousled, effortless look.
+*   **Eyes:** Deep-set, dark brown eyes. The shape is a wide almond. The most striking feature is the extremely long, thick, jet-black eyelashes that are heavily curled upward. Eyebrows are dark, thick, and precisely groomed into a high, elegant arch.
+*   **Face Shape, Cheekbones, & Jawline:** An oval face shape with high, prominent, and well-defined cheekbones. She has a clean, graceful jawline that remains soft during her expression.
+*   **Nose & Mouth:** A straight, elegant nose with a slightly refined, upturned tip in profile. She has a wide, joyous, open-mouthed smile (laughing). Her lips are full and naturally pigmented. Her upper teeth are straight, white, and prominent in the smile.
+*   **Skin Tone & Complexion:** A warm, radiant olive complexion. The skin is clear and smooth with a healthy, natural glow. 
+*   **Distinctive Markings:** A small, subtle dark beauty mark/mole located on her right cheek, just in front of the lower earlobe. Prominent, deep "smile lines" (nasolabial folds) that appear when she laughs.
+
+### Recommended Prompting Strategy:
+When using these descriptions, you can combine them for a scene or use them individually. For a "perfect likeness," use the term **"Character Reference" (or --cref in Midjourney)** followed by these specific details to reinforce the visual data from the image.
+    - Specific Story Request: Ilay is exploring new food. tasting every day something new. and learning to stop breast feeding
+
+    The story should be engaging, age-appropriate, and magical.
+    
+    OUTPUT FORMAT:
+    Return ONLY a valid JSON object with the following structure:
+    {
+        "title": "Title of the book",
+        "characterDescription": "A detailed physical description of the main character (if not provided)",
+        "pages": [
+            {
+                "pageNumber": 1,
+                "text": "Story text for this page (keep it short for children)",
+                "imagePrompt": "A detailed description of the illustration for this page, describing the scene and action"
+            },
+            ...
+        ]
+    }
+    
+[GEMINI 2026-01-18T20:36:49.381Z] Sending request to Gemini API... 
+[GEMINI 2026-01-18T20:37:02.315Z] === STORY GENERATION COMPLETED in 12934ms === 
+[GEMINI 2026-01-18T20:37:02.316Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:37:02.317Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:37:02.317Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:37:11.508Z] === IMAGE GENERATION COMPLETED in 9192ms === 
+[GEMINI 2026-01-18T20:37:12.508Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:37:12.510Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:37:12.511Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:37:21.310Z] === IMAGE GENERATION COMPLETED in 8802ms === 
+[GEMINI 2026-01-18T20:37:22.313Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:37:22.314Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:37:22.315Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:37:29.949Z] === IMAGE GENERATION COMPLETED in 7636ms === 
+[GEMINI 2026-01-18T20:37:30.951Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:37:30.952Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:37:30.953Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:37:40.398Z] === IMAGE GENERATION COMPLETED in 9447ms === 
+[GEMINI 2026-01-18T20:37:41.399Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:37:41.400Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:37:41.400Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:37:50.053Z] === IMAGE GENERATION COMPLETED in 8654ms === 
+[GEMINI 2026-01-18T20:37:51.056Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:37:51.057Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:37:51.058Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:37:58.932Z] === IMAGE GENERATION COMPLETED in 7876ms === 
+[GEMINI 2026-01-18T20:37:59.935Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:37:59.936Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:37:59.937Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:38:08.692Z] === IMAGE GENERATION COMPLETED in 8757ms === 
+[GEMINI 2026-01-18T20:38:09.694Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:38:09.695Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:38:09.696Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:38:18.399Z] === IMAGE GENERATION COMPLETED in 8705ms === 
+[GEMINI 2026-01-18T20:38:19.405Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:38:19.406Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:38:19.407Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:38:27.721Z] === IMAGE GENERATION COMPLETED in 8316ms === 
+[GEMINI 2026-01-18T20:38:28.723Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-18T20:38:28.724Z] Using Standard Mode (Imagen 4) 
+[GEMINI 2026-01-18T20:38:28.724Z] Using model: imagen-4.0-generate-001 
+[GEMINI 2026-01-18T20:38:36.211Z] === IMAGE GENERATION COMPLETED in 7488ms === 
+[GEMINI 2026-01-18T20:38:36.211Z] === FINISHED === 
+[API generate-book 2026-01-18T20:38:36.212Z] Book generation completed in 106830ms 
+[API generate-book 2026-01-18T20:38:36.212Z] Generated: 10 pages, 10 images 
+[API generate-book 2026-01-18T20:38:36.212Z] Created bookId: ac81c115-1789-4e95-809f-be4e5ad05fd9 
+[API generate-book 2026-01-18T20:38:36.212Z] Step 4: Processing and uploading images... 
+[API generate-book 2026-01-18T20:38:36.215Z] Image 0: Uploading 1451KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/0.png 
+[API generate-book 2026-01-18T20:38:36.279Z] Image 0: Upload SUCCESS in 64ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.282Z] Image 1: Uploading 1493KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/1.png 
+[API generate-book 2026-01-18T20:38:36.318Z] Image 1: Upload SUCCESS in 36ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.327Z] Image 2: Uploading 1471KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/2.png 
+[API generate-book 2026-01-18T20:38:36.366Z] Image 2: Upload SUCCESS in 39ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.369Z] Image 3: Uploading 1564KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/3.png 
+[API generate-book 2026-01-18T20:38:36.398Z] Image 3: Upload SUCCESS in 29ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.401Z] Image 4: Uploading 1664KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/4.png 
+[API generate-book 2026-01-18T20:38:36.431Z] Image 4: Upload SUCCESS in 30ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.434Z] Image 5: Uploading 1620KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/5.png 
+[API generate-book 2026-01-18T20:38:36.472Z] Image 5: Upload SUCCESS in 38ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.477Z] Image 6: Uploading 1828KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/6.png 
+[API generate-book 2026-01-18T20:38:36.510Z] Image 6: Upload SUCCESS in 33ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.513Z] Image 7: Uploading 1517KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/7.png 
+[API generate-book 2026-01-18T20:38:36.543Z] Image 7: Upload SUCCESS in 30ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.546Z] Image 8: Uploading 1817KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/8.png 
+[API generate-book 2026-01-18T20:38:36.585Z] Image 8: Upload SUCCESS in 39ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.588Z] Image 9: Uploading 1792KB as 1dae612b-91e0-4173-b3d2-8503a32d9dc7/ac81c115-1789-4e95-809f-be4e5ad05fd9/9.png 
+[API generate-book 2026-01-18T20:38:36.619Z] Image 9: Upload SUCCESS in 30ms -> http://127.0.0.1:54321/storage/v1/object/public/bo... 
+[API generate-book 2026-01-18T20:38:36.619Z] Image upload complete: 10/10 in 407ms 
+[API generate-book 2026-01-18T20:38:36.620Z] Step 5: Saving to database... 
+[API generate-book 2026-01-18T20:38:36.635Z] Book record saved in 15ms 
+[API generate-book 2026-01-18T20:38:36.635Z] Saving 10 pages to database... 
+[API generate-book 2026-01-18T20:38:36.646Z] Pages saved in 11ms 
+[API generate-book 2026-01-18T20:38:36.647Z] ======================================== 
+[API generate-book 2026-01-18T20:38:36.647Z] === GENERATE-BOOK API REQUEST COMPLETE in 107305ms === 
+[API generate-book 2026-01-18T20:38:36.647Z] ======================================== 
