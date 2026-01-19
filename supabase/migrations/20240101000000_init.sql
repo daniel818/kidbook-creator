@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS books (
   age_group TEXT NOT NULL,
   book_type TEXT NOT NULL CHECK (book_type IN ('board', 'picture', 'story', 'alphabet')),
   book_theme TEXT NOT NULL CHECK (book_theme IN ('adventure', 'bedtime', 'learning', 'fantasy', 'animals', 'custom')),
+  print_format TEXT NOT NULL DEFAULT 'portrait' CHECK (print_format IN ('square', 'portrait')),
   
   -- Status
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'completed', 'ordered')),
