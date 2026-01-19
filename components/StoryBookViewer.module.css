@@ -892,6 +892,160 @@
     }
 }
 
-.textPageContent {
-    animation: fadeIn 0.5s ease-out;
+
+/* ============================================
+   Editor Mode Styles
+   ============================================ */
+.editMode {
+    border: 2px solid var(--accent-primary);
+}
+
+.editableText {
+    width: 100%;
+    min-height: 150px;
+    background: transparent;
+    border: 1px dashed rgba(99, 102, 241, 0.3);
+    border-radius: 4px;
+    padding: 0.25rem;
+    /* Slight padding for editability */
+
+    /* Typography matching .storyParagraph */
+    font-family: 'Crimson Text', 'Crimson Pro', 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 2rem;
+    color: var(--text-primary);
+    text-align: left;
+    /* Justify is risky in textarea */
+    text-indent: 2rem;
+
+    resize: vertical;
+    outline: none;
+    transition: all 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.editableText:focus {
+    background: white;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.imageOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(2px);
+}
+
+.illustrationPageWrapper:hover .imageOverlay {
+    opacity: 1;
+}
+
+.overlayButton {
+    background: white;
+    color: var(--accent-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.illustrationPageWrapper:hover .overlayButton {
+    transform: translateY(0);
+}
+
+.overlayButton:hover {
+    transform: scale(1.05);
+    background: var(--bg-primary);
+}
+
+.overlayButton:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+/* Edit Toggle in Header */
+.editToggle {
+    background: white;
+    border: 1px solid var(--header-border);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-button);
+}
+
+.editToggle:hover {
+    background: var(--viewer-bg-start);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.editToggle.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+.saveButton {
+    background: var(--accent-secondary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.saveButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
+}
+
+.cancelButton {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancelButton:hover {
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.editToolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }

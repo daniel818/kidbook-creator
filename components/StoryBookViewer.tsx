@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, forwardRef, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
@@ -10,6 +11,47 @@ interface StoryBookViewerProps {
     book: Book;
     onClose?: () => void;
     isFullScreen?: boolean;
+}
+
+// ============================================
+// Helper: Stop Propagation Wrapper
+// Blocks native events (mousedown, click, touch) 
+// so react-pageflip listener doesn't trigger.
+// ============================================
+function StopPropagationWrapper({ children, className }: { children: React.ReactNode, className?: string }) {
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+
+        const stop = (e: Event) => {
+            e.stopPropagation();
+            // Important: immediate propagation stop for native listeners on same node or parents
+            e.stopImmediatePropagation();
+        };
+
+        // We must block all mouse/touch events that might trigger a flip
+        el.addEventListener('mousedown', stop);
+        // el.addEventListener('click', stop); // ALLOW click to bubble so React sees it!
+        el.addEventListener('mouseup', stop);
+        el.addEventListener('touchstart', stop);
+        el.addEventListener('touchend', stop);
+
+        return () => {
+            el.removeEventListener('mousedown', stop);
+            // el.removeEventListener('click', stop);
+            el.removeEventListener('mouseup', stop);
+            el.removeEventListener('touchstart', stop);
+            el.removeEventListener('touchend', stop);
+        };
+    }, []);
+
+    return (
+        <div ref={ref} className={className}>
+            {children}
+        </div>
+    );
 }
 
 // ============================================
@@ -44,27 +86,45 @@ const IllustrationPage = forwardRef<HTMLDivElement, {
     imageUrl?: string;
     pageNumber?: number;
     themeColors: string[];
+    isEditing?: boolean;
+    onRegenerate?: () => void;
+    isRegenerating?: boolean;
 }>((props, ref) => {
-    const { imageUrl, pageNumber, themeColors } = props;
+    const { imageUrl, pageNumber, themeColors, isEditing, onRegenerate, isRegenerating } = props;
 
     return (
         <div className={styles.illustrationPage} ref={ref}>
-            {imageUrl ? (
-                <img
-                    src={imageUrl}
-                    alt={`Illustration ${pageNumber || ''}`}
-                    className={styles.fullBleedImage}
-                />
-            ) : (
-                <div
-                    className={styles.illustrationPlaceholder}
-                    style={{
-                        background: `linear-gradient(135deg, ${themeColors[0]}40 0%, ${themeColors[1]}40 100%)`
-                    }}
-                >
-                    <span className={styles.placeholderIcon}>🖼️</span>
-                </div>
-            )}
+            <div className={styles.illustrationPageWrapper}>
+                {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        alt={`Illustration ${pageNumber || ''}`}
+                        className={styles.fullBleedImage}
+                    />
+                ) : (
+                    <div
+                        className={styles.illustrationPlaceholder}
+                        style={{
+                            background: `linear-gradient(135deg, ${themeColors[0]}40 0%, ${themeColors[1]}40 100%)`
+                        }}
+                    >
+                        <span className={styles.placeholderIcon}>🖼️</span>
+                    </div>
+                )}
+
+                {/* Editor Overlay */}
+                {isEditing && (
+                    <StopPropagationWrapper className={styles.imageOverlay}>
+                        <button
+                            className={styles.overlayButton}
+                            onClick={onRegenerate}
+                            disabled={isRegenerating}
+                        >
+                            {isRegenerating ? '✨ Regenerating...' : '✨ Regenerate Image'}
+                        </button>
+                    </StopPropagationWrapper>
+                )}
+            </div>
             {pageNumber !== undefined && (
                 <span className={styles.illustrationPageNumber}>{pageNumber}</span>
             )}
@@ -80,16 +140,28 @@ IllustrationPage.displayName = 'IllustrationPage';
 const TextPage = forwardRef<HTMLDivElement, {
     textElements: { id?: string; content: string }[];
     pageNumber: number;
+    isEditing?: boolean;
+    onTextChange?: (idx: number, val: string) => void;
 }>((props, ref) => {
-    const { textElements, pageNumber } = props;
+    const { textElements, pageNumber, isEditing, onTextChange } = props;
 
     return (
         <div className={styles.textPage} ref={ref}>
             <div className={styles.textPageContent}>
                 {textElements.map((text, idx) => (
-                    <p key={text.id || idx} className={styles.storyParagraph}>
-                        {text.content}
-                    </p>
+                    isEditing ? (
+                        <StopPropagationWrapper key={text.id || idx}>
+                            <textarea
+                                className={styles.editableText}
+                                value={text.content}
+                                onChange={(e) => onTextChange?.(idx, e.target.value)}
+                            />
+                        </StopPropagationWrapper>
+                    ) : (
+                        <p key={text.id || idx} className={styles.storyParagraph}>
+                            {text.content}
+                        </p>
+                    )
                 ))}
             </div>
             <span className={styles.textPageNumber}>{pageNumber}</span>
@@ -102,11 +174,18 @@ TextPage.displayName = 'TextPage';
 // Main StoryBookViewer Component
 // ============================================
 export default function StoryBookViewer({ book, onClose, isFullScreen = false }: StoryBookViewerProps) {
+    const router = useRouter();
     const bookRef = useRef<any>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+
+    // Editor State
+    const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [regeneratingPage, setRegeneratingPage] = useState<number | null>(null);
+    const [edits, setEdits] = useState<Record<number, { text?: string; image?: string }>>({});
 
     const themeColors = book.settings.bookTheme
         ? BookThemeInfo[book.settings.bookTheme]?.colors || ['#6366f1', '#ec4899']
@@ -188,6 +267,109 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
         bookRef.current?.pageFlip().flipNext();
     }, []);
 
+    // Editor Handlers
+    const handleTextChange = (pageIndex: number, textIdx: number, val: string) => {
+        // pageIndex is 0-based index of innerPages array
+        // We need to map this to logical pageNumber for edits state
+        const pageNum = pageIndex + 1;
+        setEdits(prev => ({
+            ...prev,
+            [pageNum]: {
+                ...prev[pageNum],
+                text: val
+            }
+        }));
+    };
+
+    const handleRegenerateImage = async (pageIndex: number, currentImage: string, contextText: string) => {
+        const pageNum = pageIndex + 1;
+        setRegeneratingPage(pageNum);
+        try {
+            const response = await fetch('/api/ai/regenerate-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bookId: book.id,
+                    pageNumber: pageNum,
+                    prompt: contextText,
+                    currentImageContext: currentImage
+                })
+            });
+            if (!response.ok) throw new Error('Failed');
+            const data = await response.json();
+            if (data.imageUrl) {
+                setEdits(prev => ({
+                    ...prev,
+                    [pageNum]: { ...prev[pageNum], image: data.imageUrl }
+                }));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Failed to regenerate');
+        } finally {
+            setRegeneratingPage(null);
+        }
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            const updatedPages = book.pages.map((page, i) => {
+                if (page.type !== 'inside') return page;
+                return page;
+            });
+
+            // RE-Logic for Save:
+            const newBookPages = [...book.pages];
+            let innerIdx = 0;
+            for (let i = 0; i < newBookPages.length; i++) {
+                if (newBookPages[i].type === 'inside') {
+                    const pageNum = innerIdx + 1; // 1-based logic used in UI
+                    const edit = edits[pageNum];
+                    if (edit) {
+                        const page = newBookPages[i];
+                        if (edit.image) {
+                            if (page.imageElements.length > 0) {
+                                page.imageElements[0].src = edit.image;
+                            }
+                        }
+                        if (edit.text) {
+                            if (page.textElements.length > 0) {
+                                page.textElements[0].content = edit.text;
+                            }
+                        }
+                        newBookPages[i] = { ...page };
+                    }
+                    innerIdx++;
+                }
+            }
+
+            const response = await fetch(`/api/books/${book.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pages: newBookPages })
+            });
+
+            if (!response.ok) throw new Error('Save failed');
+
+            setIsEditing(false);
+            setEdits({});
+            router.refresh();
+        } catch (e) {
+            console.error(e);
+            alert('Failed to save');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancel = () => {
+        if (Object.keys(edits).length > 0 && !confirm('Discard changes?')) return;
+        setIsEditing(false);
+        setEdits({});
+    };
+
+
     // Auto-open book on mount (simulation of "taking and opening")
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -204,6 +386,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
     // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            // If editing text, do NOT handle arrow keys!
+            if (isEditing && (e.target as HTMLElement).tagName === 'TEXTAREA') return;
+
             switch (e.key) {
                 case 'ArrowLeft':
                     flipPrev();
@@ -229,32 +414,36 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [flipPrev, flipNext, onClose, isFullscreen, toggleFullscreen]);
+    }, [flipPrev, flipNext, onClose, isFullscreen, toggleFullscreen, isEditing]);
 
     // ============================================
     // Render Spreads
-    // For the Gemini approach:
-    // - Front Cover (single hard page)
-    // - For each inner page: Illustration (left) + Text (right)
-    // - Back Cover (single hard page)
     // ============================================
 
     const renderSpreads = () => {
         const spreads: React.ReactNode[] = [];
-
         // Get inner pages (skip cover page at index 0)
         const innerPages = book.pages.filter(p => p.type === 'inside');
 
         innerPages.forEach((page, index) => {
-            const pageNum = index + 1;
+            const pageNum = index + 1; // 1-based
+            const edit = edits[pageNum] || {};
+
+            // Resolve content (edit > original)
+            const displayImage = edit.image || getPageImage(page);
+            const displayText = edit.text || (page.textElements[0]?.content || '');
+            const textElements = [{ ...page.textElements[0], content: displayText }];
 
             // Left page: Illustration
             spreads.push(
                 <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
                     <IllustrationPage
-                        imageUrl={getPageImage(page) || undefined}
+                        imageUrl={displayImage || undefined}
                         pageNumber={pageNum * 2 - 1}
                         themeColors={themeColors}
+                        isEditing={isEditing}
+                        isRegenerating={regeneratingPage === pageNum}
+                        onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
                     />
                 </Page>
             );
@@ -263,8 +452,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             spreads.push(
                 <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
                     <TextPage
-                        textElements={page.textElements || []}
+                        textElements={textElements}
                         pageNumber={pageNum * 2}
+                        isEditing={isEditing}
+                        onTextChange={(idx, val) => handleTextChange(index, idx, val)}
                     />
                 </Page>
             );
@@ -296,11 +487,28 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             {/* Header Controls */}
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
-                    {onClose && (
-                        <button className={styles.closeBtn} onClick={onClose}>
-                            ← Back
-                        </button>
-                    )}
+                    <div className={styles.editToolbar}>
+                        {isEditing ? (
+                            <>
+                                <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
+                                    {isSaving ? 'Saving...' : '💾 Save'}
+                                </button>
+                                <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
+                                    Cancel
+                                </button>
+                            </>
+                        ) : (
+                            <button className={styles.editToggle} onClick={() => setIsEditing(true)}>
+                                ✎ Edit
+                            </button>
+                        )}
+                        <span style={{ marginInline: '10px', height: '20px', width: '1px', background: 'rgba(0,0,0,0.1)' }}></span>
+                        {onClose && (
+                            <button className={styles.closeBtn} onClick={onClose}>
+                                ← Back
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <div className={styles.headerCenter}>
@@ -377,7 +585,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                     useMouseEvents={true}
                     swipeDistance={30}
                     showPageCorners={true}
-                    disableFlipByClick={false}
+                    disableFlipByClick={isEditing}
                 >
                     {/* Front Cover */}
                     <Cover>
