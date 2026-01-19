@@ -564,6 +564,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
 
                 <div className={styles.headerRight}>
                     <button
+                        className={styles.orderButton}
+                        onClick={() => router.push(`/create/${book.id}/order`)}
+                    >
+                        🛒 Order Print
+                    </button>
+                    <button
                         className={styles.actionBtn}
                         title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
                         onClick={toggleFullscreen}
