@@ -62,18 +62,17 @@ export interface CoverDimensions {
 }
 
 /**
- * Detect if book is square format from settings or title hack
+ * Detect if book is square format
  */
 function isSquareFormat(book: Book): boolean {
-    return book.settings.printFormat === 'square' ||
-        (book.settings.title?.includes('[Square]') ?? false);
+    return book.settings.printFormat === 'square';
 }
 
 /**
- * Get clean display title (strips [Square] marker)
+ * Get display title
  */
 function getDisplayTitle(book: Book): string {
-    return (book.settings.title || `${book.settings.childName}'s Story`).replace(' [Square]', '');
+    return book.settings.title || `${book.settings.childName}'s Story`;
 }
 
 /**

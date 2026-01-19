@@ -159,21 +159,16 @@ export async function POST(request: NextRequest) {
         log('Step 5: Saving to database...');
         const dbStartTime = Date.now();
 
-        // Hack: Append [Square] to title to persist format without schema change
-        let finalTitle = result.story.title;
-        if (aspectRatio === '1:1') {
-            finalTitle += ' [Square]';
-        }
-
         const { error: dbError } = await supabase.from('books').insert({
             id: bookId,
             user_id: userId,
-            title: finalTitle,
+            title: result.story.title,
             child_name: childName,
             child_age: childAge,
             age_group: getAgeGroup(childAge || 5),
             book_theme: bookTheme,
             book_type: bookType,
+            print_format: aspectRatio === '1:1' ? 'square' : 'portrait',
             status: 'draft',
         });
 

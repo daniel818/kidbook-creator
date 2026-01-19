@@ -498,9 +498,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
 
 
     // Calculate dimensions based on format
-    // Check both settings (session) and title hack (persistence)
-    const isSquare = book.settings.printFormat === 'square' || book.settings.title.includes('[Square]');
-    const displayTitle = book.settings.title.replace(' [Square]', '');
+    const isSquare = book.settings.printFormat === 'square';
+    const displayTitle = book.settings.title;
 
     const bookWidth = 550;
     const bookHeight = isSquare ? 550 : 733; // 1:1 vs 3:4
