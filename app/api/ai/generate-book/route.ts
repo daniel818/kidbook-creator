@@ -5,11 +5,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Helper function for logging with timestamps
 const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
-    console.log(`[API generate-book ${timestamp}] ${message}`);
+    const logMsg = `[API generate-book ${timestamp}] ${message}`;
+    console.log(logMsg);
+
+    // Also write to file for deeper debugging
+    try {
+        const logPath = path.join(process.cwd(), 'api_debug.log');
+        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
+        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
+    } catch (e) {
+        // ignore write error
+    }
+
     if (data !== undefined) {
         console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 500));
     }
@@ -24,8 +37,8 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality } = body;
-        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality });
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto } = body;
+        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto });
 
         if (!childName || !bookTheme || !bookType) {
             log('ERROR: Missing required fields');
@@ -58,6 +71,7 @@ export async function POST(request: NextRequest) {
             storyDescription,
             artStyle: artStyle || 'storybook_classic',
             imageQuality: imageQuality || 'fast',
+            childPhoto,
         };
 
         // Generate the complete book (story + illustrations)

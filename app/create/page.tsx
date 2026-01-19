@@ -181,6 +181,16 @@ export default function CreateBookPage() {
             const genStart = Date.now();
             setCreatingStatus('Creating your magical story...');
 
+            // Convert photo to base64 if present for the generation API
+            let base64Photo: string | undefined;
+            if (childPhoto) {
+                base64Photo = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result as string);
+                    reader.readAsDataURL(childPhoto);
+                });
+            }
+
             const requestBody = {
                 childName: settings.childName || 'My Child',
                 childAge: settings.childAge || 3,
@@ -191,6 +201,7 @@ export default function CreateBookPage() {
                 storyDescription: settings.storyDescription,
                 artStyle: settings.artStyle || 'storybook_classic',
                 imageQuality: settings.imageQuality || 'fast',
+                childPhoto: base64Photo,
             };
             console.log('[CLIENT] Request body:', requestBody);
 
@@ -560,13 +571,13 @@ export default function CreateBookPage() {
                                             transition: 'all 0.2s'
                                         }}
                                     >
-                                        💎 Pro (Gemini 3 - 4K)
+                                        💎 Pro (Imagen 4 Ultra)
                                     </button>
                                 </div>
                                 <p style={{ marginTop: '0.75rem', fontSize: '0.875rem', color: '#64748b' }}>
                                     {settings.imageQuality === 'pro'
-                                        ? "Pro mode uses Gemini 3 Pro for stunning, high-definition illustrations. Takes a bit longer to generate."
-                                        : "Standard mode generates beautiful images quickly using Gemini Flash."}
+                                        ? "Pro mode uses Imagen 4 Ultra for stunning, high-definition illustrations. Takes a bit longer to generate."
+                                        : "Standard mode generates beautiful images quickly using Imagen 4."}
                                 </p>
                             </div>
                         </motion.div>
