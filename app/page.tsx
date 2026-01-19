@@ -64,7 +64,7 @@ export default function Home() {
   };
 
   const handleEditBook = (bookId: string) => {
-    router.push(`/create/${bookId}`);
+    router.push(`/book/${bookId}`);
   };
 
   const handleViewBook = (bookId: string) => {
@@ -283,14 +283,6 @@ export default function Home() {
                           {book.status}
                         </span>
                         <div className={styles.actionButtons}>
-                          <button
-                            className={styles.editBtn}
-                            onClick={(e) => { e.stopPropagation(); handleEditBook(book.id); }}
-                            aria-label="Edit book"
-                            title="Edit book"
-                          >
-                            ✏️
-                          </button>
                           <button
                             className={styles.deleteBtn}
                             onClick={(e) => handleDeleteBook(book.id, e)}

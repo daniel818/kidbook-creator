@@ -177,7 +177,7 @@ export default function OrdersPage() {
                                     <div className={styles.orderActions}>
                                         {order.bookId && (
                                             <Link
-                                                href={`/create/${order.bookId}`}
+                                                href={`/book/${order.bookId}`}
                                                 className={styles.viewBookBtn}
                                             >
                                                 View Book

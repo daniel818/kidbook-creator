@@ -218,9 +218,9 @@ export default function OrderPage() {
             <header className={styles.header}>
                 <button
                     className={styles.backButton}
-                    onClick={() => router.push(`/create/${bookId}`)}
+                    onClick={() => router.push(`/book/${bookId}`)}
                 >
-                    ← Back to Editor
+                    ← Back to Book
                 </button>
                 <h1 className={styles.headerTitle}>Order Your Book</h1>
                 <div className={styles.placeholder}></div>
