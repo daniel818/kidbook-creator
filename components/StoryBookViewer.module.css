@@ -305,9 +305,18 @@
    ============================================ */
 
 /* Center the cover by shifting the whole spread left (cover is on right side) */
-.coverMode :global(.stf__parent) {
-    transform: translateX(-25%) !important;
+/* Center the cover by shifting the whole spread left (cover is on right side) */
+.centeringWrapper {
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.coverMode .centeringWrapper {
+    transform: translateX(-25%);
+}
+
+.backCoverMode .centeringWrapper {
+    transform: translateX(25%);
 }
 
 .coverInner {
@@ -334,9 +343,8 @@
 }
 
 /* Reset when not in cover mode - smooth transition to spread view */
-.bookContainer :global(.stf__parent) {
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Reset when not in cover mode - smooth transition to spread view */
+/* Transition is now handled by .centeringWrapper */
 
 /* ============================================
    Cover Mode - 3D Spine & Shadow Fix
@@ -422,6 +430,72 @@
 
 /* Hide the right-side page edge (pages thickness) in cover mode */
 .coverMode .flipBook::after {
+    display: none !important;
+}
+
+/* Hide the right-side page edge (pages thickness) in cover mode */
+.coverMode .flipBook::after {
+    display: none !important;
+}
+
+/* ============================================
+   Back Cover Mode
+   ============================================ */
+/* Target the Back Cover specifically */
+/* The back cover is a "hard" page on the "left" (index total-1) */
+.backCoverMode :global(.stf__item.--left[data-density="hard"]) .cover {
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 10px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Back Cover Spine - Attached to RIGHT of back cover */
+.backCoverMode :global(.stf__item.--left[data-density="hard"]) .cover::before {
+    content: '';
+    position: absolute;
+    /* Position exactly at the right edge, moving outward */
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    width: 18px;
+
+    background: linear-gradient(-90deg,
+            #8e8a85 0%,
+            #d4d0c8 20%,
+            #e8e5e0 45%,
+            #d4d0c8 80%,
+            #989488 100%);
+
+    /* Texture overlay */
+    background-image:
+        repeating-linear-gradient(0deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.02) 2px,
+            rgba(0, 0, 0, 0.02) 4px);
+
+    /* Rounded outer edge (right side of spine) */
+    border-radius: 0 4px 4px 0;
+
+    box-shadow:
+        2px 0 5px rgba(0, 0, 0, 0.1),
+        inset 1px 0 1px rgba(0, 0, 0, 0.2);
+
+    z-index: -1;
+}
+
+/* Hide appropriate elements */
+.backCoverMode :global(.stf__item.--right),
+.backCoverMode :global(.stf__block.--right) {
+    display: none !important;
+}
+
+.backCoverMode .flipBook {
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.backCoverMode .flipBook::after {
     display: none !important;
 }
 

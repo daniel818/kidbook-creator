@@ -560,75 +560,77 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             </div>
 
             {/* Book Container */}
-            <div className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''}`}>
-                {/* @ts-ignore - Library types are tricky */}
-                <HTMLFlipBook
-                    width={bookWidth}
-                    height={bookHeight}
-                    size="fixed"
-                    minWidth={315}
-                    maxWidth={1000}
-                    minHeight={400}
-                    maxHeight={1533}
-                    maxShadowOpacity={0.5}
-                    showCover={true}
-                    mobileScrollSupport={true}
-                    onFlip={onFlip}
-                    ref={bookRef}
-                    className={styles.flipBook}
-                    flippingTime={600}
-                    usePortrait={false}
-                    startPage={0}
-                    drawShadow={true}
-                    autoSize={true}
-                    clickEventForward={true}
-                    useMouseEvents={true}
-                    swipeDistance={30}
-                    showPageCorners={true}
-                    disableFlipByClick={isEditing}
-                >
-                    {/* Front Cover */}
-                    <Cover>
-                        <div
-                            className={styles.coverInner}
-                            style={{
-                                background: book.pages[0] && getPageImage(book.pages[0])
-                                    ? `url(${getPageImage(book.pages[0])}) center/cover`
-                                    : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
-                            }}
-                        >
-                            <div className={styles.coverOverlay}>
-                                <h1 className={styles.coverTitle}>{displayTitle}</h1>
-                                <p className={styles.coverSubtitle}>
-                                    For {book.settings.childName}, age {book.settings.childAge}
-                                </p>
+            <div className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''} ${currentPageIndex === totalFlipPages - 1 ? styles.backCoverMode : ''}`}>
+                <div className={styles.centeringWrapper}>
+                    {/* @ts-ignore - Library types are tricky */}
+                    <HTMLFlipBook
+                        width={bookWidth}
+                        height={bookHeight}
+                        size="fixed"
+                        minWidth={315}
+                        maxWidth={1000}
+                        minHeight={400}
+                        maxHeight={1533}
+                        maxShadowOpacity={0.5}
+                        showCover={true}
+                        mobileScrollSupport={true}
+                        onFlip={onFlip}
+                        ref={bookRef}
+                        className={styles.flipBook}
+                        flippingTime={600}
+                        usePortrait={false}
+                        startPage={0}
+                        drawShadow={true}
+                        autoSize={true}
+                        clickEventForward={true}
+                        useMouseEvents={true}
+                        swipeDistance={30}
+                        showPageCorners={true}
+                        disableFlipByClick={isEditing}
+                    >
+                        {/* Front Cover */}
+                        <Cover>
+                            <div
+                                className={styles.coverInner}
+                                style={{
+                                    background: book.pages[0] && getPageImage(book.pages[0])
+                                        ? `url(${getPageImage(book.pages[0])}) center/cover`
+                                        : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
+                                }}
+                            >
+                                <div className={styles.coverOverlay}>
+                                    <h1 className={styles.coverTitle}>{displayTitle}</h1>
+                                    <p className={styles.coverSubtitle}>
+                                        For {book.settings.childName}, age {book.settings.childAge}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    </Cover>
+                        </Cover>
 
-                    {/* Inner Spreads: Illustration (left) + Text (right) */}
-                    {renderSpreads()}
+                        {/* Inner Spreads: Illustration (left) + Text (right) */}
+                        {renderSpreads()}
 
-                    {/* Back Cover */}
-                    {/* Back Cover */}
-                    <Cover>
-                        <div
-                            className={styles.coverInner}
-                            style={{
-                                background: backCoverImage
-                                    ? `url(${backCoverImage}) center/cover`
-                                    : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
-                            }}
-                        >
-                            <div className={styles.coverOverlay}>
-                                <h2 className={styles.coverTitle}>The End</h2>
-                                <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
-                                    {backCoverText}
-                                </p>
+                        {/* Back Cover */}
+                        {/* Back Cover */}
+                        <Cover>
+                            <div
+                                className={styles.coverInner}
+                                style={{
+                                    background: backCoverImage
+                                        ? `url(${backCoverImage}) center/cover`
+                                        : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
+                                }}
+                            >
+                                <div className={styles.coverOverlay}>
+                                    <h2 className={styles.coverTitle}>The End</h2>
+                                    <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
+                                        {backCoverText}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    </Cover>
-                </HTMLFlipBook>
+                        </Cover>
+                    </HTMLFlipBook>
+                </div>
             </div>
 
             {/* Keyboard Hint */}
