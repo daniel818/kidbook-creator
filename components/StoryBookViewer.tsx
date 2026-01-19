@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
+import { generateInteriorPDF, downloadPDF as downloadLuluPDF } from '@/lib/lulu/pdf-generator';
+import { generateCoverPDF } from '@/lib/lulu/cover-generator';
+import PrintGenerator from './PrintGenerator';
 import styles from './StoryBookViewer.module.css';
 
 interface StoryBookViewerProps {
@@ -179,6 +182,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
     const viewerRef = useRef<HTMLDivElement>(null);
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
     const [isDownloading, setIsDownloading] = useState(false);
+    const [isGeneratingPrint, setIsGeneratingPrint] = useState(false); // New state
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     // Editor State
@@ -230,11 +234,30 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
     // Event Handlers
     // ============================================
 
-    const handleDownload = async () => {
+    const handleDownload = async (e: React.MouseEvent) => {
         if (isDownloading) return;
 
         try {
             setIsDownloading(true);
+
+            // Secret developer mode: Alt/Option + Click = Download Lulu Print Files
+            if (e.altKey) {
+                // Default to 8x10 Softcover for test if not specified
+                // In real app, these come from order selection
+                const size = '8x10';
+                const format = 'softcover';
+
+                // 1. Generate Interior
+                const interiorBlob = await generateInteriorPDF(book, format, size);
+                downloadLuluPDF(interiorBlob, `${book.settings.title || 'book'}_interior_8x10.pdf`);
+
+                // 2. Generate Cover
+                const coverBlob = await generateCoverPDF(book, format, size);
+                downloadLuluPDF(coverBlob, `${book.settings.title || 'book'}_cover_8x10.pdf`);
+
+                return;
+            }
+
             const blob = await generateBookPDF(book);
             const filename = `${book.settings.title || 'story-book'}.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             downloadPDF(blob, filename);
@@ -243,6 +266,14 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             alert('Failed to generate PDF. Please try again.');
         } finally {
             setIsDownloading(false);
+        }
+    };
+
+    const handlePrintComplete = (blob: Blob) => {
+        setIsGeneratingPrint(false);
+        if (blob) {
+            const filename = `${book.settings.title || 'story-book'}_print.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            downloadPDF(blob, filename);
         }
     };
 
@@ -637,6 +668,17 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             <div className={styles.keyboardHint}>
                 Use ← → arrow keys or click to flip pages
             </div>
+
+            {/* Hidden Print Generator */}
+            {isGeneratingPrint && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                    <h2>Generating High-Res Print PDF... Please Wait</h2>
+                    <PrintGenerator
+                        book={book}
+                        onComplete={handlePrintComplete}
+                    />
+                </div>
+            )}
         </div>
     );
 }

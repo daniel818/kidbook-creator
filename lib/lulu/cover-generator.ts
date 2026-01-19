@@ -1,10 +1,14 @@
 // ============================================
 // Lulu-Compliant Cover PDF Generator
 // ============================================
+// Uses html2canvas to rasterize cover spread, preserving all fonts
 // Generates print-ready cover spread (back + spine + front)
 
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { Book, BookPage } from '@/lib/types';
+'use client';
+
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { calculateSpineWidth, PaperType } from './spine-calculator';
 
 /**
@@ -26,25 +30,60 @@ const BLEED_SIZE = 0.125;
  */
 const SAFETY_MARGINS = {
     softcover: 0.5,
-    hardcover: 0.75,  // Hardcover casewrap needs more margin
+    hardcover: 0.75,
 };
 
 /**
- * Points per inch
+ * DPI for screen rendering
  */
-const POINTS_PER_INCH = 72;
+const SCREEN_DPI = 96;
+
+/**
+ * Target print DPI
+ */
+const PRINT_DPI = 300;
+
+/**
+ * Scale factor for html2canvas
+ */
+const SCALE_FACTOR = PRINT_DPI / SCREEN_DPI;
 
 /**
  * Cover dimensions calculation result
  */
 export interface CoverDimensions {
-    totalWidth: number;      // Full spread width in inches
-    totalHeight: number;     // Full spread height in inches
-    backCoverWidth: number;  // Back cover width in inches
-    spineWidth: number;      // Spine width in inches
-    frontCoverWidth: number; // Front cover width in inches
-    safetyMargin: number;    // Safety margin in inches
-    bleed: number;           // Bleed in inches
+    totalWidth: number;
+    totalHeight: number;
+    backCoverWidth: number;
+    spineWidth: number;
+    frontCoverWidth: number;
+    safetyMargin: number;
+    bleed: number;
+}
+
+/**
+ * Detect if book is square format from settings or title hack
+ */
+function isSquareFormat(book: Book): boolean {
+    return book.settings.printFormat === 'square' ||
+        (book.settings.title?.includes('[Square]') ?? false);
+}
+
+/**
+ * Get clean display title (strips [Square] marker)
+ */
+function getDisplayTitle(book: Book): string {
+    return (book.settings.title || `${book.settings.childName}'s Story`).replace(' [Square]', '');
+}
+
+/**
+ * Get the appropriate trim size based on book format
+ */
+function getBookSize(book: Book): '6x6' | '8x8' | '8x10' {
+    if (isSquareFormat(book)) {
+        return '8x8';
+    }
+    return '8x10';
 }
 
 /**
@@ -64,14 +103,10 @@ export function calculateCoverDimensions(
     const spineWidth = calculateSpineWidth(pageCount, paperType);
     const safetyMargin = SAFETY_MARGINS[format];
 
-    // Cover spread = Back + Spine + Front + Bleed on all edges
     const backCoverWidth = trimSize.width;
     const frontCoverWidth = trimSize.width;
 
-    // Total width includes bleed on left and right edges
     const totalWidth = backCoverWidth + spineWidth + frontCoverWidth + (BLEED_SIZE * 2);
-
-    // Total height includes bleed on top and bottom
     const totalHeight = trimSize.height + (BLEED_SIZE * 2);
 
     return {
@@ -83,37 +118,6 @@ export function calculateCoverDimensions(
         safetyMargin,
         bleed: BLEED_SIZE,
     };
-}
-
-/**
- * Convert inches to PDF points
- */
-function inchesToPoints(inches: number): number {
-    return inches * POINTS_PER_INCH;
-}
-
-/**
- * Load image as Uint8Array
- */
-async function loadImageBytes(url: string): Promise<Uint8Array | null> {
-    try {
-        if (url.startsWith('data:')) {
-            const base64 = url.split(',')[1];
-            const binaryString = atob(base64);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes;
-        }
-
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
-        return new Uint8Array(arrayBuffer);
-    } catch (error) {
-        console.error('Failed to load image:', error);
-        return null;
-    }
 }
 
 /**
@@ -134,9 +138,183 @@ function getBackCoverPage(book: Book): BookPage | undefined {
  * Get page image URL
  */
 function getPageImage(page: BookPage): string | null {
+    if (page.imageElements && page.imageElements.length > 0 && page.imageElements[0].src) {
+        return page.imageElements[0].src;
+    }
     return page.backgroundImage ||
         (page as unknown as { background_image?: string }).background_image ||
         null;
+}
+
+/**
+ * Wait for images to load
+ */
+async function waitForImages(element: HTMLElement): Promise<void> {
+    const images = element.querySelectorAll('img');
+    const promises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise<void>((resolve) => {
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+        });
+    });
+    await Promise.all(promises);
+    await new Promise(r => setTimeout(r, 100));
+}
+
+/**
+ * Create the cover spread element (back + spine + front)
+ */
+function createCoverSpreadElement(
+    book: Book,
+    dims: CoverDimensions,
+    themeColors: string[]
+): HTMLDivElement {
+    const totalWidthPx = dims.totalWidth * SCREEN_DPI;
+    const totalHeightPx = dims.totalHeight * SCREEN_DPI;
+    const bleedPx = dims.bleed * SCREEN_DPI;
+    const backWidthPx = dims.backCoverWidth * SCREEN_DPI;
+    const spineWidthPx = dims.spineWidth * SCREEN_DPI;
+    const frontWidthPx = dims.frontCoverWidth * SCREEN_DPI;
+    const safetyPx = dims.safetyMargin * SCREEN_DPI;
+
+    const coverPage = getCoverPage(book);
+    const backCoverPage = getBackCoverPage(book);
+
+    // Get clean title (no [Square] marker)
+    const bookTitle = getDisplayTitle(book);
+
+    // Main container
+    const container = document.createElement('div');
+    container.style.cssText = `
+        width: ${totalWidthPx}px;
+        height: ${totalHeightPx}px;
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        background: white;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    `;
+
+    // ===== BACK COVER =====
+    const backCover = document.createElement('div');
+    backCover.style.cssText = `
+        width: ${backWidthPx + bleedPx}px;
+        height: ${totalHeightPx}px;
+        position: relative;
+        overflow: hidden;
+    `;
+
+    const backImageUrl = backCoverPage ? getPageImage(backCoverPage) : null;
+    if (backImageUrl) {
+        const backImg = document.createElement('img');
+        backImg.src = backImageUrl;
+        backImg.crossOrigin = 'anonymous';
+        backImg.style.cssText = `
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        `;
+        backCover.appendChild(backImg);
+    } else {
+        backCover.style.background = `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`;
+    }
+
+    // Back cover text
+    const backText = document.createElement('div');
+    backText.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: ${bleedPx + safetyPx}px;
+        right: ${safetyPx}px;
+        transform: translateY(-50%);
+        text-align: center;
+        color: white;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    `;
+    const backBlurb = backCoverPage?.textElements?.[0]?.content ||
+        'A personalized storybook adventure created with love.';
+    backText.innerHTML = `<p style="font-size: 12pt; line-height: 1.6; margin: 0;">${backBlurb}</p>`;
+    backCover.appendChild(backText);
+
+    container.appendChild(backCover);
+
+    // ===== SPINE =====
+    const spine = document.createElement('div');
+    spine.style.cssText = `
+        width: ${spineWidthPx}px;
+        height: ${totalHeightPx}px;
+        background: linear-gradient(135deg, ${themeColors[0]}dd 0%, ${themeColors[1]}dd 100%);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    // Spine text (rotated) - only if spine is wide enough (>100 pages per Lulu)
+    if (dims.spineWidth > 0.2) {
+        const spineText = document.createElement('div');
+        spineText.style.cssText = `
+            transform: rotate(-90deg);
+            white-space: nowrap;
+            color: white;
+            font-size: ${Math.min(10, spineWidthPx * 0.6)}pt;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        `;
+        spineText.textContent = bookTitle;
+        spine.appendChild(spineText);
+    }
+
+    container.appendChild(spine);
+
+    // ===== FRONT COVER =====
+    const frontCover = document.createElement('div');
+    frontCover.style.cssText = `
+        width: ${frontWidthPx + bleedPx}px;
+        height: ${totalHeightPx}px;
+        position: relative;
+        overflow: hidden;
+    `;
+
+    const frontImageUrl = coverPage ? getPageImage(coverPage) : null;
+    if (frontImageUrl) {
+        const frontImg = document.createElement('img');
+        frontImg.src = frontImageUrl;
+        frontImg.crossOrigin = 'anonymous';
+        frontImg.style.cssText = `
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        `;
+        frontCover.appendChild(frontImg);
+    } else {
+        frontCover.style.background = `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`;
+    }
+
+    // Front cover title overlay
+    const titleOverlay = document.createElement('div');
+    titleOverlay.style.cssText = `
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: ${safetyPx}px;
+        background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        color: white;
+        text-align: center;
+    `;
+    titleOverlay.innerHTML = `
+        <h1 style="margin: 0 0 10px 0; font-family: 'Playfair Display', Georgia, serif; font-size: 28pt; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${bookTitle}</h1>
+        <p style="margin: 0; font-family: Inter, sans-serif; font-size: 14pt; opacity: 0.9;">For ${book.settings.childName}, age ${book.settings.childAge}</p>
+    `;
+    frontCover.appendChild(titleOverlay);
+
+    container.appendChild(frontCover);
+
+    return container;
 }
 
 /**
@@ -146,7 +324,7 @@ function getPageImage(page: BookPage): string | null {
 export async function generateCoverPDF(
     book: Book,
     format: 'softcover' | 'hardcover',
-    size: '6x6' | '8x8' | '8x10',
+    size?: '6x6' | '8x8' | '8x10',
     paperType: PaperType = 'standard'
 ): Promise<Blob> {
     const coverPage = getCoverPage(book);
@@ -154,156 +332,69 @@ export async function generateCoverPDF(
         throw new Error('Book must have a cover page');
     }
 
+    // Auto-detect size from book if not provided
+    const bookSize = size || getBookSize(book);
+
+    // Calculate dimensions
     const pageCount = book.pages.length;
-    const dims = calculateCoverDimensions(size, pageCount, format, paperType);
+    const dims = calculateCoverDimensions(bookSize, pageCount, format, paperType);
 
-    // Create PDF document
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    // Get theme colors
+    const themeColors = book.settings.bookTheme
+        ? BookThemeInfo[book.settings.bookTheme]?.colors || ['#6366f1', '#ec4899']
+        : ['#6366f1', '#ec4899'];
 
-    // Single page spread
-    const pageWidthPoints = inchesToPoints(dims.totalWidth);
-    const pageHeightPoints = inchesToPoints(dims.totalHeight);
-    const pdfPage = pdfDoc.addPage([pageWidthPoints, pageHeightPoints]);
+    // Create hidden container
+    const renderContainer = document.createElement('div');
+    renderContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -9999;
+        opacity: 0;
+        pointer-events: none;
+    `;
+    document.body.appendChild(renderContainer);
 
-    // Calculate positions in points
-    const bleedPoints = inchesToPoints(dims.bleed);
-    const backCoverLeft = bleedPoints;
-    const backCoverWidth = inchesToPoints(dims.backCoverWidth);
-    const spineLeft = bleedPoints + backCoverWidth;
-    const spineWidth = inchesToPoints(dims.spineWidth);
-    const frontCoverLeft = spineLeft + spineWidth;
-    const frontCoverWidth = inchesToPoints(dims.frontCoverWidth);
+    try {
+        // Create cover spread element
+        const coverSpread = createCoverSpreadElement(book, dims, themeColors);
+        renderContainer.appendChild(coverSpread);
 
-    // ===== BACK COVER =====
-    const backCoverPage = getBackCoverPage(book);
-    const backCoverImageUrl = backCoverPage ? getPageImage(backCoverPage) : null;
+        // Wait for images
+        await waitForImages(coverSpread);
 
-    if (backCoverImageUrl) {
-        const imageBytes = await loadImageBytes(backCoverImageUrl);
-        if (imageBytes) {
-            try {
-                const embeddedImage = backCoverImageUrl.includes('png')
-                    ? await pdfDoc.embedPng(imageBytes)
-                    : await pdfDoc.embedJpg(imageBytes);
+        // Capture with html2canvas
+        const canvas = await html2canvas(coverSpread, {
+            scale: SCALE_FACTOR,
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            backgroundColor: '#ffffff',
+        });
 
-                pdfPage.drawImage(embeddedImage, {
-                    x: 0,  // Include bleed
-                    y: 0,
-                    width: backCoverWidth + bleedPoints,
-                    height: pageHeightPoints,
-                });
-            } catch (error) {
-                console.error('Failed to embed back cover image:', error);
-            }
-        }
-    } else {
-        // Default back cover background
-        pdfPage.drawRectangle({
+        // Create PDF
+        const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'in',
+            format: [dims.totalWidth, dims.totalHeight],
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        pdf.addImage({
+            imageData: imgData,
+            format: 'JPEG',
             x: 0,
             y: 0,
-            width: backCoverWidth + bleedPoints,
-            height: pageHeightPoints,
-            color: rgb(0.95, 0.95, 0.95),
+            width: dims.totalWidth,
+            height: dims.totalHeight,
         });
-    }
 
-    // Back cover text (blurb)
-    const backCoverText = backCoverPage?.textElements?.[0]?.content ||
-        'A personalized storybook adventure created with love.';
-    const safeMargin = inchesToPoints(dims.safetyMargin);
-    const textMaxWidth = backCoverWidth - (safeMargin * 2);
+        return pdf.output('blob');
 
-    pdfPage.drawText(backCoverText, {
-        x: backCoverLeft + safeMargin,
-        y: pageHeightPoints / 2,
-        size: 12,
-        font: fontRegular,
-        color: rgb(0.3, 0.3, 0.3),
-        maxWidth: textMaxWidth,
-    });
-
-    // ===== SPINE =====
-    pdfPage.drawRectangle({
-        x: spineLeft,
-        y: 0,
-        width: spineWidth,
-        height: pageHeightPoints,
-        color: rgb(0.3, 0.3, 0.5),  // Dark spine color
-    });
-
-    // Spine text (rotated - title)
-    if (spineWidth > inchesToPoints(0.2)) {  // Only if spine is wide enough
-        const title = book.settings.title || `${book.settings.childName}'s Story`;
-        const spineFontSize = Math.min(10, spineWidth * 0.6);
-
-        // Rotate and center spine text
-        pdfPage.drawText(title, {
-            x: spineLeft + (spineWidth / 2) - (spineFontSize / 4),
-            y: pageHeightPoints / 2,
-            size: spineFontSize,
-            font: font,
-            color: rgb(1, 1, 1),
-            rotate: { type: 'degrees' as const, angle: 90 },
-        });
-    }
-
-    // ===== FRONT COVER =====
-    const frontCoverImageUrl = getPageImage(coverPage);
-
-    if (frontCoverImageUrl) {
-        const imageBytes = await loadImageBytes(frontCoverImageUrl);
-        if (imageBytes) {
-            try {
-                const embeddedImage = frontCoverImageUrl.includes('png')
-                    ? await pdfDoc.embedPng(imageBytes)
-                    : await pdfDoc.embedJpg(imageBytes);
-
-                pdfPage.drawImage(embeddedImage, {
-                    x: frontCoverLeft,
-                    y: 0,
-                    width: frontCoverWidth + bleedPoints,  // Include right bleed
-                    height: pageHeightPoints,
-                });
-            } catch (error) {
-                console.error('Failed to embed front cover image:', error);
-            }
+    } finally {
+        if (renderContainer.parentNode) {
+            renderContainer.parentNode.removeChild(renderContainer);
         }
-    } else {
-        // Default front cover gradient
-        pdfPage.drawRectangle({
-            x: frontCoverLeft,
-            y: 0,
-            width: frontCoverWidth + bleedPoints,
-            height: pageHeightPoints,
-            color: rgb(0.4, 0.4, 0.9),
-        });
     }
-
-    // Front cover title overlay
-    const title = book.settings.title || `${book.settings.childName}'s Story`;
-    const titleFontSize = 24;
-
-    // Semi-transparent overlay
-    pdfPage.drawRectangle({
-        x: frontCoverLeft,
-        y: 0,
-        width: frontCoverWidth + bleedPoints,
-        height: inchesToPoints(1.5),
-        color: rgb(0, 0, 0),
-        opacity: 0.5,
-    });
-
-    pdfPage.drawText(title, {
-        x: frontCoverLeft + safeMargin,
-        y: inchesToPoints(0.8),
-        size: titleFontSize,
-        font: font,
-        color: rgb(1, 1, 1),
-    });
-
-    // Save and return as Blob
-    const pdfBytes = await pdfDoc.save();
-    return new Blob([pdfBytes], { type: 'application/pdf' });
 }
