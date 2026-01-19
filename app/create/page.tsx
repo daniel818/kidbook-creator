@@ -13,12 +13,16 @@ import {
 } from '@/lib/types';
 import { saveBook } from '@/lib/storage';
 import { ART_STYLES, ArtStyle, ImageQuality } from '@/lib/art-styles';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { Navbar } from '@/components/Navbar';
+import { AuthModal } from '@/components/AuthModal';
 import styles from './page.module.css';
 
 type WizardStep = 'child' | 'type' | 'theme' | 'style' | 'title';
 
 export default function CreateBookPage() {
     const router = useRouter();
+    const { user, isLoading: isAuthLoading } = useAuth();
     const [currentStep, setCurrentStep] = useState<WizardStep>('child');
     const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string; artStyle?: ArtStyle }>({
         childName: '',
@@ -34,6 +38,9 @@ export default function CreateBookPage() {
     const [childPhoto, setChildPhoto] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [pendingCreate, setPendingCreate] = useState(false);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     // Cleanup object URL to prevent memory leaks
     useEffect(() => {
@@ -46,6 +53,40 @@ export default function CreateBookPage() {
 
     const steps: WizardStep[] = ['child', 'type', 'theme', 'style', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
+
+    // Track unsaved changes
+    useEffect(() => {
+        const hasData = settings.childName || settings.bookType || settings.bookTheme || settings.artStyle || settings.title || childPhoto;
+        setHasUnsavedChanges(!!hasData);
+    }, [settings, childPhoto]);
+
+    // Warn before leaving if there are unsaved changes
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [hasUnsavedChanges]);
+
+    const handleBack = () => {
+        if (currentStepIndex === 0) {
+            // On first step, check for unsaved changes before going back
+            if (hasUnsavedChanges) {
+                const confirmLeave = window.confirm(
+                    'You have unsaved changes. Are you sure you want to leave? Your progress will be lost.'
+                );
+                if (!confirmLeave) return;
+            }
+            router.push('/');
+        } else {
+            setCurrentStep(steps[currentStepIndex - 1]);
+        }
+    };
 
     const canProceed = () => {
         switch (currentStep) {
@@ -81,18 +122,23 @@ export default function CreateBookPage() {
         if (nextIndex < steps.length) {
             setCurrentStep(steps[nextIndex]);
         } else {
-            handleCreate();
+            // Check if user is authenticated before generating
+            if (!user && !isAuthLoading) {
+                setPendingCreate(true);
+                setShowAuthModal(true);
+            } else {
+                handleCreate();
+            }
         }
     };
 
-    const handleBack = () => {
-        const prevIndex = currentStepIndex - 1;
-        if (prevIndex >= 0) {
-            setCurrentStep(steps[prevIndex]);
-        } else {
-            router.push('/');
+    // Handle auth modal close - if user just authenticated and we have a pending create, proceed
+    useEffect(() => {
+        if (pendingCreate && user && !showAuthModal) {
+            setPendingCreate(false);
+            handleCreate();
         }
-    };
+    }, [user, pendingCreate, showAuthModal]);
 
     const handleCreate = async () => {
         const startTime = Date.now();
@@ -135,6 +181,16 @@ export default function CreateBookPage() {
             const genStart = Date.now();
             setCreatingStatus('Creating your magical story...');
 
+            // Convert photo to base64 if present for the generation API
+            let base64Photo: string | undefined;
+            if (childPhoto) {
+                base64Photo = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result as string);
+                    reader.readAsDataURL(childPhoto);
+                });
+            }
+
             const requestBody = {
                 childName: settings.childName || 'My Child',
                 childAge: settings.childAge || 3,
@@ -145,7 +201,7 @@ export default function CreateBookPage() {
                 storyDescription: settings.storyDescription,
                 artStyle: settings.artStyle || 'storybook_classic',
                 imageQuality: settings.imageQuality || 'fast',
-                childPhoto: childPhoto || undefined,
+                childPhoto: base64Photo,
             };
             console.log('[CLIENT] Request body:', requestBody);
 
@@ -166,7 +222,7 @@ export default function CreateBookPage() {
             const data = await response.json();
             console.log('[CLIENT] API response data:', data);
 
-            console.log('[CLIENT] Step 3: Navigating to book page...');
+            console.log('[CLIENT] Step 3: Navigating to book viewer...');
             setCreatingStatus('Opening your book...');
             await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -175,7 +231,7 @@ export default function CreateBookPage() {
             console.log(`[CLIENT] === BOOK CREATION COMPLETE in ${totalDuration}ms ===`);
             console.log('[CLIENT] ========================================');
 
-            router.push(`/create/${data.bookId}`);
+            router.push(`/book/${data.bookId}`);
         } catch (error) {
             const totalDuration = Date.now() - startTime;
             console.log('[CLIENT] ========================================');
@@ -193,23 +249,20 @@ export default function CreateBookPage() {
     };
 
     return (
-        <main className={styles.main}>
+        <>
+            <Navbar />
+            <main className={styles.main}>
+                {/* Auth Modal for deferred authentication */}
+                <AuthModal
+                    isOpen={showAuthModal}
+                    onClose={() => setShowAuthModal(false)}
+                />
+
             {/* Background */}
             <div className={styles.background}>
                 <div className={styles.bgShape1}></div>
                 <div className={styles.bgShape2}></div>
             </div>
-
-            {/* Header */}
-            <header className={styles.header}>
-                <button className={styles.backButton} onClick={handleBack}>
-                    ← Back
-                </button>
-                <div className={styles.logo}>
-                    <span>📚</span> KidBook Creator
-                </div>
-                <div className={styles.placeholder}></div>
-            </header>
 
             {/* Progress bar */}
             <div className={styles.progressContainer}>
@@ -229,6 +282,9 @@ export default function CreateBookPage() {
                         </div>
                     ))}
                 </div>
+                <button className={styles.backButton} onClick={handleBack}>
+                    ← Back
+                </button>
             </div>
 
             {/* Wizard Content */}
@@ -619,5 +675,6 @@ export default function CreateBookPage() {
                 </button>
             </div>
         </main>
+        </>
     );
 }

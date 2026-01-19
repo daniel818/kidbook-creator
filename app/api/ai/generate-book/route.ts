@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality } = body;
-        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality });
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto } = body;
+        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto });
 
         if (!childName || !bookTheme || !bookType) {
             log('ERROR: Missing required fields');
@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
             storyDescription,
             artStyle: artStyle || 'storybook_classic',
             imageQuality: imageQuality || 'fast',
+            childPhoto,
         };
 
         // Generate the complete book (story + illustrations)
