@@ -329,31 +329,57 @@ export async function generateCompleteBook(
 
     const characterDescription = story.characterDescription || input.characterDescription || `A cute child named ${input.childName}`;
 
-    const illustrations: string[] = [];
-    for (let i = 0; i < story.pages.length; i++) {
-        onProgress?.(`Painting page ${i + 1}...`, 20 + (70 * i / story.pages.length));
+    const illustrations: string[] = new Array(story.pages.length).fill('');
+
+    // Concurrency Settings
+    const CONCURRENCY_LIMIT = 3;
+    const SAFETY_DELAY_MS = 2000; // 2 seconds between batches to be safe with rate limits
+
+    // Helper to generate a single page
+    const generatePageFn = async (pageIndex: number) => {
         try {
             const { imageUrl, usage: imgUsage } = await generateIllustration(
-                story.pages[i].imagePrompt,
+                story.pages[pageIndex].imagePrompt,
                 characterDescription,
                 input.artStyle,
                 input.imageQuality,
                 input.childPhoto,
                 input.aspectRatio
             );
-            illustrations.push(imageUrl);
+            illustrations[pageIndex] = imageUrl;
             generationLogs.push({
-                stepName: `illustration_page_${i + 1}`,
+                stepName: `illustration_page_${pageIndex + 1}`,
                 model: imgUsage.model,
                 inputTokens: 0,
                 outputTokens: 0,
                 imageCount: 1
             });
         } catch (e) {
-            console.error(e);
-            illustrations.push('');
+            console.error(`Failed to generate page ${pageIndex + 1}`, e);
+            illustrations[pageIndex] = ''; // Keep empty on failure
         }
-        if (i < story.pages.length - 1) await new Promise(r => setTimeout(r, 1000));
+    };
+
+    // Process in Batches
+    for (let i = 0; i < story.pages.length; i += CONCURRENCY_LIMIT) {
+        const batchStart = i;
+        const batchEnd = Math.min(i + CONCURRENCY_LIMIT, story.pages.length);
+        const batchPromises: Promise<void>[] = [];
+
+        logWithTime(`Starting batch ${Math.ceil((i + 1) / CONCURRENCY_LIMIT)}: Pages ${batchStart + 1} to ${batchEnd}`);
+        onProgress?.(`Painting pages ${batchStart + 1}-${batchEnd} of ${story.pages.length}...`, 20 + (70 * (i + 1) / story.pages.length));
+
+        for (let j = batchStart; j < batchEnd; j++) {
+            batchPromises.push(generatePageFn(j));
+        }
+
+        await Promise.all(batchPromises);
+
+        // Delay between batches (unless it's the last one)
+        if (batchEnd < story.pages.length) {
+            logWithTime(`Batch complete. Waiting ${SAFETY_DELAY_MS}ms safely...`);
+            await new Promise(r => setTimeout(r, SAFETY_DELAY_MS));
+        }
     }
 
     // Generate Back Cover
