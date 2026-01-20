@@ -298,7 +298,7 @@ export default function Home() {
         <AuthModal
           isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
-          mode={authMode}
+          initialMode={authMode}
         />
 
         {/* Delete Confirmation Modal */}
