@@ -99,14 +99,7 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
                   {book.status}
                 </span>
                 <div className={styles.actionButtons}>
-                  <button
-                    className={styles.editBtn}
-                    onClick={(e) => { e.stopPropagation(); handleEditBook(book.id); }}
-                    aria-label="Edit book"
-                    title="Edit book"
-                  >
-                    ✏️
-                  </button>
+                  {/* Edit Button Removed - Viewer has its own edit mode */}
                   {onDeleteBook && (
                     <button
                       className={styles.deleteBtn}
