@@ -64,6 +64,7 @@ export interface Book {
   createdAt: Date;
   updatedAt: Date;
   thumbnailUrl?: string;
+  estimatedCost?: number;
 }
 
 export interface OrderDetails {

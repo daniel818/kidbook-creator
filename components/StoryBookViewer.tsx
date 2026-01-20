@@ -538,6 +538,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                                 ← Back
                             </button>
                         )}
+
+                        {book.estimatedCost !== undefined && (
+                            <span className={styles.costBadge} title="Estimated AI Generation Cost">
+                                💸 ${book.estimatedCost.toFixed(3)}
+                            </span>
+                        )}
                     </div>
                 </div>
 
