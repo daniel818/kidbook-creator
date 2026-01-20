@@ -85,7 +85,7 @@ export default function BookViewerPage() {
     }, [bookId]);
 
     const handleClose = () => {
-        router.push('/');
+        router.push('/mybooks');
     };
 
     if (loading) {
