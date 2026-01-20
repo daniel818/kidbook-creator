@@ -103,6 +103,7 @@ export async function GET(
             thumbnailUrl: book.thumbnail_url,
             createdAt: new Date(book.created_at),
             updatedAt: new Date(book.updated_at),
+            estimatedCost: book.estimated_cost,
         };
         log(`Transform completed in ${Date.now() - transformStartTime}ms`);
 
