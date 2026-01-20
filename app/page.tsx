@@ -183,9 +183,11 @@ export default function Home() {
             <div className={styles.bookPreview}>
               <div className={styles.bookCover}>
                 <div className={styles.bookSpine}></div>
-                <div className={styles.bookFront}>
-                  <span className={styles.bookEmoji}>📚</span>
-                  <span className={styles.bookTitle}>My Story</span>
+                <div className={styles.bookFront} style={{
+                  background: 'url(/images/default-cover.png) center/cover'
+                }}>
+                  {/* <span className={styles.bookEmoji}>📚</span> */}
+                  {/* <span className={styles.bookTitle}>My Story</span> */}
                 </div>
               </div>
               <div className={styles.bookShadow}></div>
@@ -243,18 +245,15 @@ export default function Home() {
                           style={{
                             background: coverImage
                               ? `url(${coverImage}) center/cover`
-                              : `linear-gradient(135deg, ${themeColor} 0%, ${getBookColorSecondary(book.settings.bookTheme)} 100%)`
+                              : `url(/images/default-cover.png) center/cover`
                           }}
                         >
                           {!coverImage && (
-                            <>
-                              <span className={styles.book3DEmoji}>
-                                {getBookEmoji(book.settings.bookType)}
-                              </span>
+                            <div className={styles.defaultCoverContent}>
                               <span className={styles.book3DTitle}>
                                 {book.settings.title}
                               </span>
-                            </>
+                            </div>
                           )}
                           {/* Overlay gradient for realism even with image */}
                           <div className={styles.bookCoverOverlay}></div>
