@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Re-export art styles for convenience
-export { ART_STYLES, type ArtStyle } from '@/lib/art-styles';
+export { ART_STYLES, type ArtStyle } from '../art-styles';
 
 // Helper function for logging with timestamps
 const logWithTime = (message: string, data?: unknown) => {
@@ -85,6 +85,16 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     const textModel = 'gemini-3-flash-preview';
     logWithTime(`Using model: ${textModel}`);
 
+    const getAgeBasedGuidelines = (age: number): string => {
+        if (age <= 2) return "Writing Style: TODDLER (0-2). Very simple, warm, and gentle. Use rhythmic language and comforting sensory words. Focus on friendly animals and magic in everyday things (a twinkling star, a soft bunny). Max 1-2 short sentences. AVOID: Surreal logic (clouds wearing sunglasses), scary elements, or copying famous stories.";
+        if (age <= 5) return "Writing Style: PRESCHOOL (3-5). Simple and bright. Use 2-3 sentences per page. Focus on curiosity and kindness. Use dialog. AVOID: Passive voice, abstract concepts.";
+        if (age <= 8) return "Writing Style: EARLY READER (6-8). Engaging and fun. Use 3-5 sentences per page with simple paragraph structure. mild adventure and humor are good. Vocabulary should be accessible but interesting. AVOID: Overly complex metaphors.";
+        return "Writing Style: PRE-TEEN (9-12). Natural and descriptive. Use 1-2 paragraphs per page. Write like a modern children's novel. Focus on character growth, dialogue, and solving problems. AVOID: Archaic language ('clad in', 'betwixt'), purple prose, or being too childish.";
+    };
+
+    const ageGuidelines = getAgeBasedGuidelines(input.childAge);
+    logWithTime(`Using writing guidelines for age ${input.childAge}: "${ageGuidelines}"`);
+
     const prompt = `
     Create a children's book story based on the following details:
     - Child's Name: ${input.childName}
@@ -96,6 +106,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     ${input.storyDescription ? `- Specific Story Request: ${input.storyDescription}` : ''}
 
     The story should be engaging, age-appropriate, and magical.
+    ${ageGuidelines}
     
     OUTPUT FORMAT:
     Return ONLY a valid JSON object with the following structure:
