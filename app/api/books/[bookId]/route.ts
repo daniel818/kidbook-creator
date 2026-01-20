@@ -74,6 +74,7 @@ export async function GET(
                 ageGroup: book.age_group,
                 bookType: book.book_type,
                 bookTheme: book.book_theme,
+                printFormat: book.print_format,
             },
             pages: book.pages
                 .sort((a: { page_number: number }, b: { page_number: number }) => a.page_number - b.page_number)
@@ -238,6 +239,7 @@ export async function PUT(
                 ageGroup: updatedBook.age_group,
                 bookType: updatedBook.book_type,
                 bookTheme: updatedBook.book_theme,
+                printFormat: updatedBook.print_format,
             },
             pages: updatedBook.pages
                 .sort((a: { page_number: number }, b: { page_number: number }) => a.page_number - b.page_number)
