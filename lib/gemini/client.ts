@@ -82,7 +82,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     const startTime = Date.now();
     logWithTime('=== STORY GENERATION STARTED ===');
 
-    const textModel = 'gemini-3-flash-preview';
+    const textModel = process.env.GEMINI_TEXT_MODEL || 'gemini-3-flash-preview';
     logWithTime(`Using model: ${textModel}`);
 
     const prompt = `
@@ -186,7 +186,7 @@ export async function generateIllustration(
         Ratio: ${aspectRatio === '1:1' ? 'Square 1:1' : '3:4 Portrait'}.
         High quality, detailed.`;
 
-        const modelName = 'gemini-3-pro-image-preview';
+        const modelName = process.env.GEMINI_REF_IMAGE_MODEL || 'gemini-3-pro-image-preview';
 
         try {
             const response = await genAI.models.generateContent({
@@ -222,58 +222,12 @@ export async function generateIllustration(
         }
     }
 
-    // --- MODE 2: Standard Text-to-Image (Imagen 4) ---
-    logWithTime(`Using Standard Mode (Imagen 4)`);
-
-    const fullPrompt = `Children's book illustration. ${styleInfo.prompt}.
-    
-    Scene: ${scenePrompt}
-    
-    Character: ${characterDescription}
-    
-    Ensure the art style is consistent with the description above. High quality, vibrant, detailed, ${aspectRatio === '1:1' ? 'square 1:1' : '3:4 portrait'} ratio.`;
-
-    const imageModel = quality === 'pro' ? 'imagen-4.0-generate-ultra-001' : 'imagen-4.0-generate-001';
-    logWithTime(`Using model: ${imageModel} with ratio ${aspectRatio}`);
-
-    try {
-        const response = await genAI.models.generateImages({
-            model: imageModel,
-            prompt: fullPrompt,
-            config: {
-                aspectRatio: aspectRatio,
-            }
-        });
-
-        const image = response.generatedImages?.[0]?.image;
-
-        if (image?.imageBytes) {
-            const totalDuration = Date.now() - startTime;
-            logWithTime(`=== IMAGE GENERATION COMPLETED in ${totalDuration}ms ===`);
-            return {
-                imageUrl: `data:image/png;base64,${image.imageBytes}`,
-                usage: {
-                    inputTokens: 0,
-                    outputTokens: 0,
-                    totalTokens: 0,
-                    imageCount: 1,
-                    model: imageModel
-                }
-            };
-        } else {
-            throw new Error('No image returned');
-        }
-
-    } catch (e: any) {
-        console.error('[IMAGEN ERROR]', e);
-        throw e;
-    }
 }
 
 // Extract character description
 export async function extractCharacterFromPhoto(base64Image: string): Promise<string> {
     const startTime = Date.now();
-    const model = 'gemini-3-flash-preview';
+    const model = process.env.GEMINI_TEXT_MODEL || 'gemini-3-flash-preview';
 
     try {
         const response = await genAI.models.generateContent({

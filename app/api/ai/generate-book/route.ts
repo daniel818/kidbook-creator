@@ -37,11 +37,8 @@ const PRICING = {
     'gemini-3-pro-image-preview': {
         image: 0.04
     },
-    'imagen-4.0-generate-001': {
-        image: 0.04
-    },
-    'imagen-4.0-generate-ultra-001': {
-        image: 0.08 // Assume Pro is double
+    'gemini-2.5-flash-image': {
+        image: 0.039 // ~$30/1M output tokens (approx 1290 tokens/img)
     }
 };
 
