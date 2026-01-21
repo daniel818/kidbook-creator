@@ -158,7 +158,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     }
 }
 
-// Generate an illustration using Gemini/Imagen
+// Generate an illustration using Gemini
 export async function generateIllustration(
     scenePrompt: string,
     characterDescription: string,
@@ -172,56 +172,67 @@ export async function generateIllustration(
 
     const styleInfo = ART_STYLES[artStyle] || ART_STYLES.storybook_classic;
 
-    // --- MODE 1: Reference Image (Gemini 3 Pro Image) ---
+    // --- MODE: Unified Gemini Generation ---
+    // Use Reference Model if reference image exists, otherwise Standard Model
+    const modelName = referenceImage
+        ? (process.env.GEMINI_REF_IMAGE_MODEL || 'gemini-3-pro-image-preview')
+        : (process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview');
+
+    logWithTime(`Using Gemini Image Mode with model: ${modelName}`);
+
+    const parts: any[] = [];
+
+    // Construct Prompt
+    let promptText = `Generate a children's book illustration.
+    Style: ${styleInfo.prompt}
+    Scene: ${scenePrompt}
+    Character: ${characterDescription}
+    Ratio: ${aspectRatio === '1:1' ? 'Square 1:1' : '3:4 Portrait'}.
+    High quality, vibrant, detailed.
+    Ensure the art style is consistent with the description above.`;
+
+    // Add Reference Image if available
     if (referenceImage) {
-        logWithTime('Using Reference Image Mode (Gemini 3 Pro Image)');
+        logWithTime('Including Reference Image in prompt...');
         const base64Image = referenceImage.replace(/^data:image\/\w+;base64,/, '');
+        promptText += "\nIMPORTANT: The character MUST look exactly like the child in the provided reference image. Maintain facial features, hair, and likeness.";
 
-        const prompt = `Generate a children's book illustration.
-        Style: ${styleInfo.prompt}
-        Scene: ${scenePrompt}
-        Character Description: ${characterDescription}
-        IMPORTANT: The character MUST look exactly like the child in the provided reference image.
-        Maintain facial features, hair, and likeness.
-        Ratio: ${aspectRatio === '1:1' ? 'Square 1:1' : '3:4 Portrait'}.
-        High quality, detailed.`;
-
-        const modelName = process.env.GEMINI_REF_IMAGE_MODEL || 'gemini-3-pro-image-preview';
-
-        try {
-            const response = await genAI.models.generateContent({
-                model: modelName,
-                contents: [{
-                    role: 'user',
-                    parts: [
-                        { text: prompt },
-                        { inlineData: { mimeType: 'image/jpeg', data: base64Image } }
-                    ]
-                }]
-            });
-
-            // Extract image from response
-            const part = response.candidates?.[0]?.content?.parts?.[0];
-            if (part?.inlineData?.data) {
-                const totalDuration = Date.now() - startTime;
-                logWithTime(`=== REF IMAGE GENERATION COMPLETED in ${totalDuration}ms ===`);
-
-                return {
-                    imageUrl: `data:${part.inlineData.mimeType || 'image/jpeg'};base64,${part.inlineData.data}`,
-                    usage: {
-                        inputTokens: 0, // Gemini image gen doesn't strictly report text tokens like text models usually, or we treat as 1 image op
-                        outputTokens: 0,
-                        totalTokens: 0,
-                        imageCount: 1,
-                        model: modelName
-                    }
-                };
-            }
-        } catch (e: any) {
-            logWithTime('Gemini 3 Reference Gen Failed, falling back to Imagen 4', e.message);
-        }
+        parts.push({ text: promptText });
+        parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Image } });
+    } else {
+        parts.push({ text: promptText });
     }
 
+    try {
+        const response = await genAI.models.generateContent({
+            model: modelName,
+            contents: [{
+                role: 'user',
+                parts: parts
+            }]
+        });
+
+        const part = response.candidates?.[0]?.content?.parts?.[0];
+        if (part?.inlineData?.data) {
+            const totalDuration = Date.now() - startTime;
+            logWithTime(`=== GEMINI IMAGE GENERATION COMPLETED in ${totalDuration}ms ===`);
+            return {
+                imageUrl: `data:${part.inlineData.mimeType || 'image/jpeg'};base64,${part.inlineData.data}`,
+                usage: {
+                    inputTokens: 0,
+                    outputTokens: 0,
+                    totalTokens: 0,
+                    imageCount: 1,
+                    model: modelName
+                }
+            };
+        } else {
+            throw new Error('No image returned from Gemini');
+        }
+    } catch (e: any) {
+        console.error('[GEMINI IMAGE ERROR]', e);
+        throw e;
+    }
 }
 
 // Extract character description
