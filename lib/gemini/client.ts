@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Re-export art styles for convenience
-export { ART_STYLES, type ArtStyle } from '@/lib/art-styles';
+export { ART_STYLES, type ArtStyle } from '../art-styles';
 
 // Helper function for logging with timestamps
 const logWithTime = (message: string, data?: unknown) => {
@@ -107,7 +107,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
             {
                 "pageNumber": 1,
                 "text": "Story text for this page (keep it short for children)",
-                "imagePrompt": "A detailed description of the illustration for this page, describing the scene and action"
+                "imagePrompt": "A detailed description of the illustration for this page, describing the scene and action ONLY. Do NOT describe the art style (e.g. 'cartoon', 'watercolor') as this is handled separately."
             },
             ...
         ]
@@ -225,11 +225,13 @@ export async function generateIllustration(
     // --- MODE 2: Standard Text-to-Image (Imagen 4) ---
     logWithTime(`Using Standard Mode (Imagen 4)`);
 
-    const fullPrompt = `Create a children's book illustration.
-    Style: ${styleInfo.prompt}
-    Character: ${characterDescription}
+    const fullPrompt = `Children's book illustration. ${styleInfo.prompt}.
+    
     Scene: ${scenePrompt}
-    High quality, vibrant, detailed, ${aspectRatio === '1:1' ? 'square 1:1' : '3:4 portrait'} ratio.`;
+    
+    Character: ${characterDescription}
+    
+    Ensure the art style is consistent with the description above. High quality, vibrant, detailed, ${aspectRatio === '1:1' ? 'square 1:1' : '3:4 portrait'} ratio.`;
 
     const imageModel = quality === 'pro' ? 'imagen-4.0-generate-ultra-001' : 'imagen-4.0-generate-001';
     logWithTime(`Using model: ${imageModel} with ratio ${aspectRatio}`);
