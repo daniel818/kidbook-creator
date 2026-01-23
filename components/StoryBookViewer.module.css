@@ -380,7 +380,41 @@
     /* Clip the overflowing 110% image to the page shape */
     overflow: hidden;
     /* Match the book's outer rounded corners (straight on left/spine, rounded on right) */
-    border-radius: 0 24px 24px 0;
+    /* Match the book's outer rounded corners (straight on left/spine, rounded on right) */
+    /* Updated to 16px to match BookGrid hardcover style */
+    border-radius: 0 16px 16px 0;
+}
+
+/* Texture Layer for Cover */
+.bookTexture {
+    position: absolute;
+    inset: 0;
+    background-image: url("https://www.gstatic.com/lamda/images/storybook/page_texture_771d37929812a16ff91fb.webp");
+    background-size: cover;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: multiply;
+}
+
+/* Spine Crease / Overlay for Cover */
+.spineOverlay {
+    position: absolute;
+    inset: 0;
+    /* Gemini Hardcover Spine Gradient */
+    background: linear-gradient(90deg,
+            #000 0px,
+            rgba(0, 0, 0, 0) 2%,
+            rgba(0, 0, 0, 0) 6%,
+            rgba(0, 0, 0, 0.5) 7%,
+            rgba(0, 0, 0, 0.5) 7.1%,
+            rgba(0, 0, 0, 0) 8.3%,
+            rgba(0, 0, 0, 0) 11.5%,
+            rgba(0, 0, 0, 0) 98%,
+            #000 100%);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 20;
 }
 
 /* Reset when not in cover mode - smooth transition to spread view */

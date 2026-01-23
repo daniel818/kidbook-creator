@@ -640,6 +640,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                                         : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
                                 }}
                             >
+                                <div className={styles.bookTexture}></div>
+                                <div className={styles.spineOverlay}></div>
                                 <div className={styles.coverOverlay}>
                                     <h1 className={styles.coverTitle}>{displayTitle}</h1>
                                     <p className={styles.coverSubtitle}>
