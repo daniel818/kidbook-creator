@@ -13,5 +13,14 @@
     "title": "Buch löschen",
     "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
     "confirmText": "Löschen"
+  },
+  "bookCard": {
+    "pages": "{{count}} S.",
+    "forChild": "Für {{childName}}, {{age}} Jahre alt",
+    "status": {
+      "draft": "Entwurf",
+      "complete": "Fertig",
+      "published": "Veröffentlicht"
+    }
   }
 }

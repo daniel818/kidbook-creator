@@ -13,5 +13,14 @@
     "title": "Delete Book",
     "message": "Are you sure you want to delete this book? This action cannot be undone.",
     "confirmText": "Delete"
+  },
+  "bookCard": {
+    "pages": "{{count}} pgs",
+    "forChild": "For {{childName}}, age {{age}}",
+    "status": {
+      "draft": "Draft",
+      "complete": "Complete",
+      "published": "Published"
+    }
   }
 }

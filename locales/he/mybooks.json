@@ -13,5 +13,14 @@
     "title": "מחק ספר",
     "message": "האם אתה בטוח שברצונך למחוק את הספר הזה? לא ניתן לבטל פעולה זו.",
     "confirmText": "מחק"
+  },
+  "bookCard": {
+    "pages": "{{count}} עמ'",
+    "forChild": "עבור {{childName}}, גיל {{age}}",
+    "status": {
+      "draft": "טיוטה",
+      "complete": "הושלם",
+      "published": "פורסם"
+    }
   }
 }

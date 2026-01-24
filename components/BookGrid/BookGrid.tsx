@@ -14,7 +14,7 @@ interface BookGridProps {
 
 export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridProps) {
   const router = useRouter();
-  const { t } = useTranslation('home');
+  const { t } = useTranslation('mybooks');
   const [openingBookId, setOpeningBookId] = useState<string | null>(null);
 
   const handleViewBook = (bookId: string) => {

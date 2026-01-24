@@ -177,15 +177,17 @@ TextPage.displayName = 'TextPage';
 // ============================================
 // Main StoryBookViewer Component
 // ============================================
-export default function StoryBookViewer({ book, onClose, isFullScreen = false }: StoryBookViewerProps) {
+export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscreen = false }: StoryBookViewerProps) {
     const router = useRouter();
-    const { t, i18n } = useTranslation('common');
+    const { t } = useTranslation(['common', 'viewer']);
+    const flipBookRef = useRef<any>(null);
     const bookRef = useRef<any>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
-    const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const isRTL = (book.language || book.settings.language) === 'he';
+    const [isFullScreen, setIsFullScreen] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
-    const [isGeneratingPrint, setIsGeneratingPrint] = useState(false); // New state
-    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isGeneratingPrint, setIsGeneratingPrint] = useState(false);
+    const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
     // Editor State
     const [isEditing, setIsEditing] = useState(false);
@@ -693,7 +695,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
 
             {/* Keyboard Hint */}
             <div className={styles.keyboardHint}>
-                Use ← → arrow keys or click to flip pages
+                {t('viewer:controls.keyboardHint')}
             </div>
 
             {/* Hidden Print Generator */}
