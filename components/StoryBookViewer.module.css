@@ -764,6 +764,11 @@
     background: rgba(210, 180, 160, 0.2);
 }
 
+[dir="rtl"] .textPage::before {
+    left: auto;
+    right: 2rem;
+}
+
 .textPageContent {
     flex: 1;
     display: flex;
@@ -814,6 +819,13 @@
     margin-top: 0.15rem;
     color: var(--accent-primary);
     text-shadow: 2px 2px 0 rgba(99, 102, 241, 0.1);
+}
+
+/* RTL: Drop cap floats right */
+[dir="rtl"] .storyParagraph:first-child::first-letter {
+    float: right;
+    margin-right: 0;
+    margin-left: 0.5rem;
 }
 
 .storyParagraph:last-child {

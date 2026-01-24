@@ -6,6 +6,17 @@
     "titleEnd": "Kinderbücher",
     "subtitle": "Gestalte wunderschöne individuelle Bücher für deine Kleinen. Lade Fotos hoch, schreibe Geschichten und bestelle professionell gedruckte Bücher direkt nach Hause.",
     "ctaButton": "Dein Buch erstellen",
+    "noBooks": "Noch keine Bücher. Erstelle dein erstes Buch!",
+    "createNewBook": "Neues Buch erstellen",
+    "bookCard": {
+      "pages": "{{count}} S.",
+      "forChild": "Für {{childName}}, {{age}} Jahre alt",
+      "status": {
+        "draft": "Entwurf",
+        "complete": "Fertig",
+        "published": "Veröffentlicht"
+      }
+    },
     "features": {
       "easyToUse": "Einfach zu bedienen",
       "printShip": "Drucken & versenden",

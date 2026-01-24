@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Book } from '@/lib/types';
 import styles from './BookGrid.module.css';
 
@@ -13,6 +14,7 @@ interface BookGridProps {
 
 export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridProps) {
   const router = useRouter();
+  const { t } = useTranslation('home');
   const [openingBookId, setOpeningBookId] = useState<string | null>(null);
 
   const handleViewBook = (bookId: string) => {
@@ -86,17 +88,17 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
                   {book.settings.title || `${book.settings.childName}'s Book`}
                 </h3>
                 <span className={styles.pageCountBadge}>
-                  {book.pages.length} pgs
+                  {t('bookCard.pages', { count: book.pages.length })}
                 </span>
               </div>
 
               <p className={styles.bookCardMeta}>
-                For {book.settings.childName}, age {book.settings.childAge}
+                {t('bookCard.forChild', { childName: book.settings.childName, age: book.settings.childAge })}
               </p>
 
               <div className={styles.bookItemActions}>
                 <span className={`${styles.statusBadge} ${styles[book.status]}`}>
-                  {book.status}
+                  {t(`bookCard.status.${book.status}`)}
                 </span>
                 <div className={styles.actionButtons}>
                   {/* Edit Button Removed - Viewer has its own edit mode */}

@@ -457,6 +457,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
         const spreads: React.ReactNode[] = [];
         // Get inner pages (skip cover page at index 0)
         const innerPages = book.pages.filter(p => p.type === 'inside');
+        const isRTL = (book.language || book.settings.language) === 'he';
 
         innerPages.forEach((page, index) => {
             const pageNum = index + 1; // 1-based
@@ -467,12 +468,17 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             const displayText = edit.text || (page.textElements[0]?.content || '');
             const textElements = [{ ...page.textElements[0], content: displayText }];
 
+            // For RTL books, flip the page numbering
+            // Right page (text) should be lower number in RTL
+            const leftPageNum = isRTL ? pageNum * 2 : pageNum * 2 - 1;
+            const rightPageNum = isRTL ? pageNum * 2 - 1 : pageNum * 2;
+
             // Left page: Illustration
             spreads.push(
                 <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
                     <IllustrationPage
                         imageUrl={displayImage || undefined}
-                        pageNumber={pageNum * 2 - 1}
+                        pageNumber={leftPageNum}
                         themeColors={themeColors}
                         isEditing={isEditing}
                         isRegenerating={regeneratingPage === pageNum}
@@ -486,7 +492,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                 <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
                     <TextPage
                         textElements={textElements}
-                        pageNumber={pageNum * 2}
+                        pageNumber={rightPageNum}
                         isEditing={isEditing}
                         onTextChange={(idx, val) => handleTextChange(index, idx, val)}
                     />

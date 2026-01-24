@@ -6,6 +6,17 @@
     "titleEnd": "Children's Books",
     "subtitle": "Design beautiful custom books for your little ones. Upload photos, write stories, and order professionally printed books delivered to your door.",
     "ctaButton": "Create Your Book",
+    "noBooks": "No books yet. Create your first book!",
+    "createNewBook": "Create New Book",
+    "bookCard": {
+      "pages": "{{count}} pgs",
+      "forChild": "For {{childName}}, age {{age}}",
+      "status": {
+        "draft": "Draft",
+        "complete": "Complete",
+        "published": "Published"
+      }
+    },
     "features": {
       "easyToUse": "Easy to use",
       "printShip": "Print & ship",
