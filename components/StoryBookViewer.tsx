@@ -214,10 +214,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         try {
             if (!document.fullscreenElement) {
                 await viewerRef.current.requestFullscreen();
-                setIsFullscreen(true);
+                setIsFullScreen(true);
             } else {
                 await document.exitFullscreen();
-                setIsFullscreen(false);
+                setIsFullScreen(false);
             }
         } catch (error) {
             console.error('Fullscreen error:', error);
@@ -227,7 +227,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     // Listen for fullscreen changes (user might exit with Esc)
     useEffect(() => {
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
+            setIsFullScreen(!!document.fullscreenElement);
         };
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -612,7 +612,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             </div>
 
             {/* Book Container */}
-            <div className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''} ${currentPageIndex === totalFlipPages - 1 ? styles.backCoverMode : ''}`}>
+            <div 
+                className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''} ${currentPageIndex === totalFlipPages - 1 ? styles.backCoverMode : ''}`}
+                dir={isRTL ? 'rtl' : 'ltr'}
+            >
                 <div className={styles.centeringWrapper}>
                     {/* @ts-ignore - Library types are tricky */}
                     <HTMLFlipBook
