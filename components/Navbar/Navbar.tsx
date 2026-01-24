@@ -55,7 +55,7 @@ export function Navbar() {
         ))}
       </div>
 
-      {/* Right: Create Button + Language Switcher + User Nav */}
+      {/* Right: Create Button + Sign In/User Nav + Language Switcher */}
       <div className={styles.navActions}>
         {!isLoading && (
           <button
@@ -67,19 +67,23 @@ export function Navbar() {
           </button>
         )}
         
-        <LanguageSwitcher />
-        
         {isLoading ? (
           <div className={styles.navSkeleton}></div>
         ) : user ? (
-          <UserNav />
+          <>
+            <LanguageSwitcher />
+            <UserNav />
+          </>
         ) : (
-          <button
-            className={styles.signInButton}
-            onClick={() => setShowAuthModal(true)}
-          >
-            {t('signIn')}
-          </button>
+          <>
+            <button
+              className={styles.signInButton}
+              onClick={() => setShowAuthModal(true)}
+            >
+              {t('signIn')}
+            </button>
+            <LanguageSwitcher />
+          </>
         )}
       </div>
       
