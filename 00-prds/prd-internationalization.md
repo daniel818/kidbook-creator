@@ -360,31 +360,31 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **2.1 Add German and Hebrew translation files**
+- [x] **2.1 Add German and Hebrew translation files**
   - Create `/locales/de/common.json` with `{ "test": "Hallo Welt" }`
   - Create `/locales/he/common.json` with `{ "test": "שלום עולם" }`
-  - [ ] Verify files are valid JSON
+  - [x] Verify files are valid JSON
 
-- [ ] **2.2 Update i18next config for multiple languages**
+- [x] **2.2 Update i18next config for multiple languages**
   - Add de and he to supported languages
   - Configure language detector
-  - [ ] Run `npm run dev` - verify no errors
+  - [x] Run `npm run dev` - verify no errors
 
-- [ ] **2.3 Create LanguageSwitcher component**
+- [x] **2.3 Create LanguageSwitcher component**
   - Create `/components/LanguageSwitcher/LanguageSwitcher.tsx`
   - Simple dropdown with three options
   - Use `i18next.changeLanguage()` on click
-  - [ ] Test component in isolation
+  - [x] Test component in isolation
 
-- [ ] **2.4 Add LanguageSwitcher to Navbar**
+- [x] **2.4 Add LanguageSwitcher to Navbar**
   - Import and add next to user profile
-  - [ ] Run `npm run dev` - verify switcher appears
+  - [x] Run `npm run dev` - verify switcher appears
 
-- [ ] **2.5 Test language switching**
+- [x] **2.5 Test language switching**
   - Click each language
   - Verify "test" string changes
   - Verify localStorage is updated
-  - [ ] If all work, Phase 2 is COMPLETE ✅
+  - [x] If all work, Phase 2 is COMPLETE ✅
 
 **Phase 2 Deliverable:** Working language switcher that persists preference.
 

@@ -3,6 +3,8 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import commonEN from '@/locales/en/common.json';
+import commonDE from '@/locales/de/common.json';
+import commonHE from '@/locales/he/common.json';
 
 i18n
   .use(LanguageDetector)
@@ -11,6 +13,12 @@ i18n
     resources: {
       en: {
         common: commonEN,
+      },
+      de: {
+        common: commonDE,
+      },
+      he: {
+        common: commonHE,
       },
     },
     fallbackLng: 'en',

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { UserNav } from '@/components/UserNav';
 import { AuthModal } from '@/components/AuthModal';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
@@ -54,7 +55,7 @@ export function Navbar() {
         ))}
       </div>
 
-      {/* Right: Create Button + User Nav */}
+      {/* Right: Create Button + Language Switcher + User Nav */}
       <div className={styles.navActions}>
         {!isLoading && (
           <button
@@ -65,6 +66,8 @@ export function Navbar() {
             <span className={styles.createButtonText}>Create a Book</span>
           </button>
         )}
+        
+        <LanguageSwitcher />
         
         {isLoading ? (
           <div className={styles.navSkeleton}></div>
