@@ -2,6 +2,7 @@
 
 import { useState, useRef, forwardRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
@@ -178,6 +179,7 @@ TextPage.displayName = 'TextPage';
 // ============================================
 export default function StoryBookViewer({ book, onClose, isFullScreen = false }: StoryBookViewerProps) {
     const router = useRouter();
+    const { t, i18n } = useTranslation('common');
     const bookRef = useRef<any>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -645,7 +647,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                                 <div className={styles.coverOverlay}>
                                     <h1 className={styles.coverTitle}>{displayTitle}</h1>
                                     <p className={styles.coverSubtitle}>
-                                        For {book.settings.childName}, age {book.settings.childAge}
+                                        {(book.language || book.settings.language) === 'he' ? `${book.settings.childName}, גיל ${book.settings.childAge}` :
+                                         (book.language || book.settings.language) === 'de' ? `Für ${book.settings.childName}, ${book.settings.childAge} Jahre alt` :
+                                         `For ${book.settings.childName}, age ${book.settings.childAge}`}
                                     </p>
                                 </div>
                             </div>
@@ -666,7 +670,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                                 }}
                             >
                                 <div className={styles.coverOverlay}>
-                                    <h2 className={styles.coverTitle}>The End</h2>
+                                    <h2 className={styles.coverTitle}>
+                                        {(book.language || book.settings.language) === 'he' ? 'סוף' :
+                                         (book.language || book.settings.language) === 'de' ? 'Ende' :
+                                         'The End'}
+                                    </h2>
                                     <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
                                         {backCoverText}
                                     </p>

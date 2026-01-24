@@ -19,6 +19,7 @@ export interface BookSettings {
   artStyle?: import('@/lib/art-styles').ArtStyle;
   imageQuality?: import('@/lib/art-styles').ImageQuality;
   printFormat?: 'square' | 'portrait';
+  language?: 'en' | 'de' | 'he';
 }
 
 export interface TextElement {
@@ -65,6 +66,7 @@ export interface Book {
   updatedAt: Date;
   thumbnailUrl?: string;
   estimatedCost?: number;
+  language?: 'en' | 'de' | 'he';
 }
 
 export interface OrderDetails {

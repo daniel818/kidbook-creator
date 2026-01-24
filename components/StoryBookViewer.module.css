@@ -719,6 +719,11 @@
     position: absolute;
     bottom: 1.25rem;
     left: 1.75rem;
+}
+
+[dir="rtl"] .illustrationPageNumber {
+    left: auto;
+    right: 1.75rem;
     font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     font-weight: 500;
@@ -819,6 +824,11 @@
     position: absolute;
     bottom: 1.25rem;
     right: 1.75rem;
+}
+
+[dir="rtl"] .textPageNumber {
+    right: auto;
+    left: 1.75rem;
     font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     font-weight: 400;

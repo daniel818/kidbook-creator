@@ -220,7 +220,8 @@ export async function POST(request: NextRequest) {
             book_type: bookType,
             print_format: aspectRatio === '1:1' ? 'square' : 'portrait',
             status: 'draft',
-            estimated_cost: totalCost // Save aggregated cost
+            estimated_cost: totalCost, // Save aggregated cost
+            language: language || 'en' // Save book language
         });
 
         if (dbError) {
