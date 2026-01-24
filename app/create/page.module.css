@@ -516,6 +516,15 @@
     }
 }
 
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header {

@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     BookSettings,
@@ -17,7 +16,6 @@ import { ART_STYLES, ArtStyle, ImageQuality } from '@/lib/art-styles';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
-import { AlertModal } from '@/components/AlertModal';
 import styles from './page.module.css';
 
 type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
@@ -25,7 +23,6 @@ type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
 export default function CreateBookPage() {
     const router = useRouter();
     const { user, isLoading: isAuthLoading } = useAuth();
-    const { t, i18n } = useTranslation('create');
     const [currentStep, setCurrentStep] = useState<WizardStep>('child');
     const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string; artStyle?: ArtStyle }>({
         childName: '',
@@ -45,41 +42,6 @@ export default function CreateBookPage() {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [pendingCreate, setPendingCreate] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-    const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
-    const [pendingLanguage, setPendingLanguage] = useState<string | null>(null);
-    const previousLanguageRef = useRef<string>(i18n.language);
-
-    // Track unsaved changes
-    useEffect(() => {
-        const hasChanges = !!(settings.childName || settings.childAge !== 3 || settings.bookType || settings.bookTheme || settings.storyDescription || childPhoto);
-        setHasUnsavedChanges(hasChanges);
-    }, [settings, childPhoto]);
-
-    // Detect language changes and show warning if there are unsaved changes
-    useEffect(() => {
-        const handleLanguageChange = (lng: string) => {
-            // Prevent infinite loop - only act if language actually changed
-            if (lng === previousLanguageRef.current) {
-                return;
-            }
-
-            if (hasUnsavedChanges && !isCreating) {
-                // Language is about to change, show warning
-                setPendingLanguage(lng);
-                setShowUnsavedChangesModal(true);
-                // Revert to previous language temporarily
-                i18n.changeLanguage(previousLanguageRef.current);
-            } else {
-                // No unsaved changes, allow language change
-                previousLanguageRef.current = lng;
-            }
-        };
-
-        i18n.on('languageChanged', handleLanguageChange);
-        return () => {
-            i18n.off('languageChanged', handleLanguageChange);
-        };
-    }, [hasUnsavedChanges, isCreating, i18n]);
 
     // Cleanup object URL to prevent memory leaks
     useEffect(() => {
@@ -92,6 +54,12 @@ export default function CreateBookPage() {
 
     const steps: WizardStep[] = ['child', 'type', 'format', 'theme', 'style', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
+
+    // Track unsaved changes
+    useEffect(() => {
+        const hasData = settings.childName || settings.bookType || settings.bookTheme || settings.artStyle || settings.title || childPhoto;
+        setHasUnsavedChanges(!!hasData);
+    }, [settings, childPhoto]);
 
     // Warn before leaving if there are unsaved changes
     useEffect(() => {
@@ -141,17 +109,12 @@ export default function CreateBookPage() {
     };
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('[PHOTO] File input changed', e.target.files);
         const file = e.target.files?.[0];
         if (file) {
-            console.log('[PHOTO] File selected:', file.name, file.size, file.type);
             setChildPhoto(file);
             // Use createObjectURL for better performance and reliability
             const objectUrl = URL.createObjectURL(file);
-            console.log('[PHOTO] Object URL created:', objectUrl);
             setPhotoPreview(objectUrl);
-        } else {
-            console.log('[PHOTO] No file selected');
         }
     };
 
@@ -174,11 +137,15 @@ export default function CreateBookPage() {
 
     // Handle auth modal close - if user just authenticated and we have a pending create, proceed
     useEffect(() => {
-        if (pendingCreate && user && !showAuthModal) {
-            setPendingCreate(false);
-            handleCreate();
+        if (pendingCreate && user && !showAuthModal && !isAuthLoading) {
+            // Wait a bit for auth state to fully stabilize
+            const timer = setTimeout(() => {
+                setPendingCreate(false);
+                handleCreate();
+            }, 500);
+            return () => clearTimeout(timer);
         }
-    }, [user, pendingCreate, showAuthModal]);
+    }, [user, pendingCreate, showAuthModal, isAuthLoading]);
 
     const handleCreate = async () => {
         const startTime = Date.now();
@@ -195,7 +162,7 @@ export default function CreateBookPage() {
             if (childPhoto) {
                 console.log('[CLIENT] Step 1: Extracting character from photo...');
                 const extractStart = Date.now();
-                setCreatingStatus(t('status.extractingCharacter'));
+                setCreatingStatus('Analyzing photo...');
                 const formData = new FormData();
                 formData.append('photo', childPhoto);
 
@@ -217,9 +184,9 @@ export default function CreateBookPage() {
             }
 
             // Step 2: Generate the complete book with AI
-            console.log('[CLIENT] Step 2: Generating complete book...');
+            console.log('[CLIENT] Step 2: Calling generate-book API...');
             const genStart = Date.now();
-            setCreatingStatus(t('status.generatingStory'));
+            setCreatingStatus('Creating your magical story...');
 
             // Convert photo to base64 if present for the generation API
             let base64Photo: string | undefined;
@@ -243,7 +210,6 @@ export default function CreateBookPage() {
                 artStyle: settings.artStyle || 'storybook_classic',
                 imageQuality: settings.imageQuality || 'fast',
                 childPhoto: base64Photo,
-                language: i18n.language || 'en',
             };
             console.log('[CLIENT] Request body:', requestBody);
 
@@ -265,7 +231,7 @@ export default function CreateBookPage() {
             console.log('[CLIENT] API response data:', data);
 
             console.log('[CLIENT] Step 3: Navigating to book viewer...');
-            setCreatingStatus(t('status.openingBook'));
+            setCreatingStatus('Opening your book...');
             await new Promise(resolve => setTimeout(resolve, 500));
 
             const totalDuration = Date.now() - startTime;
@@ -282,7 +248,7 @@ export default function CreateBookPage() {
             console.error('[CLIENT] Error:', error);
             setCreatingStatus('');
             setIsCreating(false);
-            alert(t('errors.creationFailed'));
+            alert('Failed to create book. Please try again.');
         }
     };
 
@@ -294,11 +260,62 @@ export default function CreateBookPage() {
         <>
             <Navbar />
             <main className={styles.main}>
-                {/* Background */}
-                <div className={styles.background}>
-                    <div className={styles.bgShape1}></div>
-                    <div className={styles.bgShape2}></div>
-                </div>
+                {/* Auth Modal for deferred authentication */}
+                <AuthModal
+                    isOpen={showAuthModal}
+                    onClose={() => {
+                        setShowAuthModal(false);
+                        setPendingCreate(false);
+                    }}
+                />
+
+                {/* Loading overlay during book creation */}
+                {isCreating && (
+                    <div style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0, 0, 0, 0.8)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 9999,
+                        backdropFilter: 'blur(4px)'
+                    }}>
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '16px',
+                            textAlign: 'center',
+                            maxWidth: '400px'
+                        }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✨</div>
+                            <h2 style={{ marginBottom: '0.5rem', color: '#1f2937' }}>Creating Your Book</h2>
+                            <p style={{ color: '#6b7280', marginBottom: '1rem' }}>{creatingStatus}</p>
+                            <div style={{
+                                width: '100%',
+                                height: '4px',
+                                background: '#e5e7eb',
+                                borderRadius: '2px',
+                                overflow: 'hidden'
+                            }}>
+                                <div style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
+                                    animation: 'shimmer 2s infinite',
+                                    backgroundSize: '200% 100%'
+                                }}></div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+            {/* Background */}
+            <div className={styles.background}>
+                <div className={styles.bgShape1}></div>
+                <div className={styles.bgShape2}></div>
+            </div>
+
             {/* Progress bar */}
             <div className={styles.progressContainer}>
                 <div className={styles.progressBar}>
@@ -318,7 +335,7 @@ export default function CreateBookPage() {
                     ))}
                 </div>
                 <button className={styles.backButton} onClick={handleBack}>
-                    {t('wizard.back')}
+                    ← Back
                 </button>
             </div>
 
@@ -335,18 +352,18 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>👶</div>
-                            <h1 className={styles.stepTitle}>{t('steps.child.title')}</h1>
+                            <h1 className={styles.stepTitle}>Who is this book for?</h1>
                             <p className={styles.stepSubtitle}>
-                                {t('steps.child.subtitle')}
+                                Tell us about the special child who will enjoy this book
                             </p>
 
                             <div className={styles.formFields}>
                                 <div className={styles.formGroup}>
-                                    <label className={styles.formLabel}>{t('steps.child.nameLabel')}</label>
+                                    <label className={styles.formLabel}>Child&apos;s Name</label>
                                     <input
                                         type="text"
                                         className={styles.formInput}
-                                        placeholder={t('steps.child.namePlaceholder')}
+                                        placeholder="Enter name..."
                                         value={settings.childName || ''}
                                         onChange={(e) => updateSettings('childName', e.target.value)}
                                         autoFocus
@@ -355,7 +372,7 @@ export default function CreateBookPage() {
 
                                 <div className={styles.formGroup}>
                                     <label className={styles.formLabel}>
-                                        {t('steps.child.ageLabel')} <span className={styles.ageValue}>{settings.childAge} {t('steps.child.ageYears')}</span>
+                                        Age: <span className={styles.ageValue}>{settings.childAge} years</span>
                                     </label>
                                     <div className={styles.sliderContainer}>
                                         <input
@@ -379,10 +396,10 @@ export default function CreateBookPage() {
                                 {/* Photo upload for AI character */}
                                 <div className={styles.formGroup}>
                                     <label className={styles.formLabel}>
-                                        {t('steps.child.photoLabel')}
+                                        📷 Upload a photo (optional)
                                     </label>
                                     <p className={styles.inputHint} style={{ marginBottom: '0.5rem' }}>
-                                        {t('steps.child.photoHint')}
+                                        Upload a photo to create a character that looks like your child
                                     </p>
                                     <input
                                         type="file"
@@ -397,7 +414,7 @@ export default function CreateBookPage() {
                                         onClick={() => fileInputRef.current?.click()}
                                         style={{ width: '100%', marginTop: '0.5rem' }}
                                     >
-                                        {childPhoto ? t('steps.child.photoChange') : t('steps.child.photoButton')}
+                                        {childPhoto ? '📷 Change Photo' : '📷 Add Photo'}
                                     </button>
                                     {photoPreview && (
                                         <div style={{ marginTop: '1rem', textAlign: 'center' }}>
@@ -429,9 +446,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>📚</div>
-                            <h1 className={styles.stepTitle}>{t('steps.type.title')}</h1>
+                            <h1 className={styles.stepTitle}>Choose a book type</h1>
                             <p className={styles.stepSubtitle}>
-                                {settings.childName ? t('steps.type.subtitle', { childName: settings.childName }) : t('steps.type.subtitleDefault')}
+                                Select the perfect format for {settings.childName || 'your child'}
                             </p>
 
                             <div className={styles.optionsGrid}>
@@ -445,9 +462,9 @@ export default function CreateBookPage() {
                                             style={{ '--option-color': info.color } as React.CSSProperties}
                                         >
                                             <span className={styles.optionEmoji}>{info.icon}</span>
-                                            <h3 className={styles.optionTitle}>{t(`bookTypes.${type}.label`)}</h3>
-                                            <p className={styles.optionDesc}>{t(`bookTypes.${type}.description`)}</p>
-                                            <span className={styles.optionAge}>{t(`bookTypes.${type}.ageRange`)}</span>
+                                            <h3 className={styles.optionTitle}>{info.label}</h3>
+                                            <p className={styles.optionDesc}>{info.description}</p>
+                                            <span className={styles.optionAge}>{info.ageRange}</span>
                                             {settings.bookType === type && (
                                                 <span className={styles.checkmark}>✓</span>
                                             )}
@@ -468,9 +485,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>📏</div>
-                            <h1 className={styles.stepTitle}>{t('steps.format.title')}</h1>
+                            <h1 className={styles.stepTitle}>Choose a Format</h1>
                             <p className={styles.stepSubtitle}>
-                                {t('steps.format.subtitle')}
+                                Prepare your book for professional printing
                             </p>
 
                             <div className={styles.optionsGrid}>
@@ -480,9 +497,9 @@ export default function CreateBookPage() {
                                     style={{ '--option-color': '#ec4899' } as React.CSSProperties}
                                 >
                                     <span className={styles.optionEmoji}>✨</span>
-                                    <h3 className={styles.optionTitle}>{t('formats.square.label')}</h3>
-                                    <p className={styles.optionDesc}>{t('formats.square.description')}</p>
-                                    <span className={styles.optionAge}>{t('formats.square.pages')}</span>
+                                    <h3 className={styles.optionTitle}>Square Hardcover</h3>
+                                    <p className={styles.optionDesc}>8.5&quot; x 8.5&quot; Premium. The gold standard for kids&apos; books.</p>
+                                    <span className={styles.optionAge}>Min 24 Pages (Auto-set)</span>
                                     {settings.printFormat === 'square' && (
                                         <span className={styles.checkmark}>✓</span>
                                     )}
@@ -494,9 +511,9 @@ export default function CreateBookPage() {
                                     style={{ '--option-color': '#3b82f6' } as React.CSSProperties}
                                 >
                                     <span className={styles.optionEmoji}>📱</span>
-                                    <h3 className={styles.optionTitle}>{t('formats.portrait.label')}</h3>
-                                    <p className={styles.optionDesc}>{t('formats.portrait.description')}</p>
-                                    <span className={styles.optionAge}>{t('formats.portrait.pages')}</span>
+                                    <h3 className={styles.optionTitle}>Portrait / Digital</h3>
+                                    <p className={styles.optionDesc}>6&quot; x 9&quot; Standard. Great for softcover or phones.</p>
+                                    <span className={styles.optionAge}>Flexible Pages</span>
                                     {settings.printFormat === 'portrait' && (
                                         <span className={styles.checkmark}>✓</span>
                                     )}
@@ -515,9 +532,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>🎨</div>
-                            <h1 className={styles.stepTitle}>{t('steps.theme.title')}</h1>
+                            <h1 className={styles.stepTitle}>Pick a theme</h1>
                             <p className={styles.stepSubtitle}>
-                                {t('steps.theme.subtitle')}
+                                What kind of story will this be?
                             </p>
 
                             <div className={styles.themeGrid}>
@@ -534,7 +551,7 @@ export default function CreateBookPage() {
                                             } as React.CSSProperties}
                                         >
                                             <span className={styles.themeEmoji}>{info.icon}</span>
-                                            <span className={styles.themeName}>{t(`themes.${theme}`)}</span>
+                                            <span className={styles.themeName}>{info.label}</span>
                                             {settings.bookTheme === theme && (
                                                 <span className={styles.checkmark}>✓</span>
                                             )}
@@ -546,16 +563,19 @@ export default function CreateBookPage() {
                             <div className={styles.formFields} style={{ marginTop: '2rem' }}>
                                 <div className={styles.formGroup}>
                                     <label className={styles.formLabel}>
-                                        {t('steps.theme.storyLabel')}
+                                        Tell us more about the story (optional)
                                     </label>
                                     <textarea
                                         className={styles.formInput}
-                                        placeholder={t('steps.theme.storyPlaceholder')}
+                                        placeholder="e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
                                         value={settings.storyDescription || ''}
                                         onChange={(e) => setSettings(prev => ({ ...prev, storyDescription: e.target.value }))}
                                         rows={3}
                                         style={{ resize: 'vertical' }}
                                     />
+                                    <p className={styles.inputHint}>
+                                        We&apos;ll use this to make the story even more personal!
+                                    </p>
                                 </div>
                             </div>
                         </motion.div>
@@ -571,9 +591,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>🎨</div>
-                            <h1 className={styles.stepTitle}>{t('steps.style.title')}</h1>
+                            <h1 className={styles.stepTitle}>Choose an art style</h1>
                             <p className={styles.stepSubtitle}>
-                                {t('steps.style.subtitle')}
+                                How should your book&apos;s illustrations look?
                             </p>
 
                             <div className={styles.themeGrid}>
@@ -606,7 +626,7 @@ export default function CreateBookPage() {
                                             } as React.CSSProperties}
                                         >
                                             <span className={styles.themeEmoji}>{emojis[style]}</span>
-                                            <span className={styles.themeName}>{t(`artStyles.${style}`)}</span>
+                                            <span className={styles.themeName}>{info.label}</span>
                                             {settings.artStyle === style && (
                                                 <span className={styles.checkmark}>✓</span>
                                             )}
@@ -617,7 +637,7 @@ export default function CreateBookPage() {
 
                             <div className={styles.qualitySection} style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                 <label className={styles.fieldLabel} style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#1e293b' }}>
-                                    {t('imageQuality.label')}
+                                    ✨ Image Quality
                                 </label>
                                 <div className={styles.qualityToggle} style={{ display: 'flex', gap: '1rem' }}>
                                     <button
@@ -634,7 +654,7 @@ export default function CreateBookPage() {
                                             transition: 'all 0.2s'
                                         }}
                                     >
-                                        {t('imageQuality.fast')}
+                                        ⚡ Fast (Standard)
                                     </button>
                                     <button
                                         onClick={() => setSettings(prev => ({ ...prev, imageQuality: 'pro' }))}
@@ -650,13 +670,13 @@ export default function CreateBookPage() {
                                             transition: 'all 0.2s'
                                         }}
                                     >
-                                        {t('imageQuality.pro')}
+                                        💎 Pro (Imagen 4 Ultra)
                                     </button>
                                 </div>
                                 <p style={{ marginTop: '0.75rem', fontSize: '0.875rem', color: '#64748b' }}>
                                     {settings.imageQuality === 'pro'
-                                        ? t('imageQuality.proDescription')
-                                        : t('imageQuality.fastDescription')}
+                                        ? "Pro mode uses Imagen 4 Ultra for stunning, high-definition illustrations. Takes a bit longer to generate."
+                                        : "Standard mode generates beautiful images quickly using Imagen 4."}
                                 </p>
                             </div>
                         </motion.div>
@@ -672,24 +692,24 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>✨</div>
-                            <h1 className={styles.stepTitle}>{t('steps.title.title')}</h1>
+                            <h1 className={styles.stepTitle}>Name your book</h1>
                             <p className={styles.stepSubtitle}>
-                                {t('steps.title.subtitle')}
+                                Give your story an amazing title
                             </p>
 
                             <div className={styles.formFields}>
                                 <div className={styles.formGroup}>
-                                    <label className={styles.formLabel}>{t('steps.title.titleLabel')}</label>
+                                    <label className={styles.formLabel}>Book Title</label>
                                     <input
                                         type="text"
                                         className={`${styles.formInput} ${styles.titleInput}`}
-                                        placeholder={settings.childName ? t('steps.title.titlePlaceholder', { childName: settings.childName }) : t('steps.title.titlePlaceholderDefault')}
+                                        placeholder={`${settings.childName}'s Amazing Adventure`}
                                         value={settings.title || ''}
                                         onChange={(e) => updateSettings('title', e.target.value)}
                                         autoFocus
                                     />
                                     <p className={styles.inputHint}>
-                                        {t('errors.emptyTitleHint')}
+                                        Leave empty to use the default title
                                     </p>
                                 </div>
 
@@ -707,12 +727,12 @@ export default function CreateBookPage() {
                                             {settings.bookType ? BookTypeInfo[settings.bookType].icon : '📚'}
                                         </span>
                                         <span className={styles.previewTitle}>
-                                            {settings.title || (settings.childName ? t('preview.defaultTitle', { childName: settings.childName }) : t('steps.title.titlePlaceholderDefault'))}
+                                            {settings.title || `${settings.childName}'s Amazing Adventure`}
                                         </span>
                                     </div>
                                     <div className={styles.previewInfo}>
-                                        <p>{t('preview.forChild', { childName: settings.childName, age: settings.childAge })}</p>
-                                        <p>{settings.bookType && t(`bookTypes.${settings.bookType}.label`)}</p>
+                                        <p>For {settings.childName}, age {settings.childAge}</p>
+                                        <p>{settings.bookType && BookTypeInfo[settings.bookType].label}</p>
                                     </div>
                                 </div>
                             </div>
@@ -727,7 +747,7 @@ export default function CreateBookPage() {
                     className={styles.secondaryButton}
                     onClick={handleBack}
                 >
-                    {t('buttons.back')}
+                    {currentStepIndex === 0 ? 'Cancel' : 'Back'}
                 </button>
 
                 <button
@@ -738,58 +758,21 @@ export default function CreateBookPage() {
                     {isCreating ? (
                         <>
                             <span className={styles.spinner}></span>
-                            {creatingStatus || t('status.generatingStory')}
+                            {creatingStatus || 'Creating...'}
                         </>
                     ) : currentStepIndex === steps.length - 1 ? (
-                        t('buttons.generateBook')
+                        <>
+                            ✨ Generate Book with AI
+                            <span>🚀</span>
+                        </>
                     ) : (
-                        t('buttons.continue')
+                        <>
+                            Continue
+                            <span>→</span>
+                        </>
                     )}
                 </button>
             </div>
-
-            {/* Auth Modal */}
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-            />
-
-            {/* Unsaved Changes Alert */}
-            <AlertModal
-                isOpen={showUnsavedChangesModal}
-                onClose={() => {
-                    setShowUnsavedChangesModal(false);
-                    setPendingLanguage(null);
-                }}
-                onConfirm={() => {
-                    // User confirmed - proceed with language change
-                    if (pendingLanguage) {
-                        previousLanguageRef.current = pendingLanguage;
-                        i18n.changeLanguage(pendingLanguage);
-                    }
-                    setShowUnsavedChangesModal(false);
-                    setPendingLanguage(null);
-                    // Clear the form
-                    setSettings({
-                        childName: '',
-                        childAge: 3,
-                        bookType: undefined,
-                        printFormat: undefined,
-                        bookTheme: undefined,
-                        title: '',
-                        storyDescription: '',
-                        artStyle: 'storybook_classic'
-                    });
-                    setChildPhoto(null);
-                    setPhotoPreview('');
-                    setCurrentStep('child');
-                }}
-                type="warning"
-                title={t('alerts.unsavedChanges.title', { ns: 'common' })}
-                message={t('alerts.unsavedChanges.message', { ns: 'common' })}
-                confirmText={t('alerts.ok', { ns: 'common' })}
-                cancelText={t('alerts.cancel', { ns: 'common' })}
-            />
         </main>
         </>
     );

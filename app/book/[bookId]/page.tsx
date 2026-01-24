@@ -3,22 +3,26 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Book, createNewPage } from '@/lib/types';
+import { useAuth } from '@/lib/auth/AuthContext';
 import StoryBookViewer from '@/components/StoryBookViewer';
 
 export default function BookViewerPage() {
     const params = useParams();
     const router = useRouter();
     const bookId = params.bookId as string;
+    const { user, isLoading: isAuthLoading } = useAuth();
 
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
         const fetchBook = async () => {
             const startTime = Date.now();
             console.log('[VIEWER] ========================================');
             console.log(`[VIEWER] === BOOK VIEWER LOADING STARTED (bookId: ${bookId}) ===`);
+            console.log(`[VIEWER] Auth state: user=${!!user}, isAuthLoading=${isAuthLoading}, retryCount=${retryCount}`);
             console.log('[VIEWER] ========================================');
 
             try {
@@ -42,10 +46,21 @@ export default function BookViewerPage() {
                     console.log(`[VIEWER] Pages with images: ${pagesWithImages}/${data.pages?.length || 0}`);
 
                     setBook(data);
+                    setError(null);
                     const totalDuration = Date.now() - startTime;
                     console.log('[VIEWER] ========================================');
                     console.log(`[VIEWER] === BOOK LOADED FROM API in ${totalDuration}ms ===`);
                     console.log('[VIEWER] ========================================');
+                    return;
+                }
+
+                // Handle 401 - if user just authenticated, retry after a delay
+                if (response.status === 401 && user && retryCount < 3) {
+                    console.log(`[VIEWER] Got 401 but user is authenticated. Retrying in 1s (attempt ${retryCount + 1}/3)...`);
+                    setLoading(true);
+                    setTimeout(() => {
+                        setRetryCount(prev => prev + 1);
+                    }, 1000);
                     return;
                 }
 
@@ -58,6 +73,7 @@ export default function BookViewerPage() {
                     if (localBook) {
                         console.log('[VIEWER] Book found in localStorage');
                         setBook(localBook);
+                        setError(null);
                         const totalDuration = Date.now() - startTime;
                         console.log(`[VIEWER] === BOOK LOADED FROM LOCALSTORAGE in ${totalDuration}ms ===`);
                         return;
@@ -79,10 +95,11 @@ export default function BookViewerPage() {
             }
         };
 
-        if (bookId) {
+        // Wait for auth to stabilize before fetching
+        if (bookId && !isAuthLoading) {
             fetchBook();
         }
-    }, [bookId]);
+    }, [bookId, user, isAuthLoading, retryCount]);
 
     const handleClose = () => {
         router.push('/mybooks');
