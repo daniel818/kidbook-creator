@@ -1,0 +1,70 @@
+{
+  "header": {
+    "title": "Mein Profil",
+    "subtitle": "Verwalte deine Kontoeinstellungen und Präferenzen"
+  },
+  "generalInfo": {
+    "title": "Allgemeine Informationen",
+    "editButton": "✏️ Bearbeiten",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "emailHint": "E-Mail kann nicht geändert werden",
+    "language": "Sprachpräferenz",
+    "accountCreated": "Konto erstellt",
+    "notSet": "Nicht festgelegt",
+    "firstNamePlaceholder": "Vorname eingeben",
+    "lastNamePlaceholder": "Nachname eingeben",
+    "cancelButton": "Abbrechen",
+    "saveButton": "Änderungen speichern"
+  },
+  "languages": {
+    "en": "Englisch",
+    "de": "Deutsch",
+    "he": "Hebräisch"
+  },
+  "childProfiles": {
+    "title": "Kinderprofile",
+    "addButton": "+ Kind hinzufügen",
+    "emptyTitle": "Noch keine Kinderprofile",
+    "emptySubtitle": "Füge ein Kinderprofil hinzu, um personalisierte Geschichten zu erstellen",
+    "emptyButton": "Dein erstes Kind hinzufügen",
+    "age": "{{age}} Jahre"
+  },
+  "myBooks": {
+    "title": "Meine Bücher",
+    "viewAllButton": "Alle anzeigen →",
+    "emptyTitle": "Deine erstellten Bücher erscheinen hier",
+    "emptyButton": "Dein erstes Buch erstellen"
+  },
+  "purchases": {
+    "title": "Letzte Käufe",
+    "viewAllButton": "Alle anzeigen →",
+    "emptyTitle": "Noch keine Käufe",
+    "emptySubtitle": "Bestelle dein erstes Buch, um es hier zu sehen"
+  },
+  "accountSettings": {
+    "title": "Kontoeinstellungen",
+    "changePassword": {
+      "label": "Passwort ändern",
+      "description": "Aktualisiere dein Passwort"
+    },
+    "paymentMethods": {
+      "label": "Zahlungsmethoden",
+      "description": "Gespeicherte Karten verwalten"
+    },
+    "shippingAddresses": {
+      "label": "Lieferadressen",
+      "description": "Lieferadressen verwalten"
+    },
+    "notifications": {
+      "label": "Benachrichtigungen",
+      "description": "E-Mail- und Push-Einstellungen"
+    }
+  },
+  "deleteModal": {
+    "title": "Buch löschen",
+    "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "confirmText": "Löschen"
+  }
+}

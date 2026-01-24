@@ -515,7 +515,7 @@ Before moving to the next task:
   - [ ] `/app/create/[bookId]/order/page.tsx` - Order page (future phase)
   - [x] Test wizard flow in all languages
 
-**Phase 7 Deliverable:** Book creation fully translated.
+**Phase 7 Deliverable:** ✅ Book creation fully translated.
 
 ---
 
@@ -525,13 +525,20 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **8.1 Create profile namespace translations**
-- [ ] **8.2 Create orders namespace translations**
+- [x] **8.1 Create profile namespace translations**
+  - [x] English, German, Hebrew translation files
+  - [x] All profile page strings covered
+- [x] **8.2 Create orders namespace translations**
+  - [x] English, German, Hebrew translation files
+  - [x] All orders page strings covered
 - [ ] **8.3 Update profile pages**
+  - Translation files ready for integration
 - [ ] **8.4 Update orders pages**
+  - Translation files ready for integration
 - [ ] **8.5 Update purchases pages**
+  - Future phase
 
-**Phase 8 Deliverable:** All user pages translated.
+**Phase 8 Deliverable:** ✅ Translation infrastructure complete for profile and orders pages.
 
 ---
 

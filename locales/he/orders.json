@@ -1,0 +1,31 @@
+{
+  "header": {
+    "backButton": "חזרה לדף הבית ←",
+    "title": "ההזמנות שלי"
+  },
+  "loading": "טוען הזמנות...",
+  "empty": {
+    "title": "אין עדיין הזמנות",
+    "subtitle": "כאשר תזמין ספר מודפס, הוא יופיע כאן.",
+    "button": "צור את הספר הראשון שלך ←"
+  },
+  "orderCard": {
+    "orderId": "הזמנה #{{id}}",
+    "for": "עבור {{childName}}",
+    "format": "פורמט",
+    "quantity": "כמות",
+    "total": "סה\"כ",
+    "trackingLabel": "מספר מעקב",
+    "viewBookButton": "הצג ספר",
+    "reorderButton": "הזמן שוב"
+  },
+  "status": {
+    "pending": "ממתין",
+    "paid": "שולם",
+    "processing": "בעיבוד",
+    "printed": "הודפס",
+    "shipped": "נשלח",
+    "delivered": "נמסר",
+    "cancelled": "בוטל"
+  }
+}

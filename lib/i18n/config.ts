@@ -17,6 +17,12 @@ import authHE from '@/locales/he/auth.json';
 import createEN from '@/locales/en/create.json';
 import createDE from '@/locales/de/create.json';
 import createHE from '@/locales/he/create.json';
+import profileEN from '@/locales/en/profile.json';
+import profileDE from '@/locales/de/profile.json';
+import profileHE from '@/locales/he/profile.json';
+import ordersEN from '@/locales/en/orders.json';
+import ordersDE from '@/locales/de/orders.json';
+import ordersHE from '@/locales/he/orders.json';
 
 i18n
   .use(LanguageDetector)
@@ -29,6 +35,8 @@ i18n
         home: homeEN,
         auth: authEN,
         create: createEN,
+        profile: profileEN,
+        orders: ordersEN,
       },
       de: {
         common: commonDE,
@@ -36,6 +44,8 @@ i18n
         home: homeDE,
         auth: authDE,
         create: createDE,
+        profile: profileDE,
+        orders: ordersDE,
       },
       he: {
         common: commonHE,
@@ -43,6 +53,8 @@ i18n
         home: homeHE,
         auth: authHE,
         create: createHE,
+        profile: profileHE,
+        orders: ordersHE,
       },
     },
     fallbackLng: 'en',
