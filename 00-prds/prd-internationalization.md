@@ -318,37 +318,37 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **1.1 Install dependencies**
+- [x] **1.1 Install dependencies**
   ```bash
   npm install react-i18next i18next i18next-browser-languagedetector
   ```
-  - [ ] Run `npm run dev` - verify app still works
+  - [x] Run `npm run dev` - verify app still works
   
-- [ ] **1.2 Create i18next config file**
+- [x] **1.2 Create i18next config file**
   - Create `/lib/i18n/config.ts`
   - Minimal config with English only
-  - [ ] Run `npm run dev` - verify no errors
+  - [x] Run `npm run dev` - verify no errors
 
-- [ ] **1.3 Create ONE translation file**
+- [x] **1.3 Create ONE translation file**
   - Create `/locales/en/common.json`
   - Add ONE key: `{ "test": "Hello World" }`
-  - [ ] Verify file is valid JSON
+  - [x] Verify file is valid JSON
 
-- [ ] **1.4 Create I18nProvider component**
+- [x] **1.4 Create I18nProvider component**
   - Create `/lib/i18n/provider.tsx`
   - Wrap children with I18nextProvider
-  - [ ] Run `npm run dev` - verify no errors
+  - [x] Run `npm run dev` - verify no errors
 
-- [ ] **1.5 Add provider to layout**
+- [x] **1.5 Add provider to layout**
   - Import I18nProvider in `/app/layout.tsx`
   - Wrap children with provider
-  - [ ] Run `npm run dev` - verify app loads
+  - [x] Run `npm run dev` - verify app loads
 
-- [ ] **1.6 Test translation in ONE component**
+- [x] **1.6 Test translation in ONE component**
   - Add `useTranslation` to Navbar
   - Replace ONE hardcoded string with `t('test')`
-  - [ ] Run `npm run dev` - verify "Hello World" appears
-  - [ ] If it works, Phase 1 is COMPLETE ✅
+  - [x] Run `npm run dev` - verify "Hello World" appears
+  - [x] If it works, Phase 1 is COMPLETE ✅
 
 **Phase 1 Deliverable:** App loads with one translated string working.
 
