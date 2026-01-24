@@ -1,0 +1,107 @@
+{
+  "wizard": {
+    "back": "← Back",
+    "next": "Next →",
+    "creating": "Creating your book..."
+  },
+  "steps": {
+    "child": {
+      "title": "Who is this book for?",
+      "subtitle": "Tell us about the special child who will enjoy this book",
+      "nameLabel": "Child's Name",
+      "namePlaceholder": "Enter name...",
+      "ageLabel": "Age:",
+      "ageYears": "years",
+      "photoLabel": "📷 Upload a photo (optional)",
+      "photoHint": "Upload a photo of the child to personalize the illustrations. The AI will use this to make the main character look like them!",
+      "photoButton": "Choose Photo",
+      "photoSelected": "Photo selected",
+      "photoChange": "Change Photo"
+    },
+    "type": {
+      "title": "Choose a book type",
+      "subtitle": "Select the perfect format for {{childName}}",
+      "subtitleDefault": "Select the perfect format for your child"
+    },
+    "format": {
+      "title": "Choose a Format",
+      "subtitle": "Prepare your book for professional printing"
+    },
+    "theme": {
+      "title": "Pick a theme",
+      "subtitle": "What kind of story will this be?",
+      "storyLabel": "Tell us more about the story (optional)",
+      "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
+    },
+    "style": {
+      "title": "Choose an art style",
+      "subtitle": "How should your book's illustrations look?"
+    },
+    "title": {
+      "title": "Name your book",
+      "subtitle": "Give your story an amazing title",
+      "titleLabel": "Book Title",
+      "titlePlaceholder": "{{childName}}'s Amazing Adventure",
+      "titlePlaceholderDefault": "My Amazing Adventure"
+    }
+  },
+  "bookTypes": {
+    "board": {
+      "name": "Board Book",
+      "description": "Thick, durable pages perfect for little hands",
+      "age": "Ages 0-3",
+      "pages": "10 pages"
+    },
+    "picture": {
+      "name": "Picture Book",
+      "description": "Beautiful illustrations with short, engaging text",
+      "age": "Ages 3-6",
+      "pages": "10 pages"
+    },
+    "story": {
+      "name": "Story Book",
+      "description": "Longer stories for growing readers",
+      "age": "Ages 5-10",
+      "pages": "12 pages"
+    },
+    "alphabet": {
+      "name": "Alphabet Book",
+      "description": "Learn letters in a fun, personalized way",
+      "age": "Ages 2-5",
+      "pages": "26 pages"
+    }
+  },
+  "formats": {
+    "portrait": {
+      "name": "Portrait",
+      "description": "8.5\" × 11\" - Classic vertical format"
+    },
+    "landscape": {
+      "name": "Landscape",
+      "description": "11\" × 8.5\" - Wide horizontal format"
+    },
+    "square": {
+      "name": "Square",
+      "description": "8.5\" × 8.5\" - Modern square format"
+    }
+  },
+  "themes": {
+    "adventure": "Adventure",
+    "bedtime": "Bedtime",
+    "learning": "Learning",
+    "fantasy": "Fantasy",
+    "animals": "Animals"
+  },
+  "buttons": {
+    "createBook": "Create My Book ✨",
+    "signInToCreate": "Sign In to Create"
+  },
+  "errors": {
+    "creationFailed": "Failed to create book. Please try again."
+  },
+  "status": {
+    "extractingCharacter": "Analyzing photo...",
+    "generatingStory": "Creating your story...",
+    "openingBook": "Opening your book..."
+  }
+}

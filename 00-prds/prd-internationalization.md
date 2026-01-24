@@ -503,7 +503,7 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **7.1 Create create namespace translations**
+- [x] **7.1 Create create namespace translations**
   - Setup page strings
   - Editor strings
   - Preview strings
@@ -568,7 +568,7 @@ Currently, the AI prompts in `/lib/gemini/client.ts` are hardcoded in English. W
   - Update `generateStory()` to accept `language` parameter
   - Update `generateCompleteBook()` to accept `language` parameter
   - Pass language from create page to API routes
-  - [ ] Test: Verify language parameter flows through
+  - [ ] Test: Verify language parameter flows through 
 
 - [ ] **10.2 Create AI prompt templates in all languages**
   - Create `/lib/gemini/prompts/en.ts` - English prompt templates

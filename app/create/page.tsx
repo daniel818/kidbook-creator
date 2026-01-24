@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     BookSettings,
@@ -23,6 +24,7 @@ type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
 export default function CreateBookPage() {
     const router = useRouter();
     const { user, isLoading: isAuthLoading } = useAuth();
+    const { t } = useTranslation('create');
     const [currentStep, setCurrentStep] = useState<WizardStep>('child');
     const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string; artStyle?: ArtStyle }>({
         childName: '',
@@ -158,7 +160,7 @@ export default function CreateBookPage() {
             if (childPhoto) {
                 console.log('[CLIENT] Step 1: Extracting character from photo...');
                 const extractStart = Date.now();
-                setCreatingStatus('Analyzing photo...');
+                setCreatingStatus(t('status.extractingCharacter'));
                 const formData = new FormData();
                 formData.append('photo', childPhoto);
 
@@ -180,9 +182,9 @@ export default function CreateBookPage() {
             }
 
             // Step 2: Generate the complete book with AI
-            console.log('[CLIENT] Step 2: Calling generate-book API...');
+            console.log('[CLIENT] Step 2: Generating complete book...');
             const genStart = Date.now();
-            setCreatingStatus('Creating your magical story...');
+            setCreatingStatus(t('status.generatingStory'));
 
             // Convert photo to base64 if present for the generation API
             let base64Photo: string | undefined;
@@ -227,7 +229,7 @@ export default function CreateBookPage() {
             console.log('[CLIENT] API response data:', data);
 
             console.log('[CLIENT] Step 3: Navigating to book viewer...');
-            setCreatingStatus('Opening your book...');
+            setCreatingStatus(t('status.openingBook'));
             await new Promise(resolve => setTimeout(resolve, 500));
 
             const totalDuration = Date.now() - startTime;
@@ -244,7 +246,7 @@ export default function CreateBookPage() {
             console.error('[CLIENT] Error:', error);
             setCreatingStatus('');
             setIsCreating(false);
-            alert('Failed to create book. Please try again.');
+            alert(t('errors.creationFailed'));
         }
     };
 
@@ -287,7 +289,7 @@ export default function CreateBookPage() {
                     ))}
                 </div>
                 <button className={styles.backButton} onClick={handleBack}>
-                    ← Back
+                    {t('wizard.back')}
                 </button>
             </div>
 
