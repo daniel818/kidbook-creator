@@ -17,6 +17,7 @@ import { ART_STYLES, ArtStyle, ImageQuality } from '@/lib/art-styles';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
+import { AlertModal } from '@/components/AlertModal';
 import styles from './page.module.css';
 
 type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
@@ -44,6 +45,32 @@ export default function CreateBookPage() {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [pendingCreate, setPendingCreate] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
+    const [pendingLanguage, setPendingLanguage] = useState<string | null>(null);
+
+    // Track unsaved changes
+    useEffect(() => {
+        const hasChanges = !!(settings.childName || settings.childAge !== 3 || settings.bookType || settings.bookTheme || settings.storyDescription || childPhoto);
+        setHasUnsavedChanges(hasChanges);
+    }, [settings, childPhoto]);
+
+    // Detect language changes and show warning if there are unsaved changes
+    useEffect(() => {
+        const handleLanguageChange = (lng: string) => {
+            if (hasUnsavedChanges && !isCreating) {
+                // Language is about to change, show warning
+                setPendingLanguage(lng);
+                setShowUnsavedChangesModal(true);
+                // Revert to previous language temporarily
+                i18n.changeLanguage(i18n.language);
+            }
+        };
+
+        i18n.on('languageChanged', handleLanguageChange);
+        return () => {
+            i18n.off('languageChanged', handleLanguageChange);
+        };
+    }, [hasUnsavedChanges, isCreating, i18n]);
 
     // Cleanup object URL to prevent memory leaks
     useEffect(() => {
@@ -259,18 +286,11 @@ export default function CreateBookPage() {
         <>
             <Navbar />
             <main className={styles.main}>
-                {/* Auth Modal for deferred authentication */}
-                <AuthModal
-                    isOpen={showAuthModal}
-                    onClose={() => setShowAuthModal(false)}
-                />
-
-            {/* Background */}
-            <div className={styles.background}>
-                <div className={styles.bgShape1}></div>
-                <div className={styles.bgShape2}></div>
-            </div>
-
+                {/* Background */}
+                <div className={styles.background}>
+                    <div className={styles.bgShape1}></div>
+                    <div className={styles.bgShape2}></div>
+                </div>
             {/* Progress bar */}
             <div className={styles.progressContainer}>
                 <div className={styles.progressBar}>
@@ -719,6 +739,48 @@ export default function CreateBookPage() {
                     )}
                 </button>
             </div>
+
+            {/* Auth Modal */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+            />
+
+            {/* Unsaved Changes Alert */}
+            <AlertModal
+                isOpen={showUnsavedChangesModal}
+                onClose={() => {
+                    setShowUnsavedChangesModal(false);
+                    setPendingLanguage(null);
+                }}
+                onConfirm={() => {
+                    // User confirmed - proceed with language change
+                    if (pendingLanguage) {
+                        i18n.changeLanguage(pendingLanguage);
+                    }
+                    setShowUnsavedChangesModal(false);
+                    setPendingLanguage(null);
+                    // Clear the form
+                    setSettings({
+                        childName: '',
+                        childAge: 3,
+                        bookType: undefined,
+                        printFormat: undefined,
+                        bookTheme: undefined,
+                        title: '',
+                        storyDescription: '',
+                        artStyle: 'storybook_classic'
+                    });
+                    setChildPhoto(null);
+                    setPhotoPreview('');
+                    setCurrentStep('child');
+                }}
+                type="warning"
+                title={t('alerts.unsavedChanges.title', { ns: 'common' })}
+                message={t('alerts.unsavedChanges.message', { ns: 'common' })}
+                confirmText={t('alerts.ok', { ns: 'common' })}
+                cancelText={t('alerts.cancel', { ns: 'common' })}
+            />
         </main>
         </>
     );

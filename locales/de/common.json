@@ -1,3 +1,20 @@
 {
-  "test": "Hallo Welt"
+  "test": "Hallo Welt",
+  "communityBooks": "Community-Bücher",
+  "faq": "FAQ",
+  "aboutUs": "Über uns",
+  "alerts": {
+    "warning": "Warnung",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "info": "Information",
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "dontAskAgain": "Nicht mehr fragen",
+    "loading": "Lädt...",
+    "unsavedChanges": {
+      "title": "Nicht gespeicherte Änderungen",
+      "message": "Sie haben nicht gespeicherte Änderungen. Möchten Sie wirklich fortfahren? Ihr Fortschritt geht verloren."
+    }
+  }
 }
