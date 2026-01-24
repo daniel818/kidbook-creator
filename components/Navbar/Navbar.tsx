@@ -1,15 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { UserNav } from '@/components/UserNav';
+import { AuthModal } from '@/components/AuthModal';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const navLinks = [
     { label: 'Community Books', href: '/community', disabled: true },
@@ -51,13 +54,13 @@ export function Navbar() {
 
       {/* Right: Create Button + User Nav */}
       <div className={styles.navActions}>
-        {!isLoading && user && (
+        {!isLoading && (
           <button
             className={styles.createButton}
-            onClick={() => router.push('/create')}
+            onClick={() => user ? router.push('/create') : setShowAuthModal(true)}
           >
             <span className={styles.createIcon}>✨</span>
-            <span className={styles.createButtonText}>Create Book</span>
+            <span className={styles.createButtonText}>Create a Book</span>
           </button>
         )}
         
@@ -68,12 +71,18 @@ export function Navbar() {
         ) : (
           <button
             className={styles.signInButton}
-            onClick={() => router.push('/')}
+            onClick={() => setShowAuthModal(true)}
           >
             Sign In
           </button>
         )}
       </div>
+      
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode="login"
+      />
     </nav>
   );
 }
