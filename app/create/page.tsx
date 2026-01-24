@@ -141,12 +141,17 @@ export default function CreateBookPage() {
     };
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log('[PHOTO] File input changed', e.target.files);
         const file = e.target.files?.[0];
         if (file) {
+            console.log('[PHOTO] File selected:', file.name, file.size, file.type);
             setChildPhoto(file);
             // Use createObjectURL for better performance and reliability
             const objectUrl = URL.createObjectURL(file);
+            console.log('[PHOTO] Object URL created:', objectUrl);
             setPhotoPreview(objectUrl);
+        } else {
+            console.log('[PHOTO] No file selected');
         }
     };
 

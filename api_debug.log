@@ -1595,3 +1595,26 @@ Gib NUR ein gültiges JSON-Objekt mit der folgenden Struktur zurück:
 [API generate-book 2026-01-24T14:34:52.458Z] ======================================== 
 [API generate-book 2026-01-24T14:34:52.458Z] === GENERATE-BOOK API REQUEST FAILED after 107701ms === 
 [API generate-book 2026-01-24T14:34:52.458Z] ======================================== 
+[API generate-book 2026-01-24T14:45:07.977Z] ======================================== 
+[API generate-book 2026-01-24T14:45:07.979Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-24T14:45:07.979Z] ======================================== 
+[API generate-book 2026-01-24T14:45:07.979Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-24T14:45:07.980Z] Request body parsed {
+  "childName": "גילה",
+  "childAge": 3,
+  "bookTheme": "adventure",
+  "bookType": "picture",
+  "artStyle": "digital_art",
+  "imageQuality": "fast",
+  "hasPhoto": false,
+  "printFormat": "square",
+  "language": "he"
+}
+[API generate-book 2026-01-24T14:45:07.980Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-24T14:45:08.021Z] Authentication completed in 40ms 
+[API generate-book 2026-01-24T14:45:08.022Z] ERROR: Unauthorized {
+  "__isAuthError": true,
+  "name": "AuthApiError",
+  "status": 403,
+  "code": "user_not_found"
+}
