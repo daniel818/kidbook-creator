@@ -19,7 +19,12 @@ ${input.characterDescription ? `- Character Description: ${input.characterDescri
 ${input.storyDescription ? `- Specific Story Request: ${input.storyDescription}` : ''}
 
 The story should be engaging, age-appropriate, and magical.
-IMPORTANT: Write the entire story in English.
+
+CRITICALLY IMPORTANT:
+- Write the ENTIRE story exclusively in ENGLISH
+- NO other languages - all words must be English
+- Title, text, and imagePrompt must be completely in English
+- Use only English words and grammar
 
 OUTPUT FORMAT:
 Return ONLY a valid JSON object with the following structure:

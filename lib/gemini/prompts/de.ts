@@ -19,23 +19,31 @@ ${input.characterDescription ? `- Charakterbeschreibung: ${input.characterDescri
 ${input.storyDescription ? `- Spezifische Geschichte Anfrage: ${input.storyDescription}` : ''}
 
 Die Geschichte sollte fesselnd, altersgerecht und magisch sein.
-WICHTIG: Schreibe die gesamte Geschichte auf Deutsch.
+
+KRITISCH WICHTIG: 
+- Schreibe die GESAMTE Geschichte ausschließlich auf DEUTSCH
+- KEIN ENGLISCH verwenden - alle Wörter müssen Deutsch sein
+- Titel, Text und imagePrompt müssen komplett auf Deutsch sein
+- Verwende nur deutsche Wörter und Grammatik
 
 AUSGABEFORMAT:
-Gib NUR ein gültiges JSON-Objekt mit der folgenden Struktur zurück:
+Gib NUR ein gültiges JSON-Objekt mit der folgenden Struktur zurück.
+ALLE Felder müssen auf DEUTSCH sein:
 {
-    "title": "Titel des Buches",
-    "backCoverBlurb": "Eine kurze, ansprechende Zusammenfassung der Geschichte für die Rückseite (maximal 2-3 Sätze)",
-    "characterDescription": "Eine detaillierte physische Beschreibung der Hauptfigur (falls nicht angegeben)",
+    "title": "Deutscher Titel des Buches",
+    "backCoverBlurb": "Eine kurze, ansprechende deutsche Zusammenfassung der Geschichte für die Rückseite (maximal 2-3 Sätze)",
+    "characterDescription": "Eine detaillierte physische Beschreibung der Hauptfigur auf Deutsch (falls nicht angegeben)",
     "pages": [
         {
             "pageNumber": 1,
-            "text": "Geschichtentext für diese Seite (kurz halten für Kinder)",
-            "imagePrompt": "Eine detaillierte Beschreibung der Illustration für diese Seite, die NUR die Szene und Handlung beschreibt. Beschreibe NICHT den Kunststil (z.B. 'Cartoon', 'Aquarell'), da dies separat behandelt wird."
+            "text": "Deutscher Geschichtentext für diese Seite (kurz halten für Kinder) - NUR DEUTSCH",
+            "imagePrompt": "Eine detaillierte deutsche Beschreibung der Illustration für diese Seite, die NUR die Szene und Handlung beschreibt. Beschreibe NICHT den Kunststil (z.B. 'Cartoon', 'Aquarell'), da dies separat behandelt wird. - NUR DEUTSCH"
         },
         ...
     ]
 }
+
+NOCHMALS: Verwende AUSSCHLIESSLICH deutsche Sprache in ALLEN Feldern. KEIN Englisch!
 `;
 
 export const getCharacterExtractionPrompt = () => `
