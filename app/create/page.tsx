@@ -271,40 +271,24 @@ export default function CreateBookPage() {
 
                 {/* Loading overlay during book creation */}
                 {isCreating && (
-                    <div style={{
-                        position: 'fixed',
-                        inset: 0,
-                        background: 'rgba(0, 0, 0, 0.8)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 9999,
-                        backdropFilter: 'blur(4px)'
-                    }}>
-                        <div style={{
-                            background: 'white',
-                            padding: '2rem',
-                            borderRadius: '16px',
-                            textAlign: 'center',
-                            maxWidth: '400px'
-                        }}>
-                            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✨</div>
-                            <h2 style={{ marginBottom: '0.5rem', color: '#1f2937' }}>Creating Your Book</h2>
-                            <p style={{ color: '#6b7280', marginBottom: '1rem' }}>{creatingStatus}</p>
-                            <div style={{
-                                width: '100%',
-                                height: '4px',
-                                background: '#e5e7eb',
-                                borderRadius: '2px',
-                                overflow: 'hidden'
-                            }}>
-                                <div style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
-                                    animation: 'shimmer 2s infinite',
-                                    backgroundSize: '200% 100%'
-                                }}></div>
+                    <div className={styles.loadingOverlay}>
+                        <div className={styles.loadingCard}>
+                            <div className={styles.starsContainer}>
+                                <span className={styles.star} style={{ animationDelay: '0s' }}>✨</span>
+                                <span className={styles.star} style={{ animationDelay: '0.3s' }}>⭐</span>
+                                <span className={styles.star} style={{ animationDelay: '0.6s' }}>✨</span>
+                            </div>
+                            <h2 className={styles.loadingTitle}>Creating Your Book</h2>
+                            <p className={styles.loadingStatus}>
+                                {creatingStatus}
+                                <span className={styles.dots}>
+                                    <span style={{ animationDelay: '0s' }}>.</span>
+                                    <span style={{ animationDelay: '0.2s' }}>.</span>
+                                    <span style={{ animationDelay: '0.4s' }}>.</span>
+                                </span>
+                            </p>
+                            <div className={styles.progressBarContainer}>
+                                <div className={styles.progressBarFill}></div>
                             </div>
                         </div>
                     </div>
