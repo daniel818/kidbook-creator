@@ -49,6 +49,7 @@ export function Navbar() {
             className={`${styles.navLink} ${isActive(link.href) ? styles.active : ''} ${link.disabled ? styles.disabled : ''}`}
             onClick={() => !link.disabled && router.push(link.href)}
             disabled={link.disabled}
+            suppressHydrationWarning
           >
             {link.label}
           </button>
