@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { AuthError } from '@supabase/supabase-js';
@@ -21,8 +22,24 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
 
     const { signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword } = useAuth();
+
+    useEffect(() => {
+        setMounted(true);
+
+        // Lock body scroll when modal is open
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
 
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -91,9 +108,9 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
         }
     };
 
-    if (!isOpen) return null;
+    if (!mounted || !isOpen) return null;
 
-    return (
+    return createPortal(
         <AnimatePresence>
             <motion.div
                 className={styles.overlay}
@@ -254,6 +271,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                     </div>
                 </motion.div>
             </motion.div>
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }
