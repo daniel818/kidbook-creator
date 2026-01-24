@@ -1,0 +1,61 @@
+{
+  "hero": {
+    "badge": "Create magical stories",
+    "title": "Create",
+    "titleHighlight": "Personalized",
+    "titleEnd": "Children's Books",
+    "subtitle": "Design beautiful custom books for your little ones. Upload photos, write stories, and order professionally printed books delivered to your door.",
+    "ctaButton": "Create Your Book",
+    "features": {
+      "easyToUse": "Easy to use",
+      "printShip": "Print & ship",
+      "perfectGift": "Perfect gift"
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1": {
+      "title": "Setup Your Book",
+      "description": "Enter your child's name, age, and choose the perfect book type and theme."
+    },
+    "step2": {
+      "title": "Add Content",
+      "description": "Upload photos and write your story. Arrange pages exactly how you want."
+    },
+    "step3": {
+      "title": "Order & Enjoy",
+      "description": "Preview your book, place your order, and receive a beautiful printed book."
+    }
+  },
+  "bookTypes": {
+    "title": "Choose Your Book Type",
+    "board": {
+      "title": "Board Book",
+      "description": "Durable pages for little hands",
+      "age": "Ages 0-3"
+    },
+    "picture": {
+      "title": "Picture Book",
+      "description": "Beautiful illustrations with short text",
+      "age": "Ages 3-6"
+    },
+    "story": {
+      "title": "Story Book",
+      "description": "Engaging stories for growing readers",
+      "age": "Ages 5-10"
+    },
+    "alphabet": {
+      "title": "Alphabet Book",
+      "description": "Learn letters in a fun way",
+      "age": "Ages 2-5"
+    }
+  },
+  "footer": {
+    "tagline": "Made with ❤️ for parents who want to create magical memories"
+  },
+  "deleteModal": {
+    "title": "Delete Book",
+    "message": "Are you sure you want to delete this book? This action cannot be undone.",
+    "confirmText": "Delete"
+  }
+}

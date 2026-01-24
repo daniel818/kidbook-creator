@@ -459,18 +459,18 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **5.1 Create home namespace translations**
+- [x] **5.1 Create home namespace translations**
   - Extract all homepage strings
   - Create `/locales/en/home.json`
-  - [ ] Create German translations
-  - [ ] Create Hebrew translations
+  - [x] Create German translations
+  - [x] Create Hebrew translations
 
-- [ ] **5.2 Update page.tsx to use translations**
+- [x] **5.2 Update page.tsx to use translations**
   - Hero section
   - How It Works section
   - Book Types section
   - Footer
-  - [ ] Test in all three languages
+  - [x] Test in all three languages
 
 **Phase 5 Deliverable:** Homepage fully translated.
 
