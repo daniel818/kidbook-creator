@@ -552,6 +552,103 @@ Before moving to the next task:
 
 ---
 
+## Phase 10: AI Prompt Internationalization (Day 6)
+
+**Goal:** Ensure AI prompts are sent in the user's selected language for story generation.
+
+### Context
+Currently, the AI prompts in `/lib/gemini/client.ts` are hardcoded in English. When a German or Hebrew user creates a book, they input their `storyDescription` in their language, but the system prompt to Gemini is in English. This phase ensures:
+1. The system prompt is translated to match the user's language
+2. The user's `storyDescription` input is preserved in their language
+3. The AI generates story content in the requested language
+
+### Tasks
+
+- [ ] **10.1 Add language parameter to AI generation functions**
+  - Update `generateStory()` to accept `language` parameter
+  - Update `generateCompleteBook()` to accept `language` parameter
+  - Pass language from create page to API routes
+  - [ ] Test: Verify language parameter flows through
+
+- [ ] **10.2 Create AI prompt templates in all languages**
+  - Create `/lib/gemini/prompts/en.ts` - English prompt templates
+  - Create `/lib/gemini/prompts/de.ts` - German prompt templates
+  - Create `/lib/gemini/prompts/he.ts` - Hebrew prompt templates
+  - Include instructions for AI to respond in the target language
+  - [ ] Test: Verify prompts are grammatically correct
+
+- [ ] **10.3 Update Gemini client to use localized prompts**
+  - Modify `generateStory()` to select prompt based on language
+  - Ensure AI instructions specify output language
+  - Add language validation
+  - [ ] Test: Generate story in German, verify German output
+  - [ ] Test: Generate story in Hebrew, verify Hebrew output
+
+- [ ] **10.4 Update create page to detect and pass language**
+  - Get current language from i18next in create page
+  - Pass language to API in book generation request
+  - [ ] Test: Switch language, create book, verify correct language used
+
+**Phase 10 Deliverable:** AI generates stories in the user's selected language.
+
+---
+
+## Phase 11: Book Output Internationalization & RTL Support (Day 6-7)
+
+**Goal:** Ensure generated books display correctly in all languages, especially Hebrew RTL.
+
+### Context
+Generated book content (title, page text, image prompts) needs to:
+1. Be in the correct language (handled by Phase 10)
+2. Display with proper RTL layout for Hebrew books
+3. Have correct text direction in the book viewer and PDF export
+
+### Tasks
+
+- [ ] **11.1 Add language metadata to book schema**
+  - Add `language` field to Book type in `/lib/types.ts`
+  - Store language when book is created
+  - Default to user's current language
+  - [ ] Test: Create book, verify language is saved
+
+- [ ] **11.2 Update StoryBookViewer for RTL support**
+  - Detect book language in `/components/StoryBookViewer.tsx`
+  - Apply RTL styles when `book.language === 'he'`
+  - Mirror page flip animations for Hebrew
+  - Ensure text alignment is correct
+  - [ ] Test: View Hebrew book, verify RTL layout
+  - [ ] Test: Page navigation works correctly in RTL
+
+- [ ] **11.3 Update StoryBookViewer3D for RTL support**
+  - Apply same RTL logic to `/components/StoryBookViewer3D.tsx`
+  - Ensure 3D book opens from right for Hebrew
+  - Mirror page turn animations
+  - [ ] Test: View Hebrew book in 3D, verify RTL behavior
+
+- [ ] **11.4 Update PDF generator for RTL support**
+  - Modify `/lib/pdf-generator.ts` to detect book language
+  - Apply RTL text direction for Hebrew books
+  - Ensure page order is correct for RTL
+  - Test with Hebrew content
+  - [ ] Test: Generate PDF of Hebrew book, verify RTL layout
+  - [ ] Test: Print preview shows correct RTL formatting
+
+- [ ] **11.5 Update book editor for RTL**
+  - Detect book language in `/app/create/[bookId]/page.tsx`
+  - Apply RTL styles to editor when editing Hebrew book
+  - Ensure text inputs respect RTL
+  - [ ] Test: Edit Hebrew book, verify RTL in editor
+
+- [ ] **11.6 Test full book creation flow in all languages**
+  - [ ] English: Create, view, edit, export PDF
+  - [ ] German: Create, view, edit, export PDF
+  - [ ] Hebrew: Create, view, edit, export PDF (verify RTL)
+  - [ ] Verify language consistency throughout flow
+
+**Phase 11 Deliverable:** Books display correctly in all languages with proper RTL support for Hebrew.
+
+---
+
 ## Relevant Files
 
 ### New Files to Create
