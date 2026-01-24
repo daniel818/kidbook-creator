@@ -167,6 +167,11 @@
     font-weight: var(--font-weight-semibold);
     color: var(--color-gray-700);
     margin-bottom: var(--spacing-sm);
+    text-align: left;
+}
+
+[dir="rtl"] .formLabel {
+    text-align: right;
 }
 
 .formInput {
