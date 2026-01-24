@@ -396,25 +396,25 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **3.1 Create RTL detection utility**
+- [x] **3.1 Create RTL detection utility**
   - Create `/lib/i18n/rtl.ts`
   - Function: `isRTL(locale: string): boolean`
-  - [ ] Write unit test for utility
+  - [x] Write unit test for utility
 
-- [ ] **3.2 Update HTML dir attribute on language change**
+- [x] **3.2 Update HTML dir attribute on language change**
   - Listen to i18next language change event
   - Set `document.documentElement.dir = 'rtl'` or `'ltr'`
-  - [ ] Test: Switch to Hebrew, verify dir="rtl" on html
+  - [x] Test: Switch to Hebrew, verify dir="rtl" on html
 
-- [ ] **3.3 Create RTL CSS overrides**
+- [x] **3.3 Create RTL CSS overrides**
   - Create `/app/rtl.css` with minimal overrides
   - Import conditionally or use CSS `:dir(rtl)` selector
-  - [ ] Test navbar in RTL mode
+  - [x] Test navbar in RTL mode
 
-- [ ] **3.4 Test all pages in Hebrew**
+- [x] **3.4 Test all pages in Hebrew**
   - Navigate through app in Hebrew
   - Note any layout issues
-  - [ ] Fix critical issues only
+  - [x] Fix critical issues only
 
 **Phase 3 Deliverable:** Hebrew displays with proper RTL layout.
 
