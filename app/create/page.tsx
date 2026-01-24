@@ -416,9 +416,9 @@ export default function CreateBookPage() {
                                             style={{ '--option-color': info.color } as React.CSSProperties}
                                         >
                                             <span className={styles.optionEmoji}>{info.icon}</span>
-                                            <h3 className={styles.optionTitle}>{info.label}</h3>
-                                            <p className={styles.optionDesc}>{info.description}</p>
-                                            <span className={styles.optionAge}>{info.ageRange}</span>
+                                            <h3 className={styles.optionTitle}>{t(`bookTypes.${type}.label`)}</h3>
+                                            <p className={styles.optionDesc}>{t(`bookTypes.${type}.description`)}</p>
+                                            <span className={styles.optionAge}>{t(`bookTypes.${type}.ageRange`)}</span>
                                             {settings.bookType === type && (
                                                 <span className={styles.checkmark}>✓</span>
                                             )}
@@ -451,9 +451,9 @@ export default function CreateBookPage() {
                                     style={{ '--option-color': '#ec4899' } as React.CSSProperties}
                                 >
                                     <span className={styles.optionEmoji}>✨</span>
-                                    <h3 className={styles.optionTitle}>Square Hardcover</h3>
-                                    <p className={styles.optionDesc}>8.5&quot; x 8.5&quot; Premium. The gold standard for kids&apos; books.</p>
-                                    <span className={styles.optionAge}>Min 24 Pages (Auto-set)</span>
+                                    <h3 className={styles.optionTitle}>{t('formats.square.label')}</h3>
+                                    <p className={styles.optionDesc}>{t('formats.square.description')}</p>
+                                    <span className={styles.optionAge}>{t('formats.square.pages')}</span>
                                     {settings.printFormat === 'square' && (
                                         <span className={styles.checkmark}>✓</span>
                                     )}
@@ -465,9 +465,9 @@ export default function CreateBookPage() {
                                     style={{ '--option-color': '#3b82f6' } as React.CSSProperties}
                                 >
                                     <span className={styles.optionEmoji}>📱</span>
-                                    <h3 className={styles.optionTitle}>Portrait / Digital</h3>
-                                    <p className={styles.optionDesc}>6&quot; x 9&quot; Standard. Great for softcover or phones.</p>
-                                    <span className={styles.optionAge}>Flexible Pages</span>
+                                    <h3 className={styles.optionTitle}>{t('formats.portrait.label')}</h3>
+                                    <p className={styles.optionDesc}>{t('formats.portrait.description')}</p>
+                                    <span className={styles.optionAge}>{t('formats.portrait.pages')}</span>
                                     {settings.printFormat === 'portrait' && (
                                         <span className={styles.checkmark}>✓</span>
                                     )}
@@ -505,7 +505,7 @@ export default function CreateBookPage() {
                                             } as React.CSSProperties}
                                         >
                                             <span className={styles.themeEmoji}>{info.icon}</span>
-                                            <span className={styles.themeName}>{info.label}</span>
+                                            <span className={styles.themeName}>{t(`themes.${theme}`)}</span>
                                             {settings.bookTheme === theme && (
                                                 <span className={styles.checkmark}>✓</span>
                                             )}
@@ -577,7 +577,7 @@ export default function CreateBookPage() {
                                             } as React.CSSProperties}
                                         >
                                             <span className={styles.themeEmoji}>{emojis[style]}</span>
-                                            <span className={styles.themeName}>{info.label}</span>
+                                            <span className={styles.themeName}>{t(`artStyles.${style}`)}</span>
                                             {settings.artStyle === style && (
                                                 <span className={styles.checkmark}>✓</span>
                                             )}
@@ -588,7 +588,7 @@ export default function CreateBookPage() {
 
                             <div className={styles.qualitySection} style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                 <label className={styles.fieldLabel} style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#1e293b' }}>
-                                    ✨ Image Quality
+                                    {t('imageQuality.label')}
                                 </label>
                                 <div className={styles.qualityToggle} style={{ display: 'flex', gap: '1rem' }}>
                                     <button
@@ -605,7 +605,7 @@ export default function CreateBookPage() {
                                             transition: 'all 0.2s'
                                         }}
                                     >
-                                        ⚡ Fast (Standard)
+                                        {t('imageQuality.fast')}
                                     </button>
                                     <button
                                         onClick={() => setSettings(prev => ({ ...prev, imageQuality: 'pro' }))}
@@ -621,13 +621,13 @@ export default function CreateBookPage() {
                                             transition: 'all 0.2s'
                                         }}
                                     >
-                                        💎 Pro (Imagen 4 Ultra)
+                                        {t('imageQuality.pro')}
                                     </button>
                                 </div>
                                 <p style={{ marginTop: '0.75rem', fontSize: '0.875rem', color: '#64748b' }}>
                                     {settings.imageQuality === 'pro'
-                                        ? "Pro mode uses Imagen 4 Ultra for stunning, high-definition illustrations. Takes a bit longer to generate."
-                                        : "Standard mode generates beautiful images quickly using Imagen 4."}
+                                        ? t('imageQuality.proDescription')
+                                        : t('imageQuality.fastDescription')}
                                 </p>
                             </div>
                         </motion.div>
@@ -660,7 +660,7 @@ export default function CreateBookPage() {
                                         autoFocus
                                     />
                                     <p className={styles.inputHint}>
-                                        Leave empty to use the default title
+                                        {t('errors.emptyTitleHint')}
                                     </p>
                                 </div>
 
@@ -678,12 +678,12 @@ export default function CreateBookPage() {
                                             {settings.bookType ? BookTypeInfo[settings.bookType].icon : '📚'}
                                         </span>
                                         <span className={styles.previewTitle}>
-                                            {settings.title || `${settings.childName}'s Amazing Adventure`}
+                                            {settings.title || (settings.childName ? t('preview.defaultTitle', { childName: settings.childName }) : t('steps.title.titlePlaceholderDefault'))}
                                         </span>
                                     </div>
                                     <div className={styles.previewInfo}>
-                                        <p>For {settings.childName}, age {settings.childAge}</p>
-                                        <p>{settings.bookType && BookTypeInfo[settings.bookType].label}</p>
+                                        <p>{t('preview.forChild', { childName: settings.childName, age: settings.childAge })}</p>
+                                        <p>{settings.bookType && t(`bookTypes.${settings.bookType}.label`)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -698,7 +698,7 @@ export default function CreateBookPage() {
                     className={styles.secondaryButton}
                     onClick={handleBack}
                 >
-                    {currentStepIndex === 0 ? 'Cancel' : 'Back'}
+                    {t('buttons.back')}
                 </button>
 
                 <button
@@ -709,18 +709,12 @@ export default function CreateBookPage() {
                     {isCreating ? (
                         <>
                             <span className={styles.spinner}></span>
-                            {creatingStatus || 'Creating...'}
+                            {creatingStatus || t('status.generatingStory')}
                         </>
                     ) : currentStepIndex === steps.length - 1 ? (
-                        <>
-                            ✨ Generate Book with AI
-                            <span>🚀</span>
-                        </>
+                        t('buttons.generateBook')
                     ) : (
-                        <>
-                            Continue
-                            <span>→</span>
-                        </>
+                        t('buttons.continue')
                     )}
                 </button>
             </div>

@@ -3,13 +3,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 32px;
-  background: white;
-  border-bottom: 1px solid #E5E7EB;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
   backdrop-filter: blur(10px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .navBrand {
@@ -45,7 +45,7 @@
 .navName {
   font-size: 20px;
   font-weight: 700;
-  color: #111827;
+  color: white;
   letter-spacing: -0.01em;
 }
 
@@ -64,32 +64,32 @@
   border-radius: 8px;
   font-size: 15px;
   font-weight: 500;
-  color: #6B7280;
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
   transition: all 0.2s ease;
   letter-spacing: -0.01em;
 }
 
 .navLink:hover {
-  background: #F3F4F6;
-  color: #111827;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 .navLink.active {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
-  color: #7C3AED;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
   font-weight: 600;
 }
 
 .navLink.disabled {
-  color: #D1D5DB;
+  color: rgba(255, 255, 255, 0.4);
   cursor: not-allowed;
   opacity: 0.5;
 }
 
 .navLink.disabled:hover {
   background: transparent;
-  color: #D1D5DB;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .navActions {
@@ -134,9 +134,9 @@
 
 .signInButton {
   padding: 10px 20px;
-  background: transparent;
+  background: white;
   color: #7C3AED;
-  border: 1.5px solid #7C3AED;
+  border: 1.5px solid white;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
@@ -146,8 +146,9 @@
 }
 
 .signInButton:hover {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
-  border-color: #6D28D9;
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .navSkeleton {

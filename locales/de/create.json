@@ -47,42 +47,36 @@
   },
   "bookTypes": {
     "board": {
-      "name": "Pappbuch",
-      "description": "Dicke, robuste Seiten perfekt für kleine Hände",
-      "age": "0-3 Jahre",
-      "pages": "10 Seiten"
+      "label": "Pappbilderbuch",
+      "description": "Robuste Seiten perfekt für kleine Hände",
+      "ageRange": "0-3 Jahre"
     },
     "picture": {
-      "name": "Bilderbuch",
-      "description": "Schöne Illustrationen mit kurzem, fesselndem Text",
-      "age": "3-6 Jahre",
-      "pages": "10 Seiten"
+      "label": "Bilderbuch",
+      "description": "Schöne Illustrationen mit kurzem Text",
+      "ageRange": "3-6 Jahre"
     },
     "story": {
-      "name": "Geschichtenbuch",
-      "description": "Längere Geschichten für wachsende Leser",
-      "age": "5-10 Jahre",
-      "pages": "12 Seiten"
+      "label": "Geschichtenbuch",
+      "description": "Fesselnde Geschichten für wachsende Leser",
+      "ageRange": "5-10 Jahre"
     },
     "alphabet": {
-      "name": "Alphabetbuch",
-      "description": "Buchstaben auf unterhaltsame, personalisierte Weise lernen",
-      "age": "2-5 Jahre",
-      "pages": "26 Seiten"
+      "label": "Alphabet-Buch",
+      "description": "Buchstaben auf spielerische Weise lernen",
+      "ageRange": "2-5 Jahre"
     }
   },
   "formats": {
-    "portrait": {
-      "name": "Hochformat",
-      "description": "21,6 × 27,9 cm - Klassisches vertikales Format"
-    },
-    "landscape": {
-      "name": "Querformat",
-      "description": "27,9 × 21,6 cm - Breites horizontales Format"
-    },
     "square": {
-      "name": "Quadratisch",
-      "description": "21,6 × 21,6 cm - Modernes quadratisches Format"
+      "label": "Quadratisches Hardcover",
+      "description": "21,6 x 21,6 cm Premium. Der Goldstandard für Kinderbücher.",
+      "pages": "Min. 24 Seiten (Auto-Set)"
+    },
+    "portrait": {
+      "label": "Hochformat / Digital",
+      "description": "15,2 x 22,9 cm Standard. Ideal für Softcover oder Handys.",
+      "pages": "Flexible Seitenzahl"
     }
   },
   "themes": {
@@ -90,14 +84,40 @@
     "bedtime": "Schlafenszeit",
     "learning": "Lernen",
     "fantasy": "Fantasy",
-    "animals": "Tiere"
+    "animals": "Tiere",
+    "custom": "Individuell"
+  },
+  "artStyles": {
+    "storybook_classic": "Klassisches Märchenbuch",
+    "watercolor": "Aquarell",
+    "digital_art": "Digitale Kunst",
+    "cartoon": "Cartoon",
+    "pixel_art": "Pixel-Art",
+    "coloring_book": "Malbuch"
+  },
+  "imageQuality": {
+    "label": "✨ Bildqualität",
+    "fast": "⚡ Schnell (Standard)",
+    "pro": "💎 Pro (Imagen 4 Ultra)",
+    "fastDescription": "Der Standardmodus erzeugt schnell schöne Bilder mit Imagen 4.",
+    "proDescription": "Der Pro-Modus verwendet Imagen 4 Ultra für atemberaubende, hochauflösende Illustrationen. Dauert etwas länger."
+  },
+  "preview": {
+    "forChild": "Für {{childName}}, {{age}} Jahre",
+    "defaultTitle": "{{childName}}s Tolles Abenteuer"
   },
   "buttons": {
+    "back": "← Zurück",
+    "continue": "Weiter →",
+    "generateBook": "✨ Buch mit KI erstellen 🪄",
     "createBook": "Mein Buch erstellen ✨",
     "signInToCreate": "Anmelden zum Erstellen"
   },
   "errors": {
-    "creationFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut."
+    "createFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
+    "photoUploadFailed": "Foto-Upload fehlgeschlagen. Bitte versuche es erneut.",
+    "invalidSettings": "Bitte fülle alle erforderlichen Felder aus.",
+    "emptyTitleHint": "Leer lassen, um den Standardtitel zu verwenden"
   },
   "status": {
     "extractingCharacter": "Foto wird analysiert...",

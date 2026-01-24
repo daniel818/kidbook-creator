@@ -90,14 +90,30 @@
     "bedtime": "שעת השינה",
     "learning": "למידה",
     "fantasy": "פנטזיה",
-    "animals": "חיות"
+    "animals": "חיות",
+    "custom": "מותאם אישית"
+  },
+  "artStyles": {
+    "storybook_classic": "ספר סיפורים קלאסי",
+    "watercolor": "צבעי מים",
+    "digital_art": "אמנות דיגיטלית",
+    "cartoon": "קריקטורה",
+    "pixel_art": "פיקסל ארט",
+    "coloring_book": "ספר צביעה"
   },
   "buttons": {
+    "back": "→ חזרה",
+    "continue": "← המשך",
+    "generateBook": "✨ צור ספר עם AI 🪄",
     "createBook": "צור את הספר שלי ✨",
     "signInToCreate": "התחבר כדי ליצור"
   },
   "errors": {
-    "creationFailed": "יצירת הספר נכשלה. אנא נסה שוב."
+    "creationFailed": "יצירת הספר נכשלה. אנא נסה שוב.",
+    "createFailed": "יצירת הספר נכשלה. אנא נסה שוב.",
+    "photoUploadFailed": "העלאת התמונה נכשלה. אנא נסה שוב.",
+    "invalidSettings": "אנא השלם את כל השדות הנדרשים.",
+    "emptyTitleHint": "השאר ריק כדי להשתמש בכותרת ברירת המחדל"
   },
   "status": {
     "extractingCharacter": "מנתח תמונה...",

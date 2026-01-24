@@ -53,6 +53,11 @@
   z-index: 1000;
 }
 
+[dir="rtl"] .dropdown {
+  right: auto;
+  left: 0;
+}
+
 .languageSwitcher:hover .dropdown {
   opacity: 1;
   visibility: visible;

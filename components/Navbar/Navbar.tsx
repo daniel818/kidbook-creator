@@ -79,8 +79,8 @@ export function Navbar() {
                 {t('signIn')}
               </button>
             )}
-            <LanguageSwitcher />
             {user && <UserNav />}
+            <LanguageSwitcher />
           </>
         )}
       </div>

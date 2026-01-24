@@ -47,42 +47,36 @@
   },
   "bookTypes": {
     "board": {
-      "name": "Board Book",
-      "description": "Thick, durable pages perfect for little hands",
-      "age": "Ages 0-3",
-      "pages": "10 pages"
+      "label": "Board Book",
+      "description": "Durable pages perfect for little hands",
+      "ageRange": "0-3 years"
     },
     "picture": {
-      "name": "Picture Book",
-      "description": "Beautiful illustrations with short, engaging text",
-      "age": "Ages 3-6",
-      "pages": "10 pages"
+      "label": "Picture Book",
+      "description": "Beautiful illustrations with short text",
+      "ageRange": "3-6 years"
     },
     "story": {
-      "name": "Story Book",
-      "description": "Longer stories for growing readers",
-      "age": "Ages 5-10",
-      "pages": "12 pages"
+      "label": "Story Book",
+      "description": "Engaging stories for growing readers",
+      "ageRange": "5-10 years"
     },
     "alphabet": {
-      "name": "Alphabet Book",
-      "description": "Learn letters in a fun, personalized way",
-      "age": "Ages 2-5",
-      "pages": "26 pages"
+      "label": "Alphabet Book",
+      "description": "Learn letters in a fun way",
+      "ageRange": "2-5 years"
     }
   },
   "formats": {
-    "portrait": {
-      "name": "Portrait",
-      "description": "8.5\" × 11\" - Classic vertical format"
-    },
-    "landscape": {
-      "name": "Landscape",
-      "description": "11\" × 8.5\" - Wide horizontal format"
-    },
     "square": {
-      "name": "Square",
-      "description": "8.5\" × 8.5\" - Modern square format"
+      "label": "Square Hardcover",
+      "description": "8.5\" x 8.5\" Premium. The gold standard for kids' books.",
+      "pages": "Min 24 Pages (Auto-set)"
+    },
+    "portrait": {
+      "label": "Portrait / Digital",
+      "description": "6\" x 9\" Standard. Great for softcover or phones.",
+      "pages": "Flexible Pages"
     }
   },
   "themes": {
@@ -90,14 +84,30 @@
     "bedtime": "Bedtime",
     "learning": "Learning",
     "fantasy": "Fantasy",
-    "animals": "Animals"
+    "animals": "Animals",
+    "custom": "Custom"
+  },
+  "artStyles": {
+    "storybook_classic": "Classic Storybook",
+    "watercolor": "Watercolor",
+    "digital_art": "Digital Art",
+    "cartoon": "Cartoon",
+    "pixel_art": "Pixel Art",
+    "coloring_book": "Coloring Book"
   },
   "buttons": {
+    "back": "← Back",
+    "continue": "Continue →",
+    "generateBook": "✨ Generate Book with AI 🪄",
     "createBook": "Create My Book ✨",
     "signInToCreate": "Sign In to Create"
   },
   "errors": {
-    "creationFailed": "Failed to create book. Please try again."
+    "creationFailed": "Failed to create book. Please try again.",
+    "createFailed": "Failed to create book. Please try again.",
+    "photoUploadFailed": "Failed to upload photo. Please try again.",
+    "invalidSettings": "Please complete all required fields.",
+    "emptyTitleHint": "Leave empty to use the default title"
   },
   "status": {
     "extractingCharacter": "Analyzing photo...",
