@@ -14,13 +14,13 @@ export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('navbar');
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const navLinks = [
-    { label: 'Community Books', href: '/community', disabled: true },
-    { label: 'FAQ', href: '/faq', disabled: true },
-    { label: 'About Us', href: '/about', disabled: true },
+    { label: t('communityBooks'), href: '/community', disabled: true },
+    { label: t('faq'), href: '/faq', disabled: true },
+    { label: t('aboutUs'), href: '/about', disabled: true },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -63,7 +63,7 @@ export function Navbar() {
             onClick={() => user ? router.push('/create') : setShowAuthModal(true)}
           >
             <span className={styles.createIcon}>✨</span>
-            <span className={styles.createButtonText}>Create a Book</span>
+            <span className={styles.createButtonText}>{t('createBook')}</span>
           </button>
         )}
         
@@ -78,7 +78,7 @@ export function Navbar() {
             className={styles.signInButton}
             onClick={() => setShowAuthModal(true)}
           >
-            {t('test')}
+            {t('signIn')}
           </button>
         )}
       </div>

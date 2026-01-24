@@ -426,7 +426,7 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **4.1 Extract navbar strings to translation files**
+- [x] **4.1 Extract navbar strings to translation files**
   - Add to `/locales/en/navbar.json`:
     ```json
     {
@@ -437,17 +437,17 @@ Before moving to the next task:
       "signIn": "Sign In"
     }
     ```
-  - [ ] Create German translations
-  - [ ] Create Hebrew translations
+  - [x] Create German translations
+  - [x] Create Hebrew translations
 
-- [ ] **4.2 Update Navbar.tsx to use translations**
+- [x] **4.2 Update Navbar.tsx to use translations**
   - Import `useTranslation`
   - Replace all hardcoded strings
-  - [ ] Test in all three languages
+  - [x] Test in all three languages
 
-- [ ] **4.3 Update UserNav.tsx to use translations**
+- [x] **4.3 Update UserNav.tsx to use translations**
   - Add translations for: My Books, Purchases, Profile, Sign Out
-  - [ ] Test in all three languages
+  - [x] Test in all three languages
 
 **Phase 4 Deliverable:** Navbar fully translated in all languages.
 

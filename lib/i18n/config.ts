@@ -5,6 +5,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import commonEN from '@/locales/en/common.json';
 import commonDE from '@/locales/de/common.json';
 import commonHE from '@/locales/he/common.json';
+import navbarEN from '@/locales/en/navbar.json';
+import navbarDE from '@/locales/de/navbar.json';
+import navbarHE from '@/locales/he/navbar.json';
 
 i18n
   .use(LanguageDetector)
@@ -13,12 +16,15 @@ i18n
     resources: {
       en: {
         common: commonEN,
+        navbar: navbarEN,
       },
       de: {
         common: commonDE,
+        navbar: navbarDE,
       },
       he: {
         common: commonHE,
+        navbar: navbarHE,
       },
     },
     fallbackLng: 'en',

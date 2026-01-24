@@ -2,12 +2,14 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import styles from './UserNav.module.css';
 
 export function UserNav() {
   const router = useRouter();
   const { user, signOut } = useAuth();
+  const { t } = useTranslation('navbar');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -120,7 +122,7 @@ export function UserNav() {
               onClick={() => handleNavigation('/mybooks')}
             >
               <span className={styles.menuIcon}>📚</span>
-              <span>My Books</span>
+              <span>{t('myBooks')}</span>
             </button>
 
             <button
@@ -128,7 +130,7 @@ export function UserNav() {
               onClick={() => handleNavigation('/purchases')}
             >
               <span className={styles.menuIcon}>📦</span>
-              <span>Purchases</span>
+              <span>{t('purchases')}</span>
             </button>
 
             <button
@@ -136,7 +138,7 @@ export function UserNav() {
               onClick={() => handleNavigation('/profile')}
             >
               <span className={styles.menuIcon}>👤</span>
-              <span>Profile</span>
+              <span>{t('profile')}</span>
             </button>
           </nav>
 
@@ -147,7 +149,7 @@ export function UserNav() {
             onClick={handleSignOut}
           >
             <span className={styles.menuIcon}>🚪</span>
-            <span>Sign Out</span>
+            <span>{t('signOut')}</span>
           </button>
         </div>
       )}
