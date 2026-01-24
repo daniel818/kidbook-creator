@@ -24,7 +24,7 @@ type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
 export default function CreateBookPage() {
     const router = useRouter();
     const { user, isLoading: isAuthLoading } = useAuth();
-    const { t } = useTranslation('create');
+    const { t, i18n } = useTranslation('create');
     const [currentStep, setCurrentStep] = useState<WizardStep>('child');
     const [settings, setSettings] = useState<Partial<BookSettings> & { storyDescription?: string; artStyle?: ArtStyle }>({
         childName: '',
@@ -208,6 +208,7 @@ export default function CreateBookPage() {
                 artStyle: settings.artStyle || 'storybook_classic',
                 imageQuality: settings.imageQuality || 'fast',
                 childPhoto: base64Photo,
+                language: i18n.language || 'en',
             };
             console.log('[CLIENT] Request body:', requestBody);
 

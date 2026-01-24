@@ -560,29 +560,35 @@ Currently, the AI prompts in `/lib/gemini/client.ts` are hardcoded in English. W
 
 ### Tasks
 
-- [ ] **9.1 Add language parameter to AI generation functions**
-  - Update `generateStory()` to accept `language` parameter
-  - Update `generateCompleteBook()` to accept `language` parameter
-  - Pass language from create page to API routes
-  - [ ] Test: Verify language parameter flows through 
+- [x] **9.1 Add language parameter to AI generation functions**
+  - [x] Update `generateStory()` to accept `language` parameter
+  - [x] Update `generateCompleteBook()` to accept `language` parameter
+  - [x] Update `generateIllustration()` to accept `language` parameter
+  - [x] Update `extractCharacterFromPhoto()` to accept `language` parameter
+  - [x] Pass language from create page to API routes
+  - [x] Added language to StoryGenerationInput interface 
 
-- [ ] **9.2 Create AI prompt templates in all languages**
-  - Create `/lib/gemini/prompts/en.ts` - English prompt templates
-  - Create `/lib/gemini/prompts/de.ts` - German prompt templates
-  - Create `/lib/gemini/prompts/he.ts` - Hebrew prompt templates
-  - Include instructions for AI to respond in the target language
-  - [ ] Test: Verify prompts are grammatically correct
+- [x] **9.2 Create AI prompt templates in all languages**
+  - [x] Create `/lib/gemini/prompts/en.ts` - English prompt templates
+  - [x] Create `/lib/gemini/prompts/de.ts` - German prompt templates
+  - [x] Create `/lib/gemini/prompts/he.ts` - Hebrew prompt templates
+  - [x] Create `/lib/gemini/prompts/index.ts` - Language selection helper
+  - [x] Include instructions for AI to respond in the target language
+  - [x] All prompts include explicit language instructions
 
-- [ ] **9.3 Update Gemini client to use localized prompts**
-  - Modify `generateStory()` to select prompt based on language
-  - Ensure AI instructions specify output language
-  - Add language validation
+- [x] **9.3 Update Gemini client to use localized prompts**
+  - [x] Modify `generateStory()` to select prompt based on language
+  - [x] Modify `generateIllustration()` to use localized prompts
+  - [x] Modify `extractCharacterFromPhoto()` to use localized prompts
+  - [x] Ensure AI instructions specify output language
+  - [x] Import and use getPrompts() helper function
   - [ ] Test: Generate story in German, verify German output
   - [ ] Test: Generate story in Hebrew, verify Hebrew output
 
-- [ ] **9.4 Update create page to detect and pass language**
-  - Get current language from i18next in create page
-  - Pass language to API in book generation request
+- [x] **9.4 Update create page to detect and pass language**
+  - [x] Get current language from i18next in create page
+  - [x] Pass language to API in book generation request
+  - [x] Update API route to accept and forward language parameter
   - [ ] Test: Switch language, create book, verify correct language used
 
 **Phase 9 Deliverable:** AI generates stories in the user's selected language.

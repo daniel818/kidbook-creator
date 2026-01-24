@@ -5,6 +5,7 @@
 
 import { GoogleGenAI } from '@google/genai';
 import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
+import { getPrompts, Language } from './prompts';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -45,6 +46,7 @@ export interface StoryGenerationInput {
     imageQuality?: ImageQuality;
     childPhoto?: string;
     aspectRatio?: '1:1' | '3:4';
+    language?: Language;
 }
 
 export interface GeneratedPage {
@@ -82,37 +84,20 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     const startTime = Date.now();
     logWithTime('=== STORY GENERATION STARTED ===');
 
+    const language = input.language || 'en';
     const textModel = process.env.GEMINI_TEXT_MODEL || 'gemini-3-flash-preview';
-    logWithTime(`Using model: ${textModel}`);
+    logWithTime(`Using model: ${textModel}, language: ${language}`);
 
-    const prompt = `
-    Create a children's book story based on the following details:
-    - Child's Name: ${input.childName}
-    - Age: ${input.childAge}
-    - Theme: ${input.bookTheme}
-    - Type: ${input.bookType}
-    - Page Count: ${input.pageCount || 10}
-    ${input.characterDescription ? `- Character Description: ${input.characterDescription}` : ''}
-    ${input.storyDescription ? `- Specific Story Request: ${input.storyDescription}` : ''}
-
-    The story should be engaging, age-appropriate, and magical.
-    
-    OUTPUT FORMAT:
-    Return ONLY a valid JSON object with the following structure:
-    {
-        "title": "Title of the book",
-        "backCoverBlurb": "A short, engaging summary of the story for the back cover (2-3 sentences max)",
-        "characterDescription": "A detailed physical description of the main character (if not provided)",
-        "pages": [
-            {
-                "pageNumber": 1,
-                "text": "Story text for this page (keep it short for children)",
-                "imagePrompt": "A detailed description of the illustration for this page, describing the scene and action ONLY. Do NOT describe the art style (e.g. 'cartoon', 'watercolor') as this is handled separately."
-            },
-            ...
-        ]
-    }
-    `;
+    const prompts = getPrompts(language);
+    const prompt = prompts.getStoryPrompt({
+        childName: input.childName,
+        childAge: input.childAge,
+        bookTheme: input.bookTheme,
+        bookType: input.bookType,
+        pageCount: input.pageCount || 10,
+        characterDescription: input.characterDescription,
+        storyDescription: input.storyDescription
+    });
 
     logWithTime('--- STORY PROMPT SENT TO MODEL ---', prompt);
 
@@ -165,7 +150,8 @@ export async function generateIllustration(
     artStyle: ArtStyle = 'storybook_classic',
     quality: ImageQuality = 'fast',
     referenceImage?: string,
-    aspectRatio: '1:1' | '3:4' = '3:4'
+    aspectRatio: '1:1' | '3:4' = '3:4',
+    language: Language = 'en'
 ): Promise<{ imageUrl: string; usage: UsageMetadata }> {
     const startTime = Date.now();
     logWithTime(`=== IMAGE GENERATION STARTED ===`);
@@ -182,20 +168,20 @@ export async function generateIllustration(
 
     const parts: any[] = [];
 
-    // Construct Prompt
-    let promptText = `Generate a children's book illustration.
-    Style: ${styleInfo.prompt}
-    Scene: ${scenePrompt}
-    Character: ${characterDescription}
-    Ratio: ${aspectRatio === '1:1' ? 'Square 1:1' : '3:4 Portrait'}.
-    High quality, vibrant, detailed.
-    Ensure the art style is consistent with the description above.`;
+    // Construct Prompt using localized template
+    const prompts = getPrompts(language);
+    const promptText = prompts.getIllustrationPrompt(
+        scenePrompt,
+        characterDescription,
+        styleInfo.prompt,
+        aspectRatio,
+        !!referenceImage
+    );
 
     // Add Reference Image if available
     if (referenceImage) {
         logWithTime('Including Reference Image in prompt...');
         const base64Image = referenceImage.replace(/^data:image\/\w+;base64,/, '');
-        promptText += "\nIMPORTANT: The character MUST look exactly like the child in the provided reference image. Maintain facial features, hair, and likeness.";
 
         parts.push({ text: promptText });
         parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Image } });
@@ -236,22 +222,25 @@ export async function generateIllustration(
 }
 
 // Extract character description
-export async function extractCharacterFromPhoto(base64Image: string): Promise<string> {
+export async function extractCharacterFromPhoto(photoBase64: string, language: Language = 'en'): Promise<string> {
     const startTime = Date.now();
     const model = process.env.GEMINI_TEXT_MODEL || 'gemini-3-flash-preview';
 
     try {
+        const prompts = getPrompts(language);
+        const promptText = prompts.getCharacterExtractionPrompt();
+
         const response = await genAI.models.generateContent({
             model: model,
             contents: [
                 {
                     role: 'user',
                     parts: [
-                        { text: "Analyze this image and create a highly detailed character reference description for an AI image generator..." }, // Keep short for brevity in log
+                        { text: promptText },
                         {
                             inlineData: {
                                 mimeType: 'image/jpeg',
-                                data: base64Image
+                                data: photoBase64
                             }
                         }
                     ]
@@ -311,7 +300,8 @@ export async function generateCompleteBook(
                 input.artStyle,
                 input.imageQuality,
                 input.childPhoto,
-                input.aspectRatio
+                input.aspectRatio,
+                input.language || 'en'
             );
             illustrations[pageIndex] = imageUrl;
             generationLogs.push({
