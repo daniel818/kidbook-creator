@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Book } from '@/lib/types';
 import { getBooks, deleteBook as deleteLocalBook } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -13,6 +14,7 @@ import styles from './page.module.css';
 export default function Home() {
   const router = useRouter();
   const { user, isLoading: authLoading, signOut } = useAuth();
+  const { t } = useTranslation('home');
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -140,40 +142,39 @@ export default function Home() {
           <div className={styles.heroContent}>
             <div className={styles.badge}>
               <span className={styles.badgeIcon}>✨</span>
-              <span>Create magical stories</span>
+              <span>{t('hero.badge')}</span>
             </div>
 
             <h1 className={styles.heroTitle}>
-              Create{' '}
-              <span className={styles.gradientText}>Personalized</span>
+              {t('hero.title')}{' '}
+              <span className={styles.gradientText}>{t('hero.titleHighlight')}</span>
               <br />
-              Children&apos;s Books
+              {t('hero.titleEnd')}
             </h1>
 
             <p className={styles.heroSubtitle}>
-              Design beautiful custom books for your little ones. Upload photos,
-              write stories, and order professionally printed books delivered to your door.
+              {t('hero.subtitle')}
             </p>
 
             <div className={styles.heroActions}>
               <button onClick={handleCreateNew} className={styles.ctaButton}>
                 <span className={styles.ctaIcon}>📖</span>
-                Create Your Book
+                {t('hero.ctaButton')}
                 <span className={styles.ctaArrow}>→</span>
               </button>
 
               <div className={styles.ctaFeatures}>
                 <span className={styles.feature}>
                   <span className={styles.featureIcon}>🎨</span>
-                  Easy to use
+                  {t('hero.features.easyToUse')}
                 </span>
                 <span className={styles.feature}>
                   <span className={styles.featureIcon}>📦</span>
-                  Print & ship
+                  {t('hero.features.printShip')}
                 </span>
                 <span className={styles.feature}>
                   <span className={styles.featureIcon}>💝</span>
-                  Perfect gift
+                  {t('hero.features.perfectGift')}
                 </span>
               </div>
             </div>
@@ -199,15 +200,15 @@ export default function Home() {
 
         {/* Features Section */}
         <section className={styles.features}>
-          <h2 className={styles.featuresTitle}>How It Works</h2>
+          <h2 className={styles.featuresTitle}>{t('howItWorks.title')}</h2>
 
           <div className={styles.stepsContainer}>
             <div className={styles.stepCard}>
               <div className={styles.stepNumber}>1</div>
               <div className={styles.stepIcon}>👶</div>
-              <h3 className={styles.stepTitle}>Setup Your Book</h3>
+              <h3 className={styles.stepTitle}>{t('howItWorks.step1.title')}</h3>
               <p className={styles.stepDesc}>
-                Enter your child&apos;s name, age, and choose the perfect book type and theme.
+                {t('howItWorks.step1.description')}
               </p>
             </div>
 
@@ -218,9 +219,9 @@ export default function Home() {
             <div className={styles.stepCard}>
               <div className={styles.stepNumber}>2</div>
               <div className={styles.stepIcon}>🖼️</div>
-              <h3 className={styles.stepTitle}>Add Content</h3>
+              <h3 className={styles.stepTitle}>{t('howItWorks.step2.title')}</h3>
               <p className={styles.stepDesc}>
-                Upload photos and write your story. Arrange pages exactly how you want.
+                {t('howItWorks.step2.description')}
               </p>
             </div>
 
@@ -231,9 +232,9 @@ export default function Home() {
             <div className={styles.stepCard}>
               <div className={styles.stepNumber}>3</div>
               <div className={styles.stepIcon}>📬</div>
-              <h3 className={styles.stepTitle}>Order & Enjoy</h3>
+              <h3 className={styles.stepTitle}>{t('howItWorks.step3.title')}</h3>
               <p className={styles.stepDesc}>
-                Preview your book, place your order, and receive a beautiful printed book.
+                {t('howItWorks.step3.description')}
               </p>
             </div>
           </div>
@@ -241,35 +242,35 @@ export default function Home() {
 
         {/* Book Types Section */}
         <section className={styles.bookTypes}>
-          <h2 className={styles.typesTitle}>Choose Your Book Type</h2>
+          <h2 className={styles.typesTitle}>{t('bookTypes.title')}</h2>
 
           <div className={styles.typesGrid}>
             <div className={styles.typeCard} style={{ '--type-color': '#10b981' } as React.CSSProperties}>
               <span className={styles.typeEmoji}>📘</span>
-              <h3>Board Book</h3>
-              <p>Durable pages for little hands</p>
-              <span className={styles.typeAge}>Ages 0-3</span>
+              <h3>{t('bookTypes.board.title')}</h3>
+              <p>{t('bookTypes.board.description')}</p>
+              <span className={styles.typeAge}>{t('bookTypes.board.age')}</span>
             </div>
 
             <div className={styles.typeCard} style={{ '--type-color': '#6366f1' } as React.CSSProperties}>
               <span className={styles.typeEmoji}>🎨</span>
-              <h3>Picture Book</h3>
-              <p>Beautiful illustrations with short text</p>
-              <span className={styles.typeAge}>Ages 3-6</span>
+              <h3>{t('bookTypes.picture.title')}</h3>
+              <p>{t('bookTypes.picture.description')}</p>
+              <span className={styles.typeAge}>{t('bookTypes.picture.age')}</span>
             </div>
 
             <div className={styles.typeCard} style={{ '--type-color': '#ec4899' } as React.CSSProperties}>
               <span className={styles.typeEmoji}>📖</span>
-              <h3>Story Book</h3>
-              <p>Engaging stories for growing readers</p>
-              <span className={styles.typeAge}>Ages 5-10</span>
+              <h3>{t('bookTypes.story.title')}</h3>
+              <p>{t('bookTypes.story.description')}</p>
+              <span className={styles.typeAge}>{t('bookTypes.story.age')}</span>
             </div>
 
             <div className={styles.typeCard} style={{ '--type-color': '#f59e0b' } as React.CSSProperties}>
               <span className={styles.typeEmoji}>🔤</span>
-              <h3>Alphabet Book</h3>
-              <p>Learn letters in a fun way</p>
-              <span className={styles.typeAge}>Ages 2-5</span>
+              <h3>{t('bookTypes.alphabet.title')}</h3>
+              <p>{t('bookTypes.alphabet.description')}</p>
+              <span className={styles.typeAge}>{t('bookTypes.alphabet.age')}</span>
             </div>
           </div>
         </section>
@@ -282,7 +283,7 @@ export default function Home() {
               <span className={styles.footerName}>KidBook Creator</span>
             </div>
             <p className={styles.footerCopy}>
-              Made with ❤️ for parents who want to create magical memories
+              {t('footer.tagline')}
             </p>
           </div>
         </footer>
@@ -306,9 +307,9 @@ export default function Home() {
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
           onConfirm={confirmDeleteBook}
-          title="Delete Book"
-          message="Are you sure you want to delete this book? This action cannot be undone."
-          confirmText="Delete"
+          title={t('deleteModal.title')}
+          message={t('deleteModal.message')}
+          confirmText={t('deleteModal.confirmText')}
           isLoading={isDeleting}
         />
       </main>

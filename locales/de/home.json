@@ -1,0 +1,72 @@
+{
+  "hero": {
+    "badge": "Magische Geschichten erstellen",
+    "title": "Erstelle",
+    "titleHighlight": "Personalisierte",
+    "titleEnd": "Kinderbücher",
+    "subtitle": "Gestalte wunderschöne individuelle Bücher für deine Kleinen. Lade Fotos hoch, schreibe Geschichten und bestelle professionell gedruckte Bücher direkt nach Hause.",
+    "ctaButton": "Dein Buch erstellen",
+    "noBooks": "Noch keine Bücher. Erstelle dein erstes Buch!",
+    "createNewBook": "Neues Buch erstellen",
+    "bookCard": {
+      "pages": "{{count}} S.",
+      "forChild": "Für {{childName}}, {{age}} Jahre alt",
+      "status": {
+        "draft": "Entwurf",
+        "complete": "Fertig",
+        "published": "Veröffentlicht"
+      }
+    },
+    "features": {
+      "easyToUse": "Einfach zu bedienen",
+      "printShip": "Drucken & versenden",
+      "perfectGift": "Perfektes Geschenk"
+    }
+  },
+  "howItWorks": {
+    "title": "So funktioniert's",
+    "step1": {
+      "title": "Buch einrichten",
+      "description": "Gib den Namen und das Alter deines Kindes ein und wähle den perfekten Buchtyp und das Thema."
+    },
+    "step2": {
+      "title": "Inhalt hinzufügen",
+      "description": "Lade Fotos hoch und schreibe deine Geschichte. Ordne die Seiten genau so an, wie du möchtest."
+    },
+    "step3": {
+      "title": "Bestellen & genießen",
+      "description": "Sieh dir dein Buch in der Vorschau an, gib deine Bestellung auf und erhalte ein wunderschön gedrucktes Buch."
+    }
+  },
+  "bookTypes": {
+    "title": "Wähle deinen Buchtyp",
+    "board": {
+      "title": "Pappbuch",
+      "description": "Robuste Seiten für kleine Hände",
+      "age": "0-3 Jahre"
+    },
+    "picture": {
+      "title": "Bilderbuch",
+      "description": "Schöne Illustrationen mit kurzem Text",
+      "age": "3-6 Jahre"
+    },
+    "story": {
+      "title": "Geschichtenbuch",
+      "description": "Spannende Geschichten für wachsende Leser",
+      "age": "5-10 Jahre"
+    },
+    "alphabet": {
+      "title": "Alphabetbuch",
+      "description": "Buchstaben auf spielerische Weise lernen",
+      "age": "2-5 Jahre"
+    }
+  },
+  "footer": {
+    "tagline": "Mit ❤️ gemacht für Eltern, die magische Erinnerungen schaffen möchten"
+  },
+  "deleteModal": {
+    "title": "Buch löschen",
+    "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "confirmText": "Löschen"
+  }
+}

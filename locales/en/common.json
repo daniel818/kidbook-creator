@@ -1,0 +1,20 @@
+{
+  "test": "Hello World",
+  "communityBooks": "Community Books",
+  "faq": "FAQ",
+  "aboutUs": "About Us",
+  "alerts": {
+    "warning": "Warning",
+    "error": "Error",
+    "success": "Success",
+    "info": "Information",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "dontAskAgain": "Don't ask again",
+    "loading": "Loading...",
+    "unsavedChanges": {
+      "title": "Unsaved Changes",
+      "message": "You have unsaved changes. Are you sure you want to leave? Your progress will be lost."
+    }
+  }
+}
