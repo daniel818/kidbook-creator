@@ -47,6 +47,7 @@ export default function CreateBookPage() {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
     const [pendingLanguage, setPendingLanguage] = useState<string | null>(null);
+    const previousLanguageRef = useRef<string>(i18n.language);
 
     // Track unsaved changes
     useEffect(() => {
@@ -57,12 +58,20 @@ export default function CreateBookPage() {
     // Detect language changes and show warning if there are unsaved changes
     useEffect(() => {
         const handleLanguageChange = (lng: string) => {
+            // Prevent infinite loop - only act if language actually changed
+            if (lng === previousLanguageRef.current) {
+                return;
+            }
+
             if (hasUnsavedChanges && !isCreating) {
                 // Language is about to change, show warning
                 setPendingLanguage(lng);
                 setShowUnsavedChangesModal(true);
                 // Revert to previous language temporarily
-                i18n.changeLanguage(i18n.language);
+                i18n.changeLanguage(previousLanguageRef.current);
+            } else {
+                // No unsaved changes, allow language change
+                previousLanguageRef.current = lng;
             }
         };
 
@@ -756,6 +765,7 @@ export default function CreateBookPage() {
                 onConfirm={() => {
                     // User confirmed - proceed with language change
                     if (pendingLanguage) {
+                        previousLanguageRef.current = pendingLanguage;
                         i18n.changeLanguage(pendingLanguage);
                     }
                     setShowUnsavedChangesModal(false);
