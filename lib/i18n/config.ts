@@ -29,6 +29,9 @@ import purchasesHE from '@/locales/he/purchases.json';
 import mybooksEN from '@/locales/en/mybooks.json';
 import mybooksDE from '@/locales/de/mybooks.json';
 import mybooksHE from '@/locales/he/mybooks.json';
+import viewerEN from '@/locales/en/viewer.json';
+import viewerDE from '@/locales/de/viewer.json';
+import viewerHE from '@/locales/he/viewer.json';
 
 i18n
   .use(LanguageDetector)
@@ -45,6 +48,7 @@ i18n
         orders: ordersEN,
         purchases: purchasesEN,
         mybooks: mybooksEN,
+        viewer: viewerEN,
       },
       de: {
         common: commonDE,
@@ -56,6 +60,7 @@ i18n
         orders: ordersDE,
         purchases: purchasesDE,
         mybooks: mybooksDE,
+        viewer: viewerDE,
       },
       he: {
         common: commonHE,
@@ -67,6 +72,7 @@ i18n
         orders: ordersHE,
         purchases: purchasesHE,
         mybooks: mybooksHE,
+        viewer: viewerHE,
       },
     },
     fallbackLng: 'en',

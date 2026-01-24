@@ -471,35 +471,61 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             const textElements = [{ ...page.textElements[0], content: displayText }];
 
             // For RTL books, flip the page numbering
-            // Right page (text) should be lower number in RTL
+            // Right page should be lower number in RTL
             const leftPageNum = isRTL ? pageNum * 2 : pageNum * 2 - 1;
             const rightPageNum = isRTL ? pageNum * 2 - 1 : pageNum * 2;
 
-            // Left page: Illustration
-            spreads.push(
-                <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
-                    <IllustrationPage
-                        imageUrl={displayImage || undefined}
-                        pageNumber={leftPageNum}
-                        themeColors={themeColors}
-                        isEditing={isEditing}
-                        isRegenerating={regeneratingPage === pageNum}
-                        onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
-                    />
-                </Page>
-            );
+            if (isRTL) {
+                // RTL: Text on left (even number), Illustration on right (odd number)
+                spreads.push(
+                    <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
+                        <TextPage
+                            textElements={textElements}
+                            pageNumber={leftPageNum}
+                            isEditing={isEditing}
+                            onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                        />
+                    </Page>
+                );
 
-            // Right page: Text
-            spreads.push(
-                <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
-                    <TextPage
-                        textElements={textElements}
-                        pageNumber={rightPageNum}
-                        isEditing={isEditing}
-                        onTextChange={(idx, val) => handleTextChange(index, idx, val)}
-                    />
-                </Page>
-            );
+                spreads.push(
+                    <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
+                        <IllustrationPage
+                            imageUrl={displayImage || undefined}
+                            pageNumber={rightPageNum}
+                            themeColors={themeColors}
+                            isEditing={isEditing}
+                            isRegenerating={regeneratingPage === pageNum}
+                            onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
+                        />
+                    </Page>
+                );
+            } else {
+                // LTR: Illustration on left (odd number), Text on right (even number)
+                spreads.push(
+                    <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
+                        <IllustrationPage
+                            imageUrl={displayImage || undefined}
+                            pageNumber={leftPageNum}
+                            themeColors={themeColors}
+                            isEditing={isEditing}
+                            isRegenerating={regeneratingPage === pageNum}
+                            onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
+                        />
+                    </Page>
+                );
+
+                spreads.push(
+                    <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
+                        <TextPage
+                            textElements={textElements}
+                            pageNumber={rightPageNum}
+                            isEditing={isEditing}
+                            onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                        />
+                    </Page>
+                );
+            }
         });
 
         return spreads;
@@ -612,10 +638,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             </div>
 
             {/* Book Container */}
-            <div 
-                className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''} ${currentPageIndex === totalFlipPages - 1 ? styles.backCoverMode : ''}`}
-                dir={isRTL ? 'rtl' : 'ltr'}
-            >
+            <div className={`${styles.bookContainer} ${currentPageIndex === 0 ? styles.coverMode : ''} ${currentPageIndex === totalFlipPages - 1 ? styles.backCoverMode : ''}`}>
                 <div className={styles.centeringWrapper}>
                     {/* @ts-ignore - Library types are tricky */}
                     <HTMLFlipBook
