@@ -482,16 +482,16 @@ Before moving to the next task:
 
 ### Tasks
 
-- [ ] **6.1 Create auth namespace translations**
+- [x] **6.1 Create auth namespace translations**
   - Sign In / Sign Up forms
   - Error messages
   - Success messages
-  - [ ] Create all three language files
+  - [x] Create all three language files
 
-- [ ] **6.2 Update AuthModal.tsx**
+- [x] **6.2 Update AuthModal.tsx**
   - Replace all hardcoded strings
-  - [ ] Test sign in flow in all languages
-  - [ ] Test sign up flow in all languages
+  - [x] Test sign in flow in all languages
+  - [x] Test sign up flow in all languages
 
 **Phase 6 Deliverable:** Auth flows fully translated.
 

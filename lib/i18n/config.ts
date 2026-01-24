@@ -11,6 +11,9 @@ import navbarHE from '@/locales/he/navbar.json';
 import homeEN from '@/locales/en/home.json';
 import homeDE from '@/locales/de/home.json';
 import homeHE from '@/locales/he/home.json';
+import authEN from '@/locales/en/auth.json';
+import authDE from '@/locales/de/auth.json';
+import authHE from '@/locales/he/auth.json';
 
 i18n
   .use(LanguageDetector)
@@ -21,16 +24,19 @@ i18n
         common: commonEN,
         navbar: navbarEN,
         home: homeEN,
+        auth: authEN,
       },
       de: {
         common: commonDE,
         navbar: navbarDE,
         home: homeDE,
+        auth: authDE,
       },
       he: {
         common: commonHE,
         navbar: navbarHE,
         home: homeHE,
+        auth: authHE,
       },
     },
     fallbackLng: 'en',
