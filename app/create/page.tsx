@@ -93,12 +93,6 @@ export default function CreateBookPage() {
     const steps: WizardStep[] = ['child', 'type', 'format', 'theme', 'style', 'title'];
     const currentStepIndex = steps.indexOf(currentStep);
 
-    // Track unsaved changes
-    useEffect(() => {
-        const hasData = settings.childName || settings.bookType || settings.bookTheme || settings.artStyle || settings.title || childPhoto;
-        setHasUnsavedChanges(!!hasData);
-    }, [settings, childPhoto]);
-
     // Warn before leaving if there are unsaved changes
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
