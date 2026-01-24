@@ -509,11 +509,11 @@ Before moving to the next task:
   - Preview strings
   - Order strings
 
-- [ ] **7.2 Update create pages**
-  - `/app/create/page.tsx`
-  - `/app/create/[bookId]/page.tsx`
-  - `/app/create/[bookId]/order/page.tsx`
-  - [ ] Test full flow in all languages
+- [x] **7.2 Update create pages**
+  - [x] `/app/create/page.tsx` - All wizard steps translated
+  - [ ] `/app/create/[bookId]/page.tsx` - Book editor (future phase)
+  - [ ] `/app/create/[bookId]/order/page.tsx` - Order page (future phase)
+  - [x] Test wizard flow in all languages
 
 **Phase 7 Deliverable:** Book creation fully translated.
 

@@ -69,20 +69,18 @@ export function Navbar() {
         
         {isLoading ? (
           <div className={styles.navSkeleton}></div>
-        ) : user ? (
-          <>
-            <LanguageSwitcher />
-            <UserNav />
-          </>
         ) : (
           <>
-            <button
-              className={styles.signInButton}
-              onClick={() => setShowAuthModal(true)}
-            >
-              {t('signIn')}
-            </button>
+            {!user && (
+              <button
+                className={styles.signInButton}
+                onClick={() => setShowAuthModal(true)}
+              >
+                {t('signIn')}
+              </button>
+            )}
             <LanguageSwitcher />
+            {user && <UserNav />}
           </>
         )}
       </div>

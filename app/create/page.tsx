@@ -306,18 +306,18 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>👶</div>
-                            <h1 className={styles.stepTitle}>Who is this book for?</h1>
+                            <h1 className={styles.stepTitle}>{t('steps.child.title')}</h1>
                             <p className={styles.stepSubtitle}>
-                                Tell us about the special child who will enjoy this book
+                                {t('steps.child.subtitle')}
                             </p>
 
                             <div className={styles.formFields}>
                                 <div className={styles.formGroup}>
-                                    <label className={styles.formLabel}>Child&apos;s Name</label>
+                                    <label className={styles.formLabel}>{t('steps.child.nameLabel')}</label>
                                     <input
                                         type="text"
                                         className={styles.formInput}
-                                        placeholder="Enter name..."
+                                        placeholder={t('steps.child.namePlaceholder')}
                                         value={settings.childName || ''}
                                         onChange={(e) => updateSettings('childName', e.target.value)}
                                         autoFocus
@@ -326,7 +326,7 @@ export default function CreateBookPage() {
 
                                 <div className={styles.formGroup}>
                                     <label className={styles.formLabel}>
-                                        Age: <span className={styles.ageValue}>{settings.childAge} years</span>
+                                        {t('steps.child.ageLabel')} <span className={styles.ageValue}>{settings.childAge} {t('steps.child.ageYears')}</span>
                                     </label>
                                     <div className={styles.sliderContainer}>
                                         <input
@@ -350,10 +350,10 @@ export default function CreateBookPage() {
                                 {/* Photo upload for AI character */}
                                 <div className={styles.formGroup}>
                                     <label className={styles.formLabel}>
-                                        📷 Upload a photo (optional)
+                                        {t('steps.child.photoLabel')}
                                     </label>
                                     <p className={styles.inputHint} style={{ marginBottom: '0.5rem' }}>
-                                        Upload a photo to create a character that looks like your child
+                                        {t('steps.child.photoHint')}
                                     </p>
                                     <input
                                         type="file"
@@ -368,7 +368,7 @@ export default function CreateBookPage() {
                                         onClick={() => fileInputRef.current?.click()}
                                         style={{ width: '100%', marginTop: '0.5rem' }}
                                     >
-                                        {childPhoto ? '📷 Change Photo' : '📷 Add Photo'}
+                                        {childPhoto ? t('steps.child.photoChange') : t('steps.child.photoButton')}
                                     </button>
                                     {photoPreview && (
                                         <div style={{ marginTop: '1rem', textAlign: 'center' }}>
@@ -400,9 +400,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>📚</div>
-                            <h1 className={styles.stepTitle}>Choose a book type</h1>
+                            <h1 className={styles.stepTitle}>{t('steps.type.title')}</h1>
                             <p className={styles.stepSubtitle}>
-                                Select the perfect format for {settings.childName || 'your child'}
+                                {settings.childName ? t('steps.type.subtitle', { childName: settings.childName }) : t('steps.type.subtitleDefault')}
                             </p>
 
                             <div className={styles.optionsGrid}>
@@ -439,9 +439,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>📏</div>
-                            <h1 className={styles.stepTitle}>Choose a Format</h1>
+                            <h1 className={styles.stepTitle}>{t('steps.format.title')}</h1>
                             <p className={styles.stepSubtitle}>
-                                Prepare your book for professional printing
+                                {t('steps.format.subtitle')}
                             </p>
 
                             <div className={styles.optionsGrid}>
@@ -486,9 +486,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>🎨</div>
-                            <h1 className={styles.stepTitle}>Pick a theme</h1>
+                            <h1 className={styles.stepTitle}>{t('steps.theme.title')}</h1>
                             <p className={styles.stepSubtitle}>
-                                What kind of story will this be?
+                                {t('steps.theme.subtitle')}
                             </p>
 
                             <div className={styles.themeGrid}>
@@ -517,19 +517,16 @@ export default function CreateBookPage() {
                             <div className={styles.formFields} style={{ marginTop: '2rem' }}>
                                 <div className={styles.formGroup}>
                                     <label className={styles.formLabel}>
-                                        Tell us more about the story (optional)
+                                        {t('steps.theme.storyLabel')}
                                     </label>
                                     <textarea
                                         className={styles.formInput}
-                                        placeholder="e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
+                                        placeholder={t('steps.theme.storyPlaceholder')}
                                         value={settings.storyDescription || ''}
                                         onChange={(e) => setSettings(prev => ({ ...prev, storyDescription: e.target.value }))}
                                         rows={3}
                                         style={{ resize: 'vertical' }}
                                     />
-                                    <p className={styles.inputHint}>
-                                        We&apos;ll use this to make the story even more personal!
-                                    </p>
                                 </div>
                             </div>
                         </motion.div>
@@ -545,9 +542,9 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>🎨</div>
-                            <h1 className={styles.stepTitle}>Choose an art style</h1>
+                            <h1 className={styles.stepTitle}>{t('steps.style.title')}</h1>
                             <p className={styles.stepSubtitle}>
-                                How should your book&apos;s illustrations look?
+                                {t('steps.style.subtitle')}
                             </p>
 
                             <div className={styles.themeGrid}>
@@ -646,18 +643,18 @@ export default function CreateBookPage() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className={styles.stepIcon}>✨</div>
-                            <h1 className={styles.stepTitle}>Name your book</h1>
+                            <h1 className={styles.stepTitle}>{t('steps.title.title')}</h1>
                             <p className={styles.stepSubtitle}>
-                                Give your story an amazing title
+                                {t('steps.title.subtitle')}
                             </p>
 
                             <div className={styles.formFields}>
                                 <div className={styles.formGroup}>
-                                    <label className={styles.formLabel}>Book Title</label>
+                                    <label className={styles.formLabel}>{t('steps.title.titleLabel')}</label>
                                     <input
                                         type="text"
                                         className={`${styles.formInput} ${styles.titleInput}`}
-                                        placeholder={`${settings.childName}'s Amazing Adventure`}
+                                        placeholder={settings.childName ? t('steps.title.titlePlaceholder', { childName: settings.childName }) : t('steps.title.titlePlaceholderDefault')}
                                         value={settings.title || ''}
                                         onChange={(e) => updateSettings('title', e.target.value)}
                                         autoFocus
