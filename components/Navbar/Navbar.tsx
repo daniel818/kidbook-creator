@@ -61,7 +61,7 @@ export function Navbar() {
         {!isLoading && (
           <button
             className={styles.createButton}
-            onClick={() => user ? router.push('/create') : setShowAuthModal(true)}
+            onClick={() => router.push('/create')}
           >
             <span className={styles.createIcon}>✨</span>
             <span className={styles.createButtonText}>{t('createBook')}</span>

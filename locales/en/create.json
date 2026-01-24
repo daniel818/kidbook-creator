@@ -95,6 +95,17 @@
     "pixel_art": "Pixel Art",
     "coloring_book": "Coloring Book"
   },
+  "imageQuality": {
+    "label": "✨ Image Quality",
+    "fast": "⚡ Fast (Standard)",
+    "pro": "💎 Pro (Imagen 4 Ultra)",
+    "fastDescription": "Standard mode generates beautiful images quickly using Imagen 4.",
+    "proDescription": "Pro mode uses Imagen 4 Ultra for stunning, high-resolution illustrations. Takes a bit longer."
+  },
+  "preview": {
+    "forChild": "For {{childName}}, {{age}} years old",
+    "defaultTitle": "{{childName}}'s Amazing Adventure"
+  },
   "buttons": {
     "back": "← Back",
     "continue": "Continue →",
