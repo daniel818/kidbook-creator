@@ -531,35 +531,24 @@ Before moving to the next task:
 - [x] **8.2 Create orders namespace translations**
   - [x] English, German, Hebrew translation files
   - [x] All orders page strings covered
-- [ ] **8.3 Update profile pages**
-  - Translation files ready for integration
-- [ ] **8.4 Update orders pages**
-  - Translation files ready for integration
-- [ ] **8.5 Update purchases pages**
-  - Future phase
+- [x] **8.3 Update profile pages**
+  - [x] Profile page fully translated with useTranslation hook
+  - [x] All sections translated (general info, child profiles, books, purchases, settings)
+  - [x] Delete modal translated
+- [x] **8.4 Update orders pages**
+  - [x] Orders page fully translated with useTranslation hook
+  - [x] Order status labels translated
+  - [x] Order card details translated
+  - [x] Empty states translated
+- [x] **8.5 Update purchases pages**
+  - [x] Purchases page fully translated with useTranslation hook
+  - [x] Empty state translated
 
 **Phase 8 Deliverable:** ✅ Translation infrastructure complete for profile and orders pages.
 
 ---
 
-## Phase 9: Polish & QA (Day 6)
-
-**Goal:** Final testing and fixes.
-
-### Tasks
-
-- [ ] **9.1 Full app walkthrough in English**
-- [ ] **9.2 Full app walkthrough in German**
-- [ ] **9.3 Full app walkthrough in Hebrew (RTL)**
-- [ ] **9.4 Fix any missing translations**
-- [ ] **9.5 Fix any RTL layout issues**
-- [ ] **9.6 Get native speaker review**
-
-**Phase 9 Deliverable:** Production-ready i18n.
-
----
-
-## Phase 10: AI Prompt Internationalization (Day 6)
+## Phase 9: AI Prompt Internationalization (Day 6)
 
 **Goal:** Ensure AI prompts are sent in the user's selected language for story generation.
 
@@ -571,36 +560,36 @@ Currently, the AI prompts in `/lib/gemini/client.ts` are hardcoded in English. W
 
 ### Tasks
 
-- [ ] **10.1 Add language parameter to AI generation functions**
+- [ ] **9.1 Add language parameter to AI generation functions**
   - Update `generateStory()` to accept `language` parameter
   - Update `generateCompleteBook()` to accept `language` parameter
   - Pass language from create page to API routes
   - [ ] Test: Verify language parameter flows through 
 
-- [ ] **10.2 Create AI prompt templates in all languages**
+- [ ] **9.2 Create AI prompt templates in all languages**
   - Create `/lib/gemini/prompts/en.ts` - English prompt templates
   - Create `/lib/gemini/prompts/de.ts` - German prompt templates
   - Create `/lib/gemini/prompts/he.ts` - Hebrew prompt templates
   - Include instructions for AI to respond in the target language
   - [ ] Test: Verify prompts are grammatically correct
 
-- [ ] **10.3 Update Gemini client to use localized prompts**
+- [ ] **9.3 Update Gemini client to use localized prompts**
   - Modify `generateStory()` to select prompt based on language
   - Ensure AI instructions specify output language
   - Add language validation
   - [ ] Test: Generate story in German, verify German output
   - [ ] Test: Generate story in Hebrew, verify Hebrew output
 
-- [ ] **10.4 Update create page to detect and pass language**
+- [ ] **9.4 Update create page to detect and pass language**
   - Get current language from i18next in create page
   - Pass language to API in book generation request
   - [ ] Test: Switch language, create book, verify correct language used
 
-**Phase 10 Deliverable:** AI generates stories in the user's selected language.
+**Phase 9 Deliverable:** AI generates stories in the user's selected language.
 
 ---
 
-## Phase 11: Book Output Internationalization & RTL Support (Day 6-7)
+## Phase 10: Book Output Internationalization & RTL Support (Day 6-7)
 
 **Goal:** Ensure generated books display correctly in all languages, especially Hebrew RTL.
 
@@ -612,13 +601,13 @@ Generated book content (title, page text, image prompts) needs to:
 
 ### Tasks
 
-- [ ] **11.1 Add language metadata to book schema**
+- [ ] **10.1 Add language metadata to book schema**
   - Add `language` field to Book type in `/lib/types.ts`
   - Store language when book is created
   - Default to user's current language
   - [ ] Test: Create book, verify language is saved
 
-- [ ] **11.2 Update StoryBookViewer for RTL support**
+- [ ] **10.2 Update StoryBookViewer for RTL support**
   - Detect book language in `/components/StoryBookViewer.tsx`
   - Apply RTL styles when `book.language === 'he'`
   - Mirror page flip animations for Hebrew
@@ -626,13 +615,13 @@ Generated book content (title, page text, image prompts) needs to:
   - [ ] Test: View Hebrew book, verify RTL layout
   - [ ] Test: Page navigation works correctly in RTL
 
-- [ ] **11.3 Update StoryBookViewer3D for RTL support**
+- [ ] **10.3 Update StoryBookViewer3D for RTL support**
   - Apply same RTL logic to `/components/StoryBookViewer3D.tsx`
   - Ensure 3D book opens from right for Hebrew
   - Mirror page turn animations
   - [ ] Test: View Hebrew book in 3D, verify RTL behavior
 
-- [ ] **11.4 Update PDF generator for RTL support**
+- [ ] **10.4 Update PDF generator for RTL support**
   - Modify `/lib/pdf-generator.ts` to detect book language
   - Apply RTL text direction for Hebrew books
   - Ensure page order is correct for RTL
@@ -640,19 +629,36 @@ Generated book content (title, page text, image prompts) needs to:
   - [ ] Test: Generate PDF of Hebrew book, verify RTL layout
   - [ ] Test: Print preview shows correct RTL formatting
 
-- [ ] **11.5 Update book editor for RTL**
+- [ ] **10.5 Update book editor for RTL**
   - Detect book language in `/app/create/[bookId]/page.tsx`
   - Apply RTL styles to editor when editing Hebrew book
   - Ensure text inputs respect RTL
   - [ ] Test: Edit Hebrew book, verify RTL in editor
 
-- [ ] **11.6 Test full book creation flow in all languages**
+- [ ] **10.6 Test full book creation flow in all languages**
   - [ ] English: Create, view, edit, export PDF
   - [ ] German: Create, view, edit, export PDF
   - [ ] Hebrew: Create, view, edit, export PDF (verify RTL)
   - [ ] Verify language consistency throughout flow
 
-**Phase 11 Deliverable:** Books display correctly in all languages with proper RTL support for Hebrew.
+**Phase 10 Deliverable:** Books display correctly in all languages with proper RTL support for Hebrew.
+
+---
+
+## Phase 11: Polish & QA (Day 7)
+
+**Goal:** Final testing and fixes.
+
+### Tasks
+
+- [ ] **11.1 Full app walkthrough in English**
+- [ ] **11.2 Full app walkthrough in German**
+- [ ] **11.3 Full app walkthrough in Hebrew (RTL)**
+- [ ] **11.4 Fix any missing translations**
+- [ ] **11.5 Fix any RTL layout issues**
+- [ ] **11.6 Get native speaker review**
+
+**Phase 11 Deliverable:** Production-ready i18n.
 
 ---
 

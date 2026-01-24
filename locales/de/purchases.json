@@ -1,0 +1,11 @@
+{
+  "header": {
+    "title": "Meine Käufe",
+    "subtitle": "Verfolge deine Bestellungen und lade Quittungen herunter"
+  },
+  "empty": {
+    "title": "Noch keine Käufe",
+    "subtitle": "Erstelle ein Buch und bestelle eine gedruckte Kopie, um deine Käufe hier zu sehen",
+    "button": "Dein erstes Buch erstellen"
+  }
+}

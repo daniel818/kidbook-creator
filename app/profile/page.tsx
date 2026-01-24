@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import { BookGrid } from '@/components/BookGrid';
@@ -19,6 +20,7 @@ interface ChildProfile {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { t } = useTranslation('profile');
   const { user, isLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -114,8 +116,8 @@ export default function ProfilePage() {
         {/* Profile Content */}
         <div className={styles.container}>
         <div className={styles.header}>
-          <h1 className={styles.title}>My Profile</h1>
-          <p className={styles.subtitle}>Manage your account settings and preferences</p>
+          <h1 className={styles.title}>{t('header.title')}</h1>
+          <p className={styles.subtitle}>{t('header.subtitle')}</p>
         </div>
 
         {/* General Information */}
@@ -123,14 +125,14 @@ export default function ProfilePage() {
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>
               <span className={styles.sectionIcon}>👤</span>
-              General Information
+              {t('generalInfo.title')}
             </h2>
             {!isEditing && (
               <button
                 className={styles.editButton}
                 onClick={() => setIsEditing(true)}
               >
-                ✏️ Edit
+                {t('generalInfo.editButton')}
               </button>
             )}
           </div>
@@ -140,48 +142,48 @@ export default function ProfilePage() {
               <div className={styles.form}>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>First Name</label>
+                    <label className={styles.label}>{t('generalInfo.firstName')}</label>
                     <input
                       type="text"
                       className={styles.input}
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Enter first name"
+                      placeholder={t('generalInfo.firstNamePlaceholder')}
                     />
                   </div>
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Last Name</label>
+                    <label className={styles.label}>{t('generalInfo.lastName')}</label>
                     <input
                       type="text"
                       className={styles.input}
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Enter last name"
+                      placeholder={t('generalInfo.lastNamePlaceholder')}
                     />
                   </div>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Email</label>
+                  <label className={styles.label}>{t('generalInfo.email')}</label>
                   <input
                     type="email"
                     className={styles.input}
                     value={user.email || ''}
                     disabled
                   />
-                  <p className={styles.helpText}>Email cannot be changed</p>
+                  <p className={styles.helpText}>{t('generalInfo.emailHint')}</p>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Language Preference</label>
+                  <label className={styles.label}>{t('generalInfo.language')}</label>
                   <select
                     className={styles.select}
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
                   >
-                    <option value="de">German (Deutsch)</option>
-                    <option value="he">Hebrew (עברית)</option>
-                    <option value="en">English</option>
+                    <option value="en">{t('languages.en')}</option>
+                    <option value="de">{t('languages.de')}</option>
+                    <option value="he">{t('languages.he')}</option>
                   </select>
                 </div>
 
@@ -190,36 +192,36 @@ export default function ProfilePage() {
                     className={styles.cancelButton}
                     onClick={() => setIsEditing(false)}
                   >
-                    Cancel
+                    {t('generalInfo.cancelButton')}
                   </button>
                   <button
                     className={styles.saveButton}
                     onClick={handleSaveProfile}
                   >
-                    Save Changes
+                    {t('generalInfo.saveButton')}
                   </button>
                 </div>
               </div>
             ) : (
               <div className={styles.infoGrid}>
                 <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Name</span>
+                  <span className={styles.infoLabel}>{t('generalInfo.firstName')}</span>
                   <span className={styles.infoValue}>
-                    {firstName && lastName ? `${firstName} ${lastName}` : 'Not set'}
+                    {firstName && lastName ? `${firstName} ${lastName}` : t('generalInfo.notSet')}
                   </span>
                 </div>
                 <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Email</span>
+                  <span className={styles.infoLabel}>{t('generalInfo.email')}</span>
                   <span className={styles.infoValue}>{user.email}</span>
                 </div>
                 <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Language</span>
+                  <span className={styles.infoLabel}>{t('generalInfo.language')}</span>
                   <span className={styles.infoValue}>
-                    {language === 'de' ? 'German' : language === 'he' ? 'Hebrew' : 'English'}
+                    {t(`languages.${language}`)}
                   </span>
                 </div>
                 <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Account Created</span>
+                  <span className={styles.infoLabel}>{t('generalInfo.accountCreated')}</span>
                   <span className={styles.infoValue}>
                     {new Date(user.created_at || '').toLocaleDateString()}
                   </span>
@@ -234,13 +236,13 @@ export default function ProfilePage() {
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>
               <span className={styles.sectionIcon}>👶</span>
-              Child Profiles
+              {t('childProfiles.title')}
             </h2>
             <button
               className={styles.addButton}
               onClick={() => setShowAddChild(true)}
             >
-              + Add Child
+              {t('childProfiles.addButton')}
             </button>
           </div>
 
@@ -248,13 +250,13 @@ export default function ProfilePage() {
             {childProfiles.length === 0 ? (
               <div className={styles.emptyState}>
                 <span className={styles.emptyIcon}>👶</span>
-                <p className={styles.emptyText}>No child profiles yet</p>
-                <p className={styles.emptySubtext}>Add a child profile to create personalized stories</p>
+                <p className={styles.emptyText}>{t('childProfiles.emptyTitle')}</p>
+                <p className={styles.emptySubtext}>{t('childProfiles.emptySubtitle')}</p>
                 <button
                   className={styles.emptyButton}
                   onClick={() => setShowAddChild(true)}
                 >
-                  Add Your First Child
+                  {t('childProfiles.emptyButton')}
                 </button>
               </div>
             ) : (
@@ -266,7 +268,7 @@ export default function ProfilePage() {
                     </div>
                     <div className={styles.childInfo}>
                       <h3 className={styles.childName}>{child.name}</h3>
-                      <p className={styles.childMeta}>Age {child.age}</p>
+                      <p className={styles.childMeta}>{t('childProfiles.age', { age: child.age })}</p>
                     </div>
                     <div className={styles.childActions}>
                       <button className={styles.iconButton}>✏️</button>
@@ -284,13 +286,13 @@ export default function ProfilePage() {
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>
               <span className={styles.sectionIcon}>📚</span>
-              My Books
+              {t('myBooks.title')}
             </h2>
             <button
               className={styles.viewAllButton}
               onClick={() => router.push('/mybooks')}
             >
-              View All →
+              {t('myBooks.viewAllButton')}
             </button>
           </div>
 
@@ -298,12 +300,12 @@ export default function ProfilePage() {
             <div className={styles.card}>
               <div className={styles.emptyState}>
                 <span className={styles.emptyIcon}>📚</span>
-                <p className={styles.emptyText}>Your created books will appear here</p>
+                <p className={styles.emptyText}>{t('myBooks.emptyTitle')}</p>
                 <button
                   className={styles.emptyButton}
                   onClick={() => router.push('/create')}
                 >
-                  Create Your First Book
+                  {t('myBooks.emptyButton')}
                 </button>
               </div>
             </div>
@@ -323,21 +325,21 @@ export default function ProfilePage() {
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>
               <span className={styles.sectionIcon}>📦</span>
-              Recent Purchases
+              {t('purchases.title')}
             </h2>
             <button
               className={styles.viewAllButton}
               onClick={() => router.push('/purchases')}
             >
-              View All →
+              {t('purchases.viewAllButton')}
             </button>
           </div>
 
           <div className={styles.card}>
             <div className={styles.emptyState}>
               <span className={styles.emptyIcon}>📦</span>
-              <p className={styles.emptyText}>No purchases yet</p>
-              <p className={styles.emptySubtext}>Order your first book to see it here</p>
+              <p className={styles.emptyText}>{t('purchases.emptyTitle')}</p>
+              <p className={styles.emptySubtext}>{t('purchases.emptySubtitle')}</p>
             </div>
           </div>
         </section>
@@ -347,7 +349,7 @@ export default function ProfilePage() {
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>
               <span className={styles.sectionIcon}>⚙️</span>
-              Account Settings
+              {t('accountSettings.title')}
             </h2>
           </div>
 
@@ -356,8 +358,8 @@ export default function ProfilePage() {
               <button className={styles.settingItem}>
                 <span className={styles.settingIcon}>🔒</span>
                 <div className={styles.settingContent}>
-                  <span className={styles.settingLabel}>Change Password</span>
-                  <span className={styles.settingDesc}>Update your password</span>
+                  <span className={styles.settingLabel}>{t('accountSettings.changePassword.label')}</span>
+                  <span className={styles.settingDesc}>{t('accountSettings.changePassword.description')}</span>
                 </div>
                 <span className={styles.settingArrow}>→</span>
               </button>
@@ -365,8 +367,8 @@ export default function ProfilePage() {
               <button className={styles.settingItem}>
                 <span className={styles.settingIcon}>💳</span>
                 <div className={styles.settingContent}>
-                  <span className={styles.settingLabel}>Payment Methods</span>
-                  <span className={styles.settingDesc}>Manage saved cards</span>
+                  <span className={styles.settingLabel}>{t('accountSettings.paymentMethods.label')}</span>
+                  <span className={styles.settingDesc}>{t('accountSettings.paymentMethods.description')}</span>
                 </div>
                 <span className={styles.settingArrow}>→</span>
               </button>
@@ -374,8 +376,8 @@ export default function ProfilePage() {
               <button className={styles.settingItem}>
                 <span className={styles.settingIcon}>📍</span>
                 <div className={styles.settingContent}>
-                  <span className={styles.settingLabel}>Shipping Addresses</span>
-                  <span className={styles.settingDesc}>Manage delivery addresses</span>
+                  <span className={styles.settingLabel}>{t('accountSettings.shippingAddresses.label')}</span>
+                  <span className={styles.settingDesc}>{t('accountSettings.shippingAddresses.description')}</span>
                 </div>
                 <span className={styles.settingArrow}>→</span>
               </button>
@@ -383,8 +385,8 @@ export default function ProfilePage() {
               <button className={styles.settingItem}>
                 <span className={styles.settingIcon}>🔔</span>
                 <div className={styles.settingContent}>
-                  <span className={styles.settingLabel}>Notifications</span>
-                  <span className={styles.settingDesc}>Email and push preferences</span>
+                  <span className={styles.settingLabel}>{t('accountSettings.notifications.label')}</span>
+                  <span className={styles.settingDesc}>{t('accountSettings.notifications.description')}</span>
                 </div>
                 <span className={styles.settingArrow}>→</span>
               </button>
@@ -397,9 +399,9 @@ export default function ProfilePage() {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={confirmDeleteBook}
-        title="Delete Book"
-        message="Are you sure you want to delete this book? This action cannot be undone."
-        confirmText="Delete"
+        title={t('deleteModal.title')}
+        message={t('deleteModal.message')}
+        confirmText={t('deleteModal.confirmText')}
         isLoading={isDeleting}
       />
       </main>

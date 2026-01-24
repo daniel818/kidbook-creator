@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import styles from './purchases.module.css';
 
 export default function PurchasesPage() {
   const router = useRouter();
+  const { t } = useTranslation('purchases');
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
@@ -35,22 +37,22 @@ export default function PurchasesPage() {
         {/* Purchases Content */}
         <div className={styles.container}>
         <div className={styles.header}>
-          <h1 className={styles.title}>My Purchases</h1>
-          <p className={styles.subtitle}>Track your orders and download receipts</p>
+          <h1 className={styles.title}>{t('header.title')}</h1>
+          <p className={styles.subtitle}>{t('header.subtitle')}</p>
         </div>
 
         <div className={styles.card}>
           <div className={styles.emptyState}>
             <span className={styles.emptyIcon}>📦</span>
-            <p className={styles.emptyText}>No purchases yet</p>
+            <p className={styles.emptyText}>{t('empty.title')}</p>
             <p className={styles.emptySubtext}>
-              Create a book and order a printed copy to see your purchases here
+              {t('empty.subtitle')}
             </p>
             <button
               className={styles.emptyButton}
               onClick={() => router.push('/create')}
             >
-              Create Your First Book
+              {t('empty.button')}
             </button>
           </div>
         </div>
