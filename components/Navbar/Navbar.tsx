@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { UserNav } from '@/components/UserNav';
 import { AuthModal } from '@/components/AuthModal';
@@ -12,6 +13,7 @@ export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
+  const { t } = useTranslation('common');
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const navLinks = [
@@ -73,7 +75,7 @@ export function Navbar() {
             className={styles.signInButton}
             onClick={() => setShowAuthModal(true)}
           >
-            Sign In
+            {t('test')}
           </button>
         )}
       </div>

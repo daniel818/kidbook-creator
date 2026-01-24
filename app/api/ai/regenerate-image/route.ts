@@ -34,19 +34,20 @@ export async function POST(req: NextRequest) {
 
         // 1. Generate new image
         log('Calling generateIllustration...');
-        const imageBase64 = await generateIllustration(
+        const imageResult = await generateIllustration(
             prompt,
             style || 'whimsical', // default style
             currentImageContext,
             quality || 'fast'
         );
-        log('generateIllustration returned', { length: imageBase64?.length });
+        log('generateIllustration returned', { imageUrl: imageResult?.imageUrl });
 
-        if (!imageBase64) {
+        if (!imageResult || !imageResult.imageUrl) {
             throw new Error('Failed to generate image (empty response)');
         }
 
-        // Convert base64 to buffer
+        // Extract base64 from imageUrl
+        const imageBase64 = imageResult.imageUrl;
         const matches = imageBase64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
         if (!matches || matches.length !== 3) {
             log('Invalid base64 format');

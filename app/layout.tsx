@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/lib/auth/AuthContext";
+import { I18nProvider } from "@/lib/i18n/provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -43,9 +44,11 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <I18nProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </I18nProvider>
       </body>
     </html>
   );
