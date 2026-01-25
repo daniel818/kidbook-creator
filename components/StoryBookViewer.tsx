@@ -682,8 +682,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                     <h1 className={styles.coverTitle}>{displayTitle}</h1>
                                     <p className={styles.coverSubtitle}>
                                         {(book.language || book.settings.language) === 'he' ? `${book.settings.childName}, גיל ${book.settings.childAge}` :
-                                         (book.language || book.settings.language) === 'de' ? `Für ${book.settings.childName}, ${book.settings.childAge} Jahre alt` :
-                                         `For ${book.settings.childName}, age ${book.settings.childAge}`}
+                                            (book.language || book.settings.language) === 'de' ? `Für ${book.settings.childName}, ${book.settings.childAge} Jahre alt` :
+                                                `For ${book.settings.childName}, age ${book.settings.childAge}`}
                                     </p>
                                 </div>
                             </div>
@@ -706,8 +706,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                 <div className={styles.coverOverlay}>
                                     <h2 className={styles.coverTitle}>
                                         {(book.language || book.settings.language) === 'he' ? 'סוף' :
-                                         (book.language || book.settings.language) === 'de' ? 'Ende' :
-                                         'The End'}
+                                            (book.language || book.settings.language) === 'de' ? 'Ende' :
+                                                'The End'}
                                     </h2>
                                     <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
                                         {backCoverText}

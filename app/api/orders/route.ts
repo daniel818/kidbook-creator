@@ -25,7 +25,9 @@ export async function GET() {
           title,
           child_name,
           book_type,
-          book_theme
+          book_theme,
+          thumbnail_url
+        )
         )
       `)
             .eq('user_id', user.id)
@@ -50,8 +52,11 @@ export async function GET() {
             shipping_cost: number;
             total: number;
             status: string;
+            fulfillment_status: string; // Added
             tracking_number: string | null;
             lulu_order_id: string | null;
+            lulu_status: string | null; // Added
+            lulu_print_job_id: string | null; // Added
             shipping_full_name: string;
             shipping_address_line1: string;
             shipping_address_line2: string | null;
@@ -67,6 +72,7 @@ export async function GET() {
                 child_name: string;
                 book_type: string;
                 book_theme: string;
+                thumbnail_url: string | null;
             } | null;
         }
 
@@ -75,6 +81,7 @@ export async function GET() {
             id: order.id,
             bookId: order.book_id,
             bookTitle: order.books?.title || 'Personalized Book',
+            bookThumbnail: order.books?.thumbnail_url,
             childName: order.books?.child_name,
             format: order.format,
             size: order.size,
@@ -85,6 +92,9 @@ export async function GET() {
             status: order.status,
             trackingNumber: order.tracking_number,
             luluOrderId: order.lulu_order_id,
+            luluStatus: order.lulu_status, // Add Lulu Status
+            fulfillmentStatus: order.fulfillment_status, // Add Fulfillment Status
+            printJobId: order.lulu_print_job_id, // Add Print Job ID for debugging
             shippingAddress: {
                 fullName: order.shipping_full_name,
                 addressLine1: order.shipping_address_line1,

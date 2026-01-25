@@ -10,7 +10,7 @@ async function applyMigration() {
         await client.connect();
         console.log('Connected to database.');
 
-        const sqlPath = path.join(__dirname, '../supabase/migrations/20260120221400_add_generation_logs.sql');
+        const sqlPath = path.join(__dirname, '../supabase/migrations/20260124215800_add_pdf_storage.sql');
         const sql = fs.readFileSync(sqlPath, 'utf8');
 
         console.log('Applying migration:', path.basename(sqlPath));

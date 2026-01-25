@@ -99,7 +99,13 @@ export function calculateCoverDimensions(
         throw new Error(`Invalid size: ${size}`);
     }
 
-    const spineWidth = calculateSpineWidth(pageCount, paperType);
+    let spineWidth = calculateSpineWidth(pageCount, paperType);
+
+    // Saddle Stitch (Softcover < 32 pages) has no spine width in Lulu specs
+    if (format === 'softcover' && pageCount < 32) {
+        spineWidth = 0;
+    }
+
     const safetyMargin = SAFETY_MARGINS[format];
 
     const backCoverWidth = trimSize.width;
@@ -334,9 +340,13 @@ export async function generateCoverPDF(
     // Auto-detect size from book if not provided
     const bookSize = size || getBookSize(book);
 
+    // Calculate effective page count (Front + (Inside * 2) + Back)
+    // Must match logic in pdf-generator.ts
+    const interiorPages = book.pages.filter(p => p.type === 'inside').length;
+    const finalPageCount = 1 + (interiorPages * 2) + 1;
+
     // Calculate dimensions
-    const pageCount = book.pages.length;
-    const dims = calculateCoverDimensions(bookSize, pageCount, format, paperType);
+    const dims = calculateCoverDimensions(bookSize, finalPageCount, format, paperType);
 
     // Get theme colors
     const themeColors = book.settings.bookTheme

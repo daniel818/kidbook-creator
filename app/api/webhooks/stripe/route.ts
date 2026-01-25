@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2025-02-24.acacia',
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise<void> {
     console.log(`[Webhook] Processing checkout session: ${session.id}`);
 
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
 
     // Get order ID from session metadata
     const orderId = session.metadata?.orderId;
@@ -137,7 +137,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     console.log(`[Webhook] Payment failed: ${paymentIntent.id}`);
 
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
 
     // Find and update order
     const { error } = await supabase

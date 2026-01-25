@@ -17,8 +17,11 @@ export interface PrintJob {
 }
 
 export interface PrintJobLineItem {
-    printableId: string;  // ID of the uploaded print file
+    printableId?: string;  // ID of the uploaded print file (Optional if using source URLs)
+    cover?: string; // URL for cover PDF
+    interior?: string; // URL for interior PDF
     quantity: number;
+    title?: string;
     productSpec: ProductSpec;
 }
 
@@ -110,12 +113,14 @@ class LuluClient {
         body?: unknown
     ): Promise<T> {
         const token = await this.getAccessToken();
+        const url = `${this.baseUrl}${endpoint}`;
 
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        const response = await fetch(url, {
             method,
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
+                'User-Agent': 'KidBookCreator/1.0',
             },
             body: body ? JSON.stringify(body) : undefined,
         });
@@ -137,14 +142,25 @@ class LuluClient {
             { name: filename }
         );
 
+        console.log(`[Lulu] Uploading file ${filename} (Size: ${file.size}) to ${createResponse.upload_url}`);
+
+        // Convert Blob to ArrayBuffer for reliable Node fetch upload
+        const arrayBuffer = await file.arrayBuffer();
+
         // Upload the actual file
-        await fetch(createResponse.upload_url, {
+        const uploadRes = await fetch(createResponse.upload_url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/pdf',
             },
-            body: file,
+            body: arrayBuffer,
         });
+
+        if (!uploadRes.ok) {
+            const errText = await uploadRes.text();
+            console.error(`[Lulu] Upload PUT failed: ${uploadRes.status} - ${errText}`);
+            throw new Error(`Failed to upload file content: ${uploadRes.status}`);
+        }
 
         // Notify Lulu that upload is complete
         await this.request(
@@ -162,6 +178,9 @@ class LuluClient {
             external_id: job.externalId,
             line_items: job.lineItems.map(item => ({
                 printable_id: item.printableId,
+                cover: item.cover,
+                interior: item.interior,
+                title: item.title || 'Personalized Book', // Lulu often requires a title
                 quantity: item.quantity,
                 pod_package_id: item.productSpec.podPackageId,
             })),
@@ -171,13 +190,14 @@ class LuluClient {
                 street2: job.shippingAddress.streetAddress2,
                 city: job.shippingAddress.city,
                 state_code: job.shippingAddress.stateCode,
-                postal_code: job.shippingAddress.postalCode,
+                postcode: job.shippingAddress.postalCode, // Changed from postal_code to postcode based on error message
                 country_code: job.shippingAddress.countryCode,
                 phone_number: job.shippingAddress.phoneNumber,
             },
             shipping_level: 'MAIL',  // Options: MAIL, PRIORITY_MAIL, GROUND, EXPEDITED, EXPRESS
         };
 
+        console.log('[LuluClient] Creating Print Job Payload:', JSON.stringify(payload, null, 2));
         return this.request('POST', '/print-jobs/', payload);
     }
 
@@ -232,6 +252,25 @@ class LuluClient {
             totalWholesale,   // cents (Lulu's price before your markup)
             currency: response.currency || 'USD',
         };
+    }
+    // Create a webhook subscription
+    async createWebhook(url: string): Promise<any> {
+        console.log(`[LuluClient] Creating webhook for URL: ${url}`);
+        return this.request('POST', '/webhooks/', {
+            topics: ['PRINT_JOB_STATUS_CHANGED'], // Array of topics
+            url: url
+        });
+    }
+
+    // List existing webhooks
+    async listWebhooks(): Promise<any[]> {
+        const response = await this.request<{ results: any[] }>('GET', '/webhooks/');
+        return response.results || [];
+    }
+
+    // Delete a webhook
+    async deleteWebhook(id: string): Promise<void> {
+        await this.request('DELETE', `/webhooks/${id}/`);
     }
 }
 

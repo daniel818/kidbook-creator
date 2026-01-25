@@ -3,10 +3,8 @@
 // ============================================
 // Coordinates PDF generation, upload, and print job creation
 
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { createLuluClient } from './client';
-import { generateInteriorPDF } from './pdf-generator';
-import { generateCoverPDF } from './cover-generator';
 import { Book } from '@/lib/types';
 
 /**
@@ -14,7 +12,7 @@ import { Book } from '@/lib/types';
  */
 export enum FulfillmentStatus {
     PENDING = 'PENDING',
-    GENERATING_PDFS = 'GENERATING_PDFS',
+    GENERATING_PDFS = 'GENERATING_PDFS', // Used by client to indicate generation in progress
     UPLOADING = 'UPLOADING',
     CREATING_JOB = 'CREATING_JOB',
     SUCCESS = 'SUCCESS',
@@ -50,6 +48,8 @@ interface OrderData {
     shipping_country: string;
     shipping_phone: string;
     user_email?: string;
+    pdf_url?: string;       // Interior PDF path
+    cover_pdf_url?: string; // Cover PDF path
 }
 
 /**
@@ -63,15 +63,21 @@ function getCountryCode(country: string): string {
         'Australia': 'AU',
         'Germany': 'DE',
         'France': 'FR',
+        'Israel': 'IL', // Added Israel
     };
-    return countryMap[country] || 'US';
+    // Return mapped code, or assuming it's already an ISO code (2 chars) return it, else default to US
+    return countryMap[country] || (country.length === 2 ? country : 'US');
 }
 
 /**
- * Fulfill an order by generating PDFs and submitting to Lulu
+ * Fulfill an order using pre-generated PDFs from storage
  */
-export async function fulfillOrder(orderId: string): Promise<FulfillmentResult> {
-    const supabase = await createClient();
+export async function fulfillOrder(
+    orderId: string,
+    interiorPathOverride?: string,
+    coverPathOverride?: string
+): Promise<FulfillmentResult> {
+    const supabase = await createAdminClient();
 
     try {
         // 1. Fetch order details
@@ -90,85 +96,62 @@ export async function fulfillOrder(orderId: string): Promise<FulfillmentResult> 
 
         const orderData = order as OrderData;
 
-        // 2. Fetch book data
-        const { data: bookRecord, error: bookError } = await supabase
-            .from('books')
-            .select('*, pages(*)')
-            .eq('id', orderData.book_id)
-            .single();
+        // Determine file paths (override takes precedence, then DB, then fail)
+        const interiorPath = interiorPathOverride || orderData.pdf_url;
+        const coverPath = coverPathOverride || orderData.cover_pdf_url;
 
-        if (bookError || !bookRecord) {
+        if (!interiorPath || !coverPath) {
             return {
                 status: FulfillmentStatus.FAILED,
-                error: `Book not found: ${orderData.book_id}`,
+                error: `Missing PDF paths for order ${orderId}. Files must be generated first.`,
             };
         }
 
-        // Transform database record to Book type
-        const book: Book = {
-            id: bookRecord.id,
-            status: bookRecord.status || 'completed',
-            createdAt: new Date(bookRecord.created_at),
-            updatedAt: new Date(bookRecord.updated_at),
-            thumbnailUrl: bookRecord.thumbnail_url,
-            settings: {
-                childName: bookRecord.child_name,
-                childAge: bookRecord.child_age,
-                ageGroup: bookRecord.age_group || '3-5',
-                bookTheme: bookRecord.book_theme,
-                bookType: bookRecord.book_type,
-                title: bookRecord.title,
-            },
-            pages: bookRecord.pages.map((p: any) => ({
-                id: p.id,
-                pageNumber: p.page_number,
-                type: p.page_type,
-                backgroundColor: p.background_color || '#ffffff',
-                backgroundImage: p.image_elements?.[0]?.src,
-                textElements: p.text_elements || [],
-                imageElements: p.image_elements || [],
-                createdAt: new Date(p.created_at),
-                updatedAt: new Date(p.updated_at),
-            })),
-        };
-
-        // Update order status
-        await updateOrderStatus(supabase, orderId, FulfillmentStatus.GENERATING_PDFS);
-
-        // 3. Generate Interior PDF
-        console.log(`[Fulfillment] Generating interior PDF for order ${orderId}...`);
-        const interiorPDF = await generateInteriorPDF(book, orderData.format, orderData.size);
-
-        // 4. Generate Cover PDF
-        console.log(`[Fulfillment] Generating cover PDF for order ${orderId}...`);
-        const coverPDF = await generateCoverPDF(book, orderData.format, orderData.size);
-
         await updateOrderStatus(supabase, orderId, FulfillmentStatus.UPLOADING);
 
-        // 5. Upload to Lulu
-        console.log(`[Fulfillment] Uploading PDFs to Lulu...`);
-        const luluClient = createLuluClient();
+        // 2. Generate Signed URLs for generic public access by Lulu
+        // Instead of downloading and re-uploading, we give Lulu a temporary URL to fetch.
+        console.log(`[Fulfillment] Generating signed URLs for order ${orderId}...`);
 
-        const interiorPrintableId = await luluClient.uploadPrintFile(
-            interiorPDF,
-            `${book.id}_interior.pdf`
-        );
+        const { data: interiorUrl, error: interiorError } = await supabase.storage
+            .from('book-pdfs')
+            .createSignedUrl(interiorPath, 86400); // 24 hours
 
-        const coverPrintableId = await luluClient.uploadPrintFile(
-            coverPDF,
-            `${book.id}_cover.pdf`
-        );
+        if (interiorError || !interiorUrl) {
+            throw new Error(`Failed to create signed URL for interior: ${interiorError?.message}`);
+        }
+
+        const { data: coverUrl, error: coverError } = await supabase.storage
+            .from('book-pdfs')
+            .createSignedUrl(coverPath, 86400); // 24 hours
+
+        if (coverError || !coverUrl) {
+            throw new Error(`Failed to create signed URL for cover: ${coverError?.message}`);
+        }
 
         await updateOrderStatus(supabase, orderId, FulfillmentStatus.CREATING_JOB);
 
-        // 6. Create Print Job
+        // 3. Create Print Job with External URLs
         console.log(`[Fulfillment] Creating print job...`);
+        const luluClient = createLuluClient();
+
+        // If we represent a local Supabase, we must expose it via a Tunnel for Lulu to reach it.
+        const tunnelUrl = process.env.TUNNEL_URL;
+        const rewriteUrl = (url: string) => {
+            if (tunnelUrl && (url.includes('127.0.0.1') || url.includes('localhost'))) {
+                return url.replace(/http:\/\/(127\.0\.0\.1|localhost):\d+/, tunnelUrl);
+            }
+            return url;
+        };
+
         const printJob = await luluClient.createPrintJob({
             lineItems: [{
-                printableId: interiorPrintableId,
+                title: orderData.book_id, // Using Book ID as title reference
+                cover: rewriteUrl(coverUrl.signedUrl),
+                interior: rewriteUrl(interiorUrl.signedUrl),
                 quantity: orderData.quantity,
                 productSpec: {
-                    podPackageId: getLuluProductId(orderData.format, orderData.size),
+                    podPackageId: getLuluProductId(orderData.format, orderData.size, 24), // TODO: Fetch actual page count from order metadata
                 },
             }],
             shippingAddress: {
@@ -185,7 +168,7 @@ export async function fulfillOrder(orderId: string): Promise<FulfillmentResult> 
             externalId: orderId,
         });
 
-        // 7. Update order with print job ID
+        // 4. Update order with print job ID
         await supabase
             .from('orders')
             .update({
@@ -200,8 +183,6 @@ export async function fulfillOrder(orderId: string): Promise<FulfillmentResult> 
         return {
             status: FulfillmentStatus.SUCCESS,
             printJobId: printJob.id,
-            interiorPrintableId,
-            coverPrintableId,
         };
 
     } catch (error) {
@@ -223,9 +204,6 @@ export async function fulfillOrder(orderId: string): Promise<FulfillmentResult> 
     }
 }
 
-/**
- * Update order fulfillment status
- */
 async function updateOrderStatus(supabase: any, orderId: string, status: FulfillmentStatus): Promise<void> {
     await supabase
         .from('orders')
@@ -233,19 +211,27 @@ async function updateOrderStatus(supabase: any, orderId: string, status: Fulfill
         .eq('id', orderId);
 }
 
-/**
- * Get Lulu product ID for format/size combination
- */
-function getLuluProductId(format: 'softcover' | 'hardcover', size: '6x6' | '8x8' | '8x10'): string {
+// Update signature to accept page count
+function getLuluProductId(format: 'softcover' | 'hardcover', size: '6x6' | '8x8' | '8x10', pageCount: number): string {
+    // 1. Saddle Stitch Logic (Min 4, Max ~48/80 depending on paper)
+    // If pages are too few for Perfect Bound (32), try Saddle Stitch
+    if (pageCount < 32 && format === 'softcover') {
+        if (size === '8x8') {
+            // Validated Sandbox SKU for 8.5x8.5 Premium Saddle Stitch
+            return '0850X0850FCPRESS080CW444GXX';
+        }
+    }
+
+    // 2. Default Perfect Bound
     const PRODUCT_IDS: Record<string, Record<string, string>> = {
         softcover: {
             '6x6': '0600X0600SCPERFCOLSTD',
-            '8x8': '0800X0800SCPERFCOLSTD',
+            '8x8': '0850X0850FCSTDPB080CW444GXX', // 8.5x8.5 Perfect Bound
             '8x10': '0800X1000SCPERFCOLSTD',
         },
         hardcover: {
             '6x6': '0600X0600HCPERFCOLSTD',
-            '8x8': '0800X0800HCPERFCOLSTD',
+            '8x8': '0850X0850HCPERFCOLSTD', // Guessing similar
             '8x10': '0800X1000HCPERFCOLSTD',
         },
     };

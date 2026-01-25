@@ -4,16 +4,22 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
+import { generateInteriorPDF } from '@/lib/lulu/pdf-generator';
+import { generateCoverPDF } from '@/lib/lulu/cover-generator';
+import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import styles from './page.module.css';
 
 interface OrderDetails {
     id: string;
+    bookId: string;
     bookTitle: string;
-    format: string;
-    size: string;
+    format: 'softcover' | 'hardcover';
+    size: '6x6' | '8x8' | '8x10';
     quantity: number;
     total: string;
     status: string;
+    fulfillmentStatus: string;
     estimatedDelivery: string;
 }
 
@@ -26,11 +32,18 @@ function OrderSuccessContent() {
     const [isLoading, setIsLoading] = useState(true);
     const [confetti, setConfetti] = useState(true);
 
+    // Generation State
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [statusMessage, setStatusMessage] = useState('Initializing...');
+
     useEffect(() => {
         if (!sessionId) {
             router.push('/');
             return;
         }
+
+        const supabase = createClient();
 
         // Fetch order details
         const fetchOrder = async () => {
@@ -39,6 +52,11 @@ function OrderSuccessContent() {
                 if (response.ok) {
                     const data = await response.json();
                     setOrder(data);
+
+                    // Start generation if paid but not fulfilled
+                    if (data.status === 'paid' && data.fulfillmentStatus !== 'SUCCESS' && data.fulfillmentStatus !== 'GENERATING_PDFS') {
+                        startFulfillment(data, supabase);
+                    }
                 }
             } catch (error) {
                 console.error('Failed to fetch order:', error);
@@ -49,10 +67,103 @@ function OrderSuccessContent() {
 
         fetchOrder();
 
-        // Auto-hide confetti after 5 seconds
         const timer = setTimeout(() => setConfetti(false), 5000);
         return () => clearTimeout(timer);
     }, [sessionId, router]);
+
+    const startFulfillment = async (orderData: OrderDetails, supabase: any) => {
+        if (isProcessing) return;
+        setIsProcessing(true);
+        setProgress(5);
+        setStatusMessage('Preparing your book for print...');
+
+        try {
+            // 1. Fetch Book Data
+            const { data: bookRecord, error: bookError } = await supabase
+                .from('books')
+                .select('*, pages(*)')
+                .eq('id', orderData.bookId)
+                .single();
+
+            if (bookError || !bookRecord) throw new Error('Could not fetch book data');
+
+            // Transform to Book Type
+            const book: Book = {
+                id: bookRecord.id,
+                status: bookRecord.status,
+                createdAt: new Date(bookRecord.created_at),
+                updatedAt: new Date(bookRecord.updated_at),
+                thumbnailUrl: bookRecord.thumbnail_url,
+                settings: {
+                    childName: bookRecord.child_name,
+                    childAge: bookRecord.child_age,
+                    ageGroup: bookRecord.age_group || '3-5',
+                    bookTheme: bookRecord.book_theme,
+                    bookType: bookRecord.book_type,
+                    title: bookRecord.title,
+                },
+                pages: bookRecord.pages.map((p: any) => ({
+                    id: p.id,
+                    pageNumber: p.page_number,
+                    type: p.page_type,
+                    backgroundColor: p.background_color || '#ffffff',
+                    backgroundImage: p.image_elements?.[0]?.src,
+                    textElements: p.text_elements || [],
+                    imageElements: p.image_elements || [],
+                    createdAt: new Date(p.created_at),
+                    updatedAt: new Date(p.updated_at),
+                })),
+            };
+
+            setProgress(15);
+            setStatusMessage('Generating print-ready PDF...');
+
+            // 2. Generate PDFs
+            const interiorBlob = await generateInteriorPDF(
+                book,
+                orderData.format,
+                orderData.size,
+                (val) => setProgress(15 + (val * 0.4)) // 15% to 55%
+            );
+
+            setStatusMessage('Generating cover...');
+            const coverBlob = await generateCoverPDF(book, orderData.format, orderData.size);
+            setProgress(70);
+
+            // 3. Upload to Storage
+            setStatusMessage('Uploading files...');
+
+            const interiorPath = `book-pdfs/${orderData.id}/interior.pdf`;
+            const coverPath = `book-pdfs/${orderData.id}/cover.pdf`;
+
+            await supabase.storage.from('book-pdfs').upload(interiorPath, interiorBlob, { upsert: true });
+            setProgress(80);
+
+            await supabase.storage.from('book-pdfs').upload(coverPath, coverBlob, { upsert: true });
+            setProgress(90);
+
+            // 4. Call Fulfillment API
+            setStatusMessage('Sending to printer...');
+            await fetch('/api/orders/fulfill-print-job', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId: orderData.id,
+                    interiorPath,
+                    coverPath
+                })
+            });
+
+            setProgress(100);
+            setStatusMessage('Done!');
+            setIsProcessing(false);
+
+        } catch (error) {
+            console.error('Fulfillment failed:', error);
+            setStatusMessage('Error preparing print files. Support has been notified.');
+            // Don't block the user, just log it. Admin can retry.
+        }
+    };
 
     if (isLoading) {
         return (
@@ -65,7 +176,6 @@ function OrderSuccessContent() {
 
     return (
         <main className={styles.main}>
-            {/* Confetti Effect */}
             {confetti && (
                 <div className={styles.confettiContainer}>
                     {Array.from({ length: 50 }).map((_, i) => (
@@ -88,7 +198,6 @@ function OrderSuccessContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
             >
-                {/* Success Icon */}
                 <motion.div
                     className={styles.successIcon}
                     initial={{ scale: 0 }}
@@ -98,13 +207,22 @@ function OrderSuccessContent() {
                     <span>✅</span>
                 </motion.div>
 
-                {/* Title */}
                 <h1 className={styles.title}>Order Confirmed!</h1>
                 <p className={styles.subtitle}>
-                    Thank you for your order. We&apos;re preparing your personalized book!
+                    Thank you for your order. We are preparing your personalized book!
                 </p>
 
-                {/* Order Summary Card */}
+                {/* Processing Indicator */}
+                {isProcessing && (
+                    <div className={styles.processingCard}>
+                        <h3>{statusMessage}</h3>
+                        <div className={styles.progressBarContainer}>
+                            <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
+                        </div>
+                        <p className={styles.smallNote}>Please keep this tab open while we finalize your book.</p>
+                    </div>
+                )}
+
                 <div className={styles.orderCard}>
                     <div className={styles.orderHeader}>
                         <span className={styles.orderIcon}>📦</span>
@@ -141,10 +259,10 @@ function OrderSuccessContent() {
                             <span className={styles.timelineLabel}>Order Placed</span>
                             <span className={styles.timelineDate}>Just now</span>
                         </div>
-                        <div className={`${styles.timelineItem} ${styles.active}`}>
+                        <div className={`${styles.timelineItem} ${isProcessing || progress > 0 ? styles.active : ''}`}>
                             <span className={styles.timelineDot}></span>
                             <span className={styles.timelineLabel}>Preparing for Print</span>
-                            <span className={styles.timelineDate}>In progress</span>
+                            <span className={styles.timelineDate}>{isProcessing ? 'In progress' : 'Pending'}</span>
                         </div>
                         <div className={styles.timelineItem}>
                             <span className={styles.timelineDot}></span>
@@ -164,7 +282,6 @@ function OrderSuccessContent() {
                     </div>
                 </div>
 
-                {/* Email Notice */}
                 <div className={styles.emailNotice}>
                     <span className={styles.emailIcon}>📧</span>
                     <p>
@@ -172,7 +289,6 @@ function OrderSuccessContent() {
                     </p>
                 </div>
 
-                {/* Actions */}
                 <div className={styles.actions}>
                     <Link href="/" className={styles.homeButton}>
                         ← Back to Home
@@ -180,14 +296,6 @@ function OrderSuccessContent() {
                     <Link href="/create" className={styles.createButton}>
                         Create Another Book
                     </Link>
-                </div>
-
-                {/* Support */}
-                <div className={styles.support}>
-                    <p>
-                        Questions about your order? Contact us at{' '}
-                        <a href="mailto:support@kidbookcreator.com">support@kidbookcreator.com</a>
-                    </p>
                 </div>
             </motion.div>
         </main>

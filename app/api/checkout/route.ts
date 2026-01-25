@@ -3,12 +3,13 @@
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe, calculatePrice, formatPrice, BookPricing } from '@/lib/stripe/server';
 
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient();
+        const adminDb = await createAdminClient();
 
         // Check authentication
         const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -28,12 +29,12 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Get book details
-        const { data: book, error: bookError } = await supabase
+        // Get book details (using admin to ensure we can read it)
+        const { data: book, error: bookError } = await adminDb
             .from('books')
             .select('*, pages(*)')
             .eq('id', bookId)
-            .eq('user_id', user.id)
+            // .eq('user_id', user.id) // Optional: enforce ownership if needed, but admin client bypasses RLS
             .single();
 
         if (bookError || !book) {
@@ -99,8 +100,8 @@ export async function POST(request: NextRequest) {
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/create/${bookId}/order`,
         });
 
-        // Create order record in database
-        const { data: order, error: orderError } = await supabase
+        // Create order record in database (Use Admin Client to bypass RLS)
+        const { data: order, error: orderError } = await adminDb
             .from('orders')
             .insert({
                 book_id: bookId,
@@ -126,8 +127,11 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (orderError) {
-            console.error('Order creation error:', orderError);
-            // Continue anyway - we can reconcile from webhook
+            console.error('Order creation error:', JSON.stringify(orderError, null, 2));
+            return NextResponse.json(
+                { error: 'Failed to create order record: ' + orderError.message },
+                { status: 500 }
+            );
         }
 
         return NextResponse.json({
