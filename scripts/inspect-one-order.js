@@ -15,16 +15,24 @@ async function inspectOrder() {
         .from('orders')
         .select(`
       id,
+      created_at,
+      status, // Payment status
       total,
       subtotal,
+      subtotal,
       shipping_cost,
+      pdf_url,
+      cover_pdf_url,
+      fulfillment_status,
       books (
         id,
         title,
         thumbnail_url
       )
     `)
-        .eq('id', '1a0c6d3f-3d35-4064-a48d-07797c17fc51')
+        .eq('status', 'paid')
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
 
     if (error) {

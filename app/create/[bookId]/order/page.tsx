@@ -8,6 +8,9 @@ import { getBookById } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { getStripe } from '@/lib/stripe/client';
 import { COUNTRIES } from '@/lib/countries';
+import { generateInteriorPDF } from '@/lib/lulu/pdf-generator';
+import { generateCoverPDF } from '@/lib/lulu/cover-generator';
+import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 type BookFormat = 'softcover' | 'hardcover';
@@ -21,8 +24,8 @@ const FALLBACK_BASE_PRICES: Record<BookFormat, Record<BookSize, number>> = {
 
 const SIZE_LABELS: Record<BookSize, string> = {
     '6x6': '6" × 6" (Small Square)',
-    '8x8': '8" × 8" (Medium Square)',
-    '8x10': '8" × 10" (Large Portrait)'
+    '8x8': '8.5" × 8.5" (Standard Square)',
+    '8x10': '8.5" × 11" (Standard Portrait)'
 };
 
 export default function OrderPage() {
@@ -179,6 +182,19 @@ export default function OrderPage() {
             shipping.country;
     };
 
+
+
+    const supabase = createClient();
+
+    const uploadFile = async (blob: Blob, path: string) => {
+        const { error } = await supabase.storage
+            .from('book-pdfs')
+            .upload(path, blob, { upsert: true });
+
+        if (error) throw error;
+        return path;
+    };
+
     const handleCheckout = async () => {
         if (!user) {
             setError('Please sign in to complete your order');
@@ -194,7 +210,49 @@ export default function OrderPage() {
         setIsProcessing(true);
 
         try {
-            // Create Stripe checkout session
+            // Helper to wrap promise with timeout
+            // Fix: Use 'extends unknown' or trailing comma for generics in TSX
+            const withTimeout = async <T,>(promise: Promise<T>, ms: number, msg: string): Promise<T> => {
+                return Promise.race([
+                    promise,
+                    new Promise<T>((_, reject) =>
+                        setTimeout(() => reject(new Error(msg)), ms)
+                    )
+                ]);
+            };
+
+            // 1. Generate PDFs (Client-side)
+            const TIMEOUT_MS = 45000; // 45 seconds
+
+            // Interior
+            console.log('Generating interior PDF...');
+            const interiorBlob = await withTimeout(
+                generateInteriorPDF(book!, format, size),
+                TIMEOUT_MS,
+                'Interior PDF generation timed out. Please check your internet connection or images.'
+            );
+
+            // Cover
+            console.log('Generating cover PDF...');
+            const coverBlob = await withTimeout(
+                generateCoverPDF(book!, format, size),
+                TIMEOUT_MS,
+                'Cover PDF generation timed out.'
+            );
+
+            // 2. Upload to Supabase Storage
+            const timestamp = Date.now();
+            const interiorPath = `${user.id}/${bookId}/${timestamp}_interior_${format}_${size}.pdf`;
+            const coverPath = `${user.id}/${bookId}/${timestamp}_cover_${format}_${size}.pdf`;
+
+            console.log('Uploading files...');
+            await Promise.all([
+                uploadFile(interiorBlob, interiorPath),
+                uploadFile(coverBlob, coverPath)
+            ]);
+
+            // 3. Create Stripe Session with File Paths
+            console.log('Creating checkout session...');
             const response = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -204,6 +262,9 @@ export default function OrderPage() {
                     size,
                     quantity,
                     shipping,
+                    // Pass the paths to the API to save in the order
+                    pdfUrl: interiorPath,
+                    coverUrl: coverPath,
                 }),
             });
 
@@ -213,7 +274,7 @@ export default function OrderPage() {
                 throw new Error(data.error || 'Failed to create checkout session');
             }
 
-            // Redirect to Stripe Checkout
+            // 4. Redirect to Stripe
             const stripe = await getStripe();
             if (stripe && data.sessionId) {
                 const { error: stripeError } = await stripe.redirectToCheckout({
@@ -224,12 +285,13 @@ export default function OrderPage() {
                     throw new Error(stripeError.message);
                 }
             } else if (data.url) {
-                // Fallback to direct URL redirect
                 window.location.href = data.url;
             }
         } catch (err) {
             console.error('Checkout error:', err);
-            setError(err instanceof Error ? err.message : 'Payment failed. Please try again.');
+            // Show detailed error to user so they can report it
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            setError(`Failed to prepare order: ${errorMessage}`);
             setIsProcessing(false);
         }
     };
@@ -580,7 +642,7 @@ export default function OrderPage() {
                                     {isProcessing ? (
                                         <>
                                             <span className={styles.btnSpinner}></span>
-                                            Processing...
+                                            Preparing Book...
                                         </>
                                     ) : (
                                         `Pay $${grandTotal.toFixed(2)} →`

@@ -14,16 +14,25 @@ import { calculateSpineWidth, PaperType } from './spine-calculator';
 /**
  * Trim sizes in inches
  */
+/**
+ * Trim sizes in inches
+ */
 const TRIM_SIZES: Record<string, { width: number; height: number }> = {
     '6x6': { width: 6, height: 6 },
-    '8x8': { width: 8, height: 8 },
-    '8x10': { width: 8, height: 10 },
+    '8x8': { width: 8.5, height: 8.5 }, // Updated to 8.5
+    '8x10': { width: 8.5, height: 11 }, // Updated to 8.5x11
 };
 
 /**
  * Bleed size in inches
  */
 const BLEED_SIZE = 0.125;
+
+/**
+ * Wrap size in inches (for Hardcover Casewrap only)
+ * The cover paper wraps around the cardboard case.
+ */
+const WRAP_SIZE = 0.75;
 
 /**
  * Safety margins for cover content
@@ -108,11 +117,19 @@ export function calculateCoverDimensions(
 
     const safetyMargin = SAFETY_MARGINS[format];
 
+    // WRAP LOGIC
+    // Softcover: Bleed only
+    // Hardcover: Wrap + Bleed
+    const extraPerSide = format === 'hardcover' ? WRAP_SIZE : 0;
+
     const backCoverWidth = trimSize.width;
     const frontCoverWidth = trimSize.width;
 
-    const totalWidth = backCoverWidth + spineWidth + frontCoverWidth + (BLEED_SIZE * 2);
-    const totalHeight = trimSize.height + (BLEED_SIZE * 2);
+    // Total Width = Back + Spine + Front + (Wrap x 2) + (Bleed x 2)
+    const totalWidth = backCoverWidth + spineWidth + frontCoverWidth + (extraPerSide * 2) + (BLEED_SIZE * 2);
+
+    // Total Height = Height + (Wrap x 2) + (Bleed x 2)
+    const totalHeight = trimSize.height + (extraPerSide * 2) + (BLEED_SIZE * 2);
 
     return {
         totalWidth,
@@ -121,7 +138,7 @@ export function calculateCoverDimensions(
         spineWidth,
         frontCoverWidth,
         safetyMargin,
-        bleed: BLEED_SIZE,
+        bleed: BLEED_SIZE + extraPerSide, // Visual bleed includes wrap for layout puproses
     };
 }
 

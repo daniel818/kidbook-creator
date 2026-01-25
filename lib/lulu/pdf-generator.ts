@@ -19,8 +19,8 @@ import { Book, BookPage, BookThemeInfo } from '@/lib/types';
  */
 export const TRIM_SIZES: Record<string, { width: number; height: number }> = {
     '6x6': { width: 6, height: 6 },
-    '8x8': { width: 8, height: 8 },
-    '8x10': { width: 8, height: 10 },
+    '8x8': { width: 8.5, height: 8.5 }, // Actually 8.5x8.5 for Lulu Standard Square
+    '8x10': { width: 8.5, height: 11 }, // Actually 8.5x11 for standard US Letter/Portrait matches
 };
 
 /**

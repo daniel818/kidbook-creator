@@ -272,6 +272,59 @@ class LuluClient {
     async deleteWebhook(id: string): Promise<void> {
         await this.request('DELETE', `/webhooks/${id}/`);
     }
+
+    // --- Validation Methods (Pre-flight) ---
+
+    // Validate Interior PDF
+    async validateInterior(url: string, podPackageId: string): Promise<string> {
+        console.log(`[Lulu] Validating Interior: ${podPackageId}`);
+        const response: any = await this.request('POST', '/printable-normalization/', {
+            pod_package_id: podPackageId,
+            source_url: url,
+        });
+        return response.id; // Returns validation job ID
+    }
+
+    // Validate Cover PDF
+    async validateCover(url: string, podPackageId: string, pageCount: number): Promise<string> {
+        console.log(`[Lulu] Validating Cover: ${podPackageId} (${pageCount} pages)`);
+        const response: any = await this.request('POST', '/printable-normalization/', {
+            pod_package_id: podPackageId,
+            source_url: url,
+            page_count: pageCount,
+        });
+        return response.id; // Returns validation job ID
+    }
+
+    // Poll validation status
+    async pollValidationStatus(id: string, timeoutMs: number = 60000): Promise<any> {
+        const startTime = Date.now();
+
+        while (Date.now() - startTime < timeoutMs) {
+            const response: any = await this.request('GET', `/printable-normalization/${id}/`);
+            const status = response.status.name;
+
+            console.log(`[Lulu] Validation Job ${id}: ${status}`);
+
+            if (status === 'VALIDATED' || status === 'NORMALIZED') {
+                return response;
+            }
+
+            if (status === 'ERROR') {
+                // If there are specific file errors, throw them
+                if (response.printable_normalization) {
+                    const errors = JSON.stringify(response.printable_normalization);
+                    throw new Error(`Validation Failed: ${errors}`);
+                }
+                throw new Error(`Validation Failed with Unknown Error. Job ID: ${id}`);
+            }
+
+            // Wait 2 seconds before retry
+            await new Promise(r => setTimeout(r, 2000));
+        }
+
+        throw new Error(`Validation timed out after ${timeoutMs}ms`);
+    }
 }
 
 // Cost calculation types

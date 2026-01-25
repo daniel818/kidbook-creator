@@ -33,7 +33,8 @@ async function checkSku(token, sku) {
         const payload = JSON.stringify({
             line_items: [{ page_count: 32, pod_package_id: sku, quantity: 1 }],
             shipping_address: {
-                country_code: 'US', city: 'New York', state_code: 'NY', postal_code: '10001'
+                country_code: 'US', city: 'New York', state_code: 'NY', postcode: '10001',
+                street1: '123 Test St', name: 'John Doe', phone_number: '555-555-5555'
             },
             shipping_level: 'MAIL'
         });
@@ -49,7 +50,7 @@ async function checkSku(token, sku) {
             res.on('data', c => body += c);
             res.on('end', () => {
                 console.log(`SKU: ${sku} -> Status: ${res.statusCode}`);
-                if (res.statusCode !== 200 && res.statusCode !== 201) console.log(body.slice(0, 100));
+                if (res.statusCode !== 201) console.log(body); // Print error if not 201
                 resolve();
             });
         });
@@ -61,10 +62,9 @@ async function checkSku(token, sku) {
 async function main() {
     const token = await getToken();
     const skus = [
-        '0850X0850FCPRESS080CW444GXX', // Premium, Saddle Stitch, Coated White
-        '0850X0850FCSTDSS080CW444GXX', // Standard, Saddle Stitch
-        '0850X0850FCSTDSS060CW444GXX', // Standard 60#
-        '0850X0850BWSTDSS060UW444GXX', // B&W baseline
+        '0850X0850FCSTDCW080CW444GXX',   // Full Color, Standard, Case Wrap, 80# Coated White
+        '0850X0850FCSTDCW060CW444GXX',   // Full Color, Standard, Case Wrap, 60# Coated White
+        '0850X0850HCCWSTDPB080CW444GXX', // Hardcover Code again?
     ];
 
     for (const sku of skus) {
