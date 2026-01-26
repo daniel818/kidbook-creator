@@ -35,54 +35,62 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
       {books.map((book, index) => {
         const coverImage = getBookCoverImage(book);
         const themeColor = getBookColor(book.settings.bookTheme);
-        const accentColor = getBookColorSecondary(book.settings.bookTheme);
-        const isSquare = book.settings.printFormat === 'square';
 
         return (
           <div
             key={book.id}
-            className={`${styles.bookItem} ${openingBookId === book.id ? styles.isOpening : ''} ${isSquare ? styles.squareFormat : ''}`}
+            className={`${styles.bookItem} ${openingBookId === book.id ? styles.isOpening : ''}`}
             onClick={() => handleViewBook(book.id)}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             {/* 3D Book Object */}
-            <div className={styles.scene}>
-              <div className={styles.bookObject}>
-                {/* Front Cover */}
-                <div className={styles.faceFront}
-                  style={{
-                    background: coverImage
-                      ? `url(${coverImage}) center/cover no-repeat`
-                      : `linear-gradient(135deg, ${themeColor} 0%, ${accentColor} 100%)`
-                  }}
-                >
-                  {/* Lighting Overlay */}
-                  <div className={styles.lightingOverlay}></div>
-
-                  {!coverImage && (
-                    <div className={styles.fallbackCover}>
-                      <span className={styles.bookEmoji}>{getBookEmoji(book.settings.bookType)}</span>
-                      <h3 className={styles.bookTitle}>{book.settings.title}</h3>
-                    </div>
-                  )}
-                </div>
-
+            <div className={styles.book3DContainer}>
+              <div className={styles.book3D}>
                 {/* Back Cover */}
-                <div className={`${styles.faceBack}`} style={{ backgroundColor: themeColor }}></div>
+                <div
+                  className={styles.book3DBack}
+                  style={{ backgroundColor: themeColor }}
+                ></div>
+
+                {/* Pages faces */}
+                <div className={styles.bookPagesTop}></div>
+                <div className={styles.bookPagesRight}></div>
+                <div className={styles.bookPagesBottom}></div>
 
                 {/* Spine */}
-                <div className={styles.faceSpine}
-                  style={{ background: `linear-gradient(90deg, ${themeColor}, ${accentColor})` }}
+                <div
+                  className={styles.book3DSpine}
+                  style={{
+                    backgroundColor: getBookColorSecondary(book.settings.bookTheme)
+                  }}
+                ></div>
+
+                {/* Front Cover */}
+                <div
+                  className={styles.book3DFront}
+                  style={{
+                    background: coverImage
+                      ? `url(${coverImage}) center/cover`
+                      : `linear-gradient(135deg, ${themeColor} 0%, ${getBookColorSecondary(book.settings.bookTheme)} 100%)`
+                  }}
                 >
-                  <span className={styles.spineText}>{book.settings.title}</span>
+                  <div className={styles.bookTexture}></div>
+                  <div className={styles.book3DFrontContent}>
+                    {!coverImage && (
+                      <>
+                        <span className={styles.book3DEmoji}>
+                          {getBookEmoji(book.settings.bookType)}
+                        </span>
+                        <span className={styles.book3DTitle}>
+                          {book.settings.title}
+                        </span>
+                      </>
+                    )}
+                    <div className={styles.bookCoverOverlay}></div>
+                  </div>
                 </div>
-
-                {/* Pages (Top, Right, Bottom) */}
-                <div className={`${styles.facePages} ${styles.pagesRight}`}></div>
               </div>
-
-              {/* Shadow Blob */}
-              <div className={styles.shadowBlob}></div>
+              <div className={styles.book3DShadow}></div>
             </div>
 
             {/* Simple Clean Meta (Below Book) */}
