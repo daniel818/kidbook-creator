@@ -288,7 +288,7 @@ export async function generateCompleteBook(
     const illustrations: string[] = new Array(story.pages.length).fill('');
 
     // Concurrency Settings
-    const CONCURRENCY_LIMIT = 3;
+    const CONCURRENCY_LIMIT = 1;
     const SAFETY_DELAY_MS = 2000; // 2 seconds between batches to be safe with rate limits
 
     // Helper to generate a single page
