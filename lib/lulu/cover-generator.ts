@@ -9,7 +9,7 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
-import { calculateSpineWidth, PaperType } from './spine-calculator';
+import { calculateSpineWidth, MINIMUM_SPINE_WIDTH, PaperType } from './spine-calculator';
 
 /**
  * Trim sizes in inches
@@ -113,6 +113,12 @@ export function calculateCoverDimensions(
     // Saddle Stitch (Softcover < 32 pages) has no spine width in Lulu specs
     if (format === 'softcover' && pageCount < 32) {
         spineWidth = 0;
+    } else {
+        // Perfect bound and casewrap have minimum spine widths
+        const minSpine = MINIMUM_SPINE_WIDTH[format];
+        if (minSpine && spineWidth < minSpine) {
+            spineWidth = minSpine;
+        }
     }
 
     const safetyMargin = SAFETY_MARGINS[format];
@@ -364,6 +370,16 @@ export async function generateCoverPDF(
 
     // Calculate dimensions
     const dims = calculateCoverDimensions(bookSize, finalPageCount, format, paperType);
+    console.log('[Lulu Cover] Dimensions:', {
+        format,
+        size: bookSize,
+        pageCount: finalPageCount,
+        paperType,
+        totalWidth: dims.totalWidth,
+        totalHeight: dims.totalHeight,
+        spineWidth: dims.spineWidth,
+        bleed: dims.bleed,
+    });
 
     // Get theme colors
     const themeColors = book.settings.bookTheme
