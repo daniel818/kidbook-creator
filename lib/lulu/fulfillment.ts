@@ -4,8 +4,9 @@
 // Coordinates PDF generation, upload, and print job creation
 
 import { createAdminClient } from '@/lib/supabase/server';
-import { createLuluClient } from './client';
+import { createLuluClient, ShippingLevel } from './client';
 import { Book } from '@/lib/types';
+import { getPrintableInteriorPageCount } from './page-count';
 
 /**
  * Fulfillment status enum
@@ -39,6 +40,7 @@ interface OrderData {
     format: 'softcover' | 'hardcover';
     size: '6x6' | '8x8' | '8x10';
     quantity: number;
+    shipping_level?: string;
     shipping_full_name: string;
     shipping_address_line1: string;
     shipping_address_line2?: string;
@@ -91,8 +93,9 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
         }
 
         const orderData = order as OrderData & { book: Book & { pages: any[] } };
-        // Determine real page count (defaults to 32 if missing, but should exist)
-        const pageCount = orderData.book?.pages?.length || 32;
+        // Determine interior page count (defaults to 32 if missing, but should exist)
+        const rawInteriorPageCount = getPrintableInteriorPageCount(orderData.book, orderData.format, orderData.size);
+        const interiorPageCount = rawInteriorPageCount > 0 ? rawInteriorPageCount : 32;
 
         // ... (path determination logic same as before) ...
         const interiorPath = interiorPathOverride || orderData.pdf_url;
@@ -129,14 +132,57 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
 
         // 3. Prepare for Job Creation
         const luluClient = createLuluClient();
-        const podPackageId = getLuluProductId(orderData.format, orderData.size, pageCount);
+        const podPackageId = getLuluProductId(orderData.format, orderData.size, interiorPageCount);
 
-        console.log(`[Fulfillment] Processing Job for SKU: ${podPackageId} (Pages: ${pageCount})`);
+        console.log(`[Fulfillment] Processing Job for SKU: ${podPackageId} (Pages: ${interiorPageCount})`);
 
         // Skip explicit validation as per request - proceeding to job creation
         await updateOrderStatus(supabase, orderId, FulfillmentStatus.CREATING_JOB);
 
-        // 4. Create Print Job
+        // 4. Determine available shipping level
+        let shippingLevel: ShippingLevel | undefined;
+        try {
+            const options = await luluClient.getShippingOptions({
+                currency: 'USD',
+                lineItems: [{
+                    pageCount: interiorPageCount,
+                    podPackageId: podPackageId,
+                    quantity: orderData.quantity,
+                }],
+                shippingAddress: {
+                    name: orderData.shipping_full_name,
+                    street1: orderData.shipping_address_line1,
+                    street2: orderData.shipping_address_line2,
+                    city: orderData.shipping_city,
+                    stateCode: orderData.shipping_state,
+                    postalCode: orderData.shipping_postal_code,
+                    countryCode: getCountryCode(orderData.shipping_country),
+                    phoneNumber: orderData.shipping_phone,
+                },
+            });
+
+            const preferredOrder: ShippingLevel[] = [
+                'MAIL',
+                'GROUND',
+                'GROUND_HD',
+                'GROUND_BUS',
+                'PRIORITY_MAIL',
+                'EXPEDITED',
+                'EXPRESS',
+            ];
+            const available = new Set(options.map((opt) => opt.level));
+            const requestedLevel = orderData.shipping_level as ShippingLevel | undefined;
+            if (requestedLevel && available.has(requestedLevel)) {
+                shippingLevel = requestedLevel;
+            } else {
+                shippingLevel = preferredOrder.find((level) => available.has(level)) || options[0]?.level;
+            }
+        } catch (error) {
+            console.warn('[Fulfillment] Failed to fetch shipping options, defaulting to MAIL', error);
+            shippingLevel = (orderData.shipping_level as ShippingLevel) || 'MAIL';
+        }
+
+        // 5. Create Print Job
         const printJob = await luluClient.createPrintJob({
             lineItems: [{
                 title: orderData.book_id,
@@ -159,6 +205,7 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
             },
             contactEmail: orderData.user_email || 'orders@kidbook-creator.com',
             externalId: orderId,
+            shippingLevel,
         });
 
         // 5. Update Success

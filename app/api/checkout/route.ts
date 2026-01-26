@@ -4,7 +4,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
-import { stripe, calculatePrice, formatPrice, BookPricing } from '@/lib/stripe/server';
+import { stripe, formatPrice } from '@/lib/stripe/server';
+import { calculateRetailPricing } from '@/lib/lulu/pricing';
+import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,7 +21,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { bookId, format, size, quantity, shipping, pdfUrl, coverUrl } = body;
+        const { bookId, format, size, quantity, shipping, shippingLevel, pdfUrl, coverUrl } = body;
 
         console.log('[Checkout API] Received request:', {
             bookId,
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Validate required fields
-        if (!bookId || !format || !size || !quantity || !shipping) {
+        if (!bookId || !format || !size || !quantity || !shipping || !shippingLevel) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }
@@ -61,15 +63,16 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
         }
 
-        // Calculate pricing
-        const pricingOptions: BookPricing = {
+        // Calculate pricing (includes profit margin)
+        const interiorPageCount = getPrintableInteriorPageCount(book, format, size);
+        const pricing = await calculateRetailPricing({
             format,
             size,
-            pageCount: book.pages.length,
-            quantity
-        };
-
-        const pricing = calculatePrice(pricingOptions);
+            pageCount: interiorPageCount,
+            quantity,
+            shippingOption: shippingLevel,
+            shipping,
+        });
 
         // 1. Create PENDING Order Record FIRST (Prevent Dangling Payment Risk)
         const { data: order, error: orderError } = await adminDb
@@ -91,6 +94,7 @@ export async function POST(request: NextRequest) {
                 shipping_postal_code: shipping.postalCode,
                 shipping_country: shipping.country,
                 shipping_phone: shipping.phone,
+                shipping_level: shippingLevel,
                 status: 'pending', // No session ID yet
                 // CRITICAL: Save the generated file paths!
                 pdf_url: pdfUrl,
@@ -115,7 +119,7 @@ export async function POST(request: NextRequest) {
                         currency: 'usd',
                         product_data: {
                             name: `${book.title} - Personalized Children's Book`,
-                            description: `${format.charAt(0).toUpperCase() + format.slice(1)}, ${size}, ${book.pages.length} pages`,
+                            description: `${format.charAt(0).toUpperCase() + format.slice(1)}, ${size}, ${interiorPageCount} pages`,
                             images: book.thumbnail_url ? [book.thumbnail_url] : [],
                         },
                         unit_amount: Math.round(pricing.subtotal / quantity),

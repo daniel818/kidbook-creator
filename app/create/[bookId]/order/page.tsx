@@ -10,11 +10,36 @@ import { getStripe } from '@/lib/stripe/client';
 import { COUNTRIES } from '@/lib/countries';
 import { generateInteriorPDF } from '@/lib/lulu/pdf-generator';
 import { generateCoverPDF } from '@/lib/lulu/cover-generator';
+import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 type BookFormat = 'softcover' | 'hardcover';
 type BookSize = '6x6' | '8x8' | '8x10';
+
+interface ShippingOption {
+    id: string;
+    level: string;
+    currency: string;
+    cost_excl_tax?: string;
+    min_delivery_date?: string;
+    max_delivery_date?: string;
+    min_dispatch_date?: string;
+    max_dispatch_date?: string;
+    home_only?: boolean;
+    business_only?: boolean;
+    postbox_ok?: boolean;
+    traceable?: boolean;
+}
+
+function formatShippingCost(option: ShippingOption): string | null {
+    if (option.cost_excl_tax === undefined || option.cost_excl_tax === null) return null;
+    const amount = typeof option.cost_excl_tax === 'string'
+        ? Number(option.cost_excl_tax)
+        : option.cost_excl_tax;
+    if (Number.isNaN(amount)) return null;
+    return `$${amount.toFixed(2)} ${option.currency || 'USD'}`;
+}
 
 // Fallback prices for display only (real prices come from API)
 const FALLBACK_BASE_PRICES: Record<BookFormat, Record<BookSize, number>> = {
@@ -52,6 +77,11 @@ export default function OrderPage() {
         isEstimate: boolean;
     } | null>(null);
     const [isPriceLoading, setIsPriceLoading] = useState(false);
+
+    const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+    const [shippingLevel, setShippingLevel] = useState<string>('');
+    const [isShippingOptionsLoading, setIsShippingOptionsLoading] = useState(false);
+    const [shippingOptionsError, setShippingOptionsError] = useState<string | null>(null);
 
     // Shipping form
     const [shipping, setShipping] = useState({
@@ -107,6 +137,7 @@ export default function OrderPage() {
     const fetchPrice = useCallback(async () => {
         if (!book) return;
 
+        const interiorPageCount = getPrintableInteriorPageCount(book, format, size);
         setIsPriceLoading(true);
         try {
             const response = await fetch('/api/lulu/calculate-cost', {
@@ -115,10 +146,13 @@ export default function OrderPage() {
                 body: JSON.stringify({
                     format,
                     size,
-                    pageCount: book.pages.length,
+                    pageCount: interiorPageCount,
                     quantity,
                     countryCode: shipping.country || 'US',
                     postalCode: shipping.postalCode || '10001',
+                    stateCode: shipping.state || 'NY',
+                    shippingOption: shippingLevel || undefined,
+                    shipping: isShippingValid() ? shipping : undefined,
                 }),
             });
 
@@ -154,7 +188,7 @@ export default function OrderPage() {
         } finally {
             setIsPriceLoading(false);
         }
-    }, [book, format, size, quantity, shipping.postalCode, shipping.country]);
+    }, [book, format, size, quantity, shipping.postalCode, shipping.country, shippingLevel]);
 
     // Debounced price fetch
     useEffect(() => {
@@ -162,9 +196,83 @@ export default function OrderPage() {
         return () => clearTimeout(timer);
     }, [fetchPrice]);
 
+    useEffect(() => {
+        if (!book || !isShippingValid()) {
+            setShippingOptions([]);
+            setShippingLevel('');
+            setShippingOptionsError(null);
+            return;
+        }
+
+        const controller = new AbortController();
+        const fetchOptions = async () => {
+            setIsShippingOptionsLoading(true);
+            setShippingOptionsError(null);
+            try {
+                const response = await fetch('/api/lulu/shipping-options', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        format,
+                        size,
+                        pageCount: getPrintableInteriorPageCount(book, format, size),
+                        quantity,
+                        shipping,
+                        currency: 'USD',
+                    }),
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load shipping options');
+                }
+
+                const data = await response.json();
+                const options: ShippingOption[] = data.options || [];
+                setShippingOptions(options);
+
+                if (options.length > 0) {
+                    const current = options.find((opt) => opt.level === shippingLevel);
+                    setShippingLevel(current ? current.level : options[0].level);
+                } else {
+                    setShippingLevel('');
+                    setShippingOptionsError('No shipping methods available for this address.');
+                }
+            } catch (err) {
+                if ((err as Error).name === 'AbortError') return;
+                console.error('Shipping options error:', err);
+                setShippingOptions([]);
+                setShippingLevel('');
+                setShippingOptionsError('Failed to load shipping methods.');
+            } finally {
+                setIsShippingOptionsLoading(false);
+            }
+        };
+
+        const timer = setTimeout(fetchOptions, 300);
+        return () => {
+            clearTimeout(timer);
+            controller.abort();
+        };
+    }, [
+        book,
+        format,
+        size,
+        quantity,
+        shipping.fullName,
+        shipping.addressLine1,
+        shipping.addressLine2,
+        shipping.city,
+        shipping.state,
+        shipping.postalCode,
+        shipping.country,
+        shipping.phone,
+    ]);
+
     const totalPrice = priceData?.subtotal ?? 0;
-    const shippingCost = priceData?.shipping ?? 4.99;
-    const grandTotal = priceData?.total ?? 0;
+    const hasShippingQuote = Boolean(shippingLevel) && Boolean(priceData);
+    const shippingCost = hasShippingQuote ? priceData!.shipping : 0;
+    const grandTotal = hasShippingQuote ? priceData!.total : totalPrice;
 
     const isShippingValid = () => {
         // Strict Validation Rules for Lulu/FedEx
@@ -203,6 +311,11 @@ export default function OrderPage() {
 
         if (!agreedToTerms) {
             setError('Please agree to the Terms of Service');
+            return;
+        }
+
+        if (!shippingLevel) {
+            setError('Please select a shipping method');
             return;
         }
 
@@ -262,6 +375,7 @@ export default function OrderPage() {
                     size,
                     quantity,
                     shipping,
+                    shippingLevel,
                     // Pass the paths to the API to save in the order
                     pdfUrl: interiorPath,
                     coverUrl: coverPath,
@@ -308,6 +422,7 @@ export default function OrderPage() {
     const themeColors = book.settings.bookTheme
         ? BookThemeInfo[book.settings.bookTheme].colors
         : ['#6366f1', '#ec4899'];
+    const interiorPageCount = getPrintableInteriorPageCount(book, format, size);
 
     return (
         <main className={styles.main}>
@@ -366,10 +481,10 @@ export default function OrderPage() {
                                         </span>
                                         <span className={styles.formatDesc}>
                                             {f === 'softcover'
-                                                ? (book && book.pages.length < 32
+                                                ? (interiorPageCount < 32
                                                     ? 'Stapled booklet binding (Saddle Stitch)'
                                                     : 'Flexible, lightweight cover (Perfect Bound)')
-                                                : (book && book.pages.length < 32
+                                                : (interiorPageCount < 32
                                                     ? 'Premium Hardcover (Casewrap)'
                                                     : 'Premium, durable hardback')
                                             }
@@ -561,6 +676,54 @@ export default function OrderPage() {
                                     </div>
                                 </div>
 
+                                <div className={styles.shippingOptions}>
+                                    <h3>Shipping Method</h3>
+                                    {!isShippingValid() && (
+                                        <p className={styles.helperText}>Enter a valid address to load shipping methods.</p>
+                                    )}
+                                    {isShippingValid() && isShippingOptionsLoading && (
+                                        <p className={styles.helperText}>Loading shipping methods...</p>
+                                    )}
+                                    {isShippingValid() && shippingOptionsError && (
+                                        <p className={styles.errorText}>{shippingOptionsError}</p>
+                                    )}
+                                    {isShippingValid() && !isShippingOptionsLoading && !shippingOptionsError && (
+                                        <div className={styles.shippingOptionsList}>
+                                            {shippingOptions.map((option) => (
+                                                <label key={option.id} className={styles.shippingOption}>
+                                                    <input
+                                                        type="radio"
+                                                        name="shippingLevel"
+                                                        value={option.level}
+                                                        checked={shippingLevel === option.level}
+                                                        onChange={() => setShippingLevel(option.level)}
+                                                    />
+                                                    <div>
+                                                        <div className={styles.shippingOptionTitle}>
+                                                            <span>{option.level.replace('_', ' ')}</span>
+                                                            {formatShippingCost(option) && (
+                                                                <span className={styles.shippingOptionCost}>
+                                                                    {formatShippingCost(option)}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        {(option.min_delivery_date || option.max_delivery_date) && (
+                                                            <div className={styles.shippingOptionMeta}>
+                                                                {option.min_delivery_date ? `Earliest ${option.min_delivery_date}` : ''}
+                                                                {option.min_delivery_date && option.max_delivery_date ? ' · ' : ''}
+                                                                {option.max_delivery_date ? `Latest ${option.max_delivery_date}` : ''}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </label>
+                                            ))}
+                                            {shippingOptions.length === 0 && (
+                                                <p className={styles.helperText}>No shipping methods available for this address.</p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className={styles.buttonRow}>
                                     <button
                                         className={styles.backBtn}
@@ -571,7 +734,7 @@ export default function OrderPage() {
                                     <button
                                         className={styles.continueBtn}
                                         onClick={() => setStep('payment')}
-                                        disabled={!isShippingValid()}
+                                        disabled={!isShippingValid() || !shippingLevel || isShippingOptionsLoading}
                                     >
                                         Continue to Payment →
                                     </button>
@@ -673,7 +836,7 @@ export default function OrderPage() {
                             <div className={styles.bookDetails}>
                                 <h3>{book.settings.title}</h3>
                                 <p>For {book.settings.childName}, age {book.settings.childAge}</p>
-                                <p>{book.pages.length} pages</p>
+                                <p>{interiorPageCount} pages</p>
                             </div>
                         </div>
 
@@ -696,17 +859,34 @@ export default function OrderPage() {
                         {/* Pricing */}
                         <div className={styles.pricing}>
                             <div className={styles.priceRow}>
-                                <span>Subtotal</span>
+                                <span>
+                                    {priceData?.isEstimate ? 'Estimated book price (excl. shipping)' : 'Book price (excl. shipping)'}
+                                </span>
                                 <span>${totalPrice.toFixed(2)}</span>
                             </div>
-                            <div className={styles.priceRow}>
-                                <span>Shipping</span>
-                                <span>${shippingCost.toFixed(2)}</span>
-                            </div>
-                            <div className={`${styles.priceRow} ${styles.total}`}>
-                                <span>Total</span>
-                                <span>${grandTotal.toFixed(2)}</span>
-                            </div>
+                            {hasShippingQuote ? (
+                                <>
+                                    <div className={styles.priceRow}>
+                                        <span>Shipping</span>
+                                        <span>${shippingCost.toFixed(2)}</span>
+                                    </div>
+                                    <div className={`${styles.priceRow} ${styles.total}`}>
+                                        <span>Total</span>
+                                        <span>${grandTotal.toFixed(2)}</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className={styles.priceRow}>
+                                    <span>Shipping</span>
+                                    <span>Calculated after address entry</span>
+                                </div>
+                            )}
+                            {priceData?.isEstimate && (
+                                <div className={styles.priceRow}>
+                                    <span>Final total updates after shipping is selected</span>
+                                    <span></span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Delivery Estimate */}

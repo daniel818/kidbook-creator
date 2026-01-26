@@ -246,18 +246,17 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
             // Secret developer mode: Alt/Option + Click = Download Lulu Print Files
             if (e.altKey) {
-                // Default to 8x10 Softcover for test if not specified
-                // In real app, these come from order selection
-                const size = '8x10';
-                const format = 'softcover';
+                // Defaults to book format (square -> 8x8, portrait -> 8x10)
+                const size = book.settings.printFormat === 'square' ? '8x8' : '8x10';
+                const format: 'softcover' | 'hardcover' = 'softcover';
 
                 // 1. Generate Interior
                 const interiorBlob = await generateInteriorPDF(book, format, size);
-                downloadLuluPDF(interiorBlob, `${book.settings.title || 'book'}_interior_8x10.pdf`);
+                downloadLuluPDF(interiorBlob, `${book.settings.title || 'book'}_interior_${size}.pdf`);
 
                 // 2. Generate Cover
                 const coverBlob = await generateCoverPDF(book, format, size);
-                downloadLuluPDF(coverBlob, `${book.settings.title || 'book'}_cover_8x10.pdf`);
+                downloadLuluPDF(coverBlob, `${book.settings.title || 'book'}_cover_${size}.pdf`);
 
                 return;
             }

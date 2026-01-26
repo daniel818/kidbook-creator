@@ -7,12 +7,14 @@
 // LAYOUT: Each "inside" page creates TWO PDF pages:
 //   - Left page: Image ONLY (full bleed illustration)
 //   - Right page: Text ONLY (story text on white/paper background)
+// Note: This generates INTERIOR ONLY (no cover/back cover).
 
 'use client';
 
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
+import { getPrintableInteriorPageCount } from './page-count';
 
 /**
  * Trim sizes in inches (final book dimensions after cutting)
@@ -429,34 +431,12 @@ export async function generateInteriorPDF(
     try {
         let pdfPageIndex = 0;
         const innerPages = book.pages.filter(p => p.type === 'inside');
-        const totalPdfPages = 1 + (innerPages.length * 2) + 1; // cover + spreads + back
+        if (innerPages.length === 0) {
+            throw new Error('Book must have interior pages');
+        }
+        const totalPdfPages = getPrintableInteriorPageCount(book, format, bookSize);
 
-        // 1. Generate Cover Page
-        const coverEl = createCoverPage(book, pageWidthInches, pageHeightInches, themeColors);
-        container.appendChild(coverEl);
-        await waitForImages(coverEl);
-
-        const coverCanvas = await html2canvas(coverEl, {
-            scale: SCALE_FACTOR,
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            backgroundColor: '#ffffff',
-        });
-
-        pdf.addImage({
-            imageData: coverCanvas.toDataURL('image/jpeg', 0.92),
-            format: 'JPEG',
-            x: 0,
-            y: 0,
-            width: pageWidthInches,
-            height: pageHeightInches,
-        });
-        container.removeChild(coverEl);
-        pdfPageIndex++;
-        onProgress?.((pdfPageIndex / totalPdfPages) * 100);
-
-        // 2. Generate Interior Spreads (each "inside" page = 2 PDF pages)
+        // Generate Interior Spreads (each "inside" page = 2 PDF pages)
         for (let i = 0; i < innerPages.length; i++) {
             const page = innerPages[i];
             const spreadNum = i + 1;
@@ -473,7 +453,9 @@ export async function generateInteriorPDF(
             container.appendChild(illustEl);
             await waitForImages(illustEl);
 
-            pdf.addPage([pageWidthInches, pageHeightInches]);
+            if (pdfPageIndex > 0) {
+                pdf.addPage([pageWidthInches, pageHeightInches]);
+            }
             const illustCanvas = await html2canvas(illustEl, {
                 scale: SCALE_FACTOR,
                 useCORS: true,
@@ -523,66 +505,11 @@ export async function generateInteriorPDF(
             pdfPageIndex++;
             onProgress?.((pdfPageIndex / totalPdfPages) * 100);
         }
-
-        // 3. Generate Back Cover
-        const backCoverPage = book.pages.find(p => p.type === 'back');
-        const backEl = document.createElement('div');
-        backEl.style.cssText = `
-            width: ${pageWidthInches * SCREEN_DPI}px;
-            height: ${pageHeightInches * SCREEN_DPI}px;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        `;
-
-        const backImageUrl = backCoverPage ? getPageImage(backCoverPage) : null;
-        if (backImageUrl) {
-            const img = document.createElement('img');
-            img.src = backImageUrl;
-            img.crossOrigin = 'anonymous';
-            img.style.cssText = `position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;`;
-            backEl.appendChild(img);
+        while (pdfPageIndex < totalPdfPages) {
+            pdf.addPage([pageWidthInches, pageHeightInches]);
+            pdfPageIndex++;
+            onProgress?.((pdfPageIndex / totalPdfPages) * 100);
         }
-
-        const backText = document.createElement('div');
-        backText.style.cssText = `
-            position: relative;
-            text-align: center;
-            color: white;
-            padding: 40px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        `;
-        backText.innerHTML = `
-            <h2 style="font-family: 'Playfair Display', Georgia, serif; font-size: 24pt; margin: 0 0 10px 0;">The End</h2>
-            <p style="font-family: Inter, sans-serif; font-size: 12pt; margin: 0;">${backCoverPage?.textElements?.[0]?.content || 'Created with KidBook Creator'}</p>
-        `;
-        backEl.appendChild(backText);
-
-        container.appendChild(backEl);
-        await waitForImages(backEl);
-
-        pdf.addPage([pageWidthInches, pageHeightInches]);
-        const backCanvas = await html2canvas(backEl, {
-            scale: SCALE_FACTOR,
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            backgroundColor: themeColors[0],
-        });
-        pdf.addImage({
-            imageData: backCanvas.toDataURL('image/jpeg', 0.92),
-            format: 'JPEG',
-            x: 0,
-            y: 0,
-            width: pageWidthInches,
-            height: pageHeightInches,
-        });
-        container.removeChild(backEl);
-
-        onProgress?.(100);
 
         return pdf.output('blob');
 

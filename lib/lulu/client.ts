@@ -14,6 +14,7 @@ export interface PrintJob {
     shippingAddress: ShippingAddress;
     contactEmail: string;
     externalId?: string;
+    shippingLevel?: ShippingLevel;
 }
 
 export interface PrintJobLineItem {
@@ -39,6 +40,15 @@ export interface ShippingAddress {
     countryCode: string;
     phoneNumber: string;
 }
+
+export type ShippingLevel =
+    | 'MAIL'
+    | 'PRIORITY_MAIL'
+    | 'GROUND_HD'
+    | 'GROUND_BUS'
+    | 'GROUND'
+    | 'EXPEDITED'
+    | 'EXPRESS';
 
 export interface LuluOrder {
     id: string;
@@ -194,7 +204,7 @@ class LuluClient {
                 country_code: job.shippingAddress.countryCode,
                 phone_number: job.shippingAddress.phoneNumber,
             },
-            shipping_level: 'MAIL',  // Options: MAIL, PRIORITY_MAIL, GROUND, EXPEDITED, EXPRESS
+            shipping_level: job.shippingLevel || 'MAIL',
         };
 
         console.log('[LuluClient] Creating Print Job Payload:', JSON.stringify(payload, null, 2));
@@ -208,7 +218,7 @@ class LuluClient {
 
     // Cancel a print job
     async cancelPrintJob(printJobId: string): Promise<void> {
-        await this.request('POST', `/print-jobs/${printJobId}/cancel/`);
+        await this.request('PUT', `/print-jobs/${printJobId}/status/`, { name: 'CANCELED' });
     }
 
     // Get product ID for book format
@@ -218,7 +228,7 @@ class LuluClient {
 
     // Calculate print job cost without creating an order
     async calculateCost(options: CostCalculationOptions): Promise<CostCalculationResult> {
-        const podPackageId = PRODUCT_IDS[options.format]?.[options.size];
+        const podPackageId = options.podPackageId || PRODUCT_IDS[options.format]?.[options.size];
         if (!podPackageId) {
             throw new Error(`Invalid format/size combination: ${options.format}/${options.size}`);
         }
@@ -230,12 +240,16 @@ class LuluClient {
                 quantity: options.quantity,
             }],
             shipping_address: {
+                name: options.name,
+                street1: options.street1 || '123 Main St',
+                street2: options.street2,
                 city: options.shippingCity || 'New York',
                 country_code: options.countryCode || 'US',
-                postal_code: options.postalCode || '10001',
+                postcode: options.postalCode || '10001',
                 state_code: options.stateCode || 'NY',
+                phone_number: options.phoneNumber,
             },
-            shipping_level: options.shippingLevel || 'MAIL',
+            shipping_option: options.shippingOption || 'MAIL',
         };
 
         const response = await this.request<LuluCostResponse>('POST', '/print-job-cost-calculations/', payload);
@@ -252,6 +266,29 @@ class LuluClient {
             totalWholesale,   // cents (Lulu's price before your markup)
             currency: response.currency || 'USD',
         };
+    }
+
+    async getShippingOptions(options: ShippingOptionRequest): Promise<ShippingOption[]> {
+        const payload = {
+            currency: options.currency || 'USD',
+            line_items: options.lineItems.map((item) => ({
+                page_count: item.pageCount,
+                pod_package_id: item.podPackageId,
+                quantity: item.quantity,
+            })),
+            shipping_address: {
+                name: options.shippingAddress.name,
+                street1: options.shippingAddress.street1,
+                street2: options.shippingAddress.street2,
+                city: options.shippingAddress.city,
+                state_code: options.shippingAddress.stateCode,
+                postcode: options.shippingAddress.postalCode,
+                country: options.shippingAddress.countryCode,
+                phone_number: options.shippingAddress.phoneNumber,
+            },
+        };
+
+        return this.request('POST', '/shipping-options/', payload);
     }
     // Create a webhook subscription
     async createWebhook(url: string): Promise<any> {
@@ -333,11 +370,50 @@ export interface CostCalculationOptions {
     size: '6x6' | '8x8' | '8x10';
     pageCount: number;
     quantity: number;
+    podPackageId?: string;
+    name?: string;
+    street1?: string;
+    street2?: string;
+    phoneNumber?: string;
     countryCode?: string;
     stateCode?: string;
     postalCode?: string;
     shippingCity?: string;
-    shippingLevel?: 'MAIL' | 'PRIORITY_MAIL' | 'GROUND' | 'EXPEDITED' | 'EXPRESS';
+    shippingOption?: 'MAIL' | 'PRIORITY_MAIL' | 'GROUND' | 'EXPEDITED' | 'EXPRESS';
+}
+
+export interface ShippingOptionRequest {
+    lineItems: Array<{
+        pageCount: number;
+        podPackageId: string;
+        quantity: number;
+    }>;
+    shippingAddress: {
+        name?: string;
+        street1?: string;
+        street2?: string;
+        city: string;
+        stateCode?: string;
+        postalCode: string;
+        countryCode: string;
+        phoneNumber?: string;
+    };
+    currency?: string;
+}
+
+export interface ShippingOption {
+    id: string;
+    level: ShippingLevel;
+    currency: string;
+    cost_excl_tax?: string;
+    min_delivery_date?: string;
+    max_delivery_date?: string;
+    min_dispatch_date?: string;
+    max_dispatch_date?: string;
+    home_only?: boolean;
+    business_only?: boolean;
+    postbox_ok?: boolean;
+    traceable?: boolean;
 }
 
 export interface CostCalculationResult {

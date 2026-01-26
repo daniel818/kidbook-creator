@@ -116,6 +116,7 @@ CREATE TABLE IF NOT EXISTS orders (
   shipping_postal_code TEXT NOT NULL,
   shipping_country TEXT NOT NULL,
   shipping_phone TEXT NOT NULL,
+  shipping_level TEXT,
   
   -- Status
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'payment_failed', 'processing', 'printed', 'shipped', 'delivered', 'cancelled')),

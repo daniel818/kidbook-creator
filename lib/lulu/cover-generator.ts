@@ -10,6 +10,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { calculateSpineWidth, MINIMUM_SPINE_WIDTH, PaperType } from './spine-calculator';
+import { getPrintableInteriorPageCount } from './page-count';
 
 /**
  * Trim sizes in inches
@@ -363,17 +364,14 @@ export async function generateCoverPDF(
     // Auto-detect size from book if not provided
     const bookSize = size || getBookSize(book);
 
-    // Calculate effective page count (Front + (Inside * 2) + Back)
-    // Must match logic in pdf-generator.ts
-    const interiorPages = book.pages.filter(p => p.type === 'inside').length;
-    const finalPageCount = 1 + (interiorPages * 2) + 1;
+    const interiorPageCount = getPrintableInteriorPageCount(book, format, bookSize);
 
     // Calculate dimensions
-    const dims = calculateCoverDimensions(bookSize, finalPageCount, format, paperType);
+    const dims = calculateCoverDimensions(bookSize, interiorPageCount, format, paperType);
     console.log('[Lulu Cover] Dimensions:', {
         format,
         size: bookSize,
-        pageCount: finalPageCount,
+        pageCount: interiorPageCount,
         paperType,
         totalWidth: dims.totalWidth,
         totalHeight: dims.totalHeight,
