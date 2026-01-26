@@ -28,16 +28,18 @@ jobs:
         uses: AleksandrFurmenkovOfficial/ai-code-review@v1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          # Fix: Add these three required inputs
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          pr_number: ${{ github.event.pull_request.number || github.event.issue.number }}
+          
           ai_provider: "openai"
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
           openai_model: "gpt-5.2-codex"
           
-          # This setting ensures comments are placed directly on the code lines
-          review_type: "inline"
+          # Fix: Use review_rules_file instead of review_rules
+          review_rules_file: ".github/codex_rules.md"
           
-          # Custom rules for file deletions and professional architecture
-          review_rules: |
-            1. Role: Senior R&D Architect.
-            2. File Deletions: If a file is deleted, search the diff for orphaned imports or references.
-            3. Logic: Focus on O(n) complexity and systematic race conditions.
-            4. Tone: Professional and technical.
+          # Optional: Limit scope to relevant logic files to avoid 'Token Limit' errors
+          include_extensions: ".ts,.js,.py,.go"
+          fail_action_if_review_failed: false
