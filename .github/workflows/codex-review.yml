@@ -7,9 +7,10 @@ on:
 
 jobs:
   codex_review:
+    # Trigger logic: Automated on PR or manual via /review comment
     if: |
       github.event_name == 'pull_request' || 
-      (github.event.issue.pull_request && (startsWith(github.event.comment.body, '/review') || startsWith(github.event.comment.body, '/codex')))
+      (github.event.issue.pull_request && (startsWith(github.event.comment.body, '/review')))
     
     runs-on: ubuntu-latest
     permissions:
@@ -21,23 +22,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # AI needs full context to see file history/deletions
 
-      - name: Run Codex GPT-5.2 Review
-        uses: extractions/setup-just@v2 # Example of a robust utility if needed
-        
-      - name: OpenAI Code Review
-        uses: core-ai/codex-review-action@v2 # Updated to a valid 2026 marketplace action
+      - name: AI Code Review
+        uses: AleksandrFurmenkovOfficial/ai-code-review@v1.0
         with:
-          api_key: ${{ secrets.OPENAI_API_KEY }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          model: "gpt-5.2-codex"
-          # Professional Architect Prompt
-          system_message: |
-            You are a Senior R&D Architect. 
-            - Provide inline comments on specific lines for bugs or performance.
-            - If a file is deleted, check for broken dependencies.
-            - Focus on O(n) complexity and clean architecture.
-          # Tells the action to post comments directly to the files
-          post_if_no_issues: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          ai_provider: "openai"
+          openai_model: "gpt-5.2-codex"
+          
+          # This setting ensures comments are placed directly on the code lines
           review_type: "inline"
+          
+          # Custom rules for file deletions and professional architecture
+          review_rules: |
+            1. Role: Senior R&D Architect.
+            2. File Deletions: If a file is deleted, search the diff for orphaned imports or references.
+            3. Logic: Focus on O(n) complexity and systematic race conditions.
+            4. Tone: Professional and technical.
