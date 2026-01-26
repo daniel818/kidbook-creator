@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -21,18 +22,19 @@ interface Order {
     createdAt: string;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-    pending: { label: 'Pending', color: '#f59e0b', icon: '⏳' },
-    paid: { label: 'Paid', color: '#6366f1', icon: '✓' },
-    processing: { label: 'Processing', color: '#8b5cf6', icon: '⚙️' },
-    printed: { label: 'Printed', color: '#06b6d4', icon: '📖' },
-    shipped: { label: 'Shipped', color: '#10b981', icon: '📦' },
-    delivered: { label: 'Delivered', color: '#22c55e', icon: '✅' },
-    cancelled: { label: 'Cancelled', color: '#ef4444', icon: '✕' },
+const STATUS_CONFIG: Record<string, { color: string; icon: string }> = {
+    pending: { color: '#f59e0b', icon: '⏳' },
+    paid: { color: '#6366f1', icon: '✓' },
+    processing: { color: '#8b5cf6', icon: '⚙️' },
+    printed: { color: '#06b6d4', icon: '📖' },
+    shipped: { color: '#10b981', icon: '📦' },
+    delivered: { color: '#22c55e', icon: '✅' },
+    cancelled: { color: '#ef4444', icon: '✕' },
 };
 
 export default function OrdersPage() {
     const router = useRouter();
+    const { t } = useTranslation('orders');
     const { user, isLoading: authLoading } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -74,7 +76,7 @@ export default function OrdersPage() {
         return (
             <div className={styles.loading}>
                 <div className={styles.spinner}></div>
-                <p>Loading orders...</p>
+                <p>{t('loading')}</p>
             </div>
         );
     }
@@ -84,9 +86,9 @@ export default function OrdersPage() {
             {/* Header */}
             <header className={styles.header}>
                 <Link href="/" className={styles.backButton}>
-                    ← Back to Home
+                    {t('header.backButton')}
                 </Link>
-                <h1 className={styles.headerTitle}>My Orders</h1>
+                <h1 className={styles.headerTitle}>{t('header.title')}</h1>
                 <div className={styles.placeholder}></div>
             </header>
 
@@ -98,10 +100,10 @@ export default function OrdersPage() {
                         animate={{ opacity: 1, y: 0 }}
                     >
                         <span className={styles.emptyIcon}>📦</span>
-                        <h2>No Orders Yet</h2>
-                        <p>When you order a printed book, it will appear here.</p>
+                        <h2>{t('empty.title')}</h2>
+                        <p>{t('empty.subtitle')}</p>
                         <Link href="/create" className={styles.createBtn}>
-                            Create Your First Book →
+                            {t('empty.button')}
                         </Link>
                     </motion.div>
                 ) : (
@@ -119,14 +121,14 @@ export default function OrdersPage() {
                                 >
                                     <div className={styles.orderHeader}>
                                         <div className={styles.orderInfo}>
-                                            <span className={styles.orderId}>Order #{order.id.slice(0, 8)}</span>
+                                            <span className={styles.orderId}>{t('orderCard.orderId', { id: order.id.slice(0, 8) })}</span>
                                             <span className={styles.orderDate}>{formatDate(order.createdAt)}</span>
                                         </div>
                                         <span
                                             className={styles.statusBadge}
                                             style={{ backgroundColor: `${status.color}20`, color: status.color }}
                                         >
-                                            {status.icon} {status.label}
+                                            {status.icon} {t(`status.${order.status}`)}
                                         </span>
                                     </div>
 
@@ -135,23 +137,23 @@ export default function OrdersPage() {
                                             <span className={styles.bookIcon}>📚</span>
                                             <div>
                                                 <h3>{order.bookTitle}</h3>
-                                                <p>For {order.childName}</p>
+                                                <p>{t('orderCard.for', { childName: order.childName })}</p>
                                             </div>
                                         </div>
 
                                         <div className={styles.orderDetails}>
                                             <div className={styles.detail}>
-                                                <span className={styles.detailLabel}>Format</span>
+                                                <span className={styles.detailLabel}>{t('orderCard.format')}</span>
                                                 <span className={styles.detailValue}>
                                                     {order.format} - {order.size}
                                                 </span>
                                             </div>
                                             <div className={styles.detail}>
-                                                <span className={styles.detailLabel}>Quantity</span>
+                                                <span className={styles.detailLabel}>{t('orderCard.quantity')}</span>
                                                 <span className={styles.detailValue}>×{order.quantity}</span>
                                             </div>
                                             <div className={styles.detail}>
-                                                <span className={styles.detailLabel}>Total</span>
+                                                <span className={styles.detailLabel}>{t('orderCard.total')}</span>
                                                 <span className={styles.detailValue}>${order.total.toFixed(2)}</span>
                                             </div>
                                         </div>
@@ -161,7 +163,7 @@ export default function OrdersPage() {
                                         <div className={styles.trackingSection}>
                                             <span className={styles.trackingIcon}>🚚</span>
                                             <div>
-                                                <span className={styles.trackingLabel}>Tracking Number</span>
+                                                <span className={styles.trackingLabel}>{t('orderCard.trackingLabel')}</span>
                                                 <a
                                                     href={`https://www.ups.com/track?tracknum=${order.trackingNumber}`}
                                                     target="_blank"
@@ -180,12 +182,12 @@ export default function OrdersPage() {
                                                 href={`/book/${order.bookId}`}
                                                 className={styles.viewBookBtn}
                                             >
-                                                View Book
+                                                {t('orderCard.viewBookButton')}
                                             </Link>
                                         )}
                                         {order.status === 'delivered' && (
                                             <button className={styles.reorderBtn}>
-                                                Order Again
+                                                {t('orderCard.reorderButton')}
                                             </button>
                                         )}
                                     </div>

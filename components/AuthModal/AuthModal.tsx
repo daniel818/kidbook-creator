@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { AuthError } from '@supabase/supabase-js';
 import styles from './AuthModal.module.css';
@@ -21,8 +23,25 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+    const { t } = useTranslation('auth');
 
     const { signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword } = useAuth();
+
+    useEffect(() => {
+        setMounted(true);
+
+        // Lock body scroll when modal is open
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
 
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,7 +79,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                     console.error('Signup error:', result.error);
                     setError(result.error.message);
                 } else {
-                    setSuccess('Check your email to confirm your account!');
+                    setSuccess(t('signup.successMessage'));
                 }
             } else if (mode === 'forgot') {
                 result = await Promise.race([
@@ -72,12 +91,12 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                     console.error('Reset password error:', result.error);
                     setError(result.error.message);
                 } else {
-                    setSuccess('Check your email for a password reset link!');
+                    setSuccess(t('forgot.successMessage'));
                 }
             }
         } catch (err: any) {
             console.error('Auth unexpected error:', err);
-            setError(err.message || 'An unexpected error occurred');
+            setError(err.message || t('errors.unexpected'));
         } finally {
             setIsLoading(false);
         }
@@ -91,9 +110,9 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
         }
     };
 
-    if (!isOpen) return null;
+    if (!mounted || !isOpen) return null;
 
-    return (
+    return createPortal(
         <AnimatePresence>
             <motion.div
                 className={styles.overlay}
@@ -116,18 +135,18 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                         <h2 className={styles.title}>
                             {customTitle ? customTitle : (
                                 <>
-                                    {mode === 'login' && 'Welcome Back!'}
-                                    {mode === 'signup' && 'Create Account'}
-                                    {mode === 'forgot' && 'Reset Password'}
+                                    {mode === 'login' && t('login.title')}
+                                    {mode === 'signup' && t('signup.title')}
+                                    {mode === 'forgot' && t('forgot.title')}
                                 </>
                             )}
                         </h2>
                         <p className={styles.subtitle}>
                             {customSubtitle ? customSubtitle : (
                                 <>
-                                    {mode === 'login' && 'Sign in to save your books and order prints'}
-                                    {mode === 'signup' && 'Join us to create amazing books for your kids'}
-                                    {mode === 'forgot' && "Enter your email and we'll send you a reset link"}
+                                    {mode === 'login' && t('login.subtitle')}
+                                    {mode === 'signup' && t('signup.subtitle')}
+                                    {mode === 'forgot' && t('forgot.subtitle')}
                                 </>
                             )}
                         </p>
@@ -146,23 +165,23 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                                 </svg>
-                                Continue with Google
+                                {t(`${mode}.continueWithGoogle`)}
                             </button>
 
                             <div className={styles.divider}>
-                                <span>or</span>
+                                <span>{t(`${mode}.or`)}</span>
                             </div>
                         </>
                     )}
 
                     <form onSubmit={handleEmailAuth} className={styles.form}>
                         <div className={styles.formGroup}>
-                            <label>Email</label>
+                            <label>{t(`${mode}.email`)}</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="you@example.com"
+                                placeholder={t(`${mode}.emailPlaceholder`)}
                                 required
                                 disabled={isLoading}
                             />
@@ -170,12 +189,12 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
 
                         {mode !== 'forgot' && (
                             <div className={styles.formGroup}>
-                                <label>Password</label>
+                                <label>{t(`${mode}.password`)}</label>
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
+                                    placeholder={t(`${mode}.passwordPlaceholder`)}
                                     required
                                     minLength={6}
                                     disabled={isLoading}
@@ -203,11 +222,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                             {isLoading ? (
                                 <span className={styles.spinner}></span>
                             ) : (
-                                <>
-                                    {mode === 'login' && 'Sign In'}
-                                    {mode === 'signup' && 'Create Account'}
-                                    {mode === 'forgot' && 'Send Reset Link'}
-                                </>
+                                t(`${mode}.submitButton`)
                             )}
                         </button>
                     </form>
@@ -219,27 +234,27 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                                     className={styles.linkBtn}
                                     onClick={() => { setMode('forgot'); setError(null); setSuccess(null); }}
                                 >
-                                    Forgot password?
+                                    {t('login.forgotPassword')}
                                 </button>
                                 <p>
-                                    Don&apos;t have an account?{' '}
+                                    {t('login.noAccount')}{' '}
                                     <button
                                         className={styles.linkBtn}
                                         onClick={() => { setMode('signup'); setError(null); setSuccess(null); }}
                                     >
-                                        Sign up
+                                        {t('login.signUpLink')}
                                     </button>
                                 </p>
                             </>
                         )}
                         {mode === 'signup' && (
                             <p>
-                                Already have an account?{' '}
+                                {t('signup.haveAccount')}{' '}
                                 <button
                                     className={styles.linkBtn}
                                     onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
                                 >
-                                    Sign in
+                                    {t('signup.signInLink')}
                                 </button>
                             </p>
                         )}
@@ -248,12 +263,13 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                                 className={styles.linkBtn}
                                 onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
                             >
-                                ← Back to sign in
+                                {t('forgot.backToSignIn')}
                             </button>
                         )}
                     </div>
                 </motion.div>
             </motion.div>
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }

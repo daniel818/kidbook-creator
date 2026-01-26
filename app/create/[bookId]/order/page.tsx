@@ -7,6 +7,10 @@ import { Book, BookTypeInfo, BookThemeInfo } from '@/lib/types';
 import { getBookById } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { getStripe } from '@/lib/stripe/client';
+import { COUNTRIES } from '@/lib/countries';
+import { generateInteriorPDF } from '@/lib/lulu/pdf-generator';
+import { generateCoverPDF } from '@/lib/lulu/cover-generator';
+import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 type BookFormat = 'softcover' | 'hardcover';
@@ -20,8 +24,8 @@ const FALLBACK_BASE_PRICES: Record<BookFormat, Record<BookSize, number>> = {
 
 const SIZE_LABELS: Record<BookSize, string> = {
     '6x6': '6" × 6" (Small Square)',
-    '8x8': '8" × 8" (Medium Square)',
-    '8x10': '8" × 10" (Large Portrait)'
+    '8x8': '8.5" × 8.5" (Standard Square)',
+    '8x10': '8.5" × 11" (Standard Portrait)'
 };
 
 export default function OrderPage() {
@@ -57,19 +61,46 @@ export default function OrderPage() {
         city: '',
         state: '',
         postalCode: '',
-        country: 'United States',
+        country: 'US',
         phone: ''
     });
 
     // Load book on mount
     useEffect(() => {
-        const loadedBook = getBookById(bookId);
-        if (loadedBook) {
-            setBook(loadedBook);
-        } else {
-            router.push('/');
-        }
-        setIsLoading(false);
+        const loadBook = async () => {
+            // 1. Try Local Storage
+            const localBook = getBookById(bookId);
+            if (localBook) {
+                setBook(localBook);
+                setIsLoading(false);
+                return;
+            }
+
+            // 2. Try API Fetch (Fallback)
+            try {
+                const res = await fetch(`/api/books/${bookId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.book) {
+                        setBook(data.book);
+                    } else {
+                        // Handle potential direct return or wrapped
+                        setBook(data);
+                    }
+                } else {
+                    console.error("Failed to fetch book from API", res.status);
+                    // Use router.replace to avoid history stack issues on redirect
+                    router.replace('/mybooks');
+                }
+            } catch (error) {
+                console.error("Error fetching book:", error);
+                router.replace('/mybooks');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadBook();
     }, [bookId, router]);
 
     // Fetch price from API when options change
@@ -86,7 +117,7 @@ export default function OrderPage() {
                     size,
                     pageCount: book.pages.length,
                     quantity,
-                    countryCode: 'US', // TODO: derive from shipping.country
+                    countryCode: shipping.country || 'US',
                     postalCode: shipping.postalCode || '10001',
                 }),
             });
@@ -123,7 +154,7 @@ export default function OrderPage() {
         } finally {
             setIsPriceLoading(false);
         }
-    }, [book, format, size, quantity, shipping.postalCode]);
+    }, [book, format, size, quantity, shipping.postalCode, shipping.country]);
 
     // Debounced price fetch
     useEffect(() => {
@@ -136,12 +167,32 @@ export default function OrderPage() {
     const grandTotal = priceData?.total ?? 0;
 
     const isShippingValid = () => {
+        // Strict Validation Rules for Lulu/FedEx
+        const isAddressLinesValid =
+            shipping.addressLine1.length <= 35 &&
+            (shipping.addressLine2?.length || 0) <= 35;
+
         return shipping.fullName &&
             shipping.addressLine1 &&
+            isAddressLinesValid &&
             shipping.city &&
             shipping.state &&
             shipping.postalCode &&
-            shipping.phone;
+            shipping.phone &&
+            shipping.country;
+    };
+
+
+
+    const supabase = createClient();
+
+    const uploadFile = async (blob: Blob, path: string) => {
+        const { error } = await supabase.storage
+            .from('book-pdfs')
+            .upload(path, blob, { upsert: true });
+
+        if (error) throw error;
+        return path;
     };
 
     const handleCheckout = async () => {
@@ -159,7 +210,49 @@ export default function OrderPage() {
         setIsProcessing(true);
 
         try {
-            // Create Stripe checkout session
+            // Helper to wrap promise with timeout
+            // Fix: Use 'extends unknown' or trailing comma for generics in TSX
+            const withTimeout = async <T,>(promise: Promise<T>, ms: number, msg: string): Promise<T> => {
+                return Promise.race([
+                    promise,
+                    new Promise<T>((_, reject) =>
+                        setTimeout(() => reject(new Error(msg)), ms)
+                    )
+                ]);
+            };
+
+            // 1. Generate PDFs (Client-side)
+            const TIMEOUT_MS = 45000; // 45 seconds
+
+            // Interior
+            console.log('Generating interior PDF...');
+            const interiorBlob = await withTimeout(
+                generateInteriorPDF(book!, format, size),
+                TIMEOUT_MS,
+                'Interior PDF generation timed out. Please check your internet connection or images.'
+            );
+
+            // Cover
+            console.log('Generating cover PDF...');
+            const coverBlob = await withTimeout(
+                generateCoverPDF(book!, format, size),
+                TIMEOUT_MS,
+                'Cover PDF generation timed out.'
+            );
+
+            // 2. Upload to Supabase Storage
+            const timestamp = Date.now();
+            const interiorPath = `${user.id}/${bookId}/${timestamp}_interior_${format}_${size}.pdf`;
+            const coverPath = `${user.id}/${bookId}/${timestamp}_cover_${format}_${size}.pdf`;
+
+            console.log('Uploading files...');
+            await Promise.all([
+                uploadFile(interiorBlob, interiorPath),
+                uploadFile(coverBlob, coverPath)
+            ]);
+
+            // 3. Create Stripe Session with File Paths
+            console.log('Creating checkout session...');
             const response = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -169,6 +262,9 @@ export default function OrderPage() {
                     size,
                     quantity,
                     shipping,
+                    // Pass the paths to the API to save in the order
+                    pdfUrl: interiorPath,
+                    coverUrl: coverPath,
                 }),
             });
 
@@ -178,7 +274,7 @@ export default function OrderPage() {
                 throw new Error(data.error || 'Failed to create checkout session');
             }
 
-            // Redirect to Stripe Checkout
+            // 4. Redirect to Stripe
             const stripe = await getStripe();
             if (stripe && data.sessionId) {
                 const { error: stripeError } = await stripe.redirectToCheckout({
@@ -189,12 +285,13 @@ export default function OrderPage() {
                     throw new Error(stripeError.message);
                 }
             } else if (data.url) {
-                // Fallback to direct URL redirect
                 window.location.href = data.url;
             }
         } catch (err) {
             console.error('Checkout error:', err);
-            setError(err instanceof Error ? err.message : 'Payment failed. Please try again.');
+            // Show detailed error to user so they can report it
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            setError(`Failed to prepare order: ${errorMessage}`);
             setIsProcessing(false);
         }
     };
@@ -269,8 +366,12 @@ export default function OrderPage() {
                                         </span>
                                         <span className={styles.formatDesc}>
                                             {f === 'softcover'
-                                                ? 'Flexible, lightweight cover'
-                                                : 'Premium, durable hardback'
+                                                ? (book && book.pages.length < 32
+                                                    ? 'Stapled booklet binding (Saddle Stitch)'
+                                                    : 'Flexible, lightweight cover (Perfect Bound)')
+                                                : (book && book.pages.length < 32
+                                                    ? 'Premium Hardcover (Casewrap)'
+                                                    : 'Premium, durable hardback')
                                             }
                                         </span>
                                         <span className={styles.formatPrice}>
@@ -351,30 +452,45 @@ export default function OrderPage() {
                                             value={shipping.fullName}
                                             onChange={(e) => setShipping({ ...shipping, fullName: e.target.value })}
                                             placeholder="John Doe"
+                                            autoComplete="name"
                                         />
                                     </div>
                                 </div>
 
                                 <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
-                                        <label>Address Line 1 *</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <label>Address Line 1 *</label>
+                                            <span style={{ fontSize: '11px', color: shipping.addressLine1.length > 35 ? 'red' : '#6b7280' }}>
+                                                {shipping.addressLine1.length}/35
+                                            </span>
+                                        </div>
                                         <input
                                             type="text"
                                             value={shipping.addressLine1}
                                             onChange={(e) => setShipping({ ...shipping, addressLine1: e.target.value })}
                                             placeholder="123 Main Street"
+                                            maxLength={35}
+                                            autoComplete="address-line1"
                                         />
                                     </div>
                                 </div>
 
                                 <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
-                                        <label>Address Line 2</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <label>Address Line 2</label>
+                                            <span style={{ fontSize: '11px', color: (shipping.addressLine2?.length || 0) > 35 ? 'red' : '#6b7280' }}>
+                                                {(shipping.addressLine2?.length || 0)}/35
+                                            </span>
+                                        </div>
                                         <input
                                             type="text"
                                             value={shipping.addressLine2}
                                             onChange={(e) => setShipping({ ...shipping, addressLine2: e.target.value })}
                                             placeholder="Apt 4B (optional)"
+                                            maxLength={35}
+                                            autoComplete="address-line2"
                                         />
                                     </div>
                                 </div>
@@ -387,15 +503,17 @@ export default function OrderPage() {
                                             value={shipping.city}
                                             onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
                                             placeholder="New York"
+                                            autoComplete="address-level2"
                                         />
                                     </div>
                                     <div className={styles.formGroup}>
-                                        <label>State *</label>
+                                        <label>State / Province *</label>
                                         <input
                                             type="text"
                                             value={shipping.state}
                                             onChange={(e) => setShipping({ ...shipping, state: e.target.value })}
                                             placeholder="NY"
+                                            autoComplete="address-level1"
                                         />
                                     </div>
                                 </div>
@@ -408,20 +526,22 @@ export default function OrderPage() {
                                             value={shipping.postalCode}
                                             onChange={(e) => setShipping({ ...shipping, postalCode: e.target.value })}
                                             placeholder="10001"
+                                            autoComplete="postal-code"
+                                            required
                                         />
                                     </div>
                                     <div className={styles.formGroup}>
-                                        <label>Country</label>
+                                        <label>Country *</label>
                                         <select
                                             value={shipping.country}
                                             onChange={(e) => setShipping({ ...shipping, country: e.target.value })}
+                                            autoComplete="country"
                                         >
-                                            <option>United States</option>
-                                            <option>Canada</option>
-                                            <option>United Kingdom</option>
-                                            <option>Australia</option>
-                                            <option>Germany</option>
-                                            <option>France</option>
+                                            {COUNTRIES.map(country => (
+                                                <option key={country.code} value={country.code}>
+                                                    {country.name}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
@@ -434,25 +554,28 @@ export default function OrderPage() {
                                             value={shipping.phone}
                                             onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
                                             placeholder="+1 (555) 123-4567"
+                                            autoComplete="tel"
+                                            required
                                         />
+                                        <span style={{ fontSize: '11px', color: '#6b7280' }}>Required for delivery updates</span>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className={styles.buttonRow}>
-                                <button
-                                    className={styles.backBtn}
-                                    onClick={() => setStep('options')}
-                                >
-                                    ← Back
-                                </button>
-                                <button
-                                    className={styles.continueBtn}
-                                    onClick={() => setStep('payment')}
-                                    disabled={!isShippingValid()}
-                                >
-                                    Continue to Payment →
-                                </button>
+                                <div className={styles.buttonRow}>
+                                    <button
+                                        className={styles.backBtn}
+                                        onClick={() => setStep('options')}
+                                    >
+                                        ← Back
+                                    </button>
+                                    <button
+                                        className={styles.continueBtn}
+                                        onClick={() => setStep('payment')}
+                                        disabled={!isShippingValid()}
+                                    >
+                                        Continue to Payment →
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -475,7 +598,7 @@ export default function OrderPage() {
 
                             <div className={styles.paymentBox}>
                                 <div className={styles.paymentIcon}>💳</div>
-                                <h3>Secure Checkout</h3>
+                                h3&gt;Secure Checkout&lt;/h3
                                 <p>
                                     You&apos;ll be redirected to Stripe&apos;s secure payment page to complete your order.
                                 </p>
@@ -519,7 +642,7 @@ export default function OrderPage() {
                                     {isProcessing ? (
                                         <>
                                             <span className={styles.btnSpinner}></span>
-                                            Processing...
+                                            Preparing Book...
                                         </>
                                     ) : (
                                         `Pay $${grandTotal.toFixed(2)} →`

@@ -37,12 +37,14 @@ export async function GET(
         // Format response
         return NextResponse.json({
             id: order.id,
+            bookId: order.book_id,
             bookTitle: order.books?.title || 'Personalized Book',
             format: order.format.charAt(0).toUpperCase() + order.format.slice(1),
             size: order.size,
             quantity: order.quantity,
             total: `$${order.total.toFixed(2)}`,
             status: order.status,
+            fulfillmentStatus: order.fulfillment_status,
             estimatedDelivery: getEstimatedDelivery(),
         });
     } catch (error) {

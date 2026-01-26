@@ -40,6 +40,7 @@ yarn-error.log*
 # supabase local
 supabase/.temp/
 supabase_status.txt
+supabase_status.json
 
 # vercel
 .vercel

@@ -321,6 +321,14 @@
   transform: translateX(4px);
 }
 
+[dir="rtl"] .ctaArrow {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .ctaButton:hover .ctaArrow {
+  transform: scaleX(-1) translateX(4px);
+}
+
 .ctaFeatures {
   display: flex;
   gap: var(--spacing-lg);

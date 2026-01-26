@@ -168,6 +168,21 @@
     border-color: rgba(0, 0, 0, 0.15);
 }
 
+.costBadge {
+    margin-left: 15px;
+    padding: 4px 8px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
 .actionBtn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -248,14 +263,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2.5rem;
-    overflow: auto;
+    padding: 2rem;
+    overflow: hidden;
     position: relative;
 }
 
 .flipBook {
     box-shadow: var(--shadow-book);
     /* Rounded corners on BOTH outer sides - like a real open book */
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: pickupBook 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     border-radius: 24px;
     position: relative;
     overflow: hidden;
@@ -365,7 +384,41 @@
     /* Clip the overflowing 110% image to the page shape */
     overflow: hidden;
     /* Match the book's outer rounded corners (straight on left/spine, rounded on right) */
-    border-radius: 0 24px 24px 0;
+    /* Match the book's outer rounded corners (straight on left/spine, rounded on right) */
+    /* Updated to 16px to match BookGrid hardcover style */
+    border-radius: 0 16px 16px 0;
+}
+
+/* Texture Layer for Cover */
+.bookTexture {
+    position: absolute;
+    inset: 0;
+    background-image: url("https://www.gstatic.com/lamda/images/storybook/page_texture_771d37929812a16ff91fb.webp");
+    background-size: cover;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: multiply;
+}
+
+/* Spine Crease / Overlay for Cover */
+.spineOverlay {
+    position: absolute;
+    inset: 0;
+    /* Gemini Hardcover Spine Gradient */
+    background: linear-gradient(90deg,
+            #000 0px,
+            rgba(0, 0, 0, 0) 2%,
+            rgba(0, 0, 0, 0) 6%,
+            rgba(0, 0, 0, 0.5) 7%,
+            rgba(0, 0, 0, 0.5) 7.1%,
+            rgba(0, 0, 0, 0) 8.3%,
+            rgba(0, 0, 0, 0) 11.5%,
+            rgba(0, 0, 0, 0) 98%,
+            #000 100%);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 20;
 }
 
 /* Reset when not in cover mode - smooth transition to spread view */
@@ -670,6 +723,11 @@
     position: absolute;
     bottom: 1.25rem;
     left: 1.75rem;
+}
+
+[dir="rtl"] .illustrationPageNumber {
+    left: auto;
+    right: 1.75rem;
     font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     font-weight: 500;
@@ -708,6 +766,11 @@
     bottom: 0;
     width: 1px;
     background: rgba(210, 180, 160, 0.2);
+}
+
+[dir="rtl"] .textPage::before {
+    left: auto;
+    right: 2rem;
 }
 
 .textPageContent {
@@ -762,6 +825,13 @@
     text-shadow: 2px 2px 0 rgba(99, 102, 241, 0.1);
 }
 
+/* RTL: Drop cap floats right */
+[dir="rtl"] .storyParagraph:first-child::first-letter {
+    float: right;
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
 .storyParagraph:last-child {
     margin-bottom: 0;
 }
@@ -770,6 +840,11 @@
     position: absolute;
     bottom: 1.25rem;
     right: 1.75rem;
+}
+
+[dir="rtl"] .textPageNumber {
+    right: auto;
+    left: 1.75rem;
     font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     font-weight: 400;

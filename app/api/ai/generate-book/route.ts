@@ -28,6 +28,45 @@ const log = (message: string, data?: unknown) => {
     }
 };
 
+// Pricing Constants (as per Plan)
+const PRICING = {
+    'gemini-3-flash-preview': {
+        input: 0.10 / 1_000_000,
+        output: 0.40 / 1_000_000
+    },
+    'gemini-3-pro-image-preview': {
+        image: 0.04
+    },
+    'gemini-2.5-flash-image': {
+        image: 0.039 // ~$30/1M output tokens (approx 1290 tokens/img)
+    }
+};
+
+function calculateCost(log: any): number {
+    let cost = 0;
+
+    // Text Cost
+    if (log.model.includes('flash') || log.model.includes('gemini-3')) {
+        const rates = PRICING['gemini-3-flash-preview']; // Default to flash rates for text
+        cost += (log.inputTokens || 0) * rates.input;
+        cost += (log.outputTokens || 0) * rates.output;
+    }
+
+    // Image Cost
+    if (log.imageCount > 0) {
+        let rate = 0.04; // Default
+        if (log.model.includes('ultra') || log.model.includes('pro')) rate = 0.08;
+        // Specific overrides
+        if (PRICING[log.model as keyof typeof PRICING]) {
+            // @ts-ignore
+            rate = PRICING[log.model].image || rate;
+        }
+        cost += log.imageCount * rate;
+    }
+
+    return cost;
+}
+
 export async function POST(request: NextRequest) {
     const requestStartTime = Date.now();
     log('========================================');
@@ -37,8 +76,8 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat } = body;
-        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat });
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language } = body;
+        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language });
 
         if (!childName || !bookTheme || !bookType) {
             log('ERROR: Missing required fields');
@@ -80,14 +119,25 @@ export async function POST(request: NextRequest) {
             imageQuality: imageQuality || 'fast',
             childPhoto,
             aspectRatio,
+            language: language || 'en',
         };
 
         // Generate the complete book (story + illustrations)
         log('Step 3: Starting book generation...');
         const genStartTime = Date.now();
         const result = await generateCompleteBook(input);
+
+        // Calculate Costs from Logs
+        let totalCost = 0;
+        const processedLogs = result.generationLogs.map(gLog => {
+            const cost = calculateCost(gLog);
+            totalCost += cost;
+            return { ...gLog, cost_usd: cost };
+        });
+
         log(`Book generation completed in ${Date.now() - genStartTime}ms`);
         log(`Generated: ${result.story.pages.length} pages, ${result.illustrations.filter(i => i).length} images`);
+        log(`Total Estimated Cost: $${totalCost.toFixed(4)}`);
 
         // Identifiers
         const userId = user.id;
@@ -109,7 +159,7 @@ export async function POST(request: NextRequest) {
                 if (matches && matches.length === 3) {
                     const contentType = matches[1];
                     const buffer = Buffer.from(matches[2], 'base64');
-                    log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
+                    // log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
 
                     const { error: uploadError } = await supabase.storage
                         .from('book-images')
@@ -170,13 +220,30 @@ export async function POST(request: NextRequest) {
             book_type: bookType,
             print_format: aspectRatio === '1:1' ? 'square' : 'portrait',
             status: 'draft',
+            estimated_cost: totalCost, // Save aggregated cost
+            language: language || 'en' // Save book language
         });
 
         if (dbError) {
             log('ERROR: Database insert failed', dbError);
             throw dbError;
         }
-        log(`Book record saved in ${Date.now() - dbStartTime}ms`);
+
+        // Save Generation Logs (Async, don't block response too much, but good to await for safety)
+        const logInserts = processedLogs.map(l => ({
+            book_id: bookId,
+            step_name: l.stepName,
+            model_name: l.model,
+            input_tokens: l.inputTokens,
+            output_tokens: l.outputTokens,
+            image_count: l.imageCount,
+            cost_usd: l.cost_usd
+        }));
+
+        const { error: logError } = await supabase.from('generation_logs').insert(logInserts);
+        if (logError) log('ERROR: Failed to save generation logs', logError);
+
+        log(`Book record & logs saved in ${Date.now() - dbStartTime}ms`);
 
         const pagesData = result.story.pages.map((page, index) => ({
             book_id: bookId,

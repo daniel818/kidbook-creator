@@ -4,16 +4,19 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 interface OrderDetails {
     id: string;
+    bookId: string;
     bookTitle: string;
-    format: string;
-    size: string;
+    format: 'softcover' | 'hardcover';
+    size: '6x6' | '8x8' | '8x10';
     quantity: number;
     total: string;
     status: string;
+    fulfillmentStatus: string;
     estimatedDelivery: string;
 }
 
@@ -32,6 +35,8 @@ function OrderSuccessContent() {
             return;
         }
 
+        const supabase = createClient();
+
         // Fetch order details
         const fetchOrder = async () => {
             try {
@@ -49,7 +54,6 @@ function OrderSuccessContent() {
 
         fetchOrder();
 
-        // Auto-hide confetti after 5 seconds
         const timer = setTimeout(() => setConfetti(false), 5000);
         return () => clearTimeout(timer);
     }, [sessionId, router]);
@@ -65,7 +69,6 @@ function OrderSuccessContent() {
 
     return (
         <main className={styles.main}>
-            {/* Confetti Effect */}
             {confetti && (
                 <div className={styles.confettiContainer}>
                     {Array.from({ length: 50 }).map((_, i) => (
@@ -88,7 +91,6 @@ function OrderSuccessContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
             >
-                {/* Success Icon */}
                 <motion.div
                     className={styles.successIcon}
                     initial={{ scale: 0 }}
@@ -98,13 +100,13 @@ function OrderSuccessContent() {
                     <span>✅</span>
                 </motion.div>
 
-                {/* Title */}
                 <h1 className={styles.title}>Order Confirmed!</h1>
                 <p className={styles.subtitle}>
-                    Thank you for your order. We&apos;re preparing your personalized book!
+                    Thank you for your order. We are preparing your personalized book!
                 </p>
 
-                {/* Order Summary Card */}
+
+
                 <div className={styles.orderCard}>
                     <div className={styles.orderHeader}>
                         <span className={styles.orderIcon}>📦</span>
@@ -141,10 +143,10 @@ function OrderSuccessContent() {
                             <span className={styles.timelineLabel}>Order Placed</span>
                             <span className={styles.timelineDate}>Just now</span>
                         </div>
-                        <div className={`${styles.timelineItem} ${styles.active}`}>
+                        <div className={`${styles.timelineItem} ${!order?.fulfillmentStatus || order.fulfillmentStatus === 'PENDING' ? styles.active : ''}`}>
                             <span className={styles.timelineDot}></span>
                             <span className={styles.timelineLabel}>Preparing for Print</span>
-                            <span className={styles.timelineDate}>In progress</span>
+                            <span className={styles.timelineDate}>Checking files...</span>
                         </div>
                         <div className={styles.timelineItem}>
                             <span className={styles.timelineDot}></span>
@@ -164,7 +166,6 @@ function OrderSuccessContent() {
                     </div>
                 </div>
 
-                {/* Email Notice */}
                 <div className={styles.emailNotice}>
                     <span className={styles.emailIcon}>📧</span>
                     <p>
@@ -172,7 +173,6 @@ function OrderSuccessContent() {
                     </p>
                 </div>
 
-                {/* Actions */}
                 <div className={styles.actions}>
                     <Link href="/" className={styles.homeButton}>
                         ← Back to Home
@@ -180,14 +180,6 @@ function OrderSuccessContent() {
                     <Link href="/create" className={styles.createButton}>
                         Create Another Book
                     </Link>
-                </div>
-
-                {/* Support */}
-                <div className={styles.support}>
-                    <p>
-                        Questions about your order? Contact us at{' '}
-                        <a href="mailto:support@kidbookcreator.com">support@kidbookcreator.com</a>
-                    </p>
                 </div>
             </motion.div>
         </main>

@@ -49,6 +49,7 @@ export async function GET() {
             book_theme: string;
             status: string;
             thumbnail_url: string | null;
+            language?: string;
             created_at: string;
             updated_at: string;
             pages: DbPage[];
@@ -75,7 +76,9 @@ export async function GET() {
                 ageGroup: book.age_group,
                 bookType: book.book_type,
                 bookTheme: book.book_theme,
+                language: book.language,
             },
+            language: book.language,
             pages: book.pages
                 .sort((a: { page_number: number }, b: { page_number: number }) => a.page_number - b.page_number)
                 .map((page: {

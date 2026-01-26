@@ -2,6 +2,7 @@
 
 import { useState, useRef, forwardRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
@@ -176,14 +177,17 @@ TextPage.displayName = 'TextPage';
 // ============================================
 // Main StoryBookViewer Component
 // ============================================
-export default function StoryBookViewer({ book, onClose, isFullScreen = false }: StoryBookViewerProps) {
+export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscreen = false }: StoryBookViewerProps) {
     const router = useRouter();
+    const { t } = useTranslation(['common', 'viewer']);
+    const flipBookRef = useRef<any>(null);
     const bookRef = useRef<any>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
-    const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const isRTL = (book.language || book.settings.language) === 'he';
+    const [isFullScreen, setIsFullScreen] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
-    const [isGeneratingPrint, setIsGeneratingPrint] = useState(false); // New state
-    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isGeneratingPrint, setIsGeneratingPrint] = useState(false);
+    const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
     // Editor State
     const [isEditing, setIsEditing] = useState(false);
@@ -210,10 +214,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
         try {
             if (!document.fullscreenElement) {
                 await viewerRef.current.requestFullscreen();
-                setIsFullscreen(true);
+                setIsFullScreen(true);
             } else {
                 await document.exitFullscreen();
-                setIsFullscreen(false);
+                setIsFullScreen(false);
             }
         } catch (error) {
             console.error('Fullscreen error:', error);
@@ -223,7 +227,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
     // Listen for fullscreen changes (user might exit with Esc)
     useEffect(() => {
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
+            setIsFullScreen(!!document.fullscreenElement);
         };
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -455,6 +459,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
         const spreads: React.ReactNode[] = [];
         // Get inner pages (skip cover page at index 0)
         const innerPages = book.pages.filter(p => p.type === 'inside');
+        const isRTL = (book.language || book.settings.language) === 'he';
 
         innerPages.forEach((page, index) => {
             const pageNum = index + 1; // 1-based
@@ -465,31 +470,62 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
             const displayText = edit.text || (page.textElements[0]?.content || '');
             const textElements = [{ ...page.textElements[0], content: displayText }];
 
-            // Left page: Illustration
-            spreads.push(
-                <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
-                    <IllustrationPage
-                        imageUrl={displayImage || undefined}
-                        pageNumber={pageNum * 2 - 1}
-                        themeColors={themeColors}
-                        isEditing={isEditing}
-                        isRegenerating={regeneratingPage === pageNum}
-                        onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
-                    />
-                </Page>
-            );
+            // For RTL books, flip the page numbering
+            // Right page should be lower number in RTL
+            const leftPageNum = isRTL ? pageNum * 2 : pageNum * 2 - 1;
+            const rightPageNum = isRTL ? pageNum * 2 - 1 : pageNum * 2;
 
-            // Right page: Text
-            spreads.push(
-                <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
-                    <TextPage
-                        textElements={textElements}
-                        pageNumber={pageNum * 2}
-                        isEditing={isEditing}
-                        onTextChange={(idx, val) => handleTextChange(index, idx, val)}
-                    />
-                </Page>
-            );
+            if (isRTL) {
+                // RTL: Text on left (even number), Illustration on right (odd number)
+                spreads.push(
+                    <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
+                        <TextPage
+                            textElements={textElements}
+                            pageNumber={leftPageNum}
+                            isEditing={isEditing}
+                            onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                        />
+                    </Page>
+                );
+
+                spreads.push(
+                    <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
+                        <IllustrationPage
+                            imageUrl={displayImage || undefined}
+                            pageNumber={rightPageNum}
+                            themeColors={themeColors}
+                            isEditing={isEditing}
+                            isRegenerating={regeneratingPage === pageNum}
+                            onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
+                        />
+                    </Page>
+                );
+            } else {
+                // LTR: Illustration on left (odd number), Text on right (even number)
+                spreads.push(
+                    <Page key={`illust-${page.id || index}`} className={styles.illustrationPageWrapper}>
+                        <IllustrationPage
+                            imageUrl={displayImage || undefined}
+                            pageNumber={leftPageNum}
+                            themeColors={themeColors}
+                            isEditing={isEditing}
+                            isRegenerating={regeneratingPage === pageNum}
+                            onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
+                        />
+                    </Page>
+                );
+
+                spreads.push(
+                    <Page key={`text-${page.id || index}`} className={styles.textPageWrapper}>
+                        <TextPage
+                            textElements={textElements}
+                            pageNumber={rightPageNum}
+                            isEditing={isEditing}
+                            onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                        />
+                    </Page>
+                );
+            }
         });
 
         return spreads;
@@ -537,6 +573,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                             <button className={styles.closeBtn} onClick={onClose}>
                                 ← Back
                             </button>
+                        )}
+
+                        {book.estimatedCost !== undefined && (
+                            <span className={styles.costBadge} title="Estimated AI Generation Cost">
+                                💸 ${book.estimatedCost.toFixed(3)}
+                            </span>
                         )}
                     </div>
                 </div>
@@ -634,10 +676,14 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                                         : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
                                 }}
                             >
+                                <div className={styles.bookTexture}></div>
+                                <div className={styles.spineOverlay}></div>
                                 <div className={styles.coverOverlay}>
                                     <h1 className={styles.coverTitle}>{displayTitle}</h1>
                                     <p className={styles.coverSubtitle}>
-                                        For {book.settings.childName}, age {book.settings.childAge}
+                                        {(book.language || book.settings.language) === 'he' ? `${book.settings.childName}, גיל ${book.settings.childAge}` :
+                                            (book.language || book.settings.language) === 'de' ? `Für ${book.settings.childName}, ${book.settings.childAge} Jahre alt` :
+                                                `For ${book.settings.childName}, age ${book.settings.childAge}`}
                                     </p>
                                 </div>
                             </div>
@@ -658,7 +704,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
                                 }}
                             >
                                 <div className={styles.coverOverlay}>
-                                    <h2 className={styles.coverTitle}>The End</h2>
+                                    <h2 className={styles.coverTitle}>
+                                        {(book.language || book.settings.language) === 'he' ? 'סוף' :
+                                            (book.language || book.settings.language) === 'de' ? 'Ende' :
+                                                'The End'}
+                                    </h2>
                                     <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
                                         {backCoverText}
                                     </p>
@@ -671,7 +721,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen = false }:
 
             {/* Keyboard Hint */}
             <div className={styles.keyboardHint}>
-                Use ← → arrow keys or click to flip pages
+                {t('viewer:controls.keyboardHint')}
             </div>
 
             {/* Hidden Print Generator */}
