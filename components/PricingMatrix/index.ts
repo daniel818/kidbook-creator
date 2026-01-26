@@ -1,0 +1,1 @@
+export { PricingMatrix } from './PricingMatrix';

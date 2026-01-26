@@ -1,0 +1,39 @@
+/* RTL (Right-to-Left) Layout Overrides for Hebrew */
+
+/* Use CSS logical properties where possible for automatic RTL support */
+[dir="rtl"] {
+  /* Text alignment */
+  text-align: start;
+}
+
+/* Navbar adjustments */
+[dir="rtl"] .navbar {
+  flex-direction: row-reverse;
+}
+
+/* Flexbox reversals */
+[dir="rtl"] .navActions,
+[dir="rtl"] .navLinks {
+  flex-direction: row-reverse;
+}
+
+/* Specific component overrides if needed */
+[dir="rtl"] .languageSwitcher .dropdown {
+  left: 0;
+  right: auto;
+}
+
+/* Icon positioning */
+[dir="rtl"] .createIcon {
+  margin-left: 6px;
+  margin-right: 0;
+}
+
+/* Border radius adjustments for RTL */
+[dir="rtl"] .languageOption:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+[dir="rtl"] .languageOption:last-child {
+  border-radius: 0 0 12px 12px;
+}

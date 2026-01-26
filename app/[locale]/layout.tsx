@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/lib/auth/AuthContext";
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
   title: "KidBook Creator - Create Personalized Children's Books",

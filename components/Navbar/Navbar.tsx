@@ -14,16 +14,26 @@ export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
-  const { t } = useTranslation('navbar');
+  const { t, i18n } = useTranslation('navbar');
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Get current locale for pricing page only
+  const locale = i18n.language || 'en';
 
   const navLinks = [
     { label: t('communityBooks'), href: '/community', disabled: true },
+    { label: t('pricing'), href: `/pricing`, disabled: false }, // Middleware will redirect to /{locale}/pricing
     { label: t('faq'), href: '/faq', disabled: true },
     { label: t('aboutUs'), href: '/about', disabled: true },
   ];
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => {
+    // Handle both locale and non-locale paths for pricing
+    if (href === '/pricing') {
+      return pathname === '/pricing' || pathname.includes('/pricing');
+    }
+    return pathname === href;
+  };
 
   return (
     <nav className={styles.navbar}>
