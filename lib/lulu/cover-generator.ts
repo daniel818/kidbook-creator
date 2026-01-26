@@ -14,16 +14,25 @@ import { calculateSpineWidth, PaperType } from './spine-calculator';
 /**
  * Trim sizes in inches
  */
+/**
+ * Trim sizes in inches
+ */
 const TRIM_SIZES: Record<string, { width: number; height: number }> = {
     '6x6': { width: 6, height: 6 },
-    '8x8': { width: 8, height: 8 },
-    '8x10': { width: 8, height: 10 },
+    '8x8': { width: 8.5, height: 8.5 }, // Updated to 8.5
+    '8x10': { width: 8.5, height: 11 }, // Updated to 8.5x11
 };
 
 /**
  * Bleed size in inches
  */
 const BLEED_SIZE = 0.125;
+
+/**
+ * Wrap size in inches (for Hardcover Casewrap only)
+ * The cover paper wraps around the cardboard case.
+ */
+const WRAP_SIZE = 0.75;
 
 /**
  * Safety margins for cover content
@@ -99,14 +108,28 @@ export function calculateCoverDimensions(
         throw new Error(`Invalid size: ${size}`);
     }
 
-    const spineWidth = calculateSpineWidth(pageCount, paperType);
+    let spineWidth = calculateSpineWidth(pageCount, paperType);
+
+    // Saddle Stitch (Softcover < 32 pages) has no spine width in Lulu specs
+    if (format === 'softcover' && pageCount < 32) {
+        spineWidth = 0;
+    }
+
     const safetyMargin = SAFETY_MARGINS[format];
+
+    // WRAP LOGIC
+    // Softcover: Bleed only
+    // Hardcover: Wrap + Bleed
+    const extraPerSide = format === 'hardcover' ? WRAP_SIZE : 0;
 
     const backCoverWidth = trimSize.width;
     const frontCoverWidth = trimSize.width;
 
-    const totalWidth = backCoverWidth + spineWidth + frontCoverWidth + (BLEED_SIZE * 2);
-    const totalHeight = trimSize.height + (BLEED_SIZE * 2);
+    // Total Width = Back + Spine + Front + (Wrap x 2) + (Bleed x 2)
+    const totalWidth = backCoverWidth + spineWidth + frontCoverWidth + (extraPerSide * 2) + (BLEED_SIZE * 2);
+
+    // Total Height = Height + (Wrap x 2) + (Bleed x 2)
+    const totalHeight = trimSize.height + (extraPerSide * 2) + (BLEED_SIZE * 2);
 
     return {
         totalWidth,
@@ -115,7 +138,7 @@ export function calculateCoverDimensions(
         spineWidth,
         frontCoverWidth,
         safetyMargin,
-        bleed: BLEED_SIZE,
+        bleed: BLEED_SIZE + extraPerSide, // Visual bleed includes wrap for layout puproses
     };
 }
 
@@ -334,9 +357,13 @@ export async function generateCoverPDF(
     // Auto-detect size from book if not provided
     const bookSize = size || getBookSize(book);
 
+    // Calculate effective page count (Front + (Inside * 2) + Back)
+    // Must match logic in pdf-generator.ts
+    const interiorPages = book.pages.filter(p => p.type === 'inside').length;
+    const finalPageCount = 1 + (interiorPages * 2) + 1;
+
     // Calculate dimensions
-    const pageCount = book.pages.length;
-    const dims = calculateCoverDimensions(bookSize, pageCount, format, paperType);
+    const dims = calculateCoverDimensions(bookSize, finalPageCount, format, paperType);
 
     // Get theme colors
     const themeColors = book.settings.bookTheme

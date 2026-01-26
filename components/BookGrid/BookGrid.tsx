@@ -48,11 +48,22 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
             {/* 3D Book Container */}
             <div className={styles.book3DContainer}>
               <div className={styles.book3D}>
+                {/* Back Cover */}
+                <div
+                  className={styles.book3DBack}
+                  style={{ backgroundColor: themeColor }}
+                ></div>
+
+                {/* Pages faces */}
+                <div className={styles.bookPagesTop}></div>
+                <div className={styles.bookPagesRight}></div>
+                <div className={styles.bookPagesBottom}></div>
+
                 {/* Spine */}
                 <div
                   className={styles.book3DSpine}
                   style={{
-                    background: `linear-gradient(90deg, ${getBookColorSecondary(book.settings.bookTheme)} 0%, ${themeColor} 100%)`
+                    backgroundColor: getBookColorSecondary(book.settings.bookTheme)
                   }}
                 ></div>
 
@@ -65,17 +76,20 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
                       : `linear-gradient(135deg, ${themeColor} 0%, ${getBookColorSecondary(book.settings.bookTheme)} 100%)`
                   }}
                 >
-                  {!coverImage && (
-                    <>
-                      <span className={styles.book3DEmoji}>
-                        {getBookEmoji(book.settings.bookType)}
-                      </span>
-                      <span className={styles.book3DTitle}>
-                        {book.settings.title}
-                      </span>
-                    </>
-                  )}
-                  <div className={styles.bookCoverOverlay}></div>
+                  <div className={styles.bookTexture}></div>
+                  <div className={styles.book3DFrontContent}>
+                    {!coverImage && (
+                      <>
+                        <span className={styles.book3DEmoji}>
+                          {getBookEmoji(book.settings.bookType)}
+                        </span>
+                        <span className={styles.book3DTitle}>
+                          {book.settings.title}
+                        </span>
+                      </>
+                    )}
+                    <div className={styles.bookCoverOverlay}></div>
+                  </div>
                 </div>
               </div>
               <div className={styles.book3DShadow}></div>
