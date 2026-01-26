@@ -1,0 +1,61 @@
+name: Codex Advanced Code Review
+on:
+  pull_request:
+    types: [opened, synchronize]
+  issue_comment:
+    types: [created]
+
+jobs:
+  codex_review:
+    # Only run if it's a PR event OR a comment starting with /review or /codex on a PR
+    if: |
+      github.event_name == 'pull_request' || 
+      (github.event.issue.pull_request && (startsWith(github.event.comment.body, '/review') || startsWith(github.event.comment.body, '/codex')))
+    
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    
+    outputs:
+      final_message: ${{ steps.run_codex.outputs.final-message }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          # Fetch the merge commit to see final state
+          ref: ${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}
+
+      - name: Run Codex GPT-5.2
+        id: run_codex
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          model: "gpt-5.2-codex" # The latest 2026 flagship coding model
+          effort: "high"         # Uses extended reasoning for deeper logic analysis
+          prompt: |
+            You are a Senior R&D Architect. Review the following Pull Request changes.
+            Focus on:
+            1. Systematic bugs or edge cases.
+            2. Performance bottlenecks (O(n) complexity, etc.).
+            3. Clean code and maintainability.
+
+            PR Title: ${{ github.event.pull_request.title || github.event.issue.title }}
+            Instructions: ${{ github.event.comment.body || 'Provide a full systematic review.' }}
+
+      - name: Post Feedback
+        if: steps.run_codex.outputs.final-message != ''
+        uses: actions/github-script@v7
+        env:
+          FEEDBACK: ${{ steps.run_codex.outputs.final-message }}
+        with:
+          script: |
+            const issue_number = context.issue.number || context.payload.pull_request.number;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: `### 🤖 GPT-5.2 Codex Review\n\n${process.env.FEEDBACK}`
+            });
