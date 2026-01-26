@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
 import { Book } from '@/lib/types';
 import styles from './BookGrid.module.css';
 
@@ -14,7 +13,6 @@ interface BookGridProps {
 
 export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridProps) {
   const router = useRouter();
-  const { t } = useTranslation('mybooks');
   const [openingBookId, setOpeningBookId] = useState<string | null>(null);
 
   const handleViewBook = (bookId: string) => {
@@ -45,7 +43,7 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
             onClick={() => handleViewBook(book.id)}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            {/* 3D Book Container */}
+            {/* 3D Book Object */}
             <div className={styles.book3DContainer}>
               <div className={styles.book3D}>
                 {/* Back Cover */}
@@ -95,38 +93,21 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
               <div className={styles.book3DShadow}></div>
             </div>
 
-            {/* Book Info */}
-            <div className={styles.bookItemInfo}>
-              <div className={styles.bookMetaTop}>
-                <h3 className={styles.bookCardTitle}>
-                  {book.settings.title || `${book.settings.childName}'s Book`}
-                </h3>
-                <span className={styles.pageCountBadge}>
-                  {t('bookCard.pages', { count: book.pages.length })}
-                </span>
-              </div>
+            {/* Simple Clean Meta (Below Book) */}
+            <div className={styles.bookMeta}>
+              <h4 className={styles.metaTitle}>{book.settings.title || "Untitled Book"}</h4>
+              <p className={styles.metaSubtitle}>For {book.settings.childName}</p>
 
-              <p className={styles.bookCardMeta}>
-                {t('bookCard.forChild', { childName: book.settings.childName, age: book.settings.childAge })}
-              </p>
-
-              <div className={styles.bookItemActions}>
-                <span className={`${styles.statusBadge} ${styles[book.status]}`}>
-                  {t(`bookCard.status.${book.status}`)}
-                </span>
-                <div className={styles.actionButtons}>
-                  {/* Edit Button Removed - Viewer has its own edit mode */}
-                  {onDeleteBook && (
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={(e) => onDeleteBook(book.id, e)}
-                      aria-label="Delete book"
-                      title="Delete book"
-                    >
-                      🗑️
-                    </button>
-                  )}
-                </div>
+              <div className={styles.metaActions}>
+                {onDeleteBook && (
+                  <button
+                    className={styles.deleteBtn}
+                    onClick={(e) => onDeleteBook(book.id, e)}
+                    title="Delete book"
+                  >
+                    🗑️
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -136,12 +117,12 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true }: BookGridPro
       {/* Add New Book Card */}
       {showAddNew && (
         <div
-          className={`${styles.bookCard} ${styles.addNew}`}
+          className={`${styles.addNewCard}`}
           onClick={handleCreateNew}
         >
           <div className={styles.addNewContent}>
-            <span className={styles.addIcon}>+</span>
-            <span className={styles.addText}>Create New Book</span>
+            <span className={styles.plusIcon}>+</span>
+            <span className={styles.addNewText}>Create New Book</span>
           </div>
         </div>
       )}

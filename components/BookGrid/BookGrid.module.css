@@ -1,27 +1,27 @@
 .booksGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 48px 32px;
-  padding: 24px;
+  padding: 20px 0;
 }
 
 .bookItem {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 0;
-  border-radius: 0;
-  transition: all 0.3s ease;
+  align-items: center;
+  gap: 20px;
   cursor: pointer;
-  background: transparent;
+  z-index: 1;
 }
 
-/* Remove hover background from container, as visual focus is on the book */
 .bookItem:hover {
-  background: transparent;
+  z-index: 10;
 }
 
+/* =========================================
+   3D Book (Main Style)
+   ========================================= */
 .book3DContainer {
   position: relative;
   width: 100%;
@@ -40,7 +40,6 @@
   transform-style: preserve-3d;
   transform: rotateY(-25deg) rotateX(10deg);
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  /* Center the rotation */
   margin-left: 20px;
 }
 
@@ -69,33 +68,26 @@
 }
 
 /* --- 3D Structure Faces --- */
-
-/* 1. FRONT COVER */
 .book3DFront {
   position: absolute;
   inset: 0;
   transform: translateZ(16px);
   background-color: #f3f4f6;
-  /* Hardcover radius: sharp spine, rounded corners */
   border-radius: 0 16px 16px 0;
   overflow: hidden;
-  /* Gemini's 'gds-elevation-2' style + subtle highlighting */
   box-shadow:
     rgba(0, 0, 0, 0.2) 0px 3px 3px -2px,
     rgba(0, 0, 0, 0.14) 0px 3px 4px 0px,
     rgba(0, 0, 0, 0.12) 0px 1px 8px 0px,
-    /* Inner highlight for board thickness */
     inset 2px 0 2px rgba(255, 255, 255, 0.3);
   z-index: 10;
 }
 
-/* 2. BACK COVER */
 .book3DBack {
   position: absolute;
   inset: 0;
   transform: translateZ(-16px) rotateY(180deg);
   background: #eee;
-  /* Correct radius for back cover - flipped horizontally */
   border-radius: 16px 0 0 16px;
   box-shadow:
     rgba(0, 0, 0, 0.2) 0px 3px 3px -2px,
@@ -103,7 +95,6 @@
   z-index: 1;
 }
 
-/* 3. SPINE */
 .book3DSpine {
   position: absolute;
   top: 0;
@@ -112,9 +103,7 @@
   width: 32px;
   transform: translateX(-16px) rotateY(-90deg);
   background-color: inherit;
-  /* Spine radius matching the book thickness */
   border-radius: 2px;
-  /* Realistic spine shading */
   background-image: linear-gradient(90deg,
       rgba(255, 255, 255, 0.2) 0%,
       rgba(255, 255, 255, 0) 40%,
@@ -123,7 +112,6 @@
   z-index: 5;
 }
 
-/* 4. PAGES (The block of paper inside) */
 .bookPagesTop {
   position: absolute;
   top: 3px;
@@ -134,7 +122,6 @@
   background: #fdfdfd;
   background-image: repeating-linear-gradient(90deg, #fdfdfd 0px, #eee 1px, #fdfdfd 2px);
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
-  /* Round the outer corners to match rounded cover (Front-Right and Back-Right) */
   border-radius: 0 16px 16px 0;
   z-index: 4;
 }
@@ -142,9 +129,7 @@
 .bookPagesRight {
   position: absolute;
   right: 6px;
-  /* Indent more to start after curve */
   top: 6px;
-  /* Avoid poking out of rounded corners */
   bottom: 6px;
   width: 28px;
   transform: rotateY(90deg) translateZ(14px);
@@ -154,7 +139,6 @@
       #e0e0e0 1px,
       #fdfdfd 3px);
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
-  /* Soften edges */
   border-radius: 2px;
   z-index: 4;
 }
@@ -168,13 +152,11 @@
   transform: translateY(-2px) rotateX(-90deg) translateZ(14px);
   background: #fdfdfd;
   background-image: repeating-linear-gradient(90deg, #fdfdfd 0px, #eee 1px, #fdfdfd 2px);
-  /* Round the outer corners */
   border-radius: 0 16px 16px 0;
   z-index: 4;
 }
 
 /* --- Cover Content --- */
-
 .book3DFrontContent {
   width: 100%;
   height: 100%;
@@ -185,14 +167,12 @@
   position: relative;
 }
 
-/* Texture Layer */
 .bookTexture {
   position: absolute;
   inset: 0;
   background-image: url("https://www.gstatic.com/lamda/images/storybook/page_texture_771d37929812a16ff91fb.webp");
   background-size: cover;
   opacity: 0.2;
-  /* Subtle paper texture */
   pointer-events: none;
   z-index: 2;
   mix-blend-mode: multiply;
@@ -201,7 +181,6 @@
 .bookCoverOverlay {
   position: absolute;
   inset: 0;
-  /* Gemini Hardcover Spine Gradient */
   background: linear-gradient(90deg,
       #000 0px,
       rgba(0, 0, 0, 0) 2%,
@@ -242,7 +221,6 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%) translateZ(-100px);
-  /* Push nicely behind */
   width: 180px;
   height: 30px;
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.4) 0%, transparent 70%);
@@ -260,185 +238,114 @@
   transform: translateX(-50%) translateZ(-100px) scale(0.9);
 }
 
-/* --- Info Section --- */
-
-.bookItemInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 8px;
+/* =========================================
+   Meta & Actions
+   ========================================= */
+.bookMeta {
   text-align: center;
+  margin-top: 10px;
+  transition: opacity 0.3s;
 }
 
-.bookMetaTop {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.bookCardTitle {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-  line-height: 1.3;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.pageCountBadge {
-  position: absolute;
-  top: 10px;
-  right: 0;
-  font-size: 11px;
+.metaTitle {
+  font-size: 16px;
   font-weight: 600;
-  color: #6b7280;
-  background: #f3f4f6;
-  padding: 2px 8px;
-  border-radius: 12px;
+  color: #111827;
+  margin: 0 0 4px 0;
+  font-family: 'Inter', sans-serif;
 }
 
-.bookCardMeta {
-  font-size: 14px;
+.metaSubtitle {
+  font-size: 13px;
   color: #6b7280;
+  margin: 0;
 }
 
-/* --- Action Buttons (Hidden by default, appear on hover/touch) --- */
-.bookItemActions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.metaActions {
   margin-top: 8px;
-  padding-top: 12px;
-  border-top: 1px solid #f3f4f6;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(5px);
   transition: all 0.2s ease;
+  height: 24px;
 }
 
-.bookItem:hover .bookItemActions {
+.bookItem:hover .metaActions {
   opacity: 1;
   transform: translateY(0);
 }
 
-.statusBadge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
-  text-transform: capitalize;
-}
-
-.statusBadge.draft {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.statusBadge.complete {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.statusBadge.ordered {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
 .deleteBtn {
-  background: transparent;
+  background: none;
   border: none;
-  font-size: 16px;
   cursor: pointer;
+  font-size: 16px;
   padding: 4px;
+  border-radius: 4px;
   color: #9ca3af;
   transition: color 0.2s;
 }
 
-.editBtn {
-  position: relative;
-  z-index: 10;
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  opacity: 0.6;
-}
-
-.editBtn:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
-  opacity: 1;
-}
-
 .deleteBtn:hover {
   color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
-.actionButtons {
+/* =========================================
+   Add New Card
+   ========================================= */
+.addNewCard {
+  width: 100%;
+  height: 260px;
+  border-radius: 12px;
+  border: 2px dashed #e5e7eb;
   display: flex;
-  gap: 12px;
-}
-
-/* --- Create New Card --- */
-.bookCard.addNew {
-  border: 2px dashed #d1d5db;
-  border-radius: 16px;
-  background: transparent;
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   transition: all 0.3s ease;
+  background: #f9fafb;
 }
 
-.bookCard.addNew:hover {
+.addNewCard:hover {
   border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.02);
-  transform: translateY(-4px);
+  background: #f5f3ff;
+  transform: translateY(-5px);
 }
 
 .addNewContent {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  height: 100%;
-  padding: 48px;
+  gap: 12px;
+  color: #9ca3af;
 }
 
-.addIcon {
-  width: 60px;
-  height: 60px;
+.plusIcon {
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  color: #9ca3af;
-  background: #f3f4f6;
+  background: #fff;
   border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
-.bookCard.addNew:hover .addIcon {
-  color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
+.addNewCard:hover .plusIcon {
+  background: #6366f1;
+  color: white;
   transform: scale(1.1);
 }
 
-.addText {
-  margin-top: 16px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #4b5563;
+.addNewText {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.addNewCard:hover .addNewText {
+  color: #6366f1;
 }
 
 @media (max-width: 768px) {
@@ -466,7 +373,7 @@
     transform: rotateY(90deg) translateZ(134px);
   }
 
-  .bookItemActions {
+  .metaActions {
     opacity: 1;
     transform: none;
   }
