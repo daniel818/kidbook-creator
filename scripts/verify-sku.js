@@ -62,9 +62,8 @@ async function checkSku(token, sku) {
 async function main() {
     const token = await getToken();
     const skus = [
-        '0850X0850FCSTDCW080CW444GXX',   // Full Color, Standard, Case Wrap, 80# Coated White
-        '0850X0850FCSTDCW060CW444GXX',   // Full Color, Standard, Case Wrap, 60# Coated White
-        '0850X0850HCCWSTDPB080CW444GXX', // Hardcover Code again?
+        '0850X0850FCPRECW080CW444GXX',   // Full Color, Premium, Case Wrap, 80# Coated White
+        '0850X0850FCPREPB080CW444GXX',   // Full Color, Premium, Perfect Bound, 80# Coated White
     ];
 
     for (const sku of skus) {

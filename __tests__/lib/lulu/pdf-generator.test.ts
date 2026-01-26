@@ -47,16 +47,16 @@ const mockBook: Book = {
 
 describe('Interior PDF Generator', () => {
     describe('TRIM_SIZES', () => {
-        it('defines correct 6x6 trim size in inches', () => {
-            expect(TRIM_SIZES['6x6']).toEqual({ width: 6, height: 6 });
+        it('defines correct 7.5x7.5 trim size in inches', () => {
+            expect(TRIM_SIZES['7.5x7.5']).toEqual({ width: 7.5, height: 7.5 });
         });
 
         it('defines correct 8x8 trim size in inches', () => {
-            expect(TRIM_SIZES['8x8']).toEqual({ width: 8, height: 8 });
+            expect(TRIM_SIZES['8x8']).toEqual({ width: 8.5, height: 8.5 });
         });
 
         it('defines correct 8x10 trim size in inches', () => {
-            expect(TRIM_SIZES['8x10']).toEqual({ width: 8, height: 10 });
+            expect(TRIM_SIZES['8x10']).toEqual({ width: 8.5, height: 11 });
         });
     });
 
@@ -86,9 +86,9 @@ describe('Interior PDF Generator', () => {
         });
 
         it('generates PDF with correct page dimensions including bleed', async () => {
-            // For 8x8 book with 0.125" bleed on each side:
-            // Width = 8 + (0.125 * 2) = 8.25 inches
-            // Height = 8 + (0.125 * 2) = 8.25 inches
+            // For 8.5x8.5 book with 0.125" bleed on each side:
+            // Width = 8.5 + (0.125 * 2) = 8.75 inches
+            // Height = 8.5 + (0.125 * 2) = 8.75 inches
             const result = await generateInteriorPDF(mockBook, 'softcover', '8x8');
 
             // We'll need to verify the PDF dimensions
@@ -103,8 +103,8 @@ describe('Interior PDF Generator', () => {
             expect(result.size).toBeGreaterThan(0);
         });
 
-        it('handles 6x6 book size', async () => {
-            const result = await generateInteriorPDF(mockBook, 'softcover', '6x6');
+        it('handles 7.5x7.5 book size', async () => {
+            const result = await generateInteriorPDF(mockBook, 'softcover', '7.5x7.5');
             expect(result).toBeInstanceOf(Blob);
         });
 

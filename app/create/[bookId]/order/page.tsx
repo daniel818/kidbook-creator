@@ -15,7 +15,8 @@ import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 type BookFormat = 'softcover' | 'hardcover';
-type BookSize = '6x6' | '8x8' | '8x10';
+type BookSize = '7.5x7.5' | '8x8' | '8x10';
+type OrderStep = 'options' | 'shipping' | 'review' | 'payment';
 
 interface ShippingOption {
     id: string;
@@ -41,17 +42,26 @@ function formatShippingCost(option: ShippingOption): string | null {
     return `$${amount.toFixed(2)} ${option.currency || 'USD'}`;
 }
 
-// Fallback prices for display only (real prices come from API)
-const FALLBACK_BASE_PRICES: Record<BookFormat, Record<BookSize, number>> = {
-    softcover: { '6x6': 8.99, '8x8': 12.99, '8x10': 14.99 },
-    hardcover: { '6x6': 18.99, '8x8': 24.99, '8x10': 29.99 }
-};
+function formatShippingLevel(level: string): string {
+    return level.replace(/_/g, ' ');
+}
 
 const SIZE_LABELS: Record<BookSize, string> = {
-    '6x6': '6" × 6" (Small Square)',
+    '7.5x7.5': '7.5" × 7.5" (Small Square)',
     '8x8': '8.5" × 8.5" (Standard Square)',
     '8x10': '8.5" × 11" (Standard Portrait)'
 };
+
+const ALL_SIZES: BookSize[] = ['7.5x7.5', '8x8', '8x10'];
+const SIZES_BY_RATIO: Record<'square' | 'portrait', BookSize[]> = {
+    square: ['7.5x7.5', '8x8'],
+    portrait: ['8x10']
+};
+
+function getAvailableSizes(printFormat?: Book['settings']['printFormat']): BookSize[] {
+    if (!printFormat) return ALL_SIZES;
+    return SIZES_BY_RATIO[printFormat] || ALL_SIZES;
+}
 
 export default function OrderPage() {
     const router = useRouter();
@@ -65,7 +75,7 @@ export default function OrderPage() {
     const [format, setFormat] = useState<BookFormat>('softcover');
     const [size, setSize] = useState<BookSize>('8x8');
     const [quantity, setQuantity] = useState(1);
-    const [step, setStep] = useState<'options' | 'shipping' | 'payment'>('options');
+    const [step, setStep] = useState<OrderStep>('options');
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -77,11 +87,25 @@ export default function OrderPage() {
         isEstimate: boolean;
     } | null>(null);
     const [isPriceLoading, setIsPriceLoading] = useState(false);
+    const [priceError, setPriceError] = useState<string | null>(null);
 
     const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
     const [shippingLevel, setShippingLevel] = useState<string>('');
     const [isShippingOptionsLoading, setIsShippingOptionsLoading] = useState(false);
     const [shippingOptionsError, setShippingOptionsError] = useState<string | null>(null);
+    const [reviewQuote, setReviewQuote] = useState<{
+        pricing: {
+            subtotal: number;
+            shipping: number;
+            total: number;
+            isEstimate: boolean;
+        };
+        format: BookFormat;
+        size: BookSize;
+        quantity: number;
+        shippingLevel: string;
+        shippingKey: string;
+    } | null>(null);
 
     // Shipping form
     const [shipping, setShipping] = useState({
@@ -94,6 +118,16 @@ export default function OrderPage() {
         country: 'US',
         phone: ''
     });
+    const shippingKey = [
+        shipping.fullName,
+        shipping.addressLine1,
+        shipping.addressLine2,
+        shipping.city,
+        shipping.state,
+        shipping.postalCode,
+        shipping.country,
+        shipping.phone
+    ].join('|');
 
     // Load book on mount
     useEffect(() => {
@@ -133,13 +167,49 @@ export default function OrderPage() {
         loadBook();
     }, [bookId, router]);
 
+    useEffect(() => {
+        if (!book) return;
+        const availableSizes = getAvailableSizes(book.settings.printFormat);
+        if (!availableSizes.includes(size)) {
+            setSize(availableSizes[0]);
+        }
+    }, [book, size]);
+
+    useEffect(() => {
+        if (!reviewQuote || step === 'review' || step === 'payment') return;
+        if (
+            reviewQuote.format !== format ||
+            reviewQuote.size !== size ||
+            reviewQuote.quantity !== quantity ||
+            reviewQuote.shippingLevel !== shippingLevel ||
+            reviewQuote.shippingKey !== shippingKey
+        ) {
+            setReviewQuote(null);
+        }
+    }, [format, quantity, reviewQuote, shippingKey, shippingLevel, size, step]);
+
     // Fetch price from API when options change
     const fetchPrice = useCallback(async () => {
         if (!book) return;
 
         const interiorPageCount = getPrintableInteriorPageCount(book, format, size);
         setIsPriceLoading(true);
+        setPriceError(null);
         try {
+            const pricingShipping = isShippingValid()
+                ? shipping
+                : {
+                    fullName: 'Pricing Estimate',
+                    addressLine1: '123 Main St',
+                    addressLine2: '',
+                    city: 'New York',
+                    state: 'NY',
+                    postalCode: '10001',
+                    country: shipping.country || 'US',
+                    phone: '0000000000',
+                };
+            const pricingShippingOption = shippingLevel || 'MAIL';
+
             const response = await fetch('/api/lulu/calculate-cost', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -148,11 +218,11 @@ export default function OrderPage() {
                     size,
                     pageCount: interiorPageCount,
                     quantity,
-                    countryCode: shipping.country || 'US',
-                    postalCode: shipping.postalCode || '10001',
-                    stateCode: shipping.state || 'NY',
-                    shippingOption: shippingLevel || undefined,
-                    shipping: isShippingValid() ? shipping : undefined,
+                    countryCode: pricingShipping.country,
+                    postalCode: pricingShipping.postalCode,
+                    stateCode: pricingShipping.state,
+                    shippingOption: pricingShippingOption,
+                    shipping: pricingShipping,
                 }),
             });
 
@@ -164,27 +234,22 @@ export default function OrderPage() {
                     total: data.total / 100,
                     isEstimate: data.isEstimate,
                 });
+                setPriceError(null);
             } else {
-                // Fallback to basic estimate on error
-                const basePrice = FALLBACK_BASE_PRICES[format][size];
-                const subtotal = basePrice * quantity;
-                setPriceData({
-                    subtotal,
-                    shipping: 4.99,
-                    total: subtotal + 4.99,
-                    isEstimate: true,
-                });
+                let message = 'Pricing unavailable. Please try again.';
+                try {
+                    const data = await response.json();
+                    if (data?.error) message = data.error;
+                } catch {
+                    // Ignore parsing errors
+                }
+                setPriceData(null);
+                setPriceError(message);
             }
         } catch (err) {
             console.error('Price fetch error:', err);
-            const basePrice = FALLBACK_BASE_PRICES[format][size];
-            const subtotal = basePrice * quantity;
-            setPriceData({
-                subtotal,
-                shipping: 4.99,
-                total: subtotal + 4.99,
-                isEstimate: true,
-            });
+            setPriceData(null);
+            setPriceError('Pricing unavailable. Please try again.');
         } finally {
             setIsPriceLoading(false);
         }
@@ -269,12 +334,25 @@ export default function OrderPage() {
         shipping.phone,
     ]);
 
-    const totalPrice = priceData?.subtotal ?? 0;
-    const hasShippingQuote = Boolean(shippingLevel) && Boolean(priceData);
-    const shippingCost = hasShippingQuote ? priceData!.shipping : 0;
-    const grandTotal = hasShippingQuote ? priceData!.total : totalPrice;
+    const displayedPricing = reviewQuote?.pricing ?? priceData;
+    const displayedShippingLevel = reviewQuote?.shippingLevel ?? shippingLevel;
+    const totalPrice = displayedPricing?.subtotal ?? 0;
+    const hasShippingQuote = Boolean(displayedShippingLevel) && Boolean(displayedPricing);
+    const shippingCost = hasShippingQuote ? displayedPricing!.shipping : 0;
+    const grandTotal = hasShippingQuote ? displayedPricing!.total : totalPrice;
+    const bookPriceLabel = 'Book price (printing + production)';
+    const bookPriceValue = priceError
+        ? 'Unavailable'
+        : displayedPricing
+            ? `$${totalPrice.toFixed(2)}`
+            : (isPriceLoading ? 'Calculating...' : '—');
+    const shippingValue = hasShippingQuote
+        ? `$${shippingCost.toFixed(2)}`
+        : (isShippingValid()
+            ? (isShippingOptionsLoading ? 'Calculating...' : 'Select a shipping method')
+            : 'Calculated after address');
 
-    const isShippingValid = () => {
+    function isShippingValid() {
         // Strict Validation Rules for Lulu/FedEx
         const isAddressLinesValid =
             shipping.addressLine1.length <= 35 &&
@@ -288,6 +366,33 @@ export default function OrderPage() {
             shipping.postalCode &&
             shipping.phone &&
             shipping.country;
+    }
+
+    const handleContinueToReview = () => {
+        if (!priceData || !shippingLevel) return;
+        setReviewQuote({
+            pricing: priceData,
+            format,
+            size,
+            quantity,
+            shippingLevel,
+            shippingKey,
+        });
+        setStep('review');
+    };
+
+    const handleContinueToPayment = () => {
+        if (!reviewQuote && priceData && shippingLevel) {
+            setReviewQuote({
+                pricing: priceData,
+                format,
+                size,
+                quantity,
+                shippingLevel,
+                shippingKey,
+            });
+        }
+        setStep('payment');
     };
 
 
@@ -419,10 +524,23 @@ export default function OrderPage() {
         );
     }
 
+    const availableSizes = getAvailableSizes(book.settings.printFormat);
     const themeColors = book.settings.bookTheme
         ? BookThemeInfo[book.settings.bookTheme].colors
         : ['#6366f1', '#ec4899'];
     const interiorPageCount = getPrintableInteriorPageCount(book, format, size);
+    const steps: OrderStep[] = ['options', 'shipping', 'review', 'payment'];
+    const currentStepIndex = steps.indexOf(step);
+    const countryName = COUNTRIES.find(country => country.code === shipping.country)?.name || shipping.country;
+    const shippingLines = [
+        shipping.fullName,
+        shipping.addressLine1,
+        shipping.addressLine2?.trim() ? shipping.addressLine2 : null,
+        `${shipping.city}, ${shipping.state} ${shipping.postalCode}`,
+        countryName,
+        shipping.phone,
+    ].filter(Boolean) as string[];
+    const shippingLevelLabel = displayedShippingLevel ? formatShippingLevel(displayedShippingLevel) : '';
 
     return (
         <main className={styles.main}>
@@ -443,13 +561,10 @@ export default function OrderPage() {
                 <div className={styles.optionsSection}>
                     {/* Step Indicator */}
                     <div className={styles.steps}>
-                        {['options', 'shipping', 'payment'].map((s, i) => (
+                        {steps.map((s, i) => (
                             <div
                                 key={s}
-                                className={`${styles.stepIndicator} ${step === s ? styles.active : ''} ${(s === 'shipping' && step === 'payment') ||
-                                    (s === 'options' && (step === 'shipping' || step === 'payment'))
-                                    ? styles.completed : ''
-                                    }`}
+                                className={`${styles.stepIndicator} ${step === s ? styles.active : ''} ${i < currentStepIndex ? styles.completed : ''}`}
                             >
                                 <span className={styles.stepNumber}>{i + 1}</span>
                                 <span className={styles.stepLabel}>{s.charAt(0).toUpperCase() + s.slice(1)}</span>
@@ -489,18 +604,18 @@ export default function OrderPage() {
                                                     : 'Premium, durable hardback')
                                             }
                                         </span>
-                                        <span className={styles.formatPrice}>
-                                            from ${FALLBACK_BASE_PRICES[f]['6x6']}
-                                        </span>
                                         {format === f && <span className={styles.checkmark}>✓</span>}
                                     </button>
                                 ))}
                             </div>
+                            <p className={styles.priceHint}>
+                                Estimated price updates in the summary as you choose options.
+                            </p>
 
                             <h2 className={styles.sectionTitle}>Select Size</h2>
 
                             <div className={styles.sizeGrid}>
-                                {(Object.keys(SIZE_LABELS) as BookSize[]).map(s => (
+                                {availableSizes.map(s => (
                                     <button
                                         key={s}
                                         className={`${styles.sizeCard} ${size === s ? styles.selected : ''}`}
@@ -510,8 +625,8 @@ export default function OrderPage() {
                                             <span
                                                 className={styles.sizeBox}
                                                 style={{
-                                                    width: s === '6x6' ? '40px' : s === '8x8' ? '50px' : '50px',
-                                                    height: s === '6x6' ? '40px' : s === '8x8' ? '50px' : '62px'
+                                                    width: s === '7.5x7.5' ? '46px' : s === '8x8' ? '50px' : '50px',
+                                                    height: s === '7.5x7.5' ? '46px' : s === '8x8' ? '50px' : '62px'
                                                 }}
                                             ></span>
                                         </span>
@@ -542,7 +657,10 @@ export default function OrderPage() {
 
                             <button
                                 className={styles.continueBtn}
-                                onClick={() => setStep('shipping')}
+                                onClick={() => {
+                                    setReviewQuote(null);
+                                    setStep('shipping');
+                                }}
                             >
                                 Continue to Shipping →
                             </button>
@@ -727,18 +845,122 @@ export default function OrderPage() {
                                 <div className={styles.buttonRow}>
                                     <button
                                         className={styles.backBtn}
-                                        onClick={() => setStep('options')}
+                                        onClick={() => {
+                                            setReviewQuote(null);
+                                            setStep('options');
+                                        }}
                                     >
                                         ← Back
                                     </button>
                                     <button
                                         className={styles.continueBtn}
-                                        onClick={() => setStep('payment')}
-                                        disabled={!isShippingValid() || !shippingLevel || isShippingOptionsLoading}
+                                        onClick={handleContinueToReview}
+                                        disabled={!isShippingValid() || !shippingLevel || isShippingOptionsLoading || isPriceLoading || !priceData}
                                     >
-                                        Continue to Payment →
+                                        Review Order →
                                     </button>
                                 </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* Review Step */}
+                    {step === 'review' && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className={styles.stepContent}
+                        >
+                            <h2 className={styles.sectionTitle}>Review Your Order</h2>
+
+                            <div className={styles.reviewGrid}>
+                                <div className={styles.reviewCard}>
+                                    <h3 className={styles.reviewTitle}>Book Details</h3>
+                                    <div className={styles.selectedOptions}>
+                                        <div className={styles.optionRow}>
+                                            <span>Format</span>
+                                            <span>{format.charAt(0).toUpperCase() + format.slice(1)}</span>
+                                        </div>
+                                        <div className={styles.optionRow}>
+                                            <span>Size</span>
+                                            <span>{size}</span>
+                                        </div>
+                                        <div className={styles.optionRow}>
+                                            <span>Pages</span>
+                                            <span>{interiorPageCount}</span>
+                                        </div>
+                                        <div className={styles.optionRow}>
+                                            <span>Quantity</span>
+                                            <span>×{quantity}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className={styles.reviewCard}>
+                                    <h3 className={styles.reviewTitle}>Shipping</h3>
+                                    <div className={styles.reviewText}>
+                                        {shippingLines.map((line, index) => (
+                                            <div key={`${index}-${line}`}>{line}</div>
+                                        ))}
+                                    </div>
+                                    <div className={styles.selectedOptions}>
+                                        <div className={styles.optionRow}>
+                                            <span>Method</span>
+                                            <span>{shippingLevelLabel || '—'}</span>
+                                        </div>
+                                        <div className={styles.optionRow}>
+                                            <span>Shipping</span>
+                                            <span>{shippingValue}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className={styles.reviewCard}>
+                                    <h3 className={styles.reviewTitle}>Pricing</h3>
+                                    <div className={styles.pricing}>
+                                        <div className={styles.priceRow}>
+                                            <span>{bookPriceLabel}</span>
+                                            <span>{bookPriceValue}</span>
+                                        </div>
+                                        <div className={styles.priceRow}>
+                                            <span>Shipping</span>
+                                            <span>{shippingValue}</span>
+                                        </div>
+                                        {hasShippingQuote && (
+                                            <div className={`${styles.priceRow} ${styles.total}`}>
+                                                <span>Total</span>
+                                                <span>${grandTotal.toFixed(2)}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className={styles.pricingNote}>
+                                        Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method.
+                                    </p>
+                                    {priceError && (
+                                        <p className={styles.reviewNote}>
+                                            {priceError}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className={styles.buttonRow}>
+                                <button
+                                    className={styles.backBtn}
+                                    onClick={() => {
+                                        setReviewQuote(null);
+                                        setStep('shipping');
+                                    }}
+                                >
+                                    ← Back
+                                </button>
+                                <button
+                                    className={styles.continueBtn}
+                                    onClick={handleContinueToPayment}
+                                    disabled={!displayedPricing || !displayedShippingLevel}
+                                >
+                                    Continue to Payment →
+                                </button>
                             </div>
                         </motion.div>
                     )}
@@ -792,7 +1014,7 @@ export default function OrderPage() {
                             <div className={styles.buttonRow}>
                                 <button
                                     className={styles.backBtn}
-                                    onClick={() => setStep('shipping')}
+                                    onClick={() => setStep('review')}
                                     disabled={isProcessing}
                                 >
                                     ← Back
@@ -851,6 +1073,10 @@ export default function OrderPage() {
                                 <span>{size}</span>
                             </div>
                             <div className={styles.optionRow}>
+                                <span>Pages</span>
+                                <span>{interiorPageCount}</span>
+                            </div>
+                            <div className={styles.optionRow}>
                                 <span>Quantity</span>
                                 <span>×{quantity}</span>
                             </div>
@@ -860,15 +1086,15 @@ export default function OrderPage() {
                         <div className={styles.pricing}>
                             <div className={styles.priceRow}>
                                 <span>
-                                    {priceData?.isEstimate ? 'Estimated book price (excl. shipping)' : 'Book price (excl. shipping)'}
+                                    {bookPriceLabel}
                                 </span>
-                                <span>${totalPrice.toFixed(2)}</span>
+                                <span>{bookPriceValue}</span>
                             </div>
                             {hasShippingQuote ? (
                                 <>
                                     <div className={styles.priceRow}>
                                         <span>Shipping</span>
-                                        <span>${shippingCost.toFixed(2)}</span>
+                                        <span>{shippingValue}</span>
                                     </div>
                                     <div className={`${styles.priceRow} ${styles.total}`}>
                                         <span>Total</span>
@@ -878,14 +1104,16 @@ export default function OrderPage() {
                             ) : (
                                 <div className={styles.priceRow}>
                                     <span>Shipping</span>
-                                    <span>Calculated after address entry</span>
+                                    <span>{shippingValue}</span>
                                 </div>
                             )}
-                            {priceData?.isEstimate && (
-                                <div className={styles.priceRow}>
-                                    <span>Final total updates after shipping is selected</span>
-                                    <span></span>
-                                </div>
+                            <p className={styles.pricingNote}>
+                                Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method.
+                            </p>
+                            {priceError && (
+                                <p className={styles.reviewNote}>
+                                    {priceError}
+                                </p>
                             )}
                         </div>
 

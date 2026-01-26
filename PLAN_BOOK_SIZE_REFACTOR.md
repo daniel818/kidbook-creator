@@ -1,6 +1,6 @@
 # Refactoring Book Size Selection
 
-We need to move the book size selection to the beginning of the creation flow to ensure the generated content (images and layout) matches the intended physical format. This replaces the current "Square vs Portrait" toggle with a more specific size selection (6x6, 8x8, 8x10) that maps to the correct generation parameters.
+We need to move the book size selection to the beginning of the creation flow to ensure the generated content (images and layout) matches the intended physical format. This replaces the current "Square vs Portrait" toggle with a more specific size selection (7.5x7.5, 8x8, 8x10) that maps to the correct generation parameters.
 
 ## User Review Required
 > [!IMPORTANT]
@@ -15,17 +15,17 @@ We need to move the book size selection to the beginning of the creation flow to
 
 ### Types & Logic
 #### [MODIFY] [lib/types.ts](file:///Users/daniel/.gemini/antigravity/playground/kidbook-creator/lib/types.ts)
-- Update `BookSettings` to include `bookSize: '6x6' | '8x8' | '8x10'`.
+- Update `BookSettings` to include `bookSize: '7.5x7.5' | '8x8' | '8x10'`.
 - Add helper maps/constants for Book Size details (label, aspect ratio, description).
 
 ### Frontend
 #### [MODIFY] [app/create/page.tsx](file:///Users/daniel/.gemini/antigravity/playground/kidbook-creator/app/create/page.tsx)
 - Replace the current 'format' step (Square vs Portrait) with a detailed "Choose Size" step.
 - Options:
-    - **6" x 6" Small Square** (Aspect: 1:1)
+    - **7.5" x 7.5" Small Square** (Aspect: 1:1)
     - **8" x 8" Standard Square** (Aspect: 1:1)
     - **8" x 10" Portrait** (Aspect: 3:4)
-- Add logic to recommend sizes based on the selected `bookType` (e.g., Board Books -> 6x6).
+- Add logic to recommend sizes based on the selected `bookType` (e.g., Board Books -> 7.5x7.5).
 
 #### [MODIFY] [app/create/[bookId]/order/page.tsx](file:///Users/daniel/.gemini/antigravity/playground/kidbook-creator/app/create/[bookId]/order/page.tsx)
 - Pre-select the size chosen during creation.
@@ -35,7 +35,7 @@ We need to move the book size selection to the beginning of the creation flow to
 #### [MODIFY] [app/api/ai/generate-book/route.ts](file:///Users/daniel/.gemini/antigravity/playground/kidbook-creator/app/api/ai/generate-book/route.ts)
 - Update to accept `bookSize` from the request body.
 - Map `bookSize` to `aspectRatio` for the AI generation:
-    - '6x6', '8x8' -> '1:1'
+    - '7.5x7.5', '8x8' -> '1:1'
     - '8x10' -> '3:4'
 - Persist `bookSize` to the new database column.
 - Remove the "[Square]" title hack.

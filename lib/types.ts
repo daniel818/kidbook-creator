@@ -72,7 +72,7 @@ export interface Book {
 export interface OrderDetails {
   bookId: string;
   format: 'softcover' | 'hardcover';
-  size: '6x6' | '8x8' | '8x10';
+  size: '7.5x7.5' | '8x8' | '8x10';
   quantity: number;
   shippingAddress: ShippingAddress;
   totalPrice: number;

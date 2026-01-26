@@ -19,7 +19,7 @@ import { getPrintableInteriorPageCount } from './page-count';
  * Trim sizes in inches
  */
 const TRIM_SIZES: Record<string, { width: number; height: number }> = {
-    '6x6': { width: 6, height: 6 },
+    '7.5x7.5': { width: 7.5, height: 7.5 },
     '8x8': { width: 8.5, height: 8.5 }, // Updated to 8.5
     '8x10': { width: 8.5, height: 11 }, // Updated to 8.5x11
 };
@@ -88,7 +88,7 @@ function getDisplayTitle(book: Book): string {
 /**
  * Get the appropriate trim size based on book format
  */
-function getBookSize(book: Book): '6x6' | '8x8' | '8x10' {
+function getBookSize(book: Book): '7.5x7.5' | '8x8' | '8x10' {
     if (isSquareFormat(book)) {
         return '8x8';
     }
@@ -99,7 +99,7 @@ function getBookSize(book: Book): '6x6' | '8x8' | '8x10' {
  * Calculate cover spread dimensions
  */
 export function calculateCoverDimensions(
-    size: '6x6' | '8x8' | '8x10',
+    size: '7.5x7.5' | '8x8' | '8x10',
     pageCount: number,
     format: 'softcover' | 'hardcover',
     paperType: PaperType = 'standard'
@@ -353,7 +353,7 @@ function createCoverSpreadElement(
 export async function generateCoverPDF(
     book: Book,
     format: 'softcover' | 'hardcover',
-    size?: '6x6' | '8x8' | '8x10',
+    size?: '7.5x7.5' | '8x8' | '8x10',
     paperType: PaperType = 'standard'
 ): Promise<Blob> {
     const coverPage = getCoverPage(book);

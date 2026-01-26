@@ -62,17 +62,16 @@ export interface LuluOrder {
 }
 
 // Lulu product IDs for different formats
-// These are example IDs - actual IDs would come from Lulu's product catalog
 const PRODUCT_IDS: Record<string, Record<string, string>> = {
     softcover: {
-        '6x6': '0600X0600SCPERFCOLSTD',
-        '8x8': '0800X0800SCPERFCOLSTD',
-        '8x10': '0800X1000SCPERFCOLSTD',
+        '7.5x7.5': '0750X0750FCPREPB080CW444GXX',
+        '8x8': '0850X0850FCPREPB080CW444GXX',
+        '8x10': '0850X1100FCPREPB080CW444GXX',
     },
     hardcover: {
-        '6x6': '0600X0600HCPERFCOLSTD',
-        '8x8': '0800X0800HCPERFCOLSTD',
-        '8x10': '0800X1000HCPERFCOLSTD',
+        '7.5x7.5': '0750X0750FCPRECW080CW444GXX',
+        '8x8': '0850X0850FCPRECW080CW444GXX',
+        '8x10': '0850X1100FCPRECW080CW444GXX',
     },
 };
 
@@ -222,7 +221,7 @@ class LuluClient {
     }
 
     // Get product ID for book format
-    static getProductId(format: 'softcover' | 'hardcover', size: '6x6' | '8x8' | '8x10'): string {
+    static getProductId(format: 'softcover' | 'hardcover', size: '7.5x7.5' | '8x8' | '8x10'): string {
         return PRODUCT_IDS[format][size];
     }
 
@@ -367,7 +366,7 @@ class LuluClient {
 // Cost calculation types
 export interface CostCalculationOptions {
     format: 'softcover' | 'hardcover';
-    size: '6x6' | '8x8' | '8x10';
+    size: '7.5x7.5' | '8x8' | '8x10';
     pageCount: number;
     quantity: number;
     podPackageId?: string;

@@ -53,7 +53,7 @@ describe('Checkout API', () => {
         const validCheckoutBody = {
             bookId: 'book-123',
             format: 'softcover',
-            size: '6x6',
+            size: '7.5x7.5',
             quantity: 1,
             shipping: {
                 fullName: 'John Doe',

@@ -36,18 +36,18 @@ User selects "Print Format" (Square vs Portrait) early on. This drives the Image
 ## 3. Order Flow: Smart Size Constraints
 
 **Current State:**
-On the Order Page, users are presented with *all* size options ('6x6', '8x8', '8x10') regardless of the book's generated aspect ratio.
+On the Order Page, users are presented with *all* size options ('7.5x7.5', '8x8', '8x10') regardless of the book's generated aspect ratio.
 *   **The Risk:** A user generates a Square book (1:1 images) but orders an 8x10 Portrait book. This results in either ugly cropping or massive white bars.
 
 **Proposed Change:**
 Filter the **Size Selection** based on the `book.settings.printFormat` chosen during creation.
 
 *   **If Created as Square (1:1):**
-    *   Show: `6x6`, `8x8`
+    *   Show: `7.5x7.5`, `8x8`
     *   Hide: `8x10` (or show as disabled with "Incompatible Format" note)
 *   **If Created as Portrait (3:4):**
     *   Show: `8x10` (and `6x9` if we add it)
-    *   Hide: `6x6`, `8x8`
+    *   Hide: `7.5x7.5`, `8x8`
 
 This ensures the physical product matches the digital design perfectly.
 

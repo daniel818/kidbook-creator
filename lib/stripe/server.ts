@@ -12,7 +12,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 // Price calculation for books
 export interface BookPricing {
     format: 'softcover' | 'hardcover';
-    size: '6x6' | '8x8' | '8x10';
+    size: '7.5x7.5' | '8x8' | '8x10';
     pageCount: number;
     quantity: number;
 }
@@ -27,12 +27,12 @@ export interface PriceBreakdown {
 
 const PRICING = {
     softcover: {
-        '6x6': { basePrice: 899, perPage: 35 },    // cents
+        '7.5x7.5': { basePrice: 899, perPage: 35 },    // cents
         '8x8': { basePrice: 1299, perPage: 45 },
         '8x10': { basePrice: 1499, perPage: 55 }
     },
     hardcover: {
-        '6x6': { basePrice: 1899, perPage: 45 },
+        '7.5x7.5': { basePrice: 1899, perPage: 45 },
         '8x8': { basePrice: 2499, perPage: 55 },
         '8x10': { basePrice: 2999, perPage: 65 }
     }

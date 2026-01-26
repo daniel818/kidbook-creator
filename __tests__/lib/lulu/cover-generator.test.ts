@@ -37,15 +37,15 @@ describe('Cover PDF Generator', () => {
         it('calculates correct dimensions for 8x8 softcover with 24 pages', () => {
             const dims = calculateCoverDimensions('8x8', 24, 'softcover');
 
-            // Back cover (8") + Spine + Front cover (8") + Bleed (0.125" × 2)
+            // Back cover (8.5") + Spine + Front cover (8.5") + Bleed (0.125" × 2)
             // Spine for 24 pages ≈ 0.054"
-            expect(dims.totalWidth).toBeCloseTo(8 + 8 + 0.054 + 0.25, 2);
-            expect(dims.totalHeight).toBeCloseTo(8 + 0.25, 2); // Height + bleed
+            expect(dims.totalWidth).toBeCloseTo(8.5 + 8.5 + 0.054 + 0.25, 2);
+            expect(dims.totalHeight).toBeCloseTo(8.5 + 0.25, 2); // Height + bleed
             expect(dims.spineWidth).toBeCloseTo(0.054, 2);
         });
 
-        it('calculates correct dimensions for 6x6 hardcover', () => {
-            const dims = calculateCoverDimensions('6x6', 24, 'hardcover');
+        it('calculates correct dimensions for 7.5x7.5 hardcover', () => {
+            const dims = calculateCoverDimensions('7.5x7.5', 24, 'hardcover');
 
             // Hardcover has wrap-around, so slightly different
             expect(dims.totalWidth).toBeGreaterThan(12); // Back + Front + Spine + Wrap

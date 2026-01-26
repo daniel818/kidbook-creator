@@ -36,7 +36,7 @@ KidBook Creator uses Stripe for payment processing. The checkout flow creates a 
 {
   bookId: string;
   format: 'softcover' | 'hardcover';
-  size: '6x6' | '8x8' | '8x10';
+  size: '7.5x7.5' | '8x8' | '8x10';
   quantity: number;
   shipping: {
     fullName: string;
@@ -85,14 +85,14 @@ Stripe sends `checkout.session.completed` event to `/api/webhook/stripe`.
 
 ### Base Prices (in cents)
 
-| Format | 6x6 | 8x8 | 8x10 |
+| Format | 7.5x7.5 | 8x8 | 8x10 |
 |--------|-----|-----|------|
 | Softcover | $8.99 | $12.99 | $14.99 |
 | Hardcover | $18.99 | $24.99 | $29.99 |
 
 ### Per-Page Pricing (in cents)
 
-| Format | 6x6 | 8x8 | 8x10 |
+| Format | 7.5x7.5 | 8x8 | 8x10 |
 |--------|-----|-----|------|
 | Softcover | $0.35 | $0.45 | $0.55 |
 | Hardcover | $0.45 | $0.55 | $0.65 |

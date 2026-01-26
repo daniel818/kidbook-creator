@@ -9,12 +9,12 @@ import { Book, BookPage } from '@/lib/types';
 
 export interface PDFOptions {
     format: 'softcover' | 'hardcover';
-    size: '6x6' | '8x8' | '8x10';
+    size: '7.5x7.5' | '8x8' | '8x10';
 }
 
 // Size mappings in inches -> points (72 points per inch)
 const SIZE_MAP = {
-    '6x6': { width: 432, height: 432 },   // 6 * 72
+    '7.5x7.5': { width: 540, height: 540 },   // 7.5 * 72
     '8x8': { width: 576, height: 576 },   // 8 * 72
     '8x10': { width: 576, height: 720 },  // 8 * 72, 10 * 72
 };

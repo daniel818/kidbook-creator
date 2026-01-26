@@ -48,9 +48,10 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         console.error('Cost calculation error:', error);
+        const message = error instanceof Error ? error.message : 'Failed to calculate cost';
         return NextResponse.json(
-            { error: 'Failed to calculate cost' },
-            { status: 500 }
+            { error: message },
+            { status: 502 }
         );
     }
 }

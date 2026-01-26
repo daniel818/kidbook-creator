@@ -20,7 +20,7 @@ import { getPrintableInteriorPageCount } from './page-count';
  * Trim sizes in inches (final book dimensions after cutting)
  */
 export const TRIM_SIZES: Record<string, { width: number; height: number }> = {
-    '6x6': { width: 6, height: 6 },
+    '7.5x7.5': { width: 7.5, height: 7.5 },
     '8x8': { width: 8.5, height: 8.5 }, // Actually 8.5x8.5 for Lulu Standard Square
     '8x10': { width: 8.5, height: 11 }, // Actually 8.5x11 for standard US Letter/Portrait matches
 };
@@ -95,7 +95,7 @@ function getDisplayTitle(book: Book): string {
 /**
  * Get the appropriate trim size based on book format
  */
-function getBookSize(book: Book): '6x6' | '8x8' | '8x10' {
+function getBookSize(book: Book): '7.5x7.5' | '8x8' | '8x10' {
     if (isSquareFormat(book)) {
         return '8x8'; // Square books use 8x8
     }
@@ -388,14 +388,14 @@ function createCoverPage(
  * 
  * @param book - Book data with pages
  * @param format - 'softcover' or 'hardcover'
- * @param size - '6x6', '8x8', or '8x10' (optional, auto-detected from book)
+ * @param size - '7.5x7.5', '8x8', or '8x10' (optional, auto-detected from book)
  * @param onProgress - Optional progress callback
  * @returns PDF as Blob
  */
 export async function generateInteriorPDF(
     book: Book,
     format: 'softcover' | 'hardcover',
-    size?: '6x6' | '8x8' | '8x10',
+    size?: '7.5x7.5' | '8x8' | '8x10',
     onProgress?: (progress: number) => void
 ): Promise<Blob> {
     // Auto-detect size from book if not provided

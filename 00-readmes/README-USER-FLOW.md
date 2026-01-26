@@ -128,7 +128,7 @@ This document describes the end-to-end user flow for creating and ordering a per
 
 **User Actions:**
 - Selects format (softcover/hardcover)
-- Selects size (6x6, 8x8, 8x10)
+- Selects size (7.5x7.5, 8x8, 8x10)
 - Enters quantity
 - Enters shipping address
 - Reviews pricing

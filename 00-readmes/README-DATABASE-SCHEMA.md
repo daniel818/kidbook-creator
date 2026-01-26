@@ -134,7 +134,7 @@ CREATE TABLE orders (
   
   -- Order details
   format TEXT NOT NULL CHECK (format IN ('softcover', 'hardcover')),
-  size TEXT NOT NULL CHECK (size IN ('6x6', '8x8', '8x10')),
+  size TEXT NOT NULL CHECK (size IN ('7.5x7.5', '8x8', '8x10')),
   quantity INTEGER NOT NULL DEFAULT 1,
   
   -- Pricing (stored in dollars)

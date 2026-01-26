@@ -38,7 +38,7 @@ interface OrderData {
     id: string;
     book_id: string;
     format: 'softcover' | 'hardcover';
-    size: '6x6' | '8x8' | '8x10';
+    size: '7.5x7.5' | '8x8' | '8x10';
     quantity: number;
     shipping_level?: string;
     shipping_full_name: string;
@@ -246,7 +246,7 @@ async function updateOrderStatus(supabase: any, orderId: string, status: Fulfill
 }
 
 // Update signature to accept page count
-export function getLuluProductId(format: 'softcover' | 'hardcover', size: '6x6' | '8x8' | '8x10', pageCount: number): string {
+export function getLuluProductId(format: 'softcover' | 'hardcover', size: '7.5x7.5' | '8x8' | '8x10', pageCount: number): string {
     // 1. Saddle Stitch Logic (Min 4, Max ~48/80 depending on paper)
     // If pages are too few for Perfect Bound (32), try Saddle Stitch
     if (pageCount < 32 && format === 'softcover') {
@@ -259,14 +259,14 @@ export function getLuluProductId(format: 'softcover' | 'hardcover', size: '6x6' 
     // 2. Default Perfect Bound / Casewrap
     const PRODUCT_IDS: Record<string, Record<string, string>> = {
         softcover: {
-            '6x6': '0600X0600SCPERFCOLSTD',
-            '8x8': '0850X0850FCSTDPB080CW444GXX', // Standard Perfect Bound (Verified)
-            '8x10': '0850X1100FCSTDPB080CW444GXX', // Standard Perfect Bound
+            '7.5x7.5': '0750X0750FCPREPB080CW444GXX',
+            '8x8': '0850X0850FCPREPB080CW444GXX', // Premium Perfect Bound (Verified)
+            '8x10': '0850X1100FCPREPB080CW444GXX', // Premium Perfect Bound
         },
         hardcover: {
-            '6x6': '0600X0600HCPERFCOLSTD',
-            '8x8': '0850X0850FCSTDCW080CW444GXX', // Hardcover Casewrap (Verified 201)
-            '8x10': '0850X1100FCSTDCW080CW444GXX', // Hardcover Casewrap
+            '7.5x7.5': '0750X0750FCPRECW080CW444GXX',
+            '8x8': '0850X0850FCPRECW080CW444GXX', // Premium Hardcover Casewrap (Verified 201)
+            '8x10': '0850X1100FCPRECW080CW444GXX', // Premium Hardcover Casewrap
         },
     };
     // Default to Softcover 8x8 if unknown

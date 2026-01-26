@@ -6,10 +6,10 @@ import { calculatePrice, formatPrice, BookPricing } from '@/lib/stripe/server';
 
 describe('Stripe Pricing', () => {
     describe('calculatePrice', () => {
-        it('should calculate softcover 6x6 price correctly', () => {
+        it('should calculate softcover 7.5x7.5 price correctly', () => {
             const options: BookPricing = {
                 format: 'softcover',
-                size: '6x6',
+                size: '7.5x7.5',
                 pageCount: 20,
                 quantity: 1,
             };
@@ -41,7 +41,7 @@ describe('Stripe Pricing', () => {
         it('should multiply by quantity', () => {
             const options: BookPricing = {
                 format: 'softcover',
-                size: '6x6',
+                size: '7.5x7.5',
                 pageCount: 10,
                 quantity: 3,
             };
@@ -72,7 +72,7 @@ describe('Stripe Pricing', () => {
         it('should handle zero pages', () => {
             const options: BookPricing = {
                 format: 'softcover',
-                size: '6x6',
+                size: '7.5x7.5',
                 pageCount: 0,
                 quantity: 1,
             };
