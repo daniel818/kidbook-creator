@@ -7,10 +7,10 @@ on:
 
 jobs:
   codex_review:
-    # Trigger logic: Automated on PR or manual via /review comment
+    # Trigger logic: Run on PR events OR when a comment starts with /review or /codex
     if: |
       github.event_name == 'pull_request' || 
-      (github.event.issue.pull_request && (startsWith(github.event.comment.body, '/review')))
+      (github.event.issue.pull_request && (startsWith(github.event.comment.body, '/review') || startsWith(github.event.comment.body, '/codex')))
     
     runs-on: ubuntu-latest
     permissions:
@@ -22,24 +22,24 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0 # AI needs full context to see file history/deletions
+          # This 'ref' ensures we get the PR code even on a comment trigger
+          ref: ${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}
+          fetch-depth: 0 
 
       - name: AI Code Review
         uses: AleksandrFurmenkovOfficial/ai-code-review@v1.0
         with:
+          # Authentication & Repository Context (Required)
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Fix: Add these three required inputs
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
           pr_number: ${{ github.event.pull_request.number || github.event.issue.number }}
           
+          # AI Configuration
           ai_provider: "openai"
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-          openai_model: "gpt-5.2-codex"
+          openai_model: "gpt-5.2" # Flagship 2026 model
           
-          # Fix: Use review_rules_file instead of review_rules
+          # Custom Rules
           review_rules_file: ".github/codex_rules.md"
-          
-          # Optional: Limit scope to relevant logic files to avoid 'Token Limit' errors
-          include_extensions: ".ts,.js,.py,.go"
-          fail_action_if_review_failed: false
+          include_extensions: ".ts,.js,.py,.go,.cpp"
