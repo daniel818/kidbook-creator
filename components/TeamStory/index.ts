@@ -1,0 +1,1 @@
+export { TeamStory } from './TeamStory';

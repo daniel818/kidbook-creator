@@ -1,0 +1,128 @@
+.valuesSection {
+  padding: 80px 20px;
+  background: #ffffff;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 60px 0;
+  text-align: center;
+  color: #2d3748;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+.valueCard {
+  text-align: center;
+  padding: 40px 24px;
+  border-radius: 16px;
+  background: #f7fafc;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.valueCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+  background: #ffffff;
+}
+
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin: 0 auto 24px;
+  transition: transform 0.3s ease;
+}
+
+.valueCard:hover .iconWrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.valueTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: #2d3748;
+}
+
+.valueDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a5568;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .valuesSection {
+    padding: 60px 20px;
+  }
+
+  .heading {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+  }
+
+  .valueCard {
+    padding: 32px 20px;
+  }
+
+  .iconWrapper {
+    width: 64px;
+    height: 64px;
+  }
+
+  .iconWrapper svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .valueTitle {
+    font-size: 1.25rem;
+  }
+
+  .valueDescription {
+    font-size: 0.9375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .valuesSection {
+    padding: 40px 16px;
+  }
+
+  .heading {
+    font-size: 1.75rem;
+    margin-bottom: 32px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .valueCard {
+    padding: 28px 16px;
+  }
+}

@@ -35,6 +35,9 @@ import viewerHE from '@/locales/he/viewer.json';
 import pricingEN from '@/locales/en/pricing.json';
 import pricingDE from '@/locales/de/pricing.json';
 import pricingHE from '@/locales/he/pricing.json';
+import aboutEN from '@/locales/en/about.json';
+import aboutDE from '@/locales/de/about.json';
+import aboutHE from '@/locales/he/about.json';
 
 i18n
   .use(LanguageDetector)
@@ -53,6 +56,7 @@ i18n
         mybooks: mybooksEN,
         viewer: viewerEN,
         pricing: pricingEN,
+        about: aboutEN,
       },
       de: {
         common: commonDE,
@@ -66,6 +70,7 @@ i18n
         mybooks: mybooksDE,
         viewer: viewerDE,
         pricing: pricingDE,
+        about: aboutDE,
       },
       he: {
         common: commonHE,
@@ -79,6 +84,7 @@ i18n
         mybooks: mybooksHE,
         viewer: viewerHE,
         pricing: pricingHE,
+        about: aboutHE,
       },
     },
     fallbackLng: 'en',
