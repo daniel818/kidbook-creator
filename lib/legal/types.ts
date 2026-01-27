@@ -234,3 +234,19 @@ export interface PrivacyData {
 }
 
 export type LegalPageType = 'terms' | 'privacy';
+
+// Generic legal section data structure
+export interface LegalSectionData {
+  title: string;
+  content?: string;
+  introduction?: string;
+  description?: string;
+  examples?: string[];
+  measures?: string[];
+  categories?: string[];
+  purposes?: Array<{
+    title: string;
+    description: string;
+  }>;
+  [key: string]: any; // Allow for dynamic subsections while maintaining type safety for known fields
+}

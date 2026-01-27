@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TermsData, PrivacyData, LegalPageType } from '@/lib/legal/types';
+import { TermsData, PrivacyData, LegalPageType, LegalSectionData } from '@/lib/legal/types';
 import { TableOfContents } from './TableOfContents';
 import { LegalSection } from './LegalSection';
 import { PrintableVersion } from './PrintableVersion';
@@ -71,7 +71,7 @@ export function LegalPage({ data, type }: LegalPageProps) {
               <LegalSection
                 key={key}
                 id={key}
-                section={section as any}
+                section={section as LegalSectionData}
                 isExpanded={expandedSections.has(key)}
                 onToggle={() => toggleSection(key)}
               />

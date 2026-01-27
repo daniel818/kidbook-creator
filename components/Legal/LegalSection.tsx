@@ -1,8 +1,9 @@
+import { LegalSectionData } from '@/lib/legal/types';
 import styles from './LegalPage.module.css';
 
 interface LegalSectionProps {
   id: string;
-  section: any;
+  section: LegalSectionData;
   isExpanded: boolean;
   onToggle: () => void;
 }

@@ -41,9 +41,12 @@ export function TableOfContents({ data, type, expandedSections, onSectionClick }
               onClick={(e) => {
                 e.preventDefault();
                 onSectionClick(section.id);
-                const element = document.getElementById(section.id);
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
+                // SSR safety check before accessing document
+                if (typeof window !== 'undefined') {
+                  const element = document.getElementById(section.id);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
                 }
               }}
             >

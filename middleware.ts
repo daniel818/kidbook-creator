@@ -25,8 +25,9 @@ export async function middleware(request: NextRequest) {
         const shouldUseLocale = localeRoutes.some(route => pathname.startsWith(route));
         
         if (shouldUseLocale) {
-            // Try to get locale from cookie or browser
-            const locale = request.cookies.get('NEXT_LOCALE')?.value || defaultLocale;
+            // Try to get locale from cookie or browser, validate against allowed locales
+            const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+            const locale = locales.includes(cookieLocale || '') ? cookieLocale : defaultLocale;
             
             // Redirect to the same path with locale prefix
             return NextResponse.redirect(
