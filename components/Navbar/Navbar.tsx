@@ -25,12 +25,10 @@ export function Navbar() {
     { label: t('pricing'), href: `/pricing`, disabled: false }, // Middleware will redirect to /{locale}/pricing
     { label: t('faq'), href: '/faq', disabled: false },
     { label: t('aboutUs'), href: '/about', disabled: false },
-    { label: t('terms'), href: '/terms', disabled: false },
-    { label: t('privacy'), href: '/privacy', disabled: false },
   ];
 
   const isActive = (href: string) => {
-    // Handle both locale and non-locale paths for pricing, faq, about, terms, and privacy
+    // Handle both locale and non-locale paths for pricing, faq, and about
     if (href === '/pricing') {
       return pathname === '/pricing' || pathname.includes('/pricing');
     }
@@ -39,12 +37,6 @@ export function Navbar() {
     }
     if (href === '/about') {
       return pathname === '/about' || pathname.includes('/about');
-    }
-    if (href === '/terms') {
-      return pathname === '/terms' || pathname.includes('/terms');
-    }
-    if (href === '/privacy') {
-      return pathname === '/privacy' || pathname.includes('/privacy');
     }
     return pathname === href;
   };
