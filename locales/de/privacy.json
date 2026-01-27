@@ -1,0 +1,393 @@
+{
+  "meta": {
+    "title": "Datenschutzerklärung",
+    "lastUpdated": "Zuletzt aktualisiert: 27. Januar 2026",
+    "version": "Version 1.0"
+  },
+  "controller": {
+    "title": "Informationen zum Verantwortlichen",
+    "content": "KidBook Creator Ltd. ('wir', 'uns', 'unser') ist der für Ihre persönlichen Informationen verantwortliche Datenverantwortliche.",
+    "details": {
+      "company": "KidBook Creator Ltd.",
+      "email": "E-Mail: privacy@kidbookcreator.com",
+      "address": "[Ihre Geschäftsadresse]",
+      "phone": "Telefon: [Ihre Telefonnummer]"
+    }
+  },
+  "dataCollection": {
+    "title": "Von uns gesammelte Daten",
+    "introduction": "Wir sammeln verschiedene Arten von Informationen, um unseren Dienst bereitzustellen und zu verbessern.",
+    "categories": {
+      "personal": {
+        "title": "Persönliche Informationen",
+        "description": "Informationen, die Sie als Einzelperson identifizieren",
+        "examples": [
+          "Name und Kontaktinformationen (E-Mail, Telefon)",
+          "Rechnungs- und Lieferadressen",
+          "Kontodaten (verschlüsseltes Passwort)",
+          "Personalisierungsdaten (Namen, Geschichtsauswahl)"
+        ]
+      },
+      "photos": {
+        "title": "Fotos und Bilder",
+        "description": "Bilder, die Sie für die Charakterpersonalisierung hochladen",
+        "examples": [
+          "Profilfotos für Charaktergenerierung",
+          "Optionale zusätzliche Referenzfotos",
+          "Fotos, die nur zur Illustrationserstellung verwendet werden"
+        ]
+      },
+      "technical": {
+        "title": "Technische Daten",
+        "description": "Automatisch gesammelte Informationen bei der Nutzung unseres Dienstes",
+        "examples": [
+          "IP-Adresse und Standortinformationen",
+          "Browsertyp, Betriebssystem und Gerätedaten",
+          "Besuchte Seiten und Verweildauer",
+          "Klickverhalten und Interaktionen"
+        ]
+      },
+      "usage": {
+        "title": "Nutzungsdaten",
+        "description": "Informationen darüber, wie Sie unseren Dienst nutzen",
+        "examples": [
+          "Bücherstellungsprozess und Präferenzen",
+          "KI-Generierungsparameter und Ergebnisse",
+          "Bestellhistorie und Kaufmuster",
+          "Kundenservicekommunikation"
+        ]
+      },
+      "communications": {
+        "title": "Kommunikationsdaten",
+        "description": "Informationen, wenn Sie uns kontaktieren",
+        "examples": [
+          "E-Mail-Nachrichten und Anhänge",
+          "Kundenservice-Chat-Protokolle",
+          "Feedback und Umfrageantworten"
+        ]
+      }
+    },
+    "required": {
+      "title": "Erforderliche vs. optionale Daten",
+      "content": "Einige Informationen sind erforderlich, um unseren Dienst bereitzustellen (Name, E-Mail für Kontoerstellung), während andere Informationen optional sind (zusätzliche Fotos, Umfrageantworten). Wir geben während des Sammelprozesses an, was erforderlich ist."
+    }
+  },
+  "legalBasis": {
+    "title": "Rechtsgrundlage für die Verarbeitung",
+    "introduction": "Wir verarbeiten Ihre persönlichen Daten nur, wenn wir eine gültige Rechtsgrundlage nach geltendem Recht haben.",
+    "bases": {
+      "contract": {
+        "title": "Vertragserfüllung",
+        "content": "Wir verarbeiten Daten, die zur Erfüllung unserer vertraglichen Verpflichtungen erforderlich sind, wie z.B. Bestellabwicklung, Lieferung von Büchern und Bereitstellung von Kundenservice."
+      },
+      "interest": {
+        "title": "Berechtigtes Interesse",
+        "content": "Wir verarbeiten Daten bei berechtigtem Interesse, wie z.B. Verbesserung unseres Dienstes, Betrugsprävention, Sicherheitssicherung und Analyse von Nutzungsmustern."
+      },
+      "consent": {
+        "title": "Einwilligung",
+        "content": "Wir verarbeiten Daten auf Basis Ihrer ausdrücklichen Einwilligung, wie z.B. für Marketingkommunikation, nicht-essentielle Cookies und Newsletter-Abonnements."
+      },
+      "legal": {
+        "title": "Rechtliche Verpflichtung",
+        "content": "Wir verarbeiten Daten zur Einhaltung gesetzlicher Anforderungen, wie z.B. Aufbewahrung von Steuerunterlagen (7 Jahre) und Beantwortung rechtlicher Anfragen."
+      }
+    }
+  },
+  "purpose": {
+    "title": "Wie wir Ihre Daten verwenden",
+    "introduction": "Wir verwenden Ihre persönlichen Daten für die in diesem Abschnitt beschriebenen spezifischen Zwecke.",
+    "purposes": [
+      {
+        "title": "Dienstbereitstellung",
+        "description": "Bestellungen bearbeiten, personalisierte Bücher generieren und Produkte liefern"
+      },
+      {
+        "title": "Kundenservice",
+        "description": "Anfragen beantworten, Probleme lösen und Unterstützung bieten"
+      },
+      {
+        "title": "Dienstverbesserung",
+        "description": "Nutzungsmuster analysieren, Funktionen optimieren und neue Funktionalität entwickeln"
+      },
+      {
+        "title": "Sicherheit und Betrugsprävention",
+        "description": "Betrugsaktivitäten erkennen und verhindern, Plattformsicherheit gewährleisten"
+      },
+      {
+        "title": "Marketingkommunikation",
+        "description": "Werbliche Inhalte senden (nur mit Ihrer Einwilligung)"
+      },
+      {
+        "title": "Rechtliche Compliance",
+        "description": "Gesetze einhalten, Aufzeichnungen führen und auf rechtliche Anfragen reagieren"
+      }
+    ]
+  },
+  "dataSharing": {
+    "title": "Datenteilung & Dritte",
+    "introduction": "Wir teilen Ihre Daten nur mit vertrauenswürdigen Dritten, die zur Bereitstellung unseres Dienstes erforderlich sind.",
+    "categories": {
+      "processors": {
+        "title": "Datenverarbeiter",
+        "description": "Unternehmen, die Daten in unserem Auftrag verarbeiten",
+        "examples": [
+          "Zahlungsverarbeiter (Stripe, PayPal)",
+          "Hosting-Anbieter (AWS, Google Cloud)",
+          "E-Mail-Dienstleister (SendGrid)",
+          "Analyse-Dienste (Google Analytics)",
+          "KI-Dienstleister (OpenAI, ähnliche)"
+        ]
+      },
+      "partners": {
+        "title": "Servicepartner",
+        "description": "Unternehmen, die uns bei der Bereitstellung unseres Dienstes helfen",
+        "examples": [
+          "Druck- und Erfüllungspartner",
+          "Versandgesellschaften",
+          "Kundenservice-Plattformen"
+        ]
+      }
+    },
+    "safeguards": {
+      "title": "Datenschutz-Sicherheitsmaßnahmen",
+      "content": "Alle Dritten unterzeichnen Datenverarbeitungsvereinbarungen und sind vertraglich verpflichtet, Ihre Daten zu schützen. Wir teilen nur die für jeden Dienst erforderlichen Mindestdaten."
+    },
+    "noSale": {
+      "title": "Wir verkaufen Ihre Daten nicht",
+      "content": "Wir verkaufen, vermieten oder tauschen Ihre persönlichen Informationen niemals an Dritte für Marketingzwecke."
+    }
+  },
+  "dataRetention": {
+    "title": "Datenspeicherung",
+    "introduction": "Wir speichern Ihre Daten nur so lange, wie es für die in dieser Richtlinie beschriebenen Zwecke erforderlich ist.",
+    "periods": {
+      "account": {
+        "title": "Kontodaten",
+        "retention": "Solange Ihr Konto aktiv ist, plus 90 Tage nach Löschung"
+      },
+      "orders": {
+        "title": "Bestell- und Rechnungsdaten",
+        "retention": "7 Jahre (Steuer- und Rechtsanforderung)"
+      },
+      "photos": {
+        "title": "Hochgeladene Fotos",
+        "retention": "90 Tage nach Bestellabschluss, dann automatische Löschung"
+      },
+      "communications": {
+        "title": "Kundenservicekommunikation",
+        "retention": "2 Jahre nach Lösung"
+      },
+      "analytics": {
+        "title": "Analysedaten",
+        "retention": "26 Monate (nach 13 Monaten anonymisiert)"
+      },
+      "marketing": {
+        "title": "Marketingdaten",
+        "retention": "Bis zum Einwilligungswiderruf, plus 30 Tage"
+      }
+    },
+    "automatic": {
+      "title": "Automatische Löschung",
+      "content": "Wir implementieren automatische Löschprozesse für Fotos und temporäre Daten. Sie können auch eine vorzeitige Löschung Ihrer Daten beantragen."
+    }
+  },
+  "userRights": {
+    "title": "Ihre Rechte (DSGVO/CCPA)",
+    "introduction": "Sie haben spezifische Rechte bezüglich Ihrer persönlichen Daten.",
+    "rights": [
+      {
+        "title": "Recht auf Auskunft",
+        "description": "Eine Kopie Ihrer persönlichen Daten anfordern"
+      },
+      {
+        "title": "Recht auf Berichtigung",
+        "description": "Unrichtige oder unvollständige Daten korrigieren"
+      },
+      {
+        "title": "Recht auf Löschung",
+        "description": "Löschung Ihrer persönlichen Daten beantragen (mit rechtlichen Ausnahmen)"
+      },
+      {
+        "title": "Recht auf Einschränkung",
+        "description": "Beschränkung der Verarbeitung Ihrer Daten"
+      },
+      {
+        "title": "Recht auf Datenübertragbarkeit",
+        "description": "Erhalt Ihrer Daten in strukturiertem, maschinenlesbarem Format"
+      },
+      {
+        "title": "Recht auf Widerspruch",
+        "description": "Widerspruch gegen Verarbeitung aufgrund berechtigten Interesses oder für Marketing"
+      },
+      {
+        "title": "Recht auf Widerruf der Einwilligung",
+        "description": "Einwilligung jederzeit widerrufen (beeinflusst nicht die vorherige Verarbeitung)"
+      },
+      {
+        "title": "Recht auf Beschwerde",
+        "description": "Beschwerde bei Aufsichtsbehörde einreichen"
+      }
+    ],
+    "exercise": {
+      "title": "Wie Sie Ihre Rechte ausüben",
+      "content": "Um diese Rechte auszuüben, senden Sie uns eine E-Mail an privacy@kidbookcreator.com. Wir antworten innerhalb von 30 Tagen (können bei komplexen Anfragen auf 90 Tage verlängern). Wir können Ihre Identität vor der Bearbeitung von Anfragen überprüfen."
+    }
+  },
+  "cookies": {
+    "title": "Cookies & Tracking-Technologien",
+    "introduction": "Wir verwenden Cookies und ähnliche Technologien, um Ihr Erlebnis zu verbessern.",
+    "categories": {
+      "necessary": {
+        "title": "Notwendige Cookies",
+        "description": "Essentiell für Website-Funktionalität",
+        "examples": ["Anmeldestatus", "Warenkorb", "Sicherheitsfunktionen"]
+      },
+      "analytics": {
+        "title": "Analyse-Cookies",
+        "description": "Helfen uns zu verstehen, wie Besucher unsere Website nutzen",
+        "examples": ["Google Analytics", "Nutzungsstatistiken"]
+      },
+      "marketing": {
+        "title": "Marketing-Cookies",
+        "description": "Verwendet, um relevante Werbung anzuzeigen",
+        "examples": ["Werbetracking", "Personalisierung"]
+      },
+      "functional": {
+        "title": "Funktionale Cookies",
+        "description": "Erinnern sich an Ihre Präferenzen",
+        "examples": ["Spracheinstellungen", "Anzeigeeinstellungen"]
+      }
+    },
+    "consent": {
+      "title": "Cookie-Einwilligung",
+      "content": "Wir fragen Ihre Einwilligung, bevor wir nicht-essentielle Cookies platzieren. Sie können Präferenzen über unseren Cookie-Banner oder Browsereinstellungen verwalten."
+    }
+  },
+  "security": {
+    "title": "Sicherheitsmaßnahmen",
+    "introduction": "Wir implementieren angemessene technische und organisatorische Sicherheitsmaßnahmen.",
+    "technical": {
+      "title": "Technische Maßnahmen",
+      "measures": [
+        "SSL/TLS-Verschlüsselung für alle Datenübertragungen",
+        "Sichere Server mit regelmäßigen Sicherheitsupdates",
+        "Verschlüsselte Passwortspeicherung",
+        "Regelmäßige Sicherheitsaudits und Penetrationstests"
+      ]
+    },
+    "organizational": {
+      "title": "Organisatorische Maßnahmen",
+      "measures": [
+        "Mitarbeiterschulung zum Datenschutz",
+        "Zugangskontrollen und Need-to-know-Prinzip",
+        "Datenschutzrichtlinien und -verfahren",
+        "Regelmäßige Schulungen zum Sicherheitsbewusstsein"
+      ]
+    },
+    "disclaimer": {
+      "title": "Keine absolute Garantie",
+      "content": "Obwohl wir angemessene Maßnahmen zum Schutz Ihrer Daten ergreifen, ist keine Methode der Übertragung über das Internet 100% sicher. Wir werden Sie über Datenschutzverletzungen benachrichtigen, die ein Risiko für Ihre Rechte darstellen."
+    }
+  },
+  "children": {
+    "title": "Kinderschutz",
+    "introduction": "Unser Dienst ist für Erwachsene konzipiert, um Bücher für Kinder zu erstellen.",
+    "ageRestriction": {
+      "title": "Altersanforderungen",
+      "content": "Sie müssen mindestens 16 Jahre alt sein (oder 13 in den Vereinigten Staaten), um ein Konto zu erstellen. Wir sammeln wissentlich keine persönlichen Informationen von Kindern unter diesem Alter."
+    },
+    "parentalRights": {
+      "title": "Elternrechte",
+      "content": "Wenn Sie glauben, dass wir Informationen von einem Kind unter dem erforderlichen Alter gesammelt haben, kontaktieren Sie uns bitte sofort. Wir werden die Informationen umgehend löschen. Eltern können jederzeit die Löschung der Daten ihres Kindes beantragen."
+    },
+    "childrenData": {
+      "title": "Informationen über Kinder",
+      "content": "Wir können Informationen über Kinder (Namen, Fotos) nur sammeln, wenn sie von ihren Eltern oder gesetzlichen Vormündern bereitgestellt werden. Diese Informationen werden ausschließlich zur Erstellung personalisierter Bücher verwendet und nicht für andere Zwecke."
+    }
+  },
+  "aiPrivacy": {
+    "title": "KI & Fotonutzung",
+    "introduction": "Wir verwenden KI zur Generierung personalisierter Illustrationen aus Ihren Fotos.",
+    "photoProcessing": {
+      "title": "Fotoverarbeitung",
+      "content": "Von Ihnen hochgeladene Fotos werden von KI-Systemen analysiert, um Charakterillustrationen zu erstellen. Fotos werden nur für diesen Zweck verwendet und nicht zum Training von KI-Modellen oder andere Zwecke."
+    },
+    "retention": {
+      "title": "Fotospeicherung",
+      "content": "Fotos werden 90 Tage nach Bestellabschluss gespeichert, dann automatisch gelöscht. Sie können jederzeit eine vorzeitige Löschung beantragen."
+    },
+    "sharing": {
+      "title": "KI-Anbieter-Freigabe",
+      "content": "Fotos können an KI-Dienstleister unter strengen Datenverarbeitungsvereinbarungen weitergegeben werden. Diese Anbieter sind davon ausgeschlossen, Fotos für andere Zwecke als die Generierung Ihrer Illustrationen zu verwenden."
+    },
+    "rights": {
+      "title": "Ihre Rechte",
+      "content": "Sie bestätigen, dass Sie das Recht haben, Fotos hochzuladen und die Erlaubnis aller abgebildeten Personen haben. Bei Fotos von Kindern bestätigen Sie, dass Sie deren Elternteil oder gesetzlicher Vormund sind."
+    }
+  },
+  "international": {
+    "title": "Internationale Datenübertragungen",
+    "introduction": "Wir können Ihre Daten in Länder außerhalb Ihres Heimatlandes übertragen.",
+    "transfers": {
+      "title": "Übertragungsmechanismen",
+      "content": "Wenn wir Daten außerhalb des Europäischen Wirtschaftsraums übertragen, verwenden wir angemessene Schutzmaßnahmen wie Standardvertragsklauseln (SCCs), die von der Europäischen Kommission genehmigt wurden. Diese stellen sicher, dass Ihre Daten geschützt bleiben."
+    },
+    "providers": {
+      "title": "Internationale Anbieter",
+      "examples": [
+        "US-basiertes Cloud-Hosting (AWS, Google Cloud)",
+        "US-basierte Analysen (Google Analytics)",
+        "US-basierte KI-Dienste",
+        "Internationale Versandpartner"
+      ]
+    }
+  },
+  "marketing": {
+    "title": "Marketingkommunikation",
+    "introduction": "Wir können Ihnen mit Ihrer Einwilligung Marketingkommunikation senden.",
+    "consent": {
+      "title": "Einwilligung erforderlich",
+      "content": "Wir senden nur Werbe-E-Mails, Newsletter und Marketing-Nachrichten mit Ihrer ausdrücklichen Einwilligung. Sie können die Einwilligung jederzeit widerrufen."
+    },
+    "types": {
+      "title": "Arten der Kommunikation",
+      "categories": [
+        "Werbliche E-Mails (mit Einwilligung)",
+        "Produktaktualisierungen und Ankündigungen",
+        "Bestellbestätigungen und Versandaktualisierungen",
+        "Kundenservicekommunikation"
+      ]
+    },
+    "optOut": {
+      "title": "Abmeldungsoptionen",
+      "content": "Sie können sich von Marketingkommunikation abmelden, indem Sie auf den Abmeldelink in E-Mails klicken, Ihre Kontoeinstellungen aktualisieren oder uns direkt kontaktieren."
+    }
+  },
+  "updates": {
+    "title": "Richtlinienaktualisierungen",
+    "introduction": "Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren.",
+    "changes": {
+      "title": "Benachrichtigung über Änderungen",
+      "content": "Bei wesentlichen Änderungen werden wir Sie per E-Mail oder prominenter Website-Mitteilung benachrichtigen. Geringfügige Änderungen werden sofort nach Veröffentlichung wirksam. Das Datum 'Zuletzt aktualisiert' zeigt an, wann diese Richtlinie zuletzt geändert wurde."
+    },
+    "review": {
+      "title": "Regelmäßige Überprüfung",
+      "content": "Wir überprüfen diese Richtlinie regelmäßig, um sicherzustellen, dass sie genau und mit geltenden Gesetzen konform bleibt. Wir empfehlen Ihnen, sie regelmäßig zu überprüfen."
+    }
+  },
+  "contact": {
+    "title": "Kontaktinformationen",
+    "introduction": "Wenn Sie Fragen zu dieser Datenschutzerklärung haben oder Ihre Rechte ausüben möchten, kontaktieren Sie uns bitte:",
+    "details": {
+      "email": "E-Mail: privacy@kidbookcreator.com",
+      "address": "KidBook Creator Ltd. [Ihre Geschäftsadresse]",
+      "phone": "Telefon: [Ihre Telefonnummer]",
+      "response": "Wir werden auf Datenschutzanfragen innerhalb von 30 Tagen antworten."
+    },
+    "authorities": {
+      "title": "Datenschutzaufsichtsbehörden",
+      "content": "Wenn Sie Bedenken darüber haben, wie wir Ihre Daten verarbeiten, haben Sie auch das Recht, sich bei Ihrer lokalen Datenschutzaufsichtsbehörde zu beschweren."
+    }
+  }
+}

@@ -62,8 +62,8 @@ export default function Footer() {
           </FooterSection>
 
           <FooterSection title={t('sections.legal.title')}>
-            <Link href="/privacy" onClick={(e) => handleComingSoon(e, 'Privacy Policy')}>{t('sections.legal.privacy')}</Link>
-            <Link href="/terms" onClick={(e) => handleComingSoon(e, 'Terms of Service')}>{t('sections.legal.terms')}</Link>
+            <Link href="/privacy">{t('sections.legal.privacy')}</Link>
+            <Link href="/terms">{t('sections.legal.terms')}</Link>
             <Link href="/cookies" onClick={(e) => handleComingSoon(e, 'Cookie Policy')}>{t('sections.legal.cookies')}</Link>
             <Link href="/refunds" onClick={(e) => handleComingSoon(e, 'Refund Policy')}>{t('sections.legal.refunds')}</Link>
             <Link href="/shipping" onClick={(e) => handleComingSoon(e, 'Shipping Info')}>{t('sections.legal.shipping')}</Link>

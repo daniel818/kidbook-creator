@@ -10,7 +10,7 @@ const locales = ['en', 'de', 'he'];
 const defaultLocale = 'en';
 
 // Routes that should use locale prefixes
-const localeRoutes = ['/pricing', '/faq', '/about'];
+const localeRoutes = ['/pricing', '/faq', '/about', '/terms', '/privacy'];
 
 export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
