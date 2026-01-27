@@ -275,19 +275,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerContent}>
-            <div className={styles.footerBrand}>
-              <span className={styles.footerLogo}>📚</span>
-              <span className={styles.footerName}>KidBook Creator</span>
-            </div>
-            <p className={styles.footerCopy}>
-              {t('footer.tagline')}
-            </p>
-          </div>
-        </footer>
-
         {/* Loading overlay */}
         {isLoading && (
           <div className={styles.loadingOverlay}>

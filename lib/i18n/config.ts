@@ -32,6 +32,15 @@ import mybooksHE from '@/locales/he/mybooks.json';
 import viewerEN from '@/locales/en/viewer.json';
 import viewerDE from '@/locales/de/viewer.json';
 import viewerHE from '@/locales/he/viewer.json';
+import pricingEN from '@/locales/en/pricing.json';
+import pricingDE from '@/locales/de/pricing.json';
+import pricingHE from '@/locales/he/pricing.json';
+import aboutEN from '@/locales/en/about.json';
+import aboutDE from '@/locales/de/about.json';
+import aboutHE from '@/locales/he/about.json';
+import footerEN from '@/locales/en/footer.json';
+import footerDE from '@/locales/de/footer.json';
+import footerHE from '@/locales/he/footer.json';
 
 i18n
   .use(LanguageDetector)
@@ -49,6 +58,9 @@ i18n
         purchases: purchasesEN,
         mybooks: mybooksEN,
         viewer: viewerEN,
+        pricing: pricingEN,
+        about: aboutEN,
+        footer: footerEN,
       },
       de: {
         common: commonDE,
@@ -61,6 +73,9 @@ i18n
         purchases: purchasesDE,
         mybooks: mybooksDE,
         viewer: viewerDE,
+        pricing: pricingDE,
+        about: aboutDE,
+        footer: footerDE,
       },
       he: {
         common: commonHE,
@@ -73,6 +88,9 @@ i18n
         purchases: purchasesHE,
         mybooks: mybooksHE,
         viewer: viewerHE,
+        pricing: pricingHE,
+        about: aboutHE,
+        footer: footerHE,
       },
     },
     fallbackLng: 'en',

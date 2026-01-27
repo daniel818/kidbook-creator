@@ -1,0 +1,42 @@
+{
+  "hero": {
+    "title": "Wir sind Geschichtenerzähler, Eltern & Träumer",
+    "subtitle": "Wir erschaffen magische Geschichten, die lehren, inspirieren und begeistern"
+  },
+  "story": {
+    "heading": "Unsere Geschichte",
+    "paragraph1": "Wir sind ein Team junger Unternehmer, die Eltern sind und im Herzen selbst noch Kinder. Wir glauben an die Magie des Geschichtenerzählens und die Kraft einer guten Geschichte, junge Köpfe zu formen.",
+    "paragraph2": "Wir lieben Geschichten, die Kindern Bedeutung vermitteln – Geschichten, die die Fantasie anregen, Charakter aufbauen und bleibende Erinnerungen schaffen. Jedes auf unserer Plattform erstellte Buch ist eine Gelegenheit, Werte, Lektionen und Liebe zu teilen.",
+    "paragraph3": "Kreativität und Innovation treiben alles an, was wir tun. Wir erforschen ständig neue Wege, um das Geschichtenerzählen zugänglicher, persönlicher und bedeutungsvoller für Familien auf der ganzen Welt zu machen."
+  },
+  "values": {
+    "heading": "Woran wir glauben",
+    "storytelling": {
+      "title": "Geschichtenerzählen",
+      "description": "Jede Geschichte ist eine Gelegenheit zu verbinden, zu lehren und zu inspirieren."
+    },
+    "learning": {
+      "title": "Sinnvolles Lernen",
+      "description": "Geschichten, die Werte vermitteln, Charakter aufbauen und junge Köpfe formen."
+    },
+    "innovation": {
+      "title": "Innovation",
+      "description": "Grenzen verschieben, um Geschichtenerzählen für alle zugänglich zu machen."
+    },
+    "wonder": {
+      "title": "Kindliches Staunen",
+      "description": "Die Magie in jeder Geschichte am Leben erhalten, die wir helfen zu erschaffen."
+    }
+  },
+  "images": {
+    "placeholder1Alt": "KidBook Creator Team bei der Zusammenarbeit",
+    "placeholder2Alt": "KidBook Creator kreativer Arbeitsbereich",
+    "comingSoon": "Foto folgt in Kürze"
+  },
+  "cta": {
+    "heading": "Bereit, Ihre Geschichte zu erschaffen?",
+    "description": "Schließen Sie sich Tausenden von Eltern an, die bedeutungsvolle Geschichten für ihre Kinder erschaffen.",
+    "primary": "Jetzt erstellen",
+    "secondary": "Community-Bücher erkunden"
+  }
+}

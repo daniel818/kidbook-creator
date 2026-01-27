@@ -1,0 +1,54 @@
+.footer {
+  background-color: #111827;
+  color: #D1D5DB;
+  width: 100%;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 4rem 2rem 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+
+.newsletterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+
+  .container {
+    padding: 3rem 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .container {
+    padding: 3rem 1rem 1rem;
+  }
+}
+
+[dir='rtl'] .grid {
+  direction: rtl;
+}
+
+[dir='rtl'] .footer {
+  text-align: right;
+}

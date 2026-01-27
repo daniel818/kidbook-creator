@@ -1,0 +1,198 @@
+{
+  "meta": {
+    "title": "Nutzungsbedingungen",
+    "lastUpdated": "Zuletzt aktualisiert: 27. Januar 2026",
+    "version": "Version 1.0"
+  },
+  "sections": {
+    "introduction": {
+      "title": "1. Einleitung & Geltungsbereich",
+      "content": "Diese Nutzungsbedingungen ('Bedingungen') regeln Ihre Nutzung von KidBook Creator ('der Dienst'), betrieben von KidBook Creator Ltd. ('wir', 'uns', 'unser'). Durch den Zugriff oder die Nutzung unseres Dienstes stimmen Sie zu, an diese Bedingungen gebunden zu sein.",
+      "acceptance": {
+        "title": "Annahme der Bedingungen",
+        "content": "Durch die Nutzung unseres Dienstes bestätigen Sie, dass Sie mindestens 16 Jahre alt (oder 13 Jahre alt in den Vereinigten Staaten) sind und die rechtliche Fähigkeit besitzen, diese Bedingungen zu akzeptieren. Wenn Sie den Dienst im Namen einer anderen Person nutzen, vertreten Sie, dass Sie die Befugnis haben, diese Person an diese Bedingungen zu binden."
+      }
+    },
+    "accountTerms": {
+      "title": "2. Kontobedingungen & Berechtigung",
+      "content": "Um unseren Dienst zu nutzen, müssen Sie ein Konto erstellen und genaue, vollständige und aktuelle Informationen angeben.",
+      "eligibility": {
+        "title": "Berechtigungsvoraussetzungen",
+        "content": "Sie müssen mindestens 16 Jahre alt sein (oder 13 Jahre alt in den Vereinigten Staaten), um ein Konto zu erstellen. Sie müssen eine gültige E-Mail-Adresse und andere erforderliche Informationen angeben. Sie sind dafür verantwortlich, die Vertraulichkeit Ihrer Kontodaten zu wahren."
+      },
+      "responsibilities": {
+        "title": "Kontoverantwortlichkeiten",
+        "content": "Sie sind für alle Aktivitäten verantwortlich, die unter Ihrem Konto stattfinden. Sie müssen uns sofort über jede unbefugte Nutzung Ihres Kontos informieren. Wir behalten uns das Recht vor, Konten zu sperren oder zu kündigen, die gegen diese Bedingungen verstoßen."
+      }
+    },
+    "ordering": {
+      "title": "3. Bestellprozess & Bestellannahme",
+      "content": "Unser Bestellprozess ist darauf ausgelegt, einfach und transparent zu sein.",
+      "process": {
+        "title": "Bestellaufgabe",
+        "content": "Bestellungen werden über unsere Webschnittstelle aufgegeben. Sie erhalten eine Bestellbestätigungs-E-Mail, sobald Ihre Bestellung erfolgreich übermittelt wurde. Wir nehmen keine Bestellung an, bis wir Ihnen eine Bestellbestätigung senden."
+      },
+      "acceptance": {
+        "title": "Bestellannahme",
+        "content": "Wir behalten uns das Recht vor, jede Bestellung aus beliebigen Grund anzunehmen oder abzulehnen, einschließlich aber nicht beschränkt auf: Preisfehler, unzureichender Lagerbestand oder Verletzung dieser Bedingungen. Wir können auch zusätzliche Überprüfungen vor der Bestellannahme verlangen."
+      },
+      "review": {
+        "title": "Bestellprüfung",
+        "content": "Sie sind dafür verantwortlich, Ihre Bestelldaten sofort nach Erhalt der Bestätigungs-E-Mail zu überprüfen. Sie müssen uns über Fehler innerhalb von 24 Stunden nach Erhalt der Bestätigung informieren."
+      }
+    },
+    "pricing": {
+      "title": "4. Preise & Zahlungsbedingungen",
+      "content": "Unsere Preisgestaltung ist transparent und umfassend.",
+      "prices": {
+        "title": "Produktpreise",
+        "content": "Preise werden in Ihrer lokalen Währung angezeigt, zutreffend. Alle Preise enthalten anwendbare Steuern für EU-Kunden. Nicht-EU-Kunden können für Einfuhrzölle und Steuern in ihrem Land verantwortlich sein."
+      },
+      "payment": {
+        "title": "Zahlungsverarbeitung",
+        "content": "Die Zahlung wird über sichere Drittanbieter-Zahlungsverarbeiter abgewickelt. Wir speichern Ihre Zahlungskarteninformationen nicht. Die Zahlung muss bei Bestellaufgabe vollständig erfolgen."
+      },
+      "errors": {
+        "title": "Preisfehler",
+        "content": "Wir behalten uns das Recht vor, Preisfehler zu korrigieren. Wenn wir nach der Bestellaufgabe einen Preisfehler feststellen, werden wir Sie kontaktieren, um den korrekten Preis zu bestätigen oder die Bestellung zu stornieren, wenn Sie dies bevorzugen."
+      }
+    },
+    "cancellation": {
+      "title": "5. Stornierungs- & Rückerstattungsrichtlinie",
+      "content": "Wir verstehen, dass sich Pläne ändern, und haben unsere Richtlinien gestaltet, um fair und transparent zu sein.",
+      "cancellationWindow": {
+        "title": "Stornierungsfenster",
+        "content": "Sie können Ihre Bestellung innerhalb von 48 Stunden nach Aufgabe stornieren, vorausgesetzt, die KI-Generierung hat noch nicht begonnen. Sobald die KI-Generierung beginnt, können Bestellungen aufgrund des personalisierten Charakters unserer Produkte nicht storniert werden."
+      },
+      "personalizedProducts": {
+        "title": "Ausschluss personalisierter Produkte",
+        "content": "Gemäß Artikel 16(c) der EU-Verbraucherrechterichtlinie und ähnlichen Gesetzen in anderen Rechtsordnungen sind personalisierte Produkte von standardmäßigen Rückgaberechten ausgeschlossen. Unsere Produkte werden nach Ihren Spezifikationen hergestellt und sind klar personalisiert."
+      },
+      "defects": {
+        "title": "Defekte Produkte",
+        "content": "Wenn Ihr Buch mit Herstellungsfehlern ankommt (Druckfehler, Bindungsprobleme, Beschädigung beim Versand), kontaktieren Sie uns bitte innerhalb von 14 Tagen nach Erhalt. Wir werden einen kostenlosen Ersatz oder eine volle Rückerstattung einschließlich Versandkosten arrangieren."
+      },
+      "process": {
+        "title": "Stornierungsprozess",
+        "content": "Um eine Bestellung zu stornieren, kontaktieren Sie bitte unseren Kundenservice mit Ihrer Bestellnummer. Wir bearbeiten Stornierungen innerhalb von 24 Stunden an Werktagen."
+      }
+    },
+    "delivery": {
+      "title": "6. Lieferung & Versand",
+      "content": "Wir liefern weltweit mit zuverlässigen Versandpartnern.",
+      "timeframes": {
+        "title": "Lieferfristen",
+        "content": "Die Herstellung dauert typischerweise 3-5 Werktage plus Versandzeit. Versandzeiten variieren je nach Standort: 3-5 Tage für Inlandsbestellungen, 7-14 Tage für internationale Bestellungen. Dies sind Schätzungen und nicht garantiert."
+      },
+      "risk": {
+        "title": "Risiko und Eigentum",
+        "content": "Das Verlustrisiko geht auf Sie über, wenn die Ware an den Spediteur übergeben wird. Das Eigentum an den Produkten geht nach vollständiger Zahlung auf Sie über. Sie müssen für die Annahme der Lieferung verfügbar sein oder Vorkehrungen für den Empfang treffen."
+      },
+      "tracking": {
+        "title": "Bestellverfolgung",
+        "content": "Sie erhalten Sendungsinformationen, sobald Ihre Bestellung versandt wird. Wir empfehlen, Ihre Sendung zu überwachen und den Spediteur direkt bei Lieferproblemen zu kontaktieren."
+      }
+    },
+    "intellectualProperty": {
+      "title": "7. Geistige Eigentumsrechte",
+      "content": "Wir respektieren geistige Eigentumsrechte und definieren das Eigentum klar.",
+      "ourRights": {
+        "title": "Unser geistiges Eigentum",
+        "content": "Alle Inhalte, Funktionen und Funktionalitäten des Dienstes gehören KidBook Creator Ltd. und sind durch Urheberrecht, Warenzeichen und andere Gesetze zum geistigen Eigentum geschützt."
+      },
+      "yourRights": {
+        "title": "Ihre Rechte an gekauften Inhalten",
+        "content": "Nach vollständiger Zahlung erhalten Sie eine nicht-exklusive, nicht übertragbare Lizenz zur Nutzung Ihres gekauften Buches für persönliche, nicht-kommerzielle Zwecke. Sie dürfen die Inhalte ohne unsere schriftliche Zustimmung nicht reproduzieren, verbreiten oder kommerziell auswerten."
+      },
+      "aiContent": {
+        "title": "KI-generierte Inhalte",
+        "content": "KI-generierte Illustrationen und Inhalte sind Ihnen nur zur persönlichen Nutzung lizenziert. Wir behalten alle Rechte an den zugrundeliegenden KI-Modellen und Algorithmen."
+      }
+    },
+    "userContent": {
+      "title": "8. Nutzerinhalte & Verantwortlichkeiten",
+      "content": "Sie sind für die Inhalte verantwortlich, die Sie unserem Dienst zur Verfügung stellen.",
+      "warranties": {
+        "title": "Ihre Gewährleistungen",
+        "content": "Sie gewährleisten, dass Sie alle notwendigen Rechte an den von Ihnen bereitgestellten Inhalten haben, einschließlich Fotos und Texten. Sie bestätigen, dass Sie die Erlaubnis aller auf Fotos abgebildeten Personen haben oder dass Sie ihr gesetzlicher Vormund sind."
+      },
+      "prohibited": {
+        "title": "Verbotene Inhalte",
+        "content": "Sie dürfen keine Inhalte hochladen, die: illegal, bedrohend, verleumderisch, hassvoll oder diskriminierend sind; geistige Eigentumsrechte verletzen; urheberrechtlich geschützte Zeichen oder geschützte Markenzeichen enthalten; Datenschutzrechte verletzen; oder anderweitig unangemessen sind."
+      },
+      "indemnification": {
+        "title": "Freistellung",
+        "content": "Sie stimmen zu, uns von allen Ansprüchen, Schäden oder Aufwendungen freizustellen, die aus Ihrer Verletzung dieser Gewährleistungen oder Ihrer Nutzung des Dienstes resultieren."
+      }
+    },
+    "aiTerms": {
+      "title": "9. Bedingungen für KI-generierte Inhalte",
+      "content": "Unser Dienst nutzt künstliche Intelligenz zur Erstellung personalisierter Inhalte.",
+      "disclaimer": {
+        "title": "KI-Qualitätshinweis",
+        "content": "KI-generierte Inhalte können unerwartete oder unvollkommene Ergebnisse enthalten. Geringfügige Abweichungen in Stil, Farbe oder Interpretation gelten nicht als Fehler und sind Teil des kreativen Prozesses. Das KI-System unternimmt sein Bestes, um Ihren Spezifikationen zu entsprechen, kann aber keine perfekten Ergebnisse garantieren."
+      },
+      "editing": {
+        "title": "Vorschau und Bearbeitung",
+        "content": "Sie haben die Möglichkeit, KI-generierte Inhalte vor der endgültigen Bestellung zu überprüfen und zu bearbeiten. Wir empfehlen, alle Inhalte sorgfältig zu prüfen, bevor Sie zur Zahlung fortfahren."
+      },
+      "limitations": {
+        "title": "KI-Beschränkungen",
+        "content": "Unser KI-System kann urheberrechtlich geschützte Zeichen, Markenzeichen oder bestimmte reale Personen nicht perfekt reproduzieren. Ergebnisse sind künstlerische Interpretationen basierend auf Ihrer Eingabe."
+      }
+    },
+    "liability": {
+      "title": "10. Haftung & Gewährleistungsausschlüsse",
+      "content": "Unsere Haftung ist wie in diesem Abschnitt beschrieben begrenzt.",
+      "serviceAsIs": {
+        "title": "Dienst 'wie besehen' bereitgestellt",
+        "content": "Unser Dienst wird 'wie besehen' und 'wie verfügbar' bereitgestellt. Wir geben keine Gewährleistungen, ausdrücklich oder stillschweigend, über den Betrieb des Dienstes oder die darin enthaltenen Informationen, Inhalte oder Materialien."
+      },
+      "limitation": {
+        "title": "Haftungsbeschränkung",
+        "content": "Nach dem maximal zulässigen Umfang des Gesetzes beträgt unsere Gesamthaftung für jeden Anspruch aus diesen Bedingungen oder Ihrer Nutzung des Dienstes nicht mehr als den Kaufpreis des betreffenden Produkts. Wir sind nicht haftbar für indirekte, Folgeschäden oder Strafschäden."
+      },
+      "exceptions": {
+        "title": "Ausnahmen",
+        "content": "Einige Rechtsordnungen erlauben den Ausschluss oder die Beschränkung der Haftung für Folgeschäden oder zufällige Schäden, daher gelten diese Beschränkungen möglicherweise nicht für Sie."
+      }
+    },
+    "forceMajeure": {
+      "title": "11. Höhere Gewalt",
+      "content": "Wir sind nicht haftbar für Leistungsausfälle aufgrund von Umständen außerhalb unserer zumutbaren Kontrolle, einschließlich aber nicht beschränkt auf: Naturkatastrophen, Krieg, Terrorismus, Arbeitsstreitigkeiten, Regierungsmaßnahmen oder Ausfälle der Internetinfrastruktur. Während solcher Ereignisse können wir Dienste aussetzen oder kündigen und Rückerstattungen geben, wo angemessen."
+    },
+    "governingLaw": {
+      "title": "12. Geltendes Recht & Streitbeilegung",
+      "content": "Diese Bedingungen unterliegen den Gesetzen Irlands ohne Rücksicht auf Kollisionsrecht.",
+      "jurisdiction": {
+        "title": "Gerichtsbarkeit",
+        "content": "Jeder Streit, der aus diesen Bedingungen entsteht, wird vor den Gerichten Irlands beigelegt. Für EU-Verbraucher können zusätzliche Schutzrechte nach lokalen Verbrauchergesetzen gelten."
+      },
+      "arbitration": {
+        "title": "Schiedsverfahren",
+        "content": "Die meisten Streitigkeiten können über unseren Kundenserviceprozess gelöst werden. Für ungelöste Streitigkeiten bieten wir verbindliche Schiedsverfahren als Alternative zu Gerichtsverfahren an, außer für Ansprüche, die vor dem Kleinklagergericht geltend gemacht werden können."
+      }
+    },
+    "modifications": {
+      "title": "13. Änderungen der Bedingungen",
+      "content": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern.",
+      "changes": {
+        "title": "Benachrichtigung über Änderungen",
+        "content": "Bei wesentlichen Änderungen werden wir Sie per E-Mail oder prominenter Website-Mitteilung benachrichtigen. Geringfügige Änderungen werden sofort nach Veröffentlichung wirksam. Ihre fortgesetzte Nutzung des Dienstes nach Änderungen stellt die Annahme der geänderten Bedingungen dar."
+      },
+      "review": {
+        "title": "Regelmäßige Überprüfung",
+        "content": "Wir empfehlen Ihnen, diese Bedingungen regelmäßig zu überprüfen. Das Datum 'Zuletzt aktualisiert' am Anfang dieser Seite zeigt, wann diese Bedingungen zuletzt geändert wurden."
+      }
+    },
+    "contact": {
+      "title": "14. Kontaktinformationen",
+      "content": "Wenn Sie Fragen zu diesen Bedingungen haben, kontaktieren Sie uns bitte:",
+      "details": {
+        "email": "E-Mail: legal@kidbookcreator.com",
+        "address": "KidBook Creator Ltd. [Ihre Geschäftsadresse]",
+        "response": "Wir werden auf rechtliche Anfragen innerhalb von 5 Werktagen antworten."
+      }
+    }
+  }
+}
