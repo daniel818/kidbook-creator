@@ -1,0 +1,62 @@
+{
+  "sections": {
+    "quickLinks": {
+      "title": "Quick Links",
+      "myBooks": "My Books",
+      "createStory": "Create Story",
+      "community": "Community Books",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "about": "About Us"
+    },
+    "resources": {
+      "title": "Resources",
+      "howItWorks": "How It Works",
+      "samples": "Sample Stories",
+      "artStyles": "Art Styles",
+      "ageGroups": "Age Groups",
+      "blog": "Blog",
+      "helpCenter": "Help Center"
+    },
+    "legal": {
+      "title": "Legal & Trust",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy",
+      "refunds": "Refund Policy",
+      "shipping": "Shipping Info",
+      "contact": "Contact Us"
+    },
+    "newsletter": {
+      "title": "Stay Magical",
+      "subtitle": "Get story ideas, parenting tips, and exclusive offers",
+      "placeholder": "Enter your email address",
+      "button": "Subscribe",
+      "privacy": "We respect your privacy. Unsubscribe anytime.",
+      "comingSoon": "Newsletter functionality coming soon.",
+      "thankYou": "Thank you for your interest!",
+      "invalidEmail": "Please enter a valid email address",
+      "required": "Email is required"
+    },
+    "social": {
+      "title": "Follow Us",
+      "facebook": "Follow us on Facebook",
+      "instagram": "Follow us on Instagram",
+      "pinterest": "Follow us on Pinterest",
+      "tiktok": "Follow us on TikTok",
+      "linkedin": "Follow us on LinkedIn"
+    }
+  },
+  "bottom": {
+    "copyright": "© {{year}} KidBook Creator. All rights reserved.",
+    "madeWith": "Made with",
+    "love": "love",
+    "for": "for families everywhere"
+  },
+  "aria": {
+    "footerNavigation": "Footer navigation",
+    "socialMedia": "Social media links",
+    "newsletter": "Newsletter subscription",
+    "languageSelector": "Select language"
+  }
+}

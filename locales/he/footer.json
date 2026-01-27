@@ -1,0 +1,62 @@
+{
+  "sections": {
+    "quickLinks": {
+      "title": "קישורים מהירים",
+      "myBooks": "הספרים שלי",
+      "createStory": "צור סיפור",
+      "community": "ספרי הקהילה",
+      "pricing": "מחירים",
+      "faq": "שאלות נפוצות",
+      "about": "אודות"
+    },
+    "resources": {
+      "title": "משאבים",
+      "howItWorks": "איך זה עובד",
+      "samples": "סיפורי דוגמה",
+      "artStyles": "סגנונות אמנות",
+      "ageGroups": "קבוצות גיל",
+      "blog": "בלוג",
+      "helpCenter": "מרכז עזרה"
+    },
+    "legal": {
+      "title": "משפטי ואמון",
+      "privacy": "מדיניות פרטיות",
+      "terms": "תנאי שימוש",
+      "cookies": "מדיניות עוגיות",
+      "refunds": "מדיניות החזרות",
+      "shipping": "מידע משלוח",
+      "contact": "צור קשר"
+    },
+    "newsletter": {
+      "title": "הישאר קסום",
+      "subtitle": "קבל רעיונות לסיפורים, טיפים להורות והצעות בלעדיות",
+      "placeholder": "הזן את כתובת האימייל שלך",
+      "button": "הירשם",
+      "privacy": "אנו מכבדים את הפרטיות שלך. ניתן לבטל בכל עת.",
+      "comingSoon": "פונקציונליות הניוזלטר תגיע בקרוב.",
+      "thankYou": "תודה על ההתעניינות!",
+      "invalidEmail": "אנא הזן כתובת אימייל תקינה",
+      "required": "אימייל הוא שדה חובה"
+    },
+    "social": {
+      "title": "עקוב אחרינו",
+      "facebook": "עקוב אחרינו בפייסבוק",
+      "instagram": "עקוב אחרינו באינסטגרם",
+      "pinterest": "עקוב אחרינו בפינטרסט",
+      "tiktok": "עקוב אחרינו בטיקטוק",
+      "linkedin": "עקוב אחרינו בלינקדאין"
+    }
+  },
+  "bottom": {
+    "copyright": "© {{year}} KidBook Creator. כל הזכויות שמורות.",
+    "madeWith": "נעשה באהבה",
+    "love": "אהבה",
+    "for": "למשפחות בכל מקום"
+  },
+  "aria": {
+    "footerNavigation": "ניווט תחתון",
+    "socialMedia": "קישורי מדיה חברתית",
+    "newsletter": "הרשמה לניוזלטר",
+    "languageSelector": "בחר שפה"
+  }
+}
