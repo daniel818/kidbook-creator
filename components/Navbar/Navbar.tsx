@@ -23,14 +23,17 @@ export function Navbar() {
   const navLinks = [
     { label: t('communityBooks'), href: '/community', disabled: true },
     { label: t('pricing'), href: `/pricing`, disabled: false }, // Middleware will redirect to /{locale}/pricing
-    { label: t('faq'), href: '/faq', disabled: true },
+    { label: t('faq'), href: '/faq', disabled: false },
     { label: t('aboutUs'), href: '/about', disabled: true },
   ];
 
   const isActive = (href: string) => {
-    // Handle both locale and non-locale paths for pricing
+    // Handle both locale and non-locale paths for pricing and faq
     if (href === '/pricing') {
       return pathname === '/pricing' || pathname.includes('/pricing');
+    }
+    if (href === '/faq') {
+      return pathname === '/faq' || pathname.includes('/faq');
     }
     return pathname === href;
   };

@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "title": "Frequently Asked Questions - KidBook Creator",
+    "description": "Find answers to common questions about creating personalized AI-generated children's books, pricing, shipping, and more."
+  },
+  "heading": "Frequently Asked Questions",
+  "searchPlaceholder": "Search FAQs...",
+  "noResults": "No results found. Try different keywords or browse categories below.",
+  "showAll": "Show All",
+  "collapseAll": "Collapse All",
+  "relatedQuestions": "Related Questions",
+  "stillHaveQuestions": "Still have questions?",
+  "contactSupport": "Contact Support",
+  "categories": [
+    {
+      "id": "product-process",
+      "title": "Product & Process",
+      "faqs": [
+        {
+          "id": "ai-creation-process",
+          "question": "How does the AI book creation process work?",
+          "answer": "<p>Creating your personalized children's book is simple and takes just a few minutes:</p><ol><li><strong>Choose Your Story:</strong> Browse our collection of story themes and select one that fits your child's interests and age.</li><li><strong>Upload a Photo:</strong> Upload a clear, well-lit photo of your child. Our AI uses this to create a consistent character throughout the book.</li><li><strong>Customize Details:</strong> Add your child's name, select preferences, and personalize the dedication page.</li><li><strong>Preview & Edit:</strong> Review the AI-generated book and make any changes to text or request illustration regeneration if needed.</li><li><strong>Order:</strong> Choose between digital PDF or printed hardcover book delivery.</li></ol><p>The entire process typically takes 5-10 minutes, and you'll see a preview before finalizing your order.</p>",
+          "relatedFaqs": ["photo-upload", "customize-story"]
+        },
+        {
+          "id": "photo-upload",
+          "question": "How do I upload photos and what quality is needed?",
+          "answer": "<p>To get the best AI-generated character results, follow these photo guidelines:</p><h4>Photo Requirements:</h4><ul><li><strong>Resolution:</strong> Minimum 1024x1024 pixels (higher is better)</li><li><strong>Format:</strong> JPG or PNG files</li><li><strong>Face Visibility:</strong> Child's face should be clearly visible and facing forward</li><li><strong>Lighting:</strong> Well-lit photos with natural lighting work best</li><li><strong>Background:</strong> Simple, uncluttered backgrounds help the AI focus on the face</li><li><strong>Single Subject:</strong> One child per photo (no group photos)</li></ul><h4>Tips for Best Results:</h4><ul><li>Use recent photos taken in good lighting</li><li>Avoid blurry, dark, or heavily filtered images</li><li>Photos taken outdoors in natural light often work best</li><li>Make sure the child's eyes are open and face is not obscured</li></ul><p>You can upload multiple photos and choose the one that generates the best character representation.</p>",
+          "relatedFaqs": ["ai-creation-process", "ai-quality"]
+        },
+        {
+          "id": "customize-story",
+          "question": "Can I customize the story, text, and illustrations?",
+          "answer": "<p>Yes! We offer extensive customization options:</p><h4>Text Customization:</h4><ul><li>Edit any text in the story to personalize it further</li><li>Modify character names and details</li><li>Add or change the dedication message</li><li>Adjust story elements to fit your child's preferences</li></ul><h4>Illustration Options:</h4><ul><li>Request regeneration of specific illustrations if you're not satisfied</li><li>Choose from different art styles (depending on story theme)</li><li>Preview all changes before ordering</li></ul><h4>Character Customization:</h4><ul><li>Child's name appears throughout the story</li><li>AI generates character based on uploaded photo</li><li>Consistent character appearance across all pages</li></ul><p>All customization happens in the preview stage before you place your order, so you can perfect the book exactly how you want it.</p>",
+          "relatedFaqs": ["ai-creation-process", "photo-upload"]
+        },
+        {
+          "id": "languages-supported",
+          "question": "What languages do you support?",
+          "answer": "<p>We currently support the following languages for both the website interface and book content:</p><h4>Fully Supported Languages:</h4><ul><li><strong>English:</strong> Complete support for all features</li><li><strong>Hebrew:</strong> Full RTL (Right-to-Left) layout support</li><li><strong>German:</strong> Complete translation and localization</li></ul><h4>Book Content:</h4><p>You can create books in any of the supported languages. The AI generates age-appropriate, grammatically correct content in your selected language.</p><h4>Website Interface:</h4><p>The entire website, including navigation, checkout, and help content, is available in all supported languages. Simply use the language switcher in the navigation menu.</p><h4>Coming Soon:</h4><p>We're working on adding Spanish, French, and Arabic support. Sign up for our newsletter to be notified when new languages become available.</p>",
+          "relatedFaqs": ["ai-creation-process"]
+        },
+        {
+          "id": "ai-quality",
+          "question": "What if I'm not satisfied with the AI-generated results?",
+          "answer": "<p>We're committed to your satisfaction, and we provide several safeguards:</p><h4>Preview Before Ordering:</h4><p>You can review and edit the entire book before placing your order. This ensures you're completely happy with the result.</p><h4>Regeneration Options:</h4><ul><li>Request new illustrations if the AI doesn't capture your child's likeness well</li><li>Edit text to better fit your preferences</li><li>Try different photos for better character generation</li><li>No additional cost for regeneration during the creation process</li></ul><h4>AI Quality Disclaimer:</h4><p>Our AI technology creates unique, personalized books, but results may vary based on photo quality and complexity. Minor artistic variations are normal and part of the AI's creative interpretation.</p><h4>What Qualifies as a Defect:</h4><ul><li>Printing errors or physical damage</li><li>Missing pages or incorrect binding</li><li>Significant deviation from approved preview</li></ul><h4>What's Not Considered a Defect:</h4><ul><li>Minor artistic variations in AI-generated illustrations</li><li>Slight differences from the digital preview (due to printing)</li><li>Personal preference differences in art style</li></ul><p>If you receive a defective book, we offer a full refund or replacement within 14 days of delivery.</p>",
+          "relatedFaqs": ["photo-upload", "return-policy"]
+        },
+        {
+          "id": "digital-vs-physical",
+          "question": "Can I order a digital version or only physical books?",
+          "answer": "<p>We offer both digital and physical book options:</p><h4>Digital PDF Book:</h4><ul><li><strong>Price:</strong> Available as part of your order</li><li><strong>Delivery:</strong> Instant download after order completion</li><li><strong>Format:</strong> High-resolution PDF optimized for screen viewing</li><li><strong>Use:</strong> View on tablets, computers, or e-readers</li><li><strong>Sharing:</strong> Personal use only (not for commercial distribution)</li></ul><h4>Physical Hardcover Book:</h4><ul><li><strong>Format:</strong> Premium hardcover with glossy pages</li><li><strong>Size:</strong> 8.5\" x 11\" (standard children's book size)</li><li><strong>Pages:</strong> 24-32 pages depending on story</li><li><strong>Quality:</strong> Professional printing with vibrant colors</li><li><strong>Delivery:</strong> Ships within 5-7 business days</li></ul><h4>Bundle Option:</h4><p>Order both digital and physical together for the best value. The digital version is perfect for immediate enjoyment while waiting for the printed book to arrive.</p>",
+          "relatedFaqs": ["pricing-options", "shipping-delivery"]
+        }
+      ]
+    },
+    {
+      "id": "pricing-payments",
+      "title": "Pricing & Payments",
+      "faqs": [
+        {
+          "id": "pricing-options",
+          "question": "What are your pricing options and discounts?",
+          "answer": "<p>We offer transparent, straightforward pricing with no hidden fees:</p><h4>Single Book Pricing:</h4><ul><li><strong>Digital PDF:</strong> Included with physical book order</li><li><strong>Physical Hardcover:</strong> $32.99 per book</li><li><strong>Shipping:</strong> Free on orders over $50, otherwise $5.99</li></ul><h4>Multi-Book Discounts:</h4><ul><li><strong>2-3 Books:</strong> 15% off additional books ($28.04 each)</li><li><strong>4+ Books:</strong> 20% off additional books ($26.39 each)</li><li><strong>Free Shipping:</strong> Automatically applied on orders of 2+ books</li></ul><h4>Promotional Offers:</h4><ul><li><strong>Newsletter Signup:</strong> $5 off your first order</li><li><strong>Seasonal Sales:</strong> 15-20% off during major holidays</li><li><strong>Referral Program:</strong> Earn $10 credit for each friend who orders</li></ul><h4>Payment Methods:</h4><p>We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, and Apple Pay.</p><h4>Currency:</h4><p>Prices displayed in your local currency based on your location. No currency conversion fees.</p>",
+          "relatedFaqs": ["shipping-delivery"]
+        }
+      ]
+    },
+    {
+      "id": "shipping-delivery",
+      "title": "Shipping & Delivery",
+      "faqs": [
+        {
+          "id": "shipping-delivery",
+          "question": "What is your shipping and delivery policy?",
+          "answer": "<p>We provide reliable shipping with clear timelines:</p><h4>Production Time:</h4><ul><li><strong>AI Generation:</strong> Instant (during creation process)</li><li><strong>Book Printing:</strong> 3-5 business days after order</li><li><strong>Quality Check:</strong> 1 business day</li><li><strong>Total Production:</strong> 4-6 business days</li></ul><h4>Shipping Options:</h4><ul><li><strong>Standard Shipping:</strong> 5-7 business days (Free on orders $50+)</li><li><strong>Expedited Shipping:</strong> 2-3 business days (+$12.99)</li><li><strong>Express Shipping:</strong> 1-2 business days (+$24.99)</li></ul><h4>International Shipping:</h4><ul><li><strong>Europe:</strong> 7-14 business days</li><li><strong>Other Regions:</strong> 10-21 business days</li><li><strong>Customs:</strong> Customer responsible for any import duties/taxes</li></ul><h4>Order Tracking:</h4><p>You'll receive a tracking number via email once your book ships. Track your order in real-time through our website or the carrier's website.</p><h4>Delivery Issues:</h4><p>If your book doesn't arrive within the expected timeframe, contact our support team and we'll investigate immediately.</p>",
+          "relatedFaqs": ["pricing-options", "cancellation-policy"]
+        }
+      ]
+    },
+    {
+      "id": "legal-policies",
+      "title": "Legal & Policies",
+      "faqs": [
+        {
+          "id": "cancellation-policy",
+          "question": "What is your cancellation and refund policy?",
+          "answer": "<p>We want you to be completely satisfied with your purchase. Here's our cancellation policy:</p><h4>Cancellation Window:</h4><ul><li><strong>Before Production:</strong> Full refund if cancelled within 48 hours of order placement and before printing begins</li><li><strong>During Production:</strong> Cannot cancel once book enters printing (typically 48 hours after order)</li><li><strong>After Shipping:</strong> Cannot cancel, but return policy applies for defective books</li></ul><h4>How to Cancel:</h4><ol><li>Email support with your order number</li><li>We'll confirm if your order is eligible for cancellation</li><li>Refund processed within 5-7 business days to original payment method</li></ol><h4>Personalized Product Notice:</h4><p>As personalized products are made specifically for you, they cannot be cancelled once production begins. This is standard industry practice and complies with consumer protection laws (EU Consumer Rights Directive Article 16(c)).</p><h4>Exceptions:</h4><ul><li>Defective or damaged books can be returned for full refund (see Return Policy)</li><li>Significant errors in production qualify for refund or replacement</li></ul><p>We'll always work with you to find a fair solution if issues arise.</p>",
+          "relatedFaqs": ["return-policy", "shipping-delivery"]
+        },
+        {
+          "id": "return-policy",
+          "question": "What is your return policy for defective books?",
+          "answer": "<p>We stand behind the quality of our books and offer a comprehensive return policy for defective products:</p><h4>Return Eligibility:</h4><ul><li><strong>Timeframe:</strong> Report defects within 14 days of delivery</li><li><strong>Condition:</strong> Book must be in original condition (unread or gently read)</li><li><strong>Proof Required:</strong> Photos of the defect must be provided</li></ul><h4>What Qualifies as Defective:</h4><ul><li>Printing errors (blurry images, color issues, text errors)</li><li>Physical damage (torn pages, broken binding, damaged cover)</li><li>Missing pages or incorrect page order</li><li>Significant deviation from approved preview</li><li>Books damaged during shipping</li></ul><h4>What's Not Considered Defective:</h4><ul><li>Minor color variations from digital preview (normal in printing)</li><li>AI artistic interpretation differences</li><li>Personal preference regarding art style</li><li>Minor imperfections in AI-generated illustrations</li></ul><h4>Return Process:</h4><ol><li>Contact support within 14 days with photos of the defect</li><li>We'll review and approve your return request</li><li>We provide a prepaid return shipping label (free for defects)</li><li>Choose between full refund or replacement book</li><li>Refund processed within 5-7 business days after we receive the return</li></ol><h4>Our Guarantee:</h4><p>If your book is defective, we'll make it right with a full refund or free replacement—your choice. No questions asked.</p>",
+          "relatedFaqs": ["cancellation-policy", "ai-quality"]
+        },
+        {
+          "id": "data-privacy",
+          "question": "How do you protect my personal data and photos?",
+          "answer": "<p>We take your privacy and data security very seriously:</p><h4>Data Collection:</h4><ul><li><strong>Personal Information:</strong> Name, email, shipping address, payment info</li><li><strong>Photos:</strong> Images uploaded for book creation only</li><li><strong>Usage Data:</strong> Website analytics for improving user experience</li></ul><h4>Photo Storage & Deletion:</h4><ul><li><strong>Storage Duration:</strong> Photos stored for 90 days after order completion</li><li><strong>Automatic Deletion:</strong> Photos automatically deleted after 90 days</li><li><strong>Early Deletion:</strong> Request immediate deletion by contacting support</li><li><strong>Secure Storage:</strong> All photos encrypted and stored on secure servers</li></ul><h4>Data Protection Compliance:</h4><ul><li><strong>GDPR Compliant:</strong> Full compliance with EU data protection regulations</li><li><strong>CCPA Compliant:</strong> California Consumer Privacy Act compliance</li><li><strong>No Third-Party Sharing:</strong> We never sell or share your data with third parties</li><li><strong>Secure Processing:</strong> All payment processing through PCI-compliant providers</li></ul><h4>Your Rights:</h4><ul><li><strong>Access:</strong> Request a copy of your personal data</li><li><strong>Deletion:</strong> Request deletion of your data at any time</li><li><strong>Correction:</strong> Update or correct your information</li><li><strong>Opt-Out:</strong> Unsubscribe from marketing emails anytime</li></ul><h4>Security Measures:</h4><ul><li>SSL encryption for all data transmission</li><li>Secure, encrypted database storage</li><li>Regular security audits and updates</li><li>Limited employee access to personal data</li></ul><p>For complete details, please review our <a href=\"/privacy-policy\">Privacy Policy</a> and <a href=\"/cookies\">Cookie Policy</a>.</p>",
+          "relatedFaqs": ["ai-creation-process"]
+        }
+      ]
+    }
+  ]
+}
