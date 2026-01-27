@@ -59,8 +59,6 @@ export default function Footer() {
             <Link href="/samples" onClick={(e) => handleComingSoon(e, 'Sample Stories')}>{t('sections.resources.samples')}</Link>
             <Link href="/art-styles" onClick={(e) => handleComingSoon(e, 'Art Styles')}>{t('sections.resources.artStyles')}</Link>
             <Link href="/age-groups" onClick={(e) => handleComingSoon(e, 'Age Groups')}>{t('sections.resources.ageGroups')}</Link>
-            <Link href="/blog" onClick={(e) => handleComingSoon(e, 'Blog')}>{t('sections.resources.blog')}</Link>
-            <Link href="/help" onClick={(e) => handleComingSoon(e, 'Help Center')}>{t('sections.resources.helpCenter')}</Link>
           </FooterSection>
 
           <FooterSection title={t('sections.legal.title')}>

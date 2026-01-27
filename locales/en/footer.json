@@ -14,9 +14,7 @@
       "howItWorks": "How It Works",
       "samples": "Sample Stories",
       "artStyles": "Art Styles",
-      "ageGroups": "Age Groups",
-      "blog": "Blog",
-      "helpCenter": "Help Center"
+      "ageGroups": "Age Groups"
     },
     "legal": {
       "title": "Legal & Trust",
@@ -41,14 +39,11 @@
     "social": {
       "title": "Follow Us",
       "facebook": "Follow us on Facebook",
-      "instagram": "Follow us on Instagram",
-      "pinterest": "Follow us on Pinterest",
-      "tiktok": "Follow us on TikTok",
-      "linkedin": "Follow us on LinkedIn"
+      "instagram": "Follow us on Instagram"
     }
   },
   "bottom": {
-    "copyright": "© {{year}} KidBook Creator. All rights reserved.",
+    "copyright": " KidBook Creator. All rights reserved.",
     "madeWith": "Made with",
     "love": "love",
     "for": "for families everywhere"

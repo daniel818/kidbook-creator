@@ -10,12 +10,7 @@ export default function FooterBottom() {
   const { t, i18n } = useTranslation('footer');
   const currentYear = new Date().getFullYear();
 
-  const paymentMethods = [
-    { name: 'Visa', icon: '💳' },
-    { name: 'Mastercard', icon: '💳' },
-    { name: 'PayPal', icon: '💰' },
-    { name: 'Stripe', icon: '💳' },
-  ];
+  const paymentMethods: Array<{ name: string; icon: string }> = [];
 
   return (
     <div className={styles.container}>

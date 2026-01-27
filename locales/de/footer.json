@@ -14,9 +14,7 @@
       "howItWorks": "So funktioniert's",
       "samples": "Beispielgeschichten",
       "artStyles": "Kunststile",
-      "ageGroups": "Altersgruppen",
-      "blog": "Blog",
-      "helpCenter": "Hilfe-Center"
+      "ageGroups": "Altersgruppen"
     },
     "legal": {
       "title": "Rechtliches & Vertrauen",
@@ -41,10 +39,7 @@
     "social": {
       "title": "Folge uns",
       "facebook": "Folge uns auf Facebook",
-      "instagram": "Folge uns auf Instagram",
-      "pinterest": "Folge uns auf Pinterest",
-      "tiktok": "Folge uns auf TikTok",
-      "linkedin": "Folge uns auf LinkedIn"
+      "instagram": "Folge uns auf Instagram"
     }
   },
   "bottom": {
