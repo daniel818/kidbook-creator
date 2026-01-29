@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { PricingCard } from '@/components/PricingCard';
+import { PricingCard } from '@/components/PricingCard/PricingCard';
 import styles from './PricingMatrix.module.css';
 
 interface PricingMatrixProps {

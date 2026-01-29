@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthProvider } from "@/lib/auth/AuthContext";
 import { I18nProvider } from "@/lib/i18n/provider";
-import Footer from "@/components/Footer";
+import Footer from "@/components/Footer/Footer";
 import "./globals.css";
 import "./rtl.css";
 

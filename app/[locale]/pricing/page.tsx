@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
-import { PricingMatrix } from '@/components/PricingMatrix';
-import { PricingFAQ } from '@/components/PricingFAQ';
+import { PricingMatrix } from '@/components/PricingMatrix/PricingMatrix';
+import { PricingFAQ } from '@/components/PricingFAQ/PricingFAQ';
 import styles from './page.module.css';
 
 export default function PricingPage() {

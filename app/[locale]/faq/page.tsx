@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
-import { FAQList } from '@/components/FAQ';
+import FAQList from '@/components/FAQ/FAQList';
 import { FAQData } from '@/lib/faq/types';
 
 export default function FAQPage() {
