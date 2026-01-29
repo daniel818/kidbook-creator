@@ -24,22 +24,6 @@
       "refunds": "Rückgaberecht",
       "shipping": "Versandinformationen",
       "contact": "Kontakt"
-    },
-    "newsletter": {
-      "title": "Bleib magisch",
-      "subtitle": "Erhalte Geschichtenideen, Erziehungstipps und exklusive Angebote",
-      "placeholder": "Gib deine E-Mail-Adresse ein",
-      "button": "Abonnieren",
-      "privacy": "Wir respektieren deine Privatsphäre. Jederzeit abbestellbar.",
-      "comingSoon": "Newsletter-Funktion kommt bald.",
-      "thankYou": "Vielen Dank für dein Interesse!",
-      "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein",
-      "required": "E-Mail ist erforderlich"
-    },
-    "social": {
-      "title": "Folge uns",
-      "facebook": "Folge uns auf Facebook",
-      "instagram": "Folge uns auf Instagram"
     }
   },
   "bottom": {

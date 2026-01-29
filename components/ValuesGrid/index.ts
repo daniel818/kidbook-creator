@@ -1,1 +1,0 @@
-export { ValuesGrid } from './ValuesGrid';

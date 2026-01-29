@@ -80,6 +80,7 @@ export function generateAnchorId(faqId: string): string {
  * Scroll to FAQ by ID
  */
 export function scrollToFAQ(faqId: string): void {
+  if (typeof window === 'undefined') return;
   const element = document.getElementById(generateAnchorId(faqId));
   if (element) {
     element.scrollIntoView({ behavior: 'smooth', block: 'start' });

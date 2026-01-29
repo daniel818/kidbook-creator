@@ -1,1 +1,0 @@
-export { TeamPhotos } from './TeamPhotos';

@@ -4,8 +4,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import FooterSection from './components/FooterSection';
-import NewsletterForm from './components/NewsletterForm';
-import SocialLinks from './components/SocialLinks';
 import FooterBottom from './components/FooterBottom';
 import styles from './Footer.module.css';
 
@@ -28,11 +26,6 @@ export default function Footer() {
             name: 'KidBook Creator',
             url: 'https://kidbookcreator.com',
             logo: 'https://kidbookcreator.com/logo.png',
-            sameAs: [
-              'https://facebook.com/kidbookcreator',
-              'https://instagram.com/kidbookcreator',
-              'https://pinterest.com/kidbookcreator',
-            ],
             contactPoint: {
               '@type': 'ContactPoint',
               contactType: 'Customer Service',
@@ -70,10 +63,6 @@ export default function Footer() {
             <Link href="/contact" onClick={(e) => handleComingSoon(e, 'Contact Us')}>{t('sections.legal.contact')}</Link>
           </FooterSection>
 
-          <div className={styles.newsletterSection}>
-            <NewsletterForm />
-            <SocialLinks />
-          </div>
         </nav>
 
         <FooterBottom />
