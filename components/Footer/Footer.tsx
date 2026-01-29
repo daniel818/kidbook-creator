@@ -3,12 +3,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import FooterSection from './components/FooterSection';
-import FooterBottom from './components/FooterBottom';
 import styles from './Footer.module.css';
 
 export default function Footer() {
-  const { t } = useTranslation('footer');
+  const { t, i18n } = useTranslation('footer');
 
   const handleComingSoon = (e: React.MouseEvent<HTMLAnchorElement>, pageName: string) => {
     e.preventDefault();
@@ -38,34 +36,77 @@ export default function Footer() {
 
       <div className={styles.container}>
         <nav className={styles.grid} aria-label={t('aria.footerNavigation')}>
-          <FooterSection title={t('sections.quickLinks.title')}>
-            <Link href="/mybooks">{t('sections.quickLinks.myBooks')}</Link>
-            <Link href="/create">{t('sections.quickLinks.createStory')}</Link>
-            <Link href="/community" onClick={(e) => handleComingSoon(e, 'Community Books')}>{t('sections.quickLinks.community')}</Link>
-            <Link href="/pricing">{t('sections.quickLinks.pricing')}</Link>
-            <Link href="/faq">{t('sections.quickLinks.faq')}</Link>
-            <Link href="/about">{t('sections.quickLinks.about')}</Link>
-          </FooterSection>
+          {/* Quick Links Section */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>{t('sections.quickLinks.title')}</h2>
+            <div className={styles.sectionContent}>
+              <Link href="/mybooks">{t('sections.quickLinks.myBooks')}</Link>
+              <Link href="/create">{t('sections.quickLinks.createStory')}</Link>
+              <Link href="/community" onClick={(e) => handleComingSoon(e, 'Community Books')}>{t('sections.quickLinks.community')}</Link>
+              <Link href="/pricing">{t('sections.quickLinks.pricing')}</Link>
+              <Link href="/faq">{t('sections.quickLinks.faq')}</Link>
+              <Link href="/about">{t('sections.quickLinks.about')}</Link>
+            </div>
+          </div>
 
-          <FooterSection title={t('sections.resources.title')}>
-            <Link href="/how-it-works" onClick={(e) => handleComingSoon(e, 'How It Works')}>{t('sections.resources.howItWorks')}</Link>
-            <Link href="/samples" onClick={(e) => handleComingSoon(e, 'Sample Stories')}>{t('sections.resources.samples')}</Link>
-            <Link href="/art-styles" onClick={(e) => handleComingSoon(e, 'Art Styles')}>{t('sections.resources.artStyles')}</Link>
-            <Link href="/age-groups" onClick={(e) => handleComingSoon(e, 'Age Groups')}>{t('sections.resources.ageGroups')}</Link>
-          </FooterSection>
-
-          <FooterSection title={t('sections.legal.title')}>
-            <Link href="/privacy">{t('sections.legal.privacy')}</Link>
-            <Link href="/terms">{t('sections.legal.terms')}</Link>
-            <Link href="/privacy#cookies">{t('sections.legal.cookies')}</Link>
-            <Link href="/terms#cancellation">{t('sections.legal.refunds')}</Link>
-            <Link href="/terms#cancellation">{t('sections.legal.shipping')}</Link>
-            <Link href="/contact" onClick={(e) => handleComingSoon(e, 'Contact Us')}>{t('sections.legal.contact')}</Link>
-          </FooterSection>
-
+          {/* Legal Section */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>{t('sections.legal.title')}</h2>
+            <div className={styles.sectionContent}>
+              <Link href="/privacy">{t('sections.legal.privacy')}</Link>
+              <Link href="/terms">{t('sections.legal.terms')}</Link>
+              <Link href="/privacy#cookies">{t('sections.legal.cookies')}</Link>
+              <Link href="/terms#cancellation">{t('sections.legal.refunds')}</Link>
+              <Link href="/terms#cancellation">{t('sections.legal.shipping')}</Link>
+              <Link href="/about#contact">{t('sections.legal.contact')}</Link>
+            </div>
+          </div>
         </nav>
 
-        <FooterBottom />
+        {/* Footer Bottom */}
+        <div className={styles.bottom}>
+          <div className={styles.bottomContent}>
+            <div className={styles.left}>
+              <Link href="/" className={styles.logoLink} aria-label="KidBook Creator Home">
+                <div className={styles.logo}>
+                  <span className={styles.logoIcon}>📚</span>
+                  <span className={styles.logoText}>KidBook Creator</span>
+                </div>
+              </Link>
+              <p className={styles.copyright}>
+                {t('bottom.copyright', { year: new Date().getFullYear() })}
+              </p>
+            </div>
+
+            <div className={styles.right}>
+              <div className={styles.languages}>
+                <button
+                  onClick={() => i18n.changeLanguage('en')}
+                  className={`${styles.langButton} ${i18n.language === 'en' ? styles.active : ''}`}
+                  aria-label="Switch to English"
+                >
+                  EN
+                </button>
+                <span className={styles.separator}>|</span>
+                <button
+                  onClick={() => i18n.changeLanguage('de')}
+                  className={`${styles.langButton} ${i18n.language === 'de' ? styles.active : ''}`}
+                  aria-label="Auf Deutsch wechseln"
+                >
+                  DE
+                </button>
+                <span className={styles.separator}>|</span>
+                <button
+                  onClick={() => i18n.changeLanguage('he')}
+                  className={`${styles.langButton} ${i18n.language === 'he' ? styles.active : ''}`}
+                  aria-label="עבור לעברית"
+                >
+                  HE
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   );

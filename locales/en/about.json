@@ -15,9 +15,14 @@
     "comingSoon": "Photo Coming Soon"
   },
   "cta": {
-    "heading": "Ready to Create Your Story?",
-    "description": "Join thousands of parents creating meaningful stories for their children.",
+    "heading": "Ready to Create Magic?",
+    "description": "Join thousands of families creating personalized stories that bring joy and wonder to children around the world.",
     "primary": "Start Creating",
     "secondary": "Explore Our Books"
+  },
+  "contact": {
+    "heading": "Get in Touch",
+    "description": "Have questions or need help? We'd love to hear from you!",
+    "button": "Contact Us"
   }
 }

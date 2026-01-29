@@ -15,9 +15,14 @@
     "comingSoon": "Foto folgt in Kürze"
   },
   "cta": {
-    "heading": "Bereit, Ihre Geschichte zu erschaffen?",
-    "description": "Schließen Sie sich Tausenden von Eltern an, die bedeutungsvolle Geschichten für ihre Kinder erschaffen.",
+    "heading": "Bereit, Magie zu erschaffen?",
+    "description": "Schließen Sie sich Tausenden von Familien an, die personalisierte Geschichten erstellen, die Kindern auf der ganzen Welt Freude und Staunen bringen.",
     "primary": "Jetzt erstellen",
     "secondary": "Entdecken Sie unsere Bücher"
+  },
+  "contact": {
+    "heading": "Kontaktieren Sie uns",
+    "description": "Haben Sie Fragen oder benötigen Hilfe? Wir freuen uns von Ihnen zu hören!",
+    "button": "Kontakt aufnehmen"
   }
 }
