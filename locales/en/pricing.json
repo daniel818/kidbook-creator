@@ -20,9 +20,17 @@
     "printedFeature2": "Premium paper quality",
     "printedFeature3": "Shipping to your door"
   },
+  "hero": {
+    "description": "Create magical personalized books for your little ones. Choose the perfect package for your story!"
+  },
   "cta": {
     "primary": "Start Creating",
-    "secondary": "Learn More"
+    "secondary": "Learn More",
+    "title": "Ready to create your magical story?",
+    "subtitle": "Start bringing your child's imagination to life today!"
+  },
+  "footer": {
+    "tagline": "Where every child becomes the hero of their own story"
   },
   "faq": {
     "title": "Pricing Questions",

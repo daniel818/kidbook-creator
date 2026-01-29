@@ -20,9 +20,17 @@
     "printedFeature2": "Premium-Papierqualität",
     "printedFeature3": "Versand nach Hause"
   },
+  "hero": {
+    "description": "Erstellen Sie magische personalisierte Bücher für Ihre Kleinen. Wählen Sie das perfekte Paket für Ihre Geschichte!"
+  },
   "cta": {
     "primary": "Jetzt erstellen",
-    "secondary": "Mehr erfahren"
+    "secondary": "Mehr erfahren",
+    "title": "Bereit, Ihre magische Geschichte zu erschaffen?",
+    "subtitle": "Erwecken Sie die Fantasie Ihres Kindes noch heute zum Leben!"
+  },
+  "footer": {
+    "tagline": "Wo jedes Kind zum Helden seiner eigenen Geschichte wird"
   },
   "faq": {
     "title": "Preisfragen",

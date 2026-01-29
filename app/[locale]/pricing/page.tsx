@@ -51,7 +51,7 @@ export default function PricingPage() {
             </h1>
 
             <p className={styles.heroDescription}>
-              Create magical personalized books for your little ones. Choose the perfect package for your story!
+              {t('hero.description')}
             </p>
 
             <button className={styles.ctaPrimary} onClick={handleCreateBook}>
@@ -86,8 +86,8 @@ export default function PricingPage() {
           </div>
           <div className={styles.ctaContent}>
             <span className={styles.ctaEmoji}>🎉</span>
-            <h2 className={styles.ctaTitle}>Ready to create your magical story?</h2>
-            <p className={styles.ctaSubtitle}>Start bringing your child's imagination to life today!</p>
+            <h2 className={styles.ctaTitle}>{t('cta.title')}</h2>
+            <p className={styles.ctaSubtitle}>{t('cta.subtitle')}</p>
             <button className={styles.ctaButton} onClick={handleCreateBook}>
               <span className={styles.ctaButtonIcon}>📖</span>
               {t('cta.primary')}
@@ -107,7 +107,7 @@ export default function PricingPage() {
               <span className={styles.footerName}>KidBook Creator</span>
             </div>
             <p className={styles.footerTagline}>
-              Where every child becomes the hero of their own story
+              {t('footer.tagline')}
             </p>
           </div>
         </footer>

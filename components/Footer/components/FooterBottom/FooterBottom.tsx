@@ -10,8 +10,6 @@ export default function FooterBottom() {
   const { t, i18n } = useTranslation('footer');
   const currentYear = new Date().getFullYear();
 
-  const paymentMethods: Array<{ name: string; icon: string }> = [];
-
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -52,19 +50,6 @@ export default function FooterBottom() {
             >
               HE
             </button>
-          </div>
-
-          <div className={styles.payments}>
-            {paymentMethods.map((method) => (
-              <span
-                key={method.name}
-                className={styles.paymentIcon}
-                title={method.name}
-                aria-label={method.name}
-              >
-                {method.icon}
-              </span>
-            ))}
           </div>
         </div>
       </div>
