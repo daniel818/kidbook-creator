@@ -6,11 +6,10 @@
   "heading": "Häufig gestellte Fragen",
   "searchPlaceholder": "FAQs durchsuchen...",
   "noResults": "Keine Ergebnisse gefunden. Versuchen Sie andere Suchbegriffe oder durchsuchen Sie die Kategorien unten.",
-  "showAll": "Alle anzeigen",
-  "collapseAll": "Alle einklappen",
   "relatedQuestions": "Verwandte Fragen",
-  "stillHaveQuestions": "Haben Sie noch Fragen?",
-  "contactSupport": "Support kontaktieren",
+  "stillHaveQuestions": "Kontaktieren Sie uns",
+  "contactDescription": "Haben Sie Fragen oder benötigen Hilfe? Wir freuen uns von Ihnen zu hören!",
+  "contactSupport": "Kontakt aufnehmen",
   "categories": [
     {
       "id": "book-creation",

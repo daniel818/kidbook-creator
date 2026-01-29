@@ -3,8 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
-import { LegalPage } from '@/components/Legal';
-import { TermsData } from '@/lib/legal/types';
+import styles from './page.module.css';
+
+interface TermsData {
+  meta: {
+    title: string;
+    lastUpdated: string;
+  };
+  sections: Array<{
+    title: string;
+    content: string;
+  }>;
+}
 
 export default function TermsPage() {
   const { i18n } = useTranslation();
@@ -17,7 +27,6 @@ export default function TermsPage() {
         const termsData = await import(`@/locales/${locale}/terms.json`);
         setData(termsData.default);
       } catch (error) {
-        // Fallback to English if locale not found
         const termsData = await import('@/locales/en/terms.json');
         setData(termsData.default);
       }
@@ -29,8 +38,10 @@ export default function TermsPage() {
     return (
       <>
         <Navbar />
-        <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-          <div style={{ textAlign: 'center', padding: '3rem 0' }}>Loading...</div>
+        <main className={styles.legalPage}>
+          <div className={styles.container}>
+            <div style={{ textAlign: 'center', padding: '3rem 0' }}>Loading...</div>
+          </div>
         </main>
       </>
     );
@@ -39,7 +50,27 @@ export default function TermsPage() {
   return (
     <>
       <Navbar />
-      <LegalPage data={data} type="terms" />
+      <main className={styles.legalPage}>
+        <div className={styles.container}>
+          <header className={styles.header}>
+            <h1 className={styles.title}>{data.meta.title}</h1>
+            <p className={styles.meta}>{data.meta.lastUpdated}</p>
+          </header>
+
+          <div className={styles.content}>
+            {data.sections.map((section, index) => (
+              <section key={index} className={styles.section}>
+                <h2 className={styles.sectionTitle}>{section.title}</h2>
+                <p className={styles.sectionContent}>{section.content}</p>
+              </section>
+            ))}
+          </div>
+
+          <footer className={styles.footer}>
+            <p>This document is legally binding. Please read it carefully.</p>
+          </footer>
+        </div>
+      </main>
     </>
   );
 }

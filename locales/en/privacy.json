@@ -4,390 +4,106 @@
     "lastUpdated": "Last updated: January 27, 2026",
     "version": "Version 1.0"
   },
-  "controller": {
-    "title": "Data Controller Information",
-    "content": "KidBook Creator Ltd. ('we', 'us', 'our') is the data controller responsible for your personal information.",
-    "details": {
-      "company": "KidBook Creator Ltd.",
-      "email": "Email: privacy@kidbookcreator.com",
-      "address": "[Your Business Address]",
-      "phone": "Phone: [Your Phone Number]"
-    }
-  },
-  "dataCollection": {
-    "title": "Data We Collect",
-    "introduction": "We collect different types of information to provide and improve our Service.",
-    "categories": {
-      "personal": {
-        "title": "Personal Information",
-        "description": "Information that identifies you as an individual",
-        "examples": [
-          "Name and contact information (email, phone)",
-          "Billing and shipping addresses",
-          "Account credentials (encrypted password)",
-          "Personalization data (names, story choices)"
-        ]
-      },
-      "photos": {
-        "title": "Photos and Images",
-        "description": "Images you upload for character personalization",
-        "examples": [
-          "Profile photos for character generation",
-          "Optional additional reference photos",
-          "Photos used only for illustration creation"
-        ]
-      },
-      "technical": {
-        "title": "Technical Data",
-        "description": "Information collected automatically when you use our Service",
-        "examples": [
-          "IP address and location information",
-          "Browser type, operating system, and device data",
-          "Pages visited and time spent on pages",
-          "Click behavior and interactions"
-        ]
-      },
-      "usage": {
-        "title": "Usage Data",
-        "description": "Information about how you use our Service",
-        "examples": [
-          "Book creation process and preferences",
-          "Book generation parameters and results",
-          "Order history and purchase patterns",
-          "Customer service communications"
-        ]
-      },
-      "communications": {
-        "title": "Communications Data",
-        "description": "Information when you contact us",
-        "examples": [
-          "Email messages and attachments",
-          "Customer support chat transcripts",
-          "Feedback and survey responses"
-        ]
-      }
+  "sections": [
+    {
+      "title": "Data Controller Information",
+      "content": "KidBook Creator Ltd. ('we', 'us', 'our') is the data controller responsible for your personal information."
     },
-    "required": {
+    {
       "title": "Required vs. Optional Data",
       "content": "Some information is required to provide our Service (name, email for account creation), while other information is optional (additional photos, survey responses). We will specify what is required during the collection process."
-    }
-  },
-  "legalBasis": {
-    "title": "Legal Basis for Processing",
-    "introduction": "We only process your personal data when we have a valid legal basis under applicable law.",
-    "bases": {
-      "contract": {
-        "title": "Performance of Contract",
-        "content": "We process data necessary to fulfill our contractual obligations, such as processing orders, delivering books, and providing customer service."
-      },
-      "interest": {
-        "title": "Legitimate Interest",
-        "content": "We process data when we have a legitimate interest, such as improving our Service, preventing fraud, ensuring security, and analyzing usage patterns."
-      },
-      "consent": {
-        "title": "Consent",
-        "content": "We process data based on your explicit consent, such as for marketing communications, non-essential cookies, and newsletter subscriptions."
-      },
-      "legal": {
-        "title": "Legal Obligation",
-        "content": "We process data to comply with legal requirements, such as tax record keeping (7 years) and responding to legal requests."
-      }
-    }
-  },
-  "purpose": {
-    "title": "How We Use Your Data",
-    "introduction": "We use your personal data for specific purposes explained in this section.",
-    "purposes": [
-      {
-        "title": "Service Provision",
-        "description": "Process orders, generate personalized books, and deliver products"
-      },
-      {
-        "title": "Customer Service",
-        "description": "Respond to inquiries, resolve issues, and provide support"
-      },
-      {
-        "title": "Service Improvement",
-        "description": "Analyze usage patterns, optimize features, and develop new functionality"
-      },
-      {
-        "title": "Security and Fraud Prevention",
-        "description": "Detect and prevent fraudulent activities, ensure platform security"
-      },
-      {
-        "title": "Marketing Communications",
-        "description": "Send promotional content (with your consent only)"
-      },
-      {
-        "title": "Legal Compliance",
-        "description": "Comply with laws, maintain records, and respond to legal requests"
-      }
-    ]
-  },
-  "dataSharing": {
-    "title": "Data Sharing & Third Parties",
-    "introduction": "We share your data only with trusted third parties necessary to provide our Service.",
-    "categories": {
-      "processors": {
-        "title": "Data Processors",
-        "description": "Companies that process data on our behalf",
-        "examples": [
-          "Payment processors (Stripe, PayPal)",
-          "Hosting providers (AWS, Google Cloud)",
-          "Email service providers (SendGrid)",
-          "Analytics services (Google Analytics)",
-          "Content generation service providers"
-        ]
-      },
-      "partners": {
-        "title": "Service Partners",
-        "description": "Companies that help us deliver our Service",
-        "examples": [
-          "Printing and fulfillment partners",
-          "Shipping carriers",
-          "Customer service platforms"
-        ]
-      }
     },
-    "safeguards": {
+    {
+      "title": "Performance of Contract",
+      "content": "We process data necessary to fulfill our contractual obligations, such as processing orders, delivering books, and providing customer service."
+    },
+    {
+      "title": "Legitimate Interest",
+      "content": "We process data when we have a legitimate interest, such as improving our Service, preventing fraud, ensuring security, and analyzing usage patterns."
+    },
+    {
+      "title": "Consent",
+      "content": "We process data based on your explicit consent, such as for marketing communications, non-essential cookies, and newsletter subscriptions."
+    },
+    {
+      "title": "Legal Obligation",
+      "content": "We process data to comply with legal requirements, such as tax record keeping (7 years) and responding to legal requests."
+    },
+    {
       "title": "Data Protection Safeguards",
       "content": "All third parties sign Data Processing Agreements and are contractually bound to protect your data. We only share the minimum data necessary for each service."
     },
-    "noSale": {
+    {
       "title": "We Do Not Sell Your Data",
       "content": "We never sell, rent, or trade your personal information to third parties for marketing purposes."
-    }
-  },
-  "dataRetention": {
-    "title": "Data Retention",
-    "introduction": "We retain your data only as long as necessary for the purposes described in this policy.",
-    "periods": {
-      "account": {
-        "title": "Account Data",
-        "retention": "While your account is active, plus 90 days after deletion"
-      },
-      "orders": {
-        "title": "Order and Invoice Data",
-        "retention": "7 years (tax and legal requirement)"
-      },
-      "photos": {
-        "title": "Uploaded Photos",
-        "retention": "90 days after order completion, then automatically deleted"
-      },
-      "communications": {
-        "title": "Customer Service Communications",
-        "retention": "2 years after resolution"
-      },
-      "analytics": {
-        "title": "Analytics Data",
-        "retention": "26 months (anonymized after 13 months)"
-      },
-      "marketing": {
-        "title": "Marketing Data",
-        "retention": "Until consent withdrawn, plus 30 days"
-      }
     },
-    "automatic": {
+    {
       "title": "Automatic Deletion",
       "content": "We implement automatic deletion processes for photos and temporary data. You can also request early deletion of your data."
-    }
-  },
-  "userRights": {
-    "title": "Your Rights (GDPR/CCPA)",
-    "introduction": "You have specific rights regarding your personal data.",
-    "rights": [
-      {
-        "title": "Right to Access",
-        "description": "Request a copy of your personal data"
-      },
-      {
-        "title": "Right to Rectification",
-        "description": "Correct inaccurate or incomplete data"
-      },
-      {
-        "title": "Right to Erasure",
-        "description": "Request deletion of your personal data (with legal exceptions)"
-      },
-      {
-        "title": "Right to Restriction",
-        "description": "Limit how we process your data"
-      },
-      {
-        "title": "Right to Data Portability",
-        "description": "Receive your data in structured, machine-readable format"
-      },
-      {
-        "title": "Right to Object",
-        "description": "Object to processing based on legitimate interest or for marketing"
-      },
-      {
-        "title": "Right to Withdraw Consent",
-        "description": "Withdraw consent at any time (doesn't affect prior processing)"
-      },
-      {
-        "title": "Right to Lodge Complaint",
-        "description": "File complaint with supervisory authority"
-      }
-    ],
-    "exercise": {
+    },
+    {
       "title": "How to Exercise Your Rights",
       "content": "To exercise these rights, email us at privacy@kidbookcreator.com. We respond within 30 days (may extend to 90 days for complex requests). We may verify your identity before processing requests."
-    }
-  },
-  "cookies": {
-    "title": "Cookies & Tracking Technologies",
-    "introduction": "We use cookies and similar technologies to enhance your experience.",
-    "categories": {
-      "necessary": {
-        "title": "Necessary Cookies",
-        "description": "Essential for website functionality",
-        "examples": ["Login status", "Shopping cart", "Security features"]
-      },
-      "analytics": {
-        "title": "Analytics Cookies",
-        "description": "Help us understand how visitors use our site",
-        "examples": ["Google Analytics", "Usage statistics"]
-      },
-      "marketing": {
-        "title": "Marketing Cookies",
-        "description": "Used to show relevant advertisements",
-        "examples": ["Ad tracking", "Personalization"]
-      },
-      "functional": {
-        "title": "Functional Cookies",
-        "description": "Remember your preferences",
-        "examples": ["Language settings", "Display preferences"]
-      }
     },
-    "consent": {
+    {
       "title": "Cookie Consent",
       "content": "We ask for your consent before placing non-essential cookies. You can manage preferences through our cookie banner or browser settings."
-    }
-  },
-  "security": {
-    "title": "Security Measures",
-    "introduction": "We implement appropriate technical and organizational security measures.",
-    "technical": {
-      "title": "Technical Measures",
-      "measures": [
-        "SSL/TLS encryption for all data transmission",
-        "Secure servers with regular security updates",
-        "Encrypted password storage",
-        "Regular security audits and penetration testing"
-      ]
     },
-    "organizational": {
-      "title": "Organizational Measures",
-      "measures": [
-        "Employee training on data protection",
-        "Access controls and need-to-know basis",
-        "Data protection policies and procedures",
-        "Regular security awareness training"
-      ]
-    },
-    "disclaimer": {
+    {
       "title": "No Absolute Guarantee",
       "content": "While we take reasonable measures to protect your data, no method of transmission over the internet is 100% secure. We will notify you of data breaches that pose a risk to your rights."
-    }
-  },
-  "children": {
-    "title": "Children's Privacy",
-    "introduction": "Our Service is designed for adults to create books for children.",
-    "ageRestriction": {
+    },
+    {
       "title": "Age Requirements",
       "content": "You must be at least 16 years old (or 13 in the United States) to create an account. We do not knowingly collect personal information from children under these ages."
     },
-    "parentalRights": {
+    {
       "title": "Parental Rights",
       "content": "If you believe we have collected information from a child under the required age, please contact us immediately. We will delete the information promptly. Parents can request deletion of their child's data at any time."
     },
-    "childrenData": {
+    {
       "title": "Children's Information",
       "content": "We may collect information about children (names, photos) only when provided by their parents or legal guardians. This information is used solely for creating personalized books and is not used for other purposes."
-    }
-  },
-  "aiPrivacy": {
-    "title": "Photo Usage & Processing",
-    "introduction": "We use advanced technology to generate personalized illustrations from your photos.",
-    "photoProcessing": {
+    },
+    {
       "title": "Photo Processing",
       "content": "Photos you upload are analyzed by our systems to create character illustrations. Photos are used only for this purpose and not for training models or other purposes."
     },
-    "retention": {
+    {
       "title": "Photo Retention",
       "content": "Photos are stored for 90 days after order completion, then automatically deleted. You can request early deletion at any time."
     },
-    "sharing": {
+    {
       "title": "Service Provider Sharing",
       "content": "Photos may be shared with content generation service providers under strict Data Processing Agreements. These providers are prohibited from using photos for any purpose other than generating your illustrations."
     },
-    "rights": {
+    {
       "title": "Your Rights",
       "content": "You confirm that you have the right to upload photos and have consent from all individuals depicted. For children's photos, you confirm you are their parent or legal guardian."
-    }
-  },
-  "international": {
-    "title": "International Data Transfers",
-    "introduction": "We may transfer your data to countries outside your home country.",
-    "transfers": {
+    },
+    {
       "title": "Transfer Mechanisms",
       "content": "When we transfer data outside the European Economic Area, we use appropriate safeguards such as Standard Contractual Clauses (SCCs) approved by the European Commission. These ensure your data remains protected."
     },
-    "providers": {
-      "title": "International Providers",
-      "examples": [
-        "US-based cloud hosting (AWS, Google Cloud)",
-        "US-based analytics (Google Analytics)",
-        "US-based content generation services",
-        "International shipping partners"
-      ]
-    }
-  },
-  "marketing": {
-    "title": "Marketing Communications",
-    "introduction": "We may send you marketing communications with your consent.",
-    "consent": {
+    {
       "title": "Consent Required",
       "content": "We only send promotional emails, newsletters, and marketing messages with your explicit consent. You can withdraw consent at any time."
     },
-    "types": {
-      "title": "Types of Communications",
-      "categories": [
-        "Promotional emails (with consent)",
-        "Product updates and announcements",
-        "Order confirmations and shipping updates",
-        "Customer service communications"
-      ]
-    },
-    "optOut": {
+    {
       "title": "Opt-Out Options",
       "content": "You can opt out of marketing communications by clicking the unsubscribe link in emails, updating your account preferences, or contacting us directly."
-    }
-  },
-  "updates": {
-    "title": "Policy Updates",
-    "introduction": "We may update this Privacy Policy from time to time.",
-    "changes": {
+    },
+    {
       "title": "Notification of Changes",
       "content": "For significant changes, we will notify you by email or prominent website notice. Minor changes will be effective immediately upon posting. The 'Last updated' date indicates when this policy was last modified."
     },
-    "review": {
+    {
       "title": "Regular Review",
       "content": "We review this policy regularly to ensure it remains accurate and compliant with applicable laws. We encourage you to review it periodically."
-    }
-  },
-  "contact": {
-    "title": "Contact Information",
-    "introduction": "If you have questions about this Privacy Policy or want to exercise your rights, please contact us:",
-    "details": {
-      "email": "Email: privacy@kidbookcreator.com",
-      "address": "KidBook Creator Ltd. [Your Business Address]",
-      "phone": "Phone: [Your Phone Number]",
-      "response": "We will respond to privacy inquiries within 30 days."
     },
-    "authorities": {
+    {
       "title": "Data Protection Authorities",
       "content": "If you have concerns about how we handle your data, you also have the right to lodge a complaint with your local data protection authority."
     }
-  }
+  ]
 }

@@ -4,13 +4,12 @@
     "description": "מצא תשובות לשאלות נפוצות על יצירת ספרי ילדים מותאמים אישית עם AI, תמחור, משלוח ועוד."
   },
   "heading": "שאלות נפוצות",
-  "searchPlaceholder": "חיפוש בשאלות נפוצות...",
-  "noResults": "לא נמצאו תוצאות. נסה מילות חיפוש אחרות או עיין בקטגוריות למטה.",
-  "showAll": "הצג הכל",
-  "collapseAll": "כווץ הכל",
+  "searchPlaceholder": "חפש שאלות נפוצות...",
+  "noResults": "לא נמצאו תוצאות. נסה מילות חיפוש שונות או עיין בקטגוריות למטה.",
   "relatedQuestions": "שאלות קשורות",
-  "stillHaveQuestions": "עדיין יש לך שאלות?",
-  "contactSupport": "צור קשר עם התמיכה",
+  "stillHaveQuestions": "צור קשר",
+  "contactDescription": "יש לך שאלות או צריך עזרה? נשמח לשמוע ממך!",
+  "contactSupport": "צור קשר",
   "categories": [
     {
       "id": "book-creation",

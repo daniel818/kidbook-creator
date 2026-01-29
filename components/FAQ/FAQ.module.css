@@ -56,30 +56,6 @@
   color: #374151;
 }
 
-.controls {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.controlButton {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.controlButton:hover {
-  background: #e5e7eb;
-}
-
-.controlButton:focus {
-  outline: none;
-}
 
 .noResults {
   text-align: center;
@@ -233,34 +209,54 @@
   border-radius: 0.125rem;
 }
 
+/* Contact Section - duplicated from About page style */
 .contactSection {
   margin-top: 3rem;
-  padding: 2rem;
-  background: #f3f4f6;
-  border-radius: 0.5rem;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   text-align: center;
+  border-radius: 0.5rem;
 }
 
-.contactText {
+.contactContainer {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contactHeading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 20px;
+}
+
+.contactDescription {
   font-size: 1.125rem;
-  font-weight: 500;
-  margin: 0 0 1rem 0;
-  color: #111827;
+  color: #4a5568;
+  margin-bottom: 30px;
+  line-height: 1.6;
 }
 
 .contactButton {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background: #3b82f6;
-  color: #ffffff;
+  padding: 16px 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: 12px;
   text-decoration: none;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .contactButton:hover {
-  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.contactButton:active {
+  transform: translateY(0);
 }
 
 /* RTL Support */
@@ -317,24 +313,22 @@
     font-size: 0.9375rem;
   }
 
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .controlButton {
-    width: 100%;
-  }
-
   .contactSection {
-    padding: 1.5rem 1rem;
+    padding: 60px 20px;
+  }
+
+  .contactHeading {
+    font-size: 2rem;
+  }
+
+  .contactDescription {
+    font-size: 1rem;
   }
 }
 
 /* Print Styles */
 @media print {
   .searchContainer,
-  .controls,
   .contactSection {
     display: none;
   }

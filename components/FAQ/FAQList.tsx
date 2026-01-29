@@ -34,40 +34,12 @@ export default function FAQList({ data }: FAQListProps) {
     });
   }, []);
 
-  const handleShowAll = () => {
-    const allFaqIds = data.categories.flatMap(cat => 
-      cat.faqs.map(faq => faq.id)
-    );
-    setExpandedFaqs(new Set(allFaqIds));
-  };
-
-  const handleCollapseAll = () => {
-    setExpandedFaqs(new Set());
-  };
-
   return (
     <div className={styles.faqContainer}>
       <FAQSearch 
         placeholder={data.searchPlaceholder} 
         onSearch={handleSearch} 
       />
-
-      <div className={styles.controls}>
-        <button 
-          className={styles.controlButton}
-          onClick={handleShowAll}
-          type="button"
-        >
-          {data.showAll}
-        </button>
-        <button 
-          className={styles.controlButton}
-          onClick={handleCollapseAll}
-          type="button"
-        >
-          {data.collapseAll}
-        </button>
-      </div>
 
       {!hasResults && searchQuery && (
         <div className={styles.noResults}>
@@ -88,12 +60,19 @@ export default function FAQList({ data }: FAQListProps) {
         </div>
       )}
 
-      <div className={styles.contactSection}>
-        <p className={styles.contactText}>{data.stillHaveQuestions}</p>
-        <a href="/contact" className={styles.contactButton}>
-          {data.contactSupport}
-        </a>
-      </div>
+      {/* Contact Section - duplicated from About page */}
+      <section className={styles.contactSection}>
+        <div className={styles.contactContainer}>
+          <h2 className={styles.contactHeading}>{data.stillHaveQuestions}</h2>
+          <p className={styles.contactDescription}>{data.contactDescription}</p>
+          <a 
+            href="mailto:support@kidbookcreator.com"
+            className={styles.contactButton}
+          >
+            {data.contactSupport}
+          </a>
+        </div>
+      </section>
     </div>
   );
 }

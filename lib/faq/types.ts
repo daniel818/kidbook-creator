@@ -19,10 +19,9 @@ export interface FAQData {
   heading: string;
   searchPlaceholder: string;
   noResults: string;
-  showAll: string;
-  collapseAll: string;
   relatedQuestions: string;
   stillHaveQuestions: string;
+  contactDescription: string;
   contactSupport: string;
   categories: FAQCategory[];
 }
