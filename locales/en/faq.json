@@ -13,8 +13,8 @@
   "contactSupport": "Contact Support",
   "categories": [
     {
-      "id": "product-process",
-      "title": "Product & Process",
+      "id": "book-creation",
+      "title": "Book Creation",
       "faqs": [
         {
           "id": "ai-creation-process",
@@ -41,10 +41,16 @@
           "relatedFaqs": ["ai-creation-process"]
         },
         {
-          "id": "ai-quality",
+          "id": "satisfaction-results",
           "question": "What if I'm not satisfied with the results?",
-          "answer": "<p>We're committed to your satisfaction, and we provide several safeguards:</p><h4>Preview Before Ordering:</h4><p>You can review and edit the entire book before placing your order. This ensures you're completely happy with the result.</p><h4>Regeneration Options:</h4><ul><li>Request new illustrations if the AI doesn't capture your child's likeness well</li><li>Edit text to better fit your preferences</li><li>Try different photos for better character generation</li><li>No additional cost for regeneration during the creation process</li></ul><h4>AI Quality Disclaimer:</h4><p>Our AI technology creates unique, personalized books, but results may vary based on photo quality and complexity. Minor artistic variations are normal and part of the AI's creative interpretation. <strong>AI-generated content is provided 'as is' without guarantees of perfection.</strong></p><h4>How We Use Your Photos:</h4><ul><li>Photos analyzed by AI solely to generate character illustrations</li><li><strong>NOT used to train AI models</strong></li><li><strong>NOT shared with third parties</strong> (except AI service provider under strict agreement)</li><li>Automatically deleted after 30 days (shorter than industry standard)</li></ul><h4>What Qualifies as a Defect:</h4><ul><li>Printing errors or physical damage</li><li>Missing pages or incorrect binding</li><li>Significant deviation from approved preview</li><li>Books damaged during shipping</li></ul><h4>What's NOT Considered a Defect:</h4><ul><li>Minor artistic variations in AI-generated illustrations</li><li>Slight color differences from digital preview (normal in printing)</li><li>Personal preference differences in art style</li><li>AI interpretation of facial features</li></ul><p>If you receive a defective book, we offer a full refund or replacement within 14 days of delivery.</p>",
+          "answer": "<p>We're committed to your satisfaction, and we provide several safeguards:</p><h4>Preview Before Ordering:</h4><p><strong>Before completing your order, you can review and edit:</strong></p><ul><li>The first page illustration (cover image)</li><li>The complete story text</li><li>All personalization details</li></ul><p><strong>Important:</strong> The remaining illustrations are generated <em>after</em> you complete your digital purchase. This is when the magic happens!</p><h4>What You Can Edit:</h4><ul><li><strong>Text Only:</strong> You can edit any text in the story to personalize it further</li><li>Modify character names and details</li><li>Adjust story elements to fit your child's preferences</li><li>Change the dedication message</li></ul><h4>What You Cannot Edit:</h4><ul><li><strong>Illustrations cannot be changed</strong> once generated</li><li>Character appearance is based on your uploaded photo</li><li>Art style is determined by the story theme you selected</li></ul><h4>Quality Disclaimer:</h4><p>Our story creation technology produces unique, personalized books, but results may vary based on photo quality and complexity. Minor artistic variations are normal and part of the creative interpretation. <strong>Generated content is provided 'as is' without guarantees of perfection.</strong></p><h4>What Qualifies as a Defect:</h4><ul><li>Printing errors or physical damage</li><li>Missing pages or incorrect binding</li><li>Significant deviation from approved preview</li><li>Books damaged during shipping</li></ul><h4>What's NOT Considered a Defect:</h4><ul><li>Minor artistic variations in generated illustrations</li><li>Slight color differences from digital preview (normal in printing)</li><li>Personal preference differences in art style</li><li>Creative interpretation of facial features</li></ul><p>If you receive a defective book, we offer a full refund or replacement within 14 days of delivery.</p>",
           "relatedFaqs": ["photo-upload", "return-policy"]
+        },
+        {
+          "id": "photo-privacy",
+          "question": "What happens to my child's photo? How is it protected?",
+          "answer": "<p>We take your privacy and your child's safety very seriously:</p><h4>Photo Usage:</h4><ul><li>Photos are used <strong>only</strong> to generate character illustrations for your book</li><li><strong>NOT used to train AI models</strong></li><li><strong>NOT shared with third parties</strong> (except our secure AI service provider)</li><li><strong>NOT used for marketing or any other purpose</strong></li></ul><h4>Automatic Deletion:</h4><ul><li>Photos are <strong>automatically deleted after 7 days</strong> of order completion</li><li>This is much shorter than industry standards (typically 30-90 days)</li><li>Deletion is permanent and cannot be reversed</li></ul><h4>Security Measures:</h4><ul><li>All photos encrypted during upload and storage (SSL/TLS)</li><li>Stored on secure, access-controlled servers</li><li>Only authorized systems can access photos for processing</li><li>Full compliance with GDPR, CCPA, and children's privacy laws</li></ul><h4>Your Rights:</h4><ul><li>Request immediate deletion at any time by contacting support</li><li>Access a copy of your data</li><li>Request information about how your data is processed</li></ul><p>For complete details, please review our <a href='/privacy'>Privacy Policy</a>.</p>",
+          "relatedFaqs": ["photo-upload", "data-privacy"]
         },
         {
           "id": "digital-vs-physical",
