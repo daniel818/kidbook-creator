@@ -11,18 +11,18 @@ interface PricingMatrixProps {
 const PRICING = {
   USD: {
     symbol: '$',
-    digital: { 1: 15, 2: 14, 3: 12 },
-    printed: { 1: 45, 2: 41, 3: 37 }
+    digital: 15,
+    printed: 45
   },
   EUR: {
     symbol: '€',
-    digital: { 1: 14, 2: 13, 3: 11 },
-    printed: { 1: 42, 2: 38, 3: 34 }
+    digital: 14,
+    printed: 42
   },
   ILS: {
     symbol: '₪',
-    digital: { 1: 55, 2: 51, 3: 44 },
-    printed: { 1: 165, 2: 150, 3: 135 }
+    digital: 55,
+    printed: 165
   }
 };
 
@@ -44,22 +44,7 @@ export function PricingMatrix({ currency }: PricingMatrixProps) {
             <PricingCard
               type="digital"
               quantity={1}
-              pricePerBook={pricing.digital[1]}
-              currency={currency}
-              currencySymbol={pricing.symbol}
-            />
-            <PricingCard
-              type="digital"
-              quantity={2}
-              pricePerBook={pricing.digital[2]}
-              currency={currency}
-              currencySymbol={pricing.symbol}
-              showBestValue={true}
-            />
-            <PricingCard
-              type="digital"
-              quantity={3}
-              pricePerBook={pricing.digital[3]}
+              pricePerBook={pricing.digital}
               currency={currency}
               currencySymbol={pricing.symbol}
             />
@@ -72,21 +57,7 @@ export function PricingMatrix({ currency }: PricingMatrixProps) {
             <PricingCard
               type="printed"
               quantity={1}
-              pricePerBook={pricing.printed[1]}
-              currency={currency}
-              currencySymbol={pricing.symbol}
-            />
-            <PricingCard
-              type="printed"
-              quantity={2}
-              pricePerBook={pricing.printed[2]}
-              currency={currency}
-              currencySymbol={pricing.symbol}
-            />
-            <PricingCard
-              type="printed"
-              quantity={3}
-              pricePerBook={pricing.printed[3]}
+              pricePerBook={pricing.printed}
               currency={currency}
               currencySymbol={pricing.symbol}
             />

@@ -5,14 +5,10 @@
     "package": "Paket",
     "digital": "Digital",
     "printed": "Gedruckt",
-    "single": "Einzeln",
-    "double": "Doppelt",
-    "triple": "Dreifach",
+    "single": "Einzelnes Buch",
     "book": "Buch",
-    "books": "Bücher",
     "perBook": "pro Buch",
-    "total": "gesamt",
-    "bestValue": "Bester Wert"
+    "total": "gesamt"
   },
   "features": {
     "digitalIncludes": "Digital beinhaltet:",
@@ -31,9 +27,7 @@
   "faq": {
     "title": "Preisfragen",
     "q1": "Was ist im gedruckten Preis enthalten?",
-    "a1": "Der gedruckte Preis beinhaltet professionellen Druck auf Premium-Papier. Versandkosten werden beim Checkout basierend auf deinem Land berechnet.",
-    "q2": "Kann ich mehr als 3 Bücher bestellen?",
-    "a2": "Ja! Für Bestellungen von 4 oder mehr Büchern kontaktiere uns bitte für individuelle Preise und Mengenrabatte.",
+    "a1": "Der gedruckte Preis beinhaltet professionellen Druck auf Premium-Papier, Hardcover-Bindung und Versand nach Hause.",
     "q3": "Welche Zahlungsmethoden akzeptiert ihr?",
     "a3": "Wir akzeptieren alle gängigen Kredit- und Debitkarten sowie PayPal über unseren sicheren Zahlungsanbieter.",
     "q4": "Gibt es zusätzliche Gebühren?",
