@@ -52,7 +52,7 @@
         "description": "Information about how you use our Service",
         "examples": [
           "Book creation process and preferences",
-          "AI generation parameters and results",
+          "Book generation parameters and results",
           "Order history and purchase patterns",
           "Customer service communications"
         ]
@@ -136,7 +136,7 @@
           "Hosting providers (AWS, Google Cloud)",
           "Email service providers (SendGrid)",
           "Analytics services (Google Analytics)",
-          "AI service providers (OpenAI, similar)"
+          "Content generation service providers"
         ]
       },
       "partners": {
@@ -307,19 +307,19 @@
     }
   },
   "aiPrivacy": {
-    "title": "AI & Photo Usage",
-    "introduction": "We use AI to generate personalized illustrations from your photos.",
+    "title": "Photo Usage & Processing",
+    "introduction": "We use advanced technology to generate personalized illustrations from your photos.",
     "photoProcessing": {
       "title": "Photo Processing",
-      "content": "Photos you upload are analyzed by AI systems to create character illustrations. Photos are used only for this purpose and not for training AI models or other purposes."
+      "content": "Photos you upload are analyzed by our systems to create character illustrations. Photos are used only for this purpose and not for training models or other purposes."
     },
     "retention": {
       "title": "Photo Retention",
       "content": "Photos are stored for 90 days after order completion, then automatically deleted. You can request early deletion at any time."
     },
     "sharing": {
-      "title": "AI Provider Sharing",
-      "content": "Photos may be shared with AI service providers under strict Data Processing Agreements. These providers are prohibited from using photos for any purpose other than generating your illustrations."
+      "title": "Service Provider Sharing",
+      "content": "Photos may be shared with content generation service providers under strict Data Processing Agreements. These providers are prohibited from using photos for any purpose other than generating your illustrations."
     },
     "rights": {
       "title": "Your Rights",
@@ -338,7 +338,7 @@
       "examples": [
         "US-based cloud hosting (AWS, Google Cloud)",
         "US-based analytics (Google Analytics)",
-        "US-based AI services",
+        "US-based content generation services",
         "International shipping partners"
       ]
     }

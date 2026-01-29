@@ -62,7 +62,7 @@
       "content": "We understand that plans change, and we've designed our policies to be fair and transparent.",
       "cancellationWindow": {
         "title": "Cancellation Window",
-        "content": "You may cancel your order within 48 hours of placing it, provided that AI generation has not yet begun. Once AI generation starts, orders cannot be cancelled due to the personalized nature of our products."
+        "content": "You may cancel your order within 48 hours of placing it, provided that book generation has not yet begun. Once book generation starts, orders cannot be cancelled due to the personalized nature of our products."
       },
       "personalizedProducts": {
         "title": "Personalized Products Exclusion",
@@ -105,8 +105,8 @@
         "content": "Upon full payment, you receive a non-exclusive, non-transferable license to use your purchased book for personal, non-commercial purposes. You may not reproduce, distribute, or commercially exploit the content without our written consent."
       },
       "aiContent": {
-        "title": "AI-Generated Content",
-        "content": "AI-generated illustrations and content are licensed to you for personal use only. We retain all rights to the underlying AI models and algorithms."
+        "title": "Generated Content",
+        "content": "Generated illustrations and content are licensed to you for personal use only. We retain all rights to the underlying generation technology and algorithms."
       }
     },
     "userContent": {
@@ -126,19 +126,19 @@
       }
     },
     "aiTerms": {
-      "title": "9. AI-Generated Content Terms",
-      "content": "Our Service uses artificial intelligence to create personalized content.",
+      "title": "9. Generated Content Terms",
+      "content": "Our Service uses advanced technology to create personalized content.",
       "disclaimer": {
-        "title": "AI Quality Disclaimer",
-        "content": "AI-generated content may contain unexpected or imperfect results. Minor variations in style, color, or interpretation are not considered defects and are part of the creative process. The AI system makes its best effort to match your specifications but cannot guarantee perfect results."
+        "title": "Quality Disclaimer",
+        "content": "Generated content may contain unexpected or imperfect results. Minor variations in style, color, or interpretation are not considered defects and are part of the creative process. Our system makes its best effort to match your specifications but cannot guarantee perfect results."
       },
       "editing": {
         "title": "Preview and Editing",
-        "content": "You will have the opportunity to preview and edit AI-generated content before finalizing your order. We recommend carefully reviewing all content before proceeding to payment."
+        "content": "You will have the opportunity to preview and edit generated content before finalizing your order. We recommend carefully reviewing all content before proceeding to payment."
       },
       "limitations": {
-        "title": "AI Limitations",
-        "content": "Our AI system cannot reproduce copyrighted characters, brand logos, or specific real people with perfect accuracy. Results are artistic interpretations based on your input."
+        "title": "System Limitations",
+        "content": "Our system cannot reproduce copyrighted characters, brand logos, or specific real people with perfect accuracy. Results are artistic interpretations based on your input."
       }
     },
     "liability": {
