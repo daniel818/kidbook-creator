@@ -1,0 +1,24 @@
+# Documentation and internal files - not needed in production
+00-prds/
+00-readmes/
+00-project-overview/
+docs/
+
+# Development and testing
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Logs and debug files
+*.log
+api_debug.log
+gemini_image_test.log
+lulu_debug.log
+model_test_debug.log
+regeneration_debug.log
+
+# Temporary files
+temp_ids.txt
+curl-test.txt
