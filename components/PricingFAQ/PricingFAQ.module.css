@@ -51,8 +51,7 @@
 }
 
 .question:focus {
-  outline: 2px solid #2563EB;
-  outline-offset: -2px;
+  outline: none;
 }
 
 .questionText {

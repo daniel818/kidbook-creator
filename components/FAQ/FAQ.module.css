@@ -77,6 +77,10 @@
   background: #e5e7eb;
 }
 
+.controlButton:focus {
+  outline: none;
+}
+
 .noResults {
   text-align: center;
   padding: 3rem 1rem;

@@ -34,9 +34,7 @@
 }
 
 .content a:focus {
-  outline: 2px solid #3B82F6;
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline: none;
 }
 
 @media (max-width: 640px) {
