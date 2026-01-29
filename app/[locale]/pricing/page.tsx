@@ -4,34 +4,42 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
-import { PricingMatrix } from '@/components/PricingMatrix/PricingMatrix';
-import { PricingFAQ } from '@/components/PricingFAQ/PricingFAQ';
 import styles from './page.module.css';
+
+const PRICING = {
+  USD: { symbol: '$', digital: 15, printed: 45 },
+  EUR: { symbol: '€', digital: 14, printed: 42 },
+  ILS: { symbol: '₪', digital: 55, printed: 165 }
+};
 
 export default function PricingPage() {
   const { t } = useTranslation('pricing');
   const router = useRouter();
   const [currency, setCurrency] = useState<'USD' | 'EUR' | 'ILS'>('USD');
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const savedCurrency = localStorage.getItem('currency') as 'USD' | 'EUR' | 'ILS' | null;
-    if (savedCurrency) {
-      setCurrency(savedCurrency);
-    }
+    if (savedCurrency) setCurrency(savedCurrency);
 
     const handleCurrencyChange = (event: CustomEvent<'USD' | 'EUR' | 'ILS'>) => {
       setCurrency(event.detail);
     };
 
     window.addEventListener('currencyChange', handleCurrencyChange as EventListener);
-    return () => {
-      window.removeEventListener('currencyChange', handleCurrencyChange as EventListener);
-    };
+    return () => window.removeEventListener('currencyChange', handleCurrencyChange as EventListener);
   }, []);
 
-  const handleCreateBook = () => {
-    router.push('/create');
-  };
+  const handleCreateBook = () => router.push('/create');
+  const pricing = PRICING[currency];
+
+  const faqItems = [
+    { question: t('faq.q1'), answer: t('faq.a1') },
+    { question: t('faq.q2'), answer: t('faq.a2') },
+    { question: t('faq.q3'), answer: t('faq.a3') },
+    { question: t('faq.q4'), answer: t('faq.a4') },
+    { question: t('faq.q5'), answer: t('faq.a5') },
+  ];
 
   return (
     <>
@@ -39,51 +47,75 @@ export default function PricingPage() {
       <main className={styles.page}>
         {/* Hero Section */}
         <section className={styles.hero}>
-          <div className={styles.heroBackground}>
-            <div className={styles.floatingShape1}></div>
-            <div className={styles.floatingShape2}></div>
-            <div className={styles.floatingShape3}></div>
-          </div>
-
           <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>
-              {t('subtitle')}
-            </h1>
-
-            <p className={styles.heroDescription}>
-              {t('hero.description')}
-            </p>
-
+            <h1 className={styles.heroTitle}>{t('subtitle')}</h1>
+            <p className={styles.heroDescription}>{t('hero.description')}</p>
             <button className={styles.ctaPrimary} onClick={handleCreateBook}>
               <span className={styles.ctaIcon}>✨</span>
               {t('cta.primary')}
               <span className={styles.ctaArrow}>→</span>
             </button>
           </div>
+        </section>
 
-          {/* Floating Book Illustrations */}
-          <div className={styles.floatingBooks}>
-            <div className={styles.floatingBook} style={{ '--delay': '0s' } as React.CSSProperties}>
-              <div className={styles.bookMini}>📘</div>
+        {/* Pricing Section */}
+        <section className={styles.pricingSection}>
+          <div className={styles.pricingHeader}>
+            <h2 className={styles.pricingTitle}>{t('title')}</h2>
+            <p className={styles.pricingSubtitle}>{t('subtitle')}</p>
+          </div>
+
+          <div className={styles.pricingGrid}>
+            {/* Digital Book Card */}
+            <div className={styles.pricingCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>{t('matrix.digital')}</h3>
+                <p className={styles.cardSubtitle}>PDF Download</p>
+              </div>
+              <div className={styles.cardPricing}>
+                <span className={styles.priceAmount}>{pricing.symbol}{pricing.digital}</span>
+                <span className={styles.priceLabel}>{t('matrix.perBook')}</span>
+              </div>
+              <ul className={styles.featureList}>
+                <li>{t('features.digitalFeature1')}</li>
+                <li>{t('features.digitalFeature2')}</li>
+                <li>{t('features.digitalFeature3')}</li>
+              </ul>
+              <button className={styles.cardButton} onClick={handleCreateBook}>
+                {t('cta.primary')}
+              </button>
             </div>
-            <div className={styles.floatingBook} style={{ '--delay': '1s' } as React.CSSProperties}>
-              <div className={styles.bookMini}>📗</div>
+
+            {/* Printed Book Card */}
+            <div className={`${styles.pricingCard} ${styles.featured}`}>
+              <div className={styles.featuredBadge}>Most Popular</div>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>{t('matrix.printed')}</h3>
+                <p className={styles.cardSubtitle}>Hardcover Book</p>
+              </div>
+              <div className={styles.cardPricing}>
+                <span className={styles.priceAmount}>{pricing.symbol}{pricing.printed}</span>
+                <span className={styles.priceLabel}>{t('matrix.perBook')}</span>
+              </div>
+              <ul className={styles.featureList}>
+                <li>{t('features.printedFeature1')}</li>
+                <li>{t('features.printedFeature2')}</li>
+                <li>{t('features.printedFeature3')}</li>
+              </ul>
+              <button className={`${styles.cardButton} ${styles.primaryButton}`} onClick={handleCreateBook}>
+                {t('cta.primary')}
+              </button>
             </div>
-            <div className={styles.floatingBook} style={{ '--delay': '2s' } as React.CSSProperties}>
-              <div className={styles.bookMini}>📕</div>
-            </div>
+          </div>
+
+          <div className={styles.disclaimers}>
+            <p>* {t('disclaimers.shipping')}</p>
+            <p>* {t('disclaimers.tax')}</p>
           </div>
         </section>
 
-        {/* Pricing Matrix */}
-        <PricingMatrix currency={currency} />
-
         {/* CTA Section */}
         <section className={styles.ctaSection}>
-          <div className={styles.ctaBackground}>
-            <div className={styles.ctaShape1}></div>
-            <div className={styles.ctaShape2}></div>
-          </div>
           <div className={styles.ctaContent}>
             <span className={styles.ctaEmoji}>🎉</span>
             <h2 className={styles.ctaTitle}>{t('cta.title')}</h2>
@@ -91,26 +123,30 @@ export default function PricingPage() {
             <button className={styles.ctaButton} onClick={handleCreateBook}>
               <span className={styles.ctaButtonIcon}>📖</span>
               {t('cta.primary')}
-              <span className={styles.ctaButtonArrow}>→</span>
             </button>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <PricingFAQ />
-
-        {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerContent}>
-            <div className={styles.footerBrand}>
-              <span className={styles.footerLogo}>📚</span>
-              <span className={styles.footerName}>KidBook Creator</span>
-            </div>
-            <p className={styles.footerTagline}>
-              {t('footer.tagline')}
-            </p>
+        <section className={styles.faqSection}>
+          <h2 className={styles.faqTitle}>{t('faq.title')}</h2>
+          <div className={styles.faqItems}>
+            {faqItems.map((item, index) => (
+              <div key={index} className={styles.faqItem}>
+                <button
+                  className={`${styles.faqQuestion} ${openFaqIndex === index ? styles.open : ''}`}
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                >
+                  <span>{item.question}</span>
+                  <span className={styles.faqIcon}>{openFaqIndex === index ? '−' : '+'}</span>
+                </button>
+                <div className={`${styles.faqAnswer} ${openFaqIndex === index ? styles.visible : ''}`}>
+                  <p>{item.answer}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </footer>
+        </section>
       </main>
     </>
   );
