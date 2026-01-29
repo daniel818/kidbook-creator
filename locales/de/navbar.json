@@ -1,7 +1,10 @@
 {
-  "communityBooks": "Community-Bücher",
+  "communityBooks": "Unsere Bücher",
+  "pricing": "Preise",
   "faq": "FAQ",
   "aboutUs": "Über uns",
+  "terms": "Nutzungsbedingungen",
+  "privacy": "Datenschutz",
   "createBook": "Buch erstellen",
   "signIn": "Anmelden",
   "myBooks": "Meine Bücher",

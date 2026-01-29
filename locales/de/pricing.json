@@ -1,0 +1,53 @@
+{
+  "title": "Preise",
+  "subtitle": "Wähle das perfekte Paket für deine magische Geschichte",
+  "matrix": {
+    "package": "Paket",
+    "digital": "Digital",
+    "printed": "Gedruckt",
+    "single": "Einzelnes Buch",
+    "book": "Buch",
+    "perBook": "pro Buch",
+    "total": "gesamt"
+  },
+  "features": {
+    "digitalIncludes": "Digital beinhaltet:",
+    "digitalFeature1": "Sofortiger Download",
+    "digitalFeature2": "PDF-Format",
+    "digitalFeature3": "Zu Hause drucken",
+    "printedIncludes": "Gedruckt beinhaltet:",
+    "printedFeature1": "Professioneller Druck",
+    "printedFeature2": "Premium-Papierqualität",
+    "printedFeature3": "Versand nach Hause"
+  },
+  "hero": {
+    "description": "Erstellen Sie magische personalisierte Bücher für Ihre Kleinen. Wählen Sie das perfekte Paket für Ihre Geschichte!"
+  },
+  "cta": {
+    "primary": "Jetzt erstellen",
+    "secondary": "Mehr erfahren",
+    "title": "Bereit, Ihre magische Geschichte zu erschaffen?",
+    "subtitle": "Erwecken Sie die Fantasie Ihres Kindes noch heute zum Leben!"
+  },
+  "footer": {
+    "tagline": "Wo jedes Kind zum Helden seiner eigenen Geschichte wird"
+  },
+  "faq": {
+    "title": "Preisfragen",
+    "q1": "Was ist im gedruckten Preis enthalten?",
+    "a1": "Der gedruckte Preis beinhaltet professionellen Druck auf Premium-Papier, Hardcover-Bindung und Versand nach Hause.",
+    "q2": "Kann ich eine digitale Kopie mit meinem gedruckten Buch erhalten?",
+    "a2": "Ja! Jede Bestellung eines gedruckten Buches enthält eine kostenlose digitale PDF-Version, die Sie sofort herunterladen können.",
+    "q3": "Welche Zahlungsmethoden akzeptiert ihr?",
+    "a3": "Wir akzeptieren alle gängigen Kredit- und Debitkarten sowie PayPal über unseren sicheren Zahlungsanbieter.",
+    "q4": "Gibt es zusätzliche Gebühren?",
+    "a4": "Steuern werden beim Checkout basierend auf deinem Standort berechnet. Versandkosten variieren je nach Land und werden vor Abschluss deines Kaufs angezeigt.",
+    "q5": "Was ist mit den Druckspezifikationen?",
+    "a5": "Gedruckte Bücher sind professionell gebunden mit Premium-Papier. Spezifische Formatoptionen (Größe, Bindungsart) sind während des Bucherstellungsprozesses verfügbar."
+  },
+  "disclaimers": {
+    "shipping": "Versandkosten werden beim Checkout basierend auf dem Land berechnet",
+    "tax": "Steuern werden beim Checkout gemäß lokaler Vorschriften berechnet",
+    "currency": "Preise angezeigt in"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "title": "Pricing",
+  "subtitle": "Choose the perfect package for your magical story",
+  "matrix": {
+    "package": "Package",
+    "digital": "Digital",
+    "printed": "Printed",
+    "single": "Single Book",
+    "book": "book",
+    "perBook": "per book",
+    "total": "total"
+  },
+  "features": {
+    "digitalIncludes": "Digital includes:",
+    "digitalFeature1": "Instant download",
+    "digitalFeature2": "PDF format",
+    "digitalFeature3": "Print at home",
+    "printedIncludes": "Printed includes:",
+    "printedFeature1": "Professional printing",
+    "printedFeature2": "Premium paper quality",
+    "printedFeature3": "Shipping to your door"
+  },
+  "hero": {
+    "description": "Create magical personalized books for your little ones. Choose the perfect package for your story!"
+  },
+  "cta": {
+    "primary": "Start Creating",
+    "secondary": "Learn More",
+    "title": "Ready to create your magical story?",
+    "subtitle": "Start bringing your child's imagination to life today!"
+  },
+  "footer": {
+    "tagline": "Where every child becomes the hero of their own story"
+  },
+  "faq": {
+    "title": "Pricing Questions",
+    "q1": "What's included in the printed price?",
+    "a1": "The printed price includes professional printing on premium paper, hardcover binding, and shipping to your door.",
+    "q2": "Can I get a digital copy with my printed book?",
+    "a2": "Yes! Every printed book order includes a complimentary digital PDF version that you can download immediately.",
+    "q3": "What payment methods do you accept?",
+    "a3": "We accept all major credit cards, debit cards, and PayPal through our secure payment processor.",
+    "q4": "Are there any additional fees?",
+    "a4": "Taxes are calculated at checkout based on your location. Shipping costs vary by country and are shown before you complete your purchase.",
+    "q5": "What about print specifications?",
+    "a5": "Printed books are professionally bound with premium paper. Specific format options (size, binding type) are available during the book creation process."
+  },
+  "disclaimers": {
+    "shipping": "Shipping costs calculated at checkout based on country",
+    "tax": "Taxes calculated at checkout as per local regulations",
+    "currency": "Prices shown in"
+  }
+}
