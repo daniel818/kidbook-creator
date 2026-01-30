@@ -714,12 +714,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                 }}
                             >
                                 <div className={styles.coverOverlay}>
-                                    <h2 className={styles.coverTitle}>
+                                    <h2 className={`${styles.coverTitle} ${styles.backCoverText}`}>
                                         {(book.language || book.settings.language) === 'he' ? 'סוף' :
                                             (book.language || book.settings.language) === 'de' ? 'Ende' :
                                                 'The End'}
                                     </h2>
-                                    <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
+                                    <p className={`${styles.coverSubtitle} ${styles.backCoverText}`} style={{ maxWidth: '80%' }}>
                                         {backCoverText}
                                     </p>
                                 </div>
