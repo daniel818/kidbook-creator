@@ -1,0 +1,983 @@
+{
+  "common": {
+    "test": "Hello World",
+    "communityBooks": "Community Books",
+    "faq": "FAQ",
+    "aboutUs": "About Us",
+    "alerts": {
+      "warning": "Warning",
+      "error": "Error",
+      "success": "Success",
+      "info": "Information",
+      "ok": "OK",
+      "cancel": "Cancel",
+      "dontAskAgain": "Don't ask again",
+      "loading": "Loading...",
+      "unsavedChanges": {
+        "title": "Unsaved Changes",
+        "message": "You have unsaved changes. Are you sure you want to leave? Your progress will be lost."
+      }
+    }
+  },
+  "navbar": {
+    "communityBooks": "Our Books",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "aboutUs": "About Us",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "createBook": "Create a Book",
+    "signIn": "Sign In",
+    "myBooks": "My Books",
+    "purchases": "Purchases",
+    "profile": "Profile",
+    "signOut": "Sign Out"
+  },
+  "home": {
+    "hero": {
+      "badge": "Create magical stories",
+      "title": "Create",
+      "titleHighlight": "Personalized",
+      "titleEnd": "Children's Books",
+      "subtitle": "Design beautiful custom books for your little ones. Upload photos, write stories, and order professionally printed books delivered to your door.",
+      "ctaButton": "Create Your Book",
+      "noBooks": "No books yet. Create your first book!",
+      "createNewBook": "Create New Book",
+      "bookCard": {
+        "pages": "{{count}} pgs",
+        "forChild": "For {{childName}}, age {{age}}",
+        "status": {
+          "draft": "Draft",
+          "complete": "Complete",
+          "published": "Published"
+        }
+      },
+      "features": {
+        "easyToUse": "Easy to use",
+        "printShip": "Print & ship",
+        "perfectGift": "Perfect gift"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Setup Your Book",
+        "description": "Enter your child's name, age, and choose the perfect book type and theme."
+      },
+      "step2": {
+        "title": "Add Content",
+        "description": "Upload photos and write your story. Arrange pages exactly how you want."
+      },
+      "step3": {
+        "title": "Order & Enjoy",
+        "description": "Preview your book, place your order, and receive a beautiful printed book."
+      }
+    },
+    "bookTypes": {
+      "title": "Choose Your Book Type",
+      "board": {
+        "title": "Board Book",
+        "description": "Durable pages for little hands",
+        "age": "Ages 0-3"
+      },
+      "picture": {
+        "title": "Picture Book",
+        "description": "Beautiful illustrations with short text",
+        "age": "Ages 3-6"
+      },
+      "story": {
+        "title": "Story Book",
+        "description": "Engaging stories for growing readers",
+        "age": "Ages 5-10"
+      },
+      "alphabet": {
+        "title": "Alphabet Book",
+        "description": "Learn letters in a fun way",
+        "age": "Ages 2-5"
+      }
+    },
+    "footer": {
+      "tagline": "Made with ❤️ for parents who want to create magical memories"
+    },
+    "deleteModal": {
+      "title": "Delete Book",
+      "message": "Are you sure you want to delete this book? This action cannot be undone.",
+      "confirmText": "Delete"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back!",
+      "subtitle": "Sign in to save your books and order prints",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Sign In",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up",
+      "continueWithGoogle": "Continue with Google",
+      "or": "or"
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Join us to create amazing books for your kids",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Create Account",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "continueWithGoogle": "Continue with Google",
+      "or": "or",
+      "successMessage": "Check your email to confirm your account!"
+    },
+    "forgot": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email and we'll send you a reset link",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "submitButton": "Send Reset Link",
+      "backToSignIn": "← Back to sign in",
+      "successMessage": "Check your email for a password reset link!"
+    },
+    "errors": {
+      "timeout": "Request timed out",
+      "unexpected": "An unexpected error occurred"
+    }
+  },
+  "create": {
+    "wizard": {
+      "back": "← Back",
+      "next": "Next →",
+      "creating": "Creating your book..."
+    },
+    "steps": {
+      "child": {
+        "title": "Who is this book for?",
+        "subtitle": "Tell us about the special child who will enjoy this book",
+        "nameLabel": "Child's Name",
+        "namePlaceholder": "Enter name...",
+        "ageLabel": "Age:",
+        "ageYears": "years",
+        "photoLabel": "📷 Upload a photo (optional)",
+        "photoHint": "Upload a photo of the child to personalize the illustrations. The AI will use this to make the main character look like them!",
+        "photoButton": "Choose Photo",
+        "photoSelected": "Photo selected",
+        "photoChange": "Change Photo"
+      },
+      "type": {
+        "title": "Choose a book type",
+        "subtitle": "Select the perfect format for {{childName}}",
+        "subtitleDefault": "Select the perfect format for your child"
+      },
+      "format": {
+        "title": "Choose a Format",
+        "subtitle": "Prepare your book for professional printing"
+      },
+      "theme": {
+        "title": "Pick a theme",
+        "subtitle": "What kind of story will this be?",
+        "storyLabel": "Tell us more about the story (optional)",
+        "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
+      },
+      "style": {
+        "title": "Choose an art style",
+        "subtitle": "How should your book's illustrations look?"
+      },
+      "title": {
+        "title": "Name your book",
+        "subtitle": "Give your story an amazing title",
+        "titleLabel": "Book Title",
+        "titlePlaceholder": "{{childName}}'s Amazing Adventure",
+        "titlePlaceholderDefault": "My Amazing Adventure"
+      }
+    },
+    "bookTypes": {
+      "board": {
+        "label": "Board Book",
+        "description": "Durable pages perfect for little hands",
+        "ageRange": "0-3 years"
+      },
+      "picture": {
+        "label": "Picture Book",
+        "description": "Beautiful illustrations with short text",
+        "ageRange": "3-6 years"
+      },
+      "story": {
+        "label": "Story Book",
+        "description": "Engaging stories for growing readers",
+        "ageRange": "5-10 years"
+      },
+      "alphabet": {
+        "label": "Alphabet Book",
+        "description": "Learn letters in a fun way",
+        "ageRange": "2-5 years"
+      }
+    },
+    "formats": {
+      "square": {
+        "label": "Square Hardcover",
+        "description": "8.5\" x 8.5\" Premium. The gold standard for kids' books.",
+        "pages": "Min 24 Pages (Auto-set)"
+      },
+      "portrait": {
+        "label": "Portrait / Digital",
+        "description": "6\" x 9\" Standard. Great for softcover or phones.",
+        "pages": "Flexible Pages"
+      }
+    },
+    "themes": {
+      "adventure": "Adventure",
+      "bedtime": "Bedtime",
+      "learning": "Learning",
+      "fantasy": "Fantasy",
+      "animals": "Animals",
+      "custom": "Custom"
+    },
+    "artStyles": {
+      "storybook_classic": "Classic Storybook",
+      "watercolor": "Watercolor",
+      "digital_art": "Digital Art",
+      "cartoon": "Cartoon",
+      "pixel_art": "Pixel Art",
+      "coloring_book": "Coloring Book"
+    },
+    "imageQuality": {
+      "label": "✨ Image Quality",
+      "fast": "⚡ Fast (Standard)",
+      "pro": "💎 Pro (Imagen 4 Ultra)",
+      "fastDescription": "Standard mode generates beautiful images quickly using Imagen 4.",
+      "proDescription": "Pro mode uses Imagen 4 Ultra for stunning, high-resolution illustrations. Takes a bit longer."
+    },
+    "preview": {
+      "forChild": "For {{childName}}, {{age}} years old",
+      "defaultTitle": "{{childName}}'s Amazing Adventure"
+    },
+    "buttons": {
+      "back": "← Back",
+      "continue": "Continue →",
+      "generateBook": "✨ Generate Book with AI 🪄",
+      "createBook": "Create My Book ✨",
+      "signInToCreate": "Sign In to Create"
+    },
+    "errors": {
+      "creationFailed": "Failed to create book. Please try again.",
+      "createFailed": "Failed to create book. Please try again.",
+      "photoUploadFailed": "Failed to upload photo. Please try again.",
+      "invalidSettings": "Please complete all required fields.",
+      "emptyTitleHint": "Leave empty to use the default title"
+    },
+    "status": {
+      "extractingCharacter": "Analyzing photo...",
+      "generatingStory": "Creating your story...",
+      "openingBook": "Opening your book..."
+    }
+  },
+  "profile": {
+    "header": {
+      "title": "My Profile",
+      "subtitle": "Manage your account settings and preferences"
+    },
+    "generalInfo": {
+      "title": "General Information",
+      "editButton": "✏️ Edit",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "emailHint": "Email cannot be changed",
+      "language": "Language Preference",
+      "accountCreated": "Account Created",
+      "notSet": "Not set",
+      "firstNamePlaceholder": "Enter first name",
+      "lastNamePlaceholder": "Enter last name",
+      "cancelButton": "Cancel",
+      "saveButton": "Save Changes"
+    },
+    "languages": {
+      "en": "English",
+      "de": "German",
+      "he": "Hebrew"
+    },
+    "childProfiles": {
+      "title": "Child Profiles",
+      "addButton": "+ Add Child",
+      "emptyTitle": "No child profiles yet",
+      "emptySubtitle": "Add a child profile to create personalized stories",
+      "emptyButton": "Add Your First Child",
+      "age": "Age {{age}}"
+    },
+    "myBooks": {
+      "title": "My Books",
+      "viewAllButton": "View All →",
+      "emptyTitle": "Your created books will appear here",
+      "emptyButton": "Create Your First Book"
+    },
+    "purchases": {
+      "title": "Recent Purchases",
+      "viewAllButton": "View All →",
+      "emptyTitle": "No purchases yet",
+      "emptySubtitle": "Order your first book to see it here"
+    },
+    "accountSettings": {
+      "title": "Account Settings",
+      "changePassword": {
+        "label": "Change Password",
+        "description": "Update your password"
+      },
+      "paymentMethods": {
+        "label": "Payment Methods",
+        "description": "Manage saved cards"
+      },
+      "shippingAddresses": {
+        "label": "Shipping Addresses",
+        "description": "Manage delivery addresses"
+      },
+      "notifications": {
+        "label": "Notifications",
+        "description": "Email and push preferences"
+      }
+    },
+    "deleteModal": {
+      "title": "Delete Book",
+      "message": "Are you sure you want to delete this book? This action cannot be undone.",
+      "confirmText": "Delete"
+    }
+  },
+  "orders": {
+    "header": {
+      "backButton": "← Back to Home",
+      "title": "My Orders"
+    },
+    "loading": "Loading orders...",
+    "empty": {
+      "title": "No Orders Yet",
+      "subtitle": "When you order a printed book, it will appear here.",
+      "button": "Create Your First Book →"
+    },
+    "orderCard": {
+      "orderId": "Order #{{id}}",
+      "for": "For {{childName}}",
+      "format": "Format",
+      "quantity": "Quantity",
+      "total": "Total",
+      "trackingLabel": "Tracking Number",
+      "viewBookButton": "View Book",
+      "reorderButton": "Order Again"
+    },
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "processing": "Processing",
+      "printed": "Printed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "purchases": {
+    "header": {
+      "title": "My Purchases",
+      "subtitle": "Track your orders and download receipts"
+    },
+    "empty": {
+      "title": "No purchases yet",
+      "subtitle": "Create a book and order a printed copy to see your purchases here",
+      "button": "Create Your First Book"
+    }
+  },
+  "mybooks": {
+    "header": {
+      "title": "My Books",
+      "booksCount": "{{count}} book created",
+      "booksCount_other": "{{count}} books created"
+    },
+    "empty": {
+      "title": "No books yet",
+      "subtitle": "Create your first personalized children's book and watch the magic happen",
+      "button": "✨ Create Your First Book"
+    },
+    "deleteModal": {
+      "title": "Delete Book",
+      "message": "Are you sure you want to delete this book? This action cannot be undone.",
+      "confirmText": "Delete"
+    },
+    "bookCard": {
+      "pages": "{{count}} pgs",
+      "forChild": "For {{childName}}, age {{age}}",
+      "status": {
+        "draft": "Draft",
+        "complete": "Complete",
+        "published": "Published"
+      }
+    }
+  },
+  "viewer": {
+    "controls": {
+      "keyboardHint": "Use ← → arrow keys or click to flip pages"
+    }
+  },
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "Choose the perfect package for your magical story",
+    "matrix": {
+      "package": "Package",
+      "digital": "Digital",
+      "printed": "Printed",
+      "single": "Single Book",
+      "book": "book",
+      "perBook": "per book",
+      "total": "total"
+    },
+    "features": {
+      "digitalIncludes": "Digital includes:",
+      "digitalFeature1": "Instant download",
+      "digitalFeature2": "PDF format",
+      "digitalFeature3": "Print at home",
+      "printedIncludes": "Printed includes:",
+      "printedFeature1": "Professional printing",
+      "printedFeature2": "Premium paper quality",
+      "printedFeature3": "Shipping to your door"
+    },
+    "hero": {
+      "description": "Create magical personalized books for your little ones. Choose the perfect package for your story!"
+    },
+    "cta": {
+      "primary": "Start Creating",
+      "secondary": "Learn More",
+      "title": "Ready to create your magical story?",
+      "subtitle": "Start bringing your child's imagination to life today!"
+    },
+    "footer": {
+      "tagline": "Where every child becomes the hero of their own story"
+    },
+    "faq": {
+      "title": "Pricing Questions",
+      "q1": "What's included in the printed price?",
+      "a1": "The printed price includes professional printing on premium paper, hardcover binding, and shipping to your door.",
+      "q2": "Can I get a digital copy with my printed book?",
+      "a2": "Yes! Every printed book order includes a complimentary digital PDF version that you can download immediately.",
+      "q3": "What payment methods do you accept?",
+      "a3": "We accept all major credit cards, debit cards, and PayPal through our secure payment processor.",
+      "q4": "Are there any additional fees?",
+      "a4": "Taxes are calculated at checkout based on your location. Shipping costs vary by country and are shown before you complete your purchase.",
+      "q5": "What about print specifications?",
+      "a5": "Printed books are professionally bound with premium paper. Specific format options (size, binding type) are available during the book creation process."
+    },
+    "disclaimers": {
+      "shipping": "Shipping costs calculated at checkout based on country",
+      "tax": "Taxes calculated at checkout as per local regulations",
+      "currency": "Prices shown in"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "We're Storytellers, Parents & Dreamers",
+      "subtitle": "Creating magical stories that teach, inspire, and delight"
+    },
+    "story": {
+      "heading": "Our Story",
+      "paragraph1": "We're a team of young entrepreneurs who are parents and, at heart, still kids ourselves. We believe in the magic of storytelling and the power of a good story to shape young minds.",
+      "paragraph2": "We love stories that teach children meaning—stories that spark imagination, build character, and create lasting memories. Every book created on our platform is a chance to share values, lessons, and love.",
+      "paragraph3": "Creativity and innovation drive everything we do. We're constantly exploring new ways to make storytelling more accessible, more personal, and more meaningful for families around the world."
+    },
+    "images": {
+      "placeholder1Alt": "KidBook Creator team collaborating",
+      "placeholder2Alt": "KidBook Creator creative workspace",
+      "comingSoon": "Photo Coming Soon"
+    },
+    "cta": {
+      "heading": "Ready to Create Magic?",
+      "description": "Join thousands of families creating personalized stories that bring joy and wonder to children around the world.",
+      "primary": "Start Creating",
+      "secondary": "Explore Our Books"
+    },
+    "contact": {
+      "heading": "Get in Touch",
+      "description": "Have questions or need help? We'd love to hear from you!",
+      "button": "Contact Us"
+    }
+  },
+  "footer": {
+    "sections": {
+      "quickLinks": {
+        "title": "Quick Links",
+        "myBooks": "My Books",
+        "createStory": "Create Story",
+        "community": "Our Books",
+        "pricing": "Pricing",
+        "faq": "FAQ",
+        "about": "About Us"
+      },
+      "legal": {
+        "title": "Legal & Trust",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "cookies": "Cookie Policy",
+        "refunds": "Refund Policy",
+        "shipping": "Shipping Info",
+        "contact": "Contact Us"
+      }
+    },
+    "bottom": {
+      "copyright": " KidBook Creator. All rights reserved.",
+      "madeWith": "Made with",
+      "love": "love",
+      "for": "for families everywhere"
+    },
+    "aria": {
+      "footerNavigation": "Footer navigation",
+      "socialMedia": "Social media links",
+      "newsletter": "Newsletter subscription",
+      "languageSelector": "Select language"
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Frequently Asked Questions - KidBook Creator",
+      "description": "Find answers to common questions about creating personalized children's books, pricing, shipping, and more."
+    },
+    "heading": "Frequently Asked Questions",
+    "searchPlaceholder": "Search FAQs...",
+    "noResults": "No results found. Try different keywords or browse categories below.",
+    "relatedQuestions": "Related Questions",
+    "stillHaveQuestions": "Get in Touch",
+    "contactDescription": "Have questions or need help? We'd love to hear from you!",
+    "contactSupport": "Contact Us",
+    "categories": [
+      {
+        "id": "book-creation",
+        "title": "Book Creation",
+        "faqs": [
+          {
+            "id": "ai-creation-process",
+            "question": "How does the book creation process work?",
+            "answer": "<p>Creating your personalized children's book is simple and takes just a few minutes:</p><ol><li><strong>Choose Your Story:</strong> Browse our collection of story themes and select one that fits your child's interests and age.</li><li><strong>Upload a Photo:</strong> Upload a clear, well-lit photo of your child. We use this to create a consistent character throughout the book.</li><li><strong>Customize Details:</strong> Add your child's name, select preferences, and personalize the dedication page.</li><li><strong>Preview & Edit:</strong> Review the generated book and make any changes to text.</li><li><strong>Order:</strong> Choose between digital PDF or printed hardcover book delivery.</li></ol><p>The entire process typically takes 5-10 minutes, and you'll see a preview before finalizing your order.</p>",
+            "relatedFaqs": [
+              "photo-upload",
+              "customize-story"
+            ]
+          },
+          {
+            "id": "photo-upload",
+            "question": "How do I upload photos and what quality is needed?",
+            "answer": "<p>To get the best character results, follow these photo guidelines:</p><h4>Photo Requirements:</h4><ul><li><strong>Resolution:</strong> Minimum 1024x1024 pixels (higher is better)</li><li><strong>Format:</strong> JPG or PNG files</li><li><strong>Face Visibility:</strong> Child's face should be clearly visible and facing forward</li><li><strong>Lighting:</strong> Well-lit photos with natural lighting work best</li><li><strong>Background:</strong> Simple, uncluttered backgrounds help the AI focus on the face</li><li><strong>Single Subject:</strong> One child per photo (no group photos)</li></ul><h4>Tips for Best Results:</h4><ul><li>Use recent photos taken in good lighting</li><li>Avoid blurry, dark, or heavily filtered images</li><li>Photos taken outdoors in natural light often work best</li><li>Make sure the child's eyes are open and face is not obscured</li></ul><h4>Photo Rights & Consent:</h4><ul><li><strong>You must have rights to use the uploaded photos</strong></li><li><strong>Obtain consent from persons depicted in photos</strong></li><li><strong>For minors: parental/guardian consent required</strong></li><li>Do not upload photos of famous characters or copyrighted content</li></ul><p>You can upload multiple photos and choose the one that generates the best character representation.</p>",
+            "relatedFaqs": [
+              "ai-creation-process",
+              "ai-quality"
+            ]
+          },
+          {
+            "id": "customize-story",
+            "question": "Can I customize the story, text, and illustrations?",
+            "answer": "<p>Yes! We offer customization options:</p><h4>Text Customization:</h4><ul><li>Edit any text in the story to personalize it further</li><li>Modify character names and details</li><li>Add or change the dedication message</li><li>Adjust story elements to fit your child's preferences</li></ul><h4>Character Customization:</h4><ul><li>Child's name appears throughout the story</li><li>Character generated based on uploaded photo</li><li>Consistent character appearance across all pages</li></ul><h4>Important Note:</h4><p><strong>Once illustrations are generated, they cannot be changed.</strong> Please review carefully during the preview stage before placing your order. All customization happens in the preview stage, so you can perfect the book exactly how you want it.</p>",
+            "relatedFaqs": [
+              "ai-creation-process",
+              "photo-upload"
+            ]
+          },
+          {
+            "id": "languages-supported",
+            "question": "What languages do you support?",
+            "answer": "<p>We currently support the following languages for both the website interface and book content:</p><h4>Fully Supported Languages:</h4><ul><li><strong>English:</strong> Complete support for all features</li><li><strong>Hebrew:</strong> Full RTL (Right-to-Left) layout support</li><li><strong>German:</strong> Complete translation and localization</li></ul><h4>Book Content:</h4><p>You can create books in any of the supported languages. The AI generates age-appropriate, grammatically correct content in your selected language.</p><h4>Website Interface:</h4><p>The entire website, including navigation, checkout, and help content, is available in all supported languages. Simply use the language switcher in the navigation menu.</p><h4>Coming Soon:</h4><p>We're working on adding Spanish, French, and Arabic support. Sign up for our newsletter to be notified when new languages become available.</p>",
+            "relatedFaqs": [
+              "ai-creation-process"
+            ]
+          },
+          {
+            "id": "satisfaction-results",
+            "question": "What if I'm not satisfied with the results?",
+            "answer": "<p>We're committed to your satisfaction, and we provide several safeguards:</p><h4>Preview Before Ordering:</h4><p><strong>Before completing your order, you can review and edit:</strong></p><ul><li>The first page illustration (cover image)</li><li>The complete story text</li><li>All personalization details</li></ul><p><strong>Important:</strong> The remaining illustrations are generated <em>after</em> you complete your digital purchase. This is when the magic happens!</p><h4>What You Can Edit:</h4><ul><li><strong>Text Only:</strong> You can edit any text in the story to personalize it further</li><li>Modify character names and details</li><li>Adjust story elements to fit your child's preferences</li><li>Change the dedication message</li></ul><h4>What You Cannot Edit:</h4><ul><li><strong>Illustrations cannot be changed</strong> once generated</li><li>Character appearance is based on your uploaded photo</li><li>Art style is determined by the story theme you selected</li></ul><h4>Quality Disclaimer:</h4><p>Our story creation technology produces unique, personalized books, but results may vary based on photo quality and complexity. Minor artistic variations are normal and part of the creative interpretation. <strong>Generated content is provided 'as is' without guarantees of perfection.</strong></p><h4>What Qualifies as a Defect:</h4><ul><li>Printing errors or physical damage</li><li>Missing pages or incorrect binding</li><li>Significant deviation from approved preview</li><li>Books damaged during shipping</li></ul><h4>What's NOT Considered a Defect:</h4><ul><li>Minor artistic variations in generated illustrations</li><li>Slight color differences from digital preview (normal in printing)</li><li>Personal preference differences in art style</li><li>Creative interpretation of facial features</li></ul><p>If you receive a defective book, we offer a full refund or replacement within 14 days of delivery.</p>",
+            "relatedFaqs": [
+              "photo-upload",
+              "return-policy"
+            ]
+          },
+          {
+            "id": "photo-privacy",
+            "question": "What happens to my child's photo? How is it protected?",
+            "answer": "<p>We take your privacy and your child's safety very seriously:</p><h4>Photo Usage:</h4><ul><li>Photos are used <strong>only</strong> to generate character illustrations for your book</li><li><strong>NOT used to train AI models</strong></li><li><strong>NOT shared with third parties</strong> (except our secure AI service provider)</li><li><strong>NOT used for marketing or any other purpose</strong></li></ul><h4>Automatic Deletion:</h4><ul><li>Photos are <strong>automatically deleted after 7 days</strong> of order completion</li><li>This is much shorter than industry standards (typically 30-90 days)</li><li>Deletion is permanent and cannot be reversed</li></ul><h4>Security Measures:</h4><ul><li>All photos encrypted during upload and storage (SSL/TLS)</li><li>Stored on secure, access-controlled servers</li><li>Only authorized systems can access photos for processing</li><li>Full compliance with GDPR, CCPA, and children's privacy laws</li></ul><h4>Your Rights:</h4><ul><li>Request immediate deletion at any time by contacting support</li><li>Access a copy of your data</li><li>Request information about how your data is processed</li></ul><p>For complete details, please review our <a href='/privacy'>Privacy Policy</a>.</p>",
+            "relatedFaqs": [
+              "photo-upload",
+              "data-privacy"
+            ]
+          },
+          {
+            "id": "digital-vs-physical",
+            "question": "Can I order a digital version or only physical books?",
+            "answer": "<p>We offer both digital and physical book options:</p><h4>Digital PDF Book:</h4><ul><li><strong>Price:</strong> Available as part of your order</li><li><strong>Delivery:</strong> Instant download after order completion</li><li><strong>Format:</strong> High-resolution PDF optimized for screen viewing</li><li><strong>Use:</strong> View on tablets, computers, or e-readers</li><li><strong>Sharing:</strong> Personal use only (not for commercial distribution)</li></ul><h4>Physical Hardcover Book:</h4><ul><li><strong>Format:</strong> Premium hardcover with glossy pages</li><li><strong>Size:</strong> 8.5\" x 11\" (standard children's book size)</li><li><strong>Pages:</strong> 24-32 pages depending on story</li><li><strong>Quality:</strong> Professional printing with vibrant colors</li><li><strong>Delivery:</strong> Ships within 5-7 business days</li></ul><h4>Bundle Option:</h4><p>Order both digital and physical together for the best value. The digital version is perfect for immediate enjoyment while waiting for the printed book to arrive.</p>",
+            "relatedFaqs": [
+              "pricing-options",
+              "shipping-delivery"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pricing-payments",
+        "title": "Pricing & Payments",
+        "faqs": [
+          {
+            "id": "pricing-options",
+            "question": "What are your pricing options and discounts?",
+            "answer": "<p>We offer transparent, straightforward pricing with no hidden fees:</p><h4>Single Book Pricing:</h4><ul><li><strong>Digital PDF:</strong> $15 - Instant download after order</li><li><strong>Physical Hardcover:</strong> $45 - Includes digital copy, professional printing, and shipping</li></ul><h4>Payment Methods:</h4><p>We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, and Apple Pay.</p><h4>Currency & Pricing:</h4><p>All prices are displayed in your local currency based on your location. No currency conversion fees. Visit our pricing page to see exact prices in your currency.</p>",
+            "relatedFaqs": [
+              "shipping-delivery"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shipping-delivery",
+        "title": "Shipping & Delivery",
+        "faqs": [
+          {
+            "id": "shipping-delivery",
+            "question": "What is your shipping and delivery policy?",
+            "answer": "<p>We provide reliable shipping with clear timelines:</p><h4>Production Time:</h4><ul><li><strong>AI Generation:</strong> Instant (during creation process)</li><li><strong>Book Printing:</strong> 3-5 business days after order</li><li><strong>Quality Check:</strong> 1 business day</li><li><strong>Total Production:</strong> 4-6 business days</li></ul><h4>Shipping Options:</h4><ul><li><strong>Standard Shipping:</strong> 5-7 business days (Free on qualifying orders)</li><li><strong>Expedited Shipping:</strong> 2-3 business days (additional fee)</li><li><strong>Express Shipping:</strong> 1-2 business days (additional fee)</li></ul><h4>International Shipping:</h4><ul><li><strong>Europe:</strong> 7-14 business days</li><li><strong>Other Regions:</strong> 10-21 business days</li><li><strong>Customs:</strong> Customer responsible for any import duties/taxes</li></ul><h4>Order Tracking:</h4><p>You'll receive a tracking number via email once your book ships. Track your order in real-time through our website or the carrier's website.</p><h4>Delivery Issues:</h4><p>If your book doesn't arrive within the expected timeframe, contact our support team and we'll investigate immediately.</p>",
+            "relatedFaqs": [
+              "pricing-options",
+              "cancellation-policy"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "legal-policies",
+        "title": "Legal & Policies",
+        "faqs": [
+          {
+            "id": "cancellation-policy",
+            "question": "What is your cancellation and refund policy?",
+            "answer": "<p>We want you to be completely satisfied with your purchase. Here's our cancellation policy:</p><h4>Cancellation Window:</h4><ul><li><strong>Before Production:</strong> Full refund if cancelled within <strong>48 hours</strong> of order placement and before printing begins</li><li><strong>During Production:</strong> Cannot cancel once book enters printing (typically 48 hours after order)</li><li><strong>After Shipping:</strong> Cannot cancel, but return policy applies for defective books</li></ul><h4>How to Cancel:</h4><ol><li>Email support@kidbookcreator.com with your order number</li><li>We'll confirm if your order is eligible for cancellation</li><li>Refund processed within 5-7 business days to original payment method</li></ol><h4>Personalized Product Notice:</h4><p>As personalized products are made specifically for you, they <strong>cannot be cancelled once production begins</strong>. This is standard industry practice and complies with consumer protection laws:</p><ul><li><strong>EU:</strong> Consumer Rights Directive Article 16(c) - Personalized goods excluded from right of withdrawal</li><li><strong>UK:</strong> Consumer Contracts Regulations 2013</li><li><strong>US:</strong> State-specific consumer protection laws</li></ul><h4>Digital E-Books:</h4><ul><li>Cannot be cancelled once generation starts</li><li>Not eligible for refund after download</li><li>Preview carefully before finalizing order</li></ul><h4>Exceptions:</h4><ul><li>Defective or damaged books can be returned for full refund (see Return Policy)</li><li>Significant production errors qualify for refund or replacement</li><li>Force majeure events (delivery failures beyond our control)</li></ul><h4>Our Commitment:</h4><p>We offer a <strong>longer 48-hour cancellation window</strong> compared to the industry standard 24 hours. We'll always work with you to find a fair solution if issues arise.</p>",
+            "relatedFaqs": [
+              "return-policy",
+              "shipping-delivery"
+            ]
+          },
+          {
+            "id": "return-policy",
+            "question": "What is your return policy for defective books?",
+            "answer": "<p>We stand behind the quality of our books and offer a comprehensive return policy for defective products:</p><h4>Return Eligibility:</h4><ul><li><strong>Timeframe:</strong> Report defects within <strong>14 days of delivery</strong></li><li><strong>Condition:</strong> Book must be in original condition (unread or gently read)</li><li><strong>Proof Required:</strong> Clear photos of the defect must be provided</li><li><strong>Inspection:</strong> Inspect your book immediately upon delivery</li></ul><h4>What Qualifies as Defective:</h4><ul><li><strong>Printing errors:</strong> Blurry images, color issues, text errors</li><li><strong>Physical damage:</strong> Torn pages, broken binding, damaged cover</li><li><strong>Missing pages</strong> or incorrect page order</li><li><strong>Significant deviation</strong> from approved preview</li><li><strong>Shipping damage:</strong> Books damaged during transit</li><li><strong>Production errors:</strong> Wrong personalization, incorrect content</li></ul><h4>What's NOT Considered Defective:</h4><ul><li>Minor color variations from digital preview (normal in printing)</li><li>AI artistic interpretation differences</li><li>Personal preference regarding art style</li><li>Minor imperfections in AI-generated illustrations</li><li>Slight paper texture variations</li><li>Normal wear from reading</li></ul><h4>Return Process:</h4><ol><li><strong>Contact support@kidbookcreator.com</strong> within 14 days with:</li><ul><li>Order number</li><li>Clear photos showing the defect</li><li>Description of the issue</li></ul><li>We'll review and approve your return within 24-48 hours</li><li>We provide a <strong>prepaid return shipping label</strong> (free for defects)</li><li>Choose between full refund or replacement book</li><li>Refund processed within 5-7 business days after we receive the return</li></ol><h4>Liability Limitation:</h4><p>Our liability is limited to the purchase price of the book. We are not liable for indirect, consequential, or special damages.</p><h4>Our Guarantee:</h4><p>If your book is defective, we'll make it right with a full refund or free replacement—your choice. <strong>Free return shipping for all defects.</strong> No questions asked.</p>",
+            "relatedFaqs": [
+              "cancellation-policy",
+              "ai-quality"
+            ]
+          },
+          {
+            "id": "data-privacy",
+            "question": "How do you protect my personal data and photos?",
+            "answer": "<p>We take your privacy and data security very seriously and comply with all major data protection regulations:</p><h4>Data We Collect:</h4><ul><li><strong>Personal Information:</strong> Name, email, shipping/billing address</li><li><strong>Payment Data:</strong> Processed by third-party providers (Stripe) - we never store card details</li><li><strong>Photos:</strong> Images uploaded for book creation only</li><li><strong>Technical Data:</strong> IP address, browser type, device info (automatic)</li><li><strong>Usage Data:</strong> Pages visited, clicks, session duration (analytics)</li></ul><h4>Photo Storage & Deletion:</h4><ul><li><strong>Storage Duration:</strong> Photos stored for <strong>30 days</strong> after order completion (shorter than industry standard of 90 days)</li><li><strong>Automatic Deletion:</strong> Photos automatically and permanently deleted after 30 days</li><li><strong>Early Deletion:</strong> Request immediate deletion by contacting support</li><li><strong>Secure Storage:</strong> All photos encrypted (SSL/TLS) and stored on secure servers</li><li><strong>AI Processing:</strong> Photos analyzed by AI solely for illustration generation</li><li><strong>NOT used to train AI models</strong></li><li><strong>NOT shared with third parties</strong> (except AI provider under strict data processing agreement)</li></ul><h4>Legal Basis for Processing (GDPR):</h4><ul><li><strong>Performance of Contract:</strong> Order processing, delivery, customer service</li><li><strong>Legitimate Interest:</strong> Fraud prevention, security, site improvement</li><li><strong>Consent:</strong> Marketing communications, non-essential cookies</li><li><strong>Legal Obligation:</strong> Tax records (7 years), legal compliance</li></ul><h4>Data Protection Compliance:</h4><ul><li><strong>GDPR Compliant:</strong> Full compliance with EU General Data Protection Regulation</li><li><strong>CCPA Compliant:</strong> California Consumer Privacy Act compliance</li><li><strong>COPPA Compliant:</strong> Children's Online Privacy Protection Act (US)</li><li><strong>No Data Sales:</strong> We never sell or rent your personal data</li><li><strong>Third-Party Processors:</strong> All bound by data processing agreements</li><li><strong>International Transfers:</strong> Standard Contractual Clauses for non-EU transfers</li></ul><h4>Your Rights (GDPR/CCPA):</h4><ul><li><strong>Right to Access:</strong> Request a copy of your personal data</li><li><strong>Right to Rectification:</strong> Correct inaccurate data</li><li><strong>Right to Erasure:</strong> Request deletion of your data (with legal exceptions)</li><li><strong>Right to Restriction:</strong> Limit how we process your data</li><li><strong>Right to Data Portability:</strong> Receive data in machine-readable format</li><li><strong>Right to Object:</strong> Opt out of processing for marketing</li><li><strong>Right to Withdraw Consent:</strong> Unsubscribe anytime</li><li><strong>Right to Lodge Complaint:</strong> File complaint with supervisory authority</li></ul><h4>How to Exercise Your Rights:</h4><p>Email privacy@kidbookcreator.com with your request. We'll respond within <strong>30 days</strong> (GDPR) or <strong>45 days</strong> (CCPA). Identity verification may be required.</p><h4>Security Measures:</h4><ul><li><strong>SSL/TLS encryption</strong> for all data transmission</li><li><strong>Encrypted database storage</strong></li><li><strong>Access controls:</strong> Role-based employee access</li><li><strong>Regular security audits</strong> and penetration testing</li><li><strong>Data breach notification:</strong> Within 72 hours to authorities (GDPR)</li><li><strong>PCI-DSS compliant</strong> payment processing</li></ul><h4>Cookies:</h4><ul><li><strong>Essential cookies:</strong> Required for site functionality (no consent needed)</li><li><strong>Analytics cookies:</strong> Google Analytics (consent required)</li><li><strong>Marketing cookies:</strong> Advertising (consent required)</li><li>Manage cookie preferences via our cookie banner</li></ul><h4>Children's Privacy:</h4><ul><li>Service intended for adults (parents/guardians) to create books for children</li><li>We do not knowingly collect data from children under 16 (EU) or 13 (US)</li><li>If discovered, data deleted immediately</li><li>Parents can request deletion of child data</li></ul><h4>Data Retention:</h4><ul><li><strong>Account data:</strong> While account active + reasonable period after closure</li><li><strong>Order/invoice data:</strong> 7 years (tax/legal requirement)</li><li><strong>Photos:</strong> 30 days, then automatic deletion</li><li><strong>Marketing data:</strong> Until consent withdrawn</li></ul><p>For complete details, please review our <a href=\"/privacy-policy\">Privacy Policy</a>, <a href=\"/terms\">Terms & Conditions</a>, and <a href=\"/cookies\">Cookie Policy</a>.</p>",
+            "relatedFaqs": [
+              "ai-creation-process"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: January 27, 2026",
+      "version": "Version 1.0"
+    },
+    "sections": [
+      {
+        "title": "1. Introduction & Scope",
+        "content": "These Terms of Service ('Terms') govern your use of KidBook Creator ('the Service'), operated by KidBook Creator Ltd. ('we', 'us', 'our'). By accessing or using our Service, you agree to be bound by these Terms."
+      },
+      {
+        "title": "Acceptance of Terms",
+        "content": "By using our Service, you confirm that you are at least 16 years old (or 13 years old if in the United States) and have the legal capacity to enter into these Terms. If you are using the Service on behalf of someone else, you represent that you have the authority to bind that person to these Terms."
+      },
+      {
+        "title": "2. Account Terms & Eligibility",
+        "content": "To use our Service, you must create an account and provide accurate, complete, and current information."
+      },
+      {
+        "title": "Eligibility Requirements",
+        "content": "You must be at least 16 years old (or 13 years old in the United States) to create an account. You must provide a valid email address and other required information. You are responsible for maintaining the confidentiality of your account credentials."
+      },
+      {
+        "title": "Account Responsibilities",
+        "content": "You are responsible for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account. We reserve the right to suspend or terminate accounts that violate these Terms."
+      },
+      {
+        "title": "3. Ordering Process & Order Acceptance",
+        "content": "Our ordering process is designed to be simple and transparent."
+      },
+      {
+        "title": "Order Placement",
+        "content": "Orders are placed through our website interface. You will receive an order confirmation email once your order is successfully submitted. No order is accepted by us until we send you an order confirmation."
+      },
+      {
+        "title": "Order Acceptance",
+        "content": "We reserve the right to accept or decline any order for any reason, including but not limited to: pricing errors, insufficient inventory, or violation of these Terms. We may also require additional verification before accepting an order."
+      },
+      {
+        "title": "Order Review",
+        "content": "You are responsible for reviewing your order details immediately after receiving the confirmation email. You must notify us of any errors within 24 hours of receiving the confirmation."
+      },
+      {
+        "title": "4. Pricing & Payment Terms",
+        "content": "Our pricing is transparent and all-inclusive."
+      },
+      {
+        "title": "Product Pricing",
+        "content": "Prices are displayed in your local currency where applicable. All prices include applicable taxes for EU customers. Non-EU customers may be responsible for import duties and taxes in their country."
+      },
+      {
+        "title": "Payment Processing",
+        "content": "Payment is processed through secure third-party payment processors. We do not store your payment card information. Payment must be made in full at the time of order placement."
+      },
+      {
+        "title": "Pricing Errors",
+        "content": "We reserve the right to correct pricing errors. If we discover a pricing error after order placement, we will contact you to confirm the correct price or cancel the order if you prefer."
+      },
+      {
+        "title": "5. Cancellation & Refund Policy",
+        "content": "We understand that plans change, and we've designed our policies to be fair and transparent."
+      },
+      {
+        "title": "Cancellation Window",
+        "content": "You may cancel your order within 48 hours of placing it, provided that book generation has not yet begun. Once book generation starts, orders cannot be cancelled due to the personalized nature of our products."
+      },
+      {
+        "title": "Personalized Products Exclusion",
+        "content": "In accordance with EU Consumer Rights Directive Article 16(c) and similar laws in other jurisdictions, personalized products are excluded from standard return rights. Our products are manufactured to your specifications and are clearly personalized."
+      },
+      {
+        "title": "Defective Products",
+        "content": "If your book arrives with manufacturing defects (printing errors, binding issues, damage during shipping), please contact us within 14 days of receipt. We will arrange for a free replacement or full refund, including shipping costs."
+      },
+      {
+        "title": "Cancellation Process",
+        "content": "To cancel an order, please contact our customer service team with your order number. We will process cancellations within 24 hours during business days."
+      },
+      {
+        "title": "6. Delivery & Shipping",
+        "content": "We deliver worldwide with reliable shipping partners."
+      },
+      {
+        "title": "Delivery Timeframes",
+        "content": "Production typically takes 3-5 business days, plus shipping time. Shipping times vary by location: 3-5 days for domestic orders, 7-14 days for international orders. These are estimates and not guaranteed."
+      },
+      {
+        "title": "Risk and Title",
+        "content": "Risk of loss passes to you upon delivery to the shipping carrier. Title to the products passes to you upon full payment. You must be available to accept delivery or make arrangements for receipt."
+      },
+      {
+        "title": "Order Tracking",
+        "content": "You will receive tracking information once your order ships. We recommend monitoring your shipment and contacting the carrier directly for delivery issues."
+      },
+      {
+        "title": "7. Intellectual Property Rights",
+        "content": "We respect intellectual property rights and clearly define ownership."
+      },
+      {
+        "title": "Our Intellectual Property",
+        "content": "All content, features, and functionality of the Service are owned by KidBook Creator Ltd. and are protected by copyright, trademark, and other intellectual property laws."
+      },
+      {
+        "title": "Your Rights to Purchased Content",
+        "content": "Upon full payment, you receive a non-exclusive, non-transferable license to use your purchased book for personal, non-commercial purposes. You may not reproduce, distribute, or commercially exploit the content without our written consent."
+      },
+      {
+        "title": "Generated Content",
+        "content": "Generated illustrations and content are licensed to you for personal use only. We retain all rights to the underlying generation technology and algorithms."
+      },
+      {
+        "title": "8. User Content & Responsibilities",
+        "content": "You are responsible for the content you provide to our Service."
+      },
+      {
+        "title": "Your Warranties",
+        "content": "You warrant that you have all necessary rights to the content you provide, including photos and text. You confirm that you have permission from all individuals depicted in photos, or that you are their legal guardian."
+      },
+      {
+        "title": "Prohibited Content",
+        "content": "You may not upload content that: is illegal, threatening, defamatory, hateful, or discriminatory; infringes on intellectual property rights; contains copyrighted characters or protected brand logos; violates privacy rights; or is otherwise inappropriate."
+      },
+      {
+        "title": "Indemnification",
+        "content": "You agree to indemnify and hold us harmless from any claims, damages, or expenses arising from your violation of these warranties or your use of the Service."
+      },
+      {
+        "title": "9. Generated Content Terms",
+        "content": "Our Service uses advanced technology to create personalized content."
+      },
+      {
+        "title": "Quality Disclaimer",
+        "content": "Generated content may contain unexpected or imperfect results. Minor variations in style, color, or interpretation are not considered defects and are part of the creative process. Our system makes its best effort to match your specifications but cannot guarantee perfect results."
+      },
+      {
+        "title": "Preview and Editing",
+        "content": "You will have the opportunity to preview and edit generated content before finalizing your order. We recommend carefully reviewing all content before proceeding to payment."
+      },
+      {
+        "title": "System Limitations",
+        "content": "Our system cannot reproduce copyrighted characters, brand logos, or specific real people with perfect accuracy. Results are artistic interpretations based on your input."
+      },
+      {
+        "title": "10. Liability & Warranty Disclaimers",
+        "content": "Our liability is limited as described in this section."
+      },
+      {
+        "title": "Service Provided 'As Is'",
+        "content": "Our Service is provided on an 'as is' and 'as available' basis. We make no warranties, express or implied, about the operation of the Service or the information, content, or materials included."
+      },
+      {
+        "title": "Limitation of Liability",
+        "content": "To the maximum extent permitted by law, our total liability for any claim arising from these Terms or your use of the Service shall not exceed the purchase price of the product in question. We are not liable for indirect, consequential, or punitive damages."
+      },
+      {
+        "title": "Exceptions",
+        "content": "Some jurisdictions do not allow the exclusion or limitation of liability for consequential or incidental damages, so these limitations may not apply to you."
+      },
+      {
+        "title": "11. Force Majeure",
+        "content": "We are not liable for failures to perform due to circumstances beyond our reasonable control, including but not limited to: natural disasters, war, terrorism, labor disputes, government actions, or internet infrastructure failures. During such events, we may suspend or cancel services and provide refunds where appropriate."
+      },
+      {
+        "title": "12. Governing Law & Dispute Resolution",
+        "content": "These Terms are governed by the laws of Ireland, without regard to conflict of law principles."
+      },
+      {
+        "title": "Jurisdiction",
+        "content": "Any dispute arising from these Terms shall be resolved in the courts of Ireland. For EU consumers, additional protections under local consumer laws may apply."
+      },
+      {
+        "title": "Arbitration",
+        "content": "Most disputes can be resolved through our customer service process. For unresolved disputes, we offer binding arbitration as an alternative to court proceedings, except for claims that may be brought in small claims court."
+      },
+      {
+        "title": "13. Modifications to Terms",
+        "content": "We reserve the right to modify these Terms at any time."
+      },
+      {
+        "title": "Notification of Changes",
+        "content": "For significant changes, we will notify you by email or prominent website notice. Minor changes will be effective immediately upon posting. Your continued use of the Service after changes constitutes acceptance of the modified Terms."
+      },
+      {
+        "title": "Regular Review",
+        "content": "We encourage you to review these Terms periodically. The 'Last updated' date at the top of this page indicates when these Terms were last modified."
+      },
+      {
+        "title": "14. Contact Information",
+        "content": "If you have questions about these Terms, please contact us:"
+      }
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: January 27, 2026",
+      "version": "Version 1.0"
+    },
+    "sections": [
+      {
+        "title": "Data Controller Information",
+        "content": "KidBook Creator Ltd. ('we', 'us', 'our') is the data controller responsible for your personal information."
+      },
+      {
+        "title": "Required vs. Optional Data",
+        "content": "Some information is required to provide our Service (name, email for account creation), while other information is optional (additional photos, survey responses). We will specify what is required during the collection process."
+      },
+      {
+        "title": "Performance of Contract",
+        "content": "We process data necessary to fulfill our contractual obligations, such as processing orders, delivering books, and providing customer service."
+      },
+      {
+        "title": "Legitimate Interest",
+        "content": "We process data when we have a legitimate interest, such as improving our Service, preventing fraud, ensuring security, and analyzing usage patterns."
+      },
+      {
+        "title": "Consent",
+        "content": "We process data based on your explicit consent, such as for marketing communications, non-essential cookies, and newsletter subscriptions."
+      },
+      {
+        "title": "Legal Obligation",
+        "content": "We process data to comply with legal requirements, such as tax record keeping (7 years) and responding to legal requests."
+      },
+      {
+        "title": "Data Protection Safeguards",
+        "content": "All third parties sign Data Processing Agreements and are contractually bound to protect your data. We only share the minimum data necessary for each service."
+      },
+      {
+        "title": "We Do Not Sell Your Data",
+        "content": "We never sell, rent, or trade your personal information to third parties for marketing purposes."
+      },
+      {
+        "title": "Automatic Deletion",
+        "content": "We implement automatic deletion processes for photos and temporary data. You can also request early deletion of your data."
+      },
+      {
+        "title": "How to Exercise Your Rights",
+        "content": "To exercise these rights, email us at privacy@kidbookcreator.com. We respond within 30 days (may extend to 90 days for complex requests). We may verify your identity before processing requests."
+      },
+      {
+        "title": "Cookie Consent",
+        "content": "We ask for your consent before placing non-essential cookies. You can manage preferences through our cookie banner or browser settings."
+      },
+      {
+        "title": "No Absolute Guarantee",
+        "content": "While we take reasonable measures to protect your data, no method of transmission over the internet is 100% secure. We will notify you of data breaches that pose a risk to your rights."
+      },
+      {
+        "title": "Age Requirements",
+        "content": "You must be at least 16 years old (or 13 in the United States) to create an account. We do not knowingly collect personal information from children under these ages."
+      },
+      {
+        "title": "Parental Rights",
+        "content": "If you believe we have collected information from a child under the required age, please contact us immediately. We will delete the information promptly. Parents can request deletion of their child's data at any time."
+      },
+      {
+        "title": "Children's Information",
+        "content": "We may collect information about children (names, photos) only when provided by their parents or legal guardians. This information is used solely for creating personalized books and is not used for other purposes."
+      },
+      {
+        "title": "Photo Processing",
+        "content": "Photos you upload are analyzed by our systems to create character illustrations. Photos are used only for this purpose and not for training models or other purposes."
+      },
+      {
+        "title": "Photo Retention",
+        "content": "Photos are stored for 90 days after order completion, then automatically deleted. You can request early deletion at any time."
+      },
+      {
+        "title": "Service Provider Sharing",
+        "content": "Photos may be shared with content generation service providers under strict Data Processing Agreements. These providers are prohibited from using photos for any purpose other than generating your illustrations."
+      },
+      {
+        "title": "Your Rights",
+        "content": "You confirm that you have the right to upload photos and have consent from all individuals depicted. For children's photos, you confirm you are their parent or legal guardian."
+      },
+      {
+        "title": "Transfer Mechanisms",
+        "content": "When we transfer data outside the European Economic Area, we use appropriate safeguards such as Standard Contractual Clauses (SCCs) approved by the European Commission. These ensure your data remains protected."
+      },
+      {
+        "title": "Consent Required",
+        "content": "We only send promotional emails, newsletters, and marketing messages with your explicit consent. You can withdraw consent at any time."
+      },
+      {
+        "title": "Opt-Out Options",
+        "content": "You can opt out of marketing communications by clicking the unsubscribe link in emails, updating your account preferences, or contacting us directly."
+      },
+      {
+        "title": "Notification of Changes",
+        "content": "For significant changes, we will notify you by email or prominent website notice. Minor changes will be effective immediately upon posting. The 'Last updated' date indicates when this policy was last modified."
+      },
+      {
+        "title": "Regular Review",
+        "content": "We review this policy regularly to ensure it remains accurate and compliant with applicable laws. We encourage you to review it periodically."
+      },
+      {
+        "title": "Data Protection Authorities",
+        "content": "If you have concerns about how we handle your data, you also have the right to lodge a complaint with your local data protection authority."
+      }
+    ]
+  }
+}

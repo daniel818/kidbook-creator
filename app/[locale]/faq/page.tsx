@@ -1,31 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
 import FAQList from '@/components/FAQ/FAQList';
 import { FAQData } from '@/lib/faq/types';
 
 export default function FAQPage() {
-  const { i18n } = useTranslation();
-  const [data, setData] = useState<FAQData | null>(null);
-  const locale = i18n.language || 'en';
+  const { t, ready, i18n } = useTranslation('faq');
 
-  useEffect(() => {
-    async function loadFAQData() {
-      try {
-        const faqData = await import(`@/locales/${locale}/faq.json`);
-        setData(faqData.default);
-      } catch (error) {
-        // Fallback to English if locale not found
-        const faqData = await import('@/locales/en/faq.json');
-        setData(faqData.default);
-      }
-    }
-    loadFAQData();
-  }, [locale]);
-
-  if (!data) {
+  if (!ready) {
     return (
       <>
         <Navbar />
@@ -35,6 +18,8 @@ export default function FAQPage() {
       </>
     );
   }
+
+  const data: FAQData = i18n.getResourceBundle(i18n.language, 'faq') as FAQData;
 
   return (
     <>

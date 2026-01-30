@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
 import styles from './page.module.css';
@@ -17,24 +16,9 @@ interface TermsData {
 }
 
 export default function TermsPage() {
-  const { i18n } = useTranslation();
-  const [data, setData] = useState<TermsData | null>(null);
-  const locale = i18n.language || 'en';
+  const { t, ready, i18n } = useTranslation('terms');
 
-  useEffect(() => {
-    async function loadTermsData() {
-      try {
-        const termsData = await import(`@/locales/${locale}/terms.json`);
-        setData(termsData.default);
-      } catch (error) {
-        const termsData = await import('@/locales/en/terms.json');
-        setData(termsData.default);
-      }
-    }
-    loadTermsData();
-  }, [locale]);
-
-  if (!data) {
+  if (!ready) {
     return (
       <>
         <Navbar />
@@ -46,6 +30,8 @@ export default function TermsPage() {
       </>
     );
   }
+
+  const data: TermsData = i18n.getResourceBundle(i18n.language, 'terms') as TermsData;
 
   return (
     <>

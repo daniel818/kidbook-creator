@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
 import styles from './page.module.css';
@@ -17,24 +16,9 @@ interface PrivacyData {
 }
 
 export default function PrivacyPage() {
-  const { i18n } = useTranslation();
-  const [data, setData] = useState<PrivacyData | null>(null);
-  const locale = i18n.language || 'en';
+  const { t, ready, i18n } = useTranslation('privacy');
 
-  useEffect(() => {
-    async function loadPrivacyData() {
-      try {
-        const privacyData = await import(`@/locales/${locale}/privacy.json`);
-        setData(privacyData.default);
-      } catch (error) {
-        const privacyData = await import('@/locales/en/privacy.json');
-        setData(privacyData.default);
-      }
-    }
-    loadPrivacyData();
-  }, [locale]);
-
-  if (!data) {
+  if (!ready) {
     return (
       <>
         <Navbar />
@@ -46,6 +30,8 @@ export default function PrivacyPage() {
       </>
     );
   }
+
+  const data: PrivacyData = i18n.getResourceBundle(i18n.language, 'privacy') as PrivacyData;
 
   return (
     <>

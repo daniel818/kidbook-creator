@@ -2,96 +2,18 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import commonEN from '@/locales/en/common.json';
-import commonDE from '@/locales/de/common.json';
-import commonHE from '@/locales/he/common.json';
-import navbarEN from '@/locales/en/navbar.json';
-import navbarDE from '@/locales/de/navbar.json';
-import navbarHE from '@/locales/he/navbar.json';
-import homeEN from '@/locales/en/home.json';
-import homeDE from '@/locales/de/home.json';
-import homeHE from '@/locales/he/home.json';
-import authEN from '@/locales/en/auth.json';
-import authDE from '@/locales/de/auth.json';
-import authHE from '@/locales/he/auth.json';
-import createEN from '@/locales/en/create.json';
-import createDE from '@/locales/de/create.json';
-import createHE from '@/locales/he/create.json';
-import profileEN from '@/locales/en/profile.json';
-import profileDE from '@/locales/de/profile.json';
-import profileHE from '@/locales/he/profile.json';
-import ordersEN from '@/locales/en/orders.json';
-import ordersDE from '@/locales/de/orders.json';
-import ordersHE from '@/locales/he/orders.json';
-import purchasesEN from '@/locales/en/purchases.json';
-import purchasesDE from '@/locales/de/purchases.json';
-import purchasesHE from '@/locales/he/purchases.json';
-import mybooksEN from '@/locales/en/mybooks.json';
-import mybooksDE from '@/locales/de/mybooks.json';
-import mybooksHE from '@/locales/he/mybooks.json';
-import viewerEN from '@/locales/en/viewer.json';
-import viewerDE from '@/locales/de/viewer.json';
-import viewerHE from '@/locales/he/viewer.json';
-import pricingEN from '@/locales/en/pricing.json';
-import pricingDE from '@/locales/de/pricing.json';
-import pricingHE from '@/locales/he/pricing.json';
-import aboutEN from '@/locales/en/about.json';
-import aboutDE from '@/locales/de/about.json';
-import aboutHE from '@/locales/he/about.json';
-import footerEN from '@/locales/en/footer.json';
-import footerDE from '@/locales/de/footer.json';
-import footerHE from '@/locales/he/footer.json';
+import en from '@/locales/en.json';
+import de from '@/locales/de.json';
+import he from '@/locales/he.json';
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
-      en: {
-        common: commonEN,
-        navbar: navbarEN,
-        home: homeEN,
-        auth: authEN,
-        create: createEN,
-        profile: profileEN,
-        orders: ordersEN,
-        purchases: purchasesEN,
-        mybooks: mybooksEN,
-        viewer: viewerEN,
-        pricing: pricingEN,
-        about: aboutEN,
-        footer: footerEN,
-      },
-      de: {
-        common: commonDE,
-        navbar: navbarDE,
-        home: homeDE,
-        auth: authDE,
-        create: createDE,
-        profile: profileDE,
-        orders: ordersDE,
-        purchases: purchasesDE,
-        mybooks: mybooksDE,
-        viewer: viewerDE,
-        pricing: pricingDE,
-        about: aboutDE,
-        footer: footerDE,
-      },
-      he: {
-        common: commonHE,
-        navbar: navbarHE,
-        home: homeHE,
-        auth: authHE,
-        create: createHE,
-        profile: profileHE,
-        orders: ordersHE,
-        purchases: purchasesHE,
-        mybooks: mybooksHE,
-        viewer: viewerHE,
-        pricing: pricingHE,
-        about: aboutHE,
-        footer: footerHE,
-      },
+      en,
+      de,
+      he,
     },
     fallbackLng: 'en',
     supportedLngs: ['en', 'de', 'he'],
