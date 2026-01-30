@@ -534,7 +534,13 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
     // Calculate dimensions based on format
     const isSquare = book.settings.printFormat === 'square';
-    const displayTitle = book.settings.title;
+    const displayTitle = book.settings.title || 'Untitled story';
+    const bookSubtitle = [
+        book.settings.childName,
+        book.settings.childAge ? `Age ${book.settings.childAge}` : ''
+    ]
+        .filter(Boolean)
+        .join(' · ');
 
     const bookWidth = 550;
     const bookHeight = isSquare ? 550 : 733; // 1:1 vs 3:4
@@ -552,32 +558,15 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             {/* Header Controls */}
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
-                    <div className={styles.editToolbar}>
-                        {isEditing ? (
-                            <>
-                                <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
-                                    {isSaving ? 'Saving...' : '💾 Save'}
-                                </button>
-                                <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
-                                    Cancel
-                                </button>
-                            </>
-                        ) : (
-                            <button className={styles.editToggle} onClick={() => setIsEditing(true)}>
-                                ✎ Edit
-                            </button>
-                        )}
-                        <span style={{ marginInline: '10px', height: '20px', width: '1px', background: 'rgba(0,0,0,0.1)' }}></span>
-                        {onClose && (
-                            <button className={styles.closeBtn} onClick={onClose}>
-                                ← Back
-                            </button>
-                        )}
-
-                        {book.estimatedCost !== undefined && (
-                            <span className={styles.costBadge} title="Estimated AI Generation Cost">
-                                💸 ${book.estimatedCost.toFixed(3)}
-                            </span>
+                    {onClose && (
+                        <button className={styles.closeBtn} onClick={onClose}>
+                            ← Back
+                        </button>
+                    )}
+                    <div className={styles.bookMeta}>
+                        <span className={styles.bookTitle}>{displayTitle}</span>
+                        {bookSubtitle && (
+                            <span className={styles.bookSubtitle}>{bookSubtitle}</span>
                         )}
                     </div>
                 </div>
@@ -603,6 +592,23 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 </div>
 
                 <div className={styles.headerRight}>
+                    <div className={styles.editToolbar}>
+                        {isEditing ? (
+                            <>
+                                <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
+                                    {isSaving ? 'Saving...' : '💾 Save'}
+                                </button>
+                                <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
+                                    Cancel
+                                </button>
+                            </>
+                        ) : (
+                            <button className={styles.editToggle} onClick={() => setIsEditing(true)}>
+                                ✎ Edit
+                            </button>
+                        )}
+                    </div>
+                    <span className={styles.headerDivider}></span>
                     <button
                         className={styles.orderButton}
                         onClick={() => router.push(`/create/${book.id}/order`)}
@@ -625,6 +631,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                     >
                         {isDownloading ? '⏳' : '⬇️'}
                     </button>
+                    {book.estimatedCost !== undefined && (
+                        <span className={styles.costBadge} title="Estimated AI Generation Cost">
+                            💸 ${book.estimatedCost.toFixed(3)}
+                        </span>
+                    )}
                 </div>
             </header>
 
