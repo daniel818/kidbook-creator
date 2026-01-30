@@ -65,10 +65,3 @@ export function getCurrencyFromLocale(locale: string): Currency {
   if (locale.startsWith('he')) return 'ILS';
   return 'USD'; // Default
 }
-
-/**
- * Get all pricing info for a currency
- */
-export function getPricingConfig(currency: Currency): PricingConfig {
-  return PRICING[currency];
-}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
@@ -934,8 +934,8 @@ export default function OrderPage() {
                                     </div>
                                     <p className={styles.pricingNote}>
                                         {deliveryType === 'digital' 
-                                            ? 'Digital books are delivered instantly via email after purchase.'
-                                            : 'Shipping cost calculated based on your address and selected shipping method.'}
+                                            ? t('summary.digitalNote')
+                                            : t('summary.printNote')}
                                     </p>
                                 </div>
                             </div>

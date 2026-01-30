@@ -1,0 +1,7 @@
+Configuration,Book Size,Size (mm),Page Count,Binding Type,Interior Color,Paper Type,Cover Finish,Price (EUR),Price Per Book
+Config 1,Novella,5 x 8 in / 127 x 203 mm,24,Hardcover Case Wrap,Premium Color,60# White - Uncoated,Matte,10.97,10.97
+Config 2,Novella,5 x 8 in / 127 x 203 mm,24,Hardcover Case Wrap,Premium Color,80# White - Coated,Matte,11.27,11.27
+Config 3,Novella,5 x 8 in / 127 x 203 mm,24,Paperback Saddle Stitch,Premium Color,80# White - Coated,Matte,5.79,5.79
+Config 4,Small Square,7.5 x 7.5 in / 190 x 190 mm,24,Paperback Saddle Stitch,Premium Color,80# White - Coated,Matte,8.10,8.10
+Config 5,Small Square,7.5 x 7.5 in / 190 x 190 mm,24,Hardcover Case Wrap,Premium Color,80# White - Coated,Matte,13.58,13.58
+Config 6,Comic Book,6.625 x 10.25 in / 168 x 260 mm,24,Paperback Saddle Stitch,Premium Color,70# White - Coated,Matte,8.40,8.40
