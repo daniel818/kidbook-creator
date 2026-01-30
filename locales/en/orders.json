@@ -1,7 +1,8 @@
 {
   "header": {
     "backButton": "← Back to Home",
-    "title": "My Orders"
+    "title": "My Orders",
+    "subtitle": "Track your printed books and order status"
   },
   "loading": "Loading orders...",
   "empty": {
@@ -23,9 +24,12 @@
     "pending": "Pending",
     "paid": "Paid",
     "processing": "Processing",
+    "preparing": "Preparing to Print",
+    "printing": "Printing Your Book",
     "printed": "Printed",
     "shipped": "Shipped",
     "delivered": "Delivered",
-    "cancelled": "Cancelled"
+    "cancelled": "Cancelled",
+    "failed": "Issue Detected"
   }
 }

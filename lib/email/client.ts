@@ -9,100 +9,100 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.EMAIL_FROM || 'KidBook Creator <orders@kidbookcreator.com>';
 
 export interface OrderEmailData {
-    orderId: string;
-    customerEmail: string;
-    customerName: string;
-    bookTitle: string;
-    childName: string;
-    format: string;
-    size: string;
-    quantity: number;
-    total: number;
-    shippingAddress: {
-        fullName: string;
-        addressLine1: string;
-        addressLine2?: string;
-        city: string;
-        state: string;
-        postalCode: string;
-        country: string;
-    };
+  orderId: string;
+  customerEmail: string;
+  customerName: string;
+  bookTitle: string;
+  childName: string;
+  format: string;
+  size: string;
+  quantity: number;
+  total: number;
+  shippingAddress: {
+    fullName: string;
+    addressLine1: string;
+    addressLine2?: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
 }
 
 export interface ShippingEmailData extends OrderEmailData {
-    trackingNumber: string;
-    trackingUrl: string;
-    carrier: string;
-    estimatedDelivery: string;
+  trackingNumber: string;
+  trackingUrl: string;
+  carrier: string;
+  estimatedDelivery: string;
 }
 
 // Send order confirmation email
 export async function sendOrderConfirmation(data: OrderEmailData) {
-    try {
-        const { data: result, error } = await resend.emails.send({
-            from: FROM_EMAIL,
-            to: data.customerEmail,
-            subject: `Order Confirmed! Your "${data.bookTitle}" is being prepared 📚`,
-            html: generateOrderConfirmationHtml(data),
-        });
+  try {
+    const { data: result, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.customerEmail,
+      subject: `Order Confirmed! Your "${data.bookTitle}" is being prepared 📚`,
+      html: generateOrderConfirmationHtml(data),
+    });
 
-        if (error) {
-            console.error('Failed to send order confirmation:', error);
-            return { success: false, error };
-        }
-
-        console.log('Order confirmation sent:', result?.id);
-        return { success: true, id: result?.id };
-    } catch (error) {
-        console.error('Email error:', error);
-        return { success: false, error };
+    if (error) {
+      console.error('Failed to send order confirmation:', error);
+      return { success: false, error };
     }
+
+    console.log('Order confirmation sent:', result?.id);
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error('Email error:', error);
+    return { success: false, error };
+  }
 }
 
 // Send shipping notification email
 export async function sendShippingNotification(data: ShippingEmailData) {
-    try {
-        const { data: result, error } = await resend.emails.send({
-            from: FROM_EMAIL,
-            to: data.customerEmail,
-            subject: `Your book is on its way! 🚚 Track your "${data.bookTitle}"`,
-            html: generateShippingNotificationHtml(data),
-        });
+  try {
+    const { data: result, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.customerEmail,
+      subject: `Your book is on its way! 🚚 Track your "${data.bookTitle}"`,
+      html: generateShippingNotificationHtml(data),
+    });
 
-        if (error) {
-            console.error('Failed to send shipping notification:', error);
-            return { success: false, error };
-        }
-
-        console.log('Shipping notification sent:', result?.id);
-        return { success: true, id: result?.id };
-    } catch (error) {
-        console.error('Email error:', error);
-        return { success: false, error };
+    if (error) {
+      console.error('Failed to send shipping notification:', error);
+      return { success: false, error };
     }
+
+    console.log('Shipping notification sent:', result?.id);
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error('Email error:', error);
+    return { success: false, error };
+  }
 }
 
 // Send delivery confirmation email
 export async function sendDeliveryConfirmation(data: OrderEmailData) {
-    try {
-        const { data: result, error } = await resend.emails.send({
-            from: FROM_EMAIL,
-            to: data.customerEmail,
-            subject: `Your "${data.bookTitle}" has been delivered! 🎉`,
-            html: generateDeliveryConfirmationHtml(data),
-        });
+  try {
+    const { data: result, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.customerEmail,
+      subject: `Your "${data.bookTitle}" has been delivered! 🎉`,
+      html: generateDeliveryConfirmationHtml(data),
+    });
 
-        if (error) {
-            console.error('Failed to send delivery confirmation:', error);
-            return { success: false, error };
-        }
-
-        console.log('Delivery confirmation sent:', result?.id);
-        return { success: true, id: result?.id };
-    } catch (error) {
-        console.error('Email error:', error);
-        return { success: false, error };
+    if (error) {
+      console.error('Failed to send delivery confirmation:', error);
+      return { success: false, error };
     }
+
+    console.log('Delivery confirmation sent:', result?.id);
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error('Email error:', error);
+    return { success: false, error };
+  }
 }
 
 // ============================================
@@ -110,7 +110,7 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
 // ============================================
 
 function generateOrderConfirmationHtml(data: OrderEmailData): string {
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -221,7 +221,7 @@ function generateOrderConfirmationHtml(data: OrderEmailData): string {
 }
 
 function generateShippingNotificationHtml(data: ShippingEmailData): string {
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -305,7 +305,7 @@ function generateShippingNotificationHtml(data: ShippingEmailData): string {
 }
 
 function generateDeliveryConfirmationHtml(data: OrderEmailData): string {
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>

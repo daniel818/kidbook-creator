@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
                 shipping_country: shipping.country,
                 shipping_phone: shipping.phone,
                 shipping_level: shippingLevel,
-                status: 'pending', // No session ID yet
+                payment_status: 'pending', // No session ID yet
                 // CRITICAL: Save the generated file paths!
                 pdf_url: pdfUrl,
                 cover_pdf_url: coverUrl,

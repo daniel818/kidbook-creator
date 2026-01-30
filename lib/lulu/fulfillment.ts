@@ -118,11 +118,12 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
             throw new Error('Failed to generate signed URLs');
         }
 
-        // Tunnel Rewrite Logic
-        const tunnelUrl = process.env.TUNNEL_URL;
+        // Tunnel Rewrite Logic for Supabase Storage
+        // Use STORAGE_TUNNEL_URL to expose local Supabase storage to Lulu
+        const storageTunnelUrl = process.env.STORAGE_TUNNEL_URL || process.env.TUNNEL_URL;
         const rewriteUrl = (url: string) => {
-            if (tunnelUrl && (url.includes('127.0.0.1') || url.includes('localhost'))) {
-                return url.replace(/http:\/\/(127\.0\.0\.1|localhost):\d+/, tunnelUrl);
+            if (storageTunnelUrl && (url.includes('127.0.0.1') || url.includes('localhost'))) {
+                return url.replace(/http:\/\/(127\.0\.0\.1|localhost):\d+/, storageTunnelUrl);
             }
             return url;
         };
