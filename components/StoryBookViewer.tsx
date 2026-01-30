@@ -558,27 +558,34 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 {/* Left Section: Back Button + Testing Area */}
                 <div className={styles.headerLeft}>
                     {onClose && (
-                        <button className={styles.backBtn} onClick={onClose}>
+                        <button 
+                            className={styles.backBtn} 
+                            onClick={onClose}
+                            aria-label={t('buttons.myBooks', { ns: 'viewer' })}
+                        >
                             ← {t('buttons.myBooks', { ns: 'viewer' })}
                         </button>
                     )}
                     
                     {/* Testing Area - Only visible in dev/testing mode */}
-                    <div className={styles.testingArea}>
-                        {book.estimatedCost !== undefined && (
-                            <span className={styles.costBadge} title="Estimated AI Generation Cost">
-                                💰 ${book.estimatedCost.toFixed(3)}
-                            </span>
-                        )}
-                        <button
-                            className={styles.testBtn}
-                            title={t('buttons.downloadPdf', { ns: 'viewer' })}
-                            onClick={handleDownload}
-                            disabled={isDownloading}
-                        >
-                            {isDownloading ? '⏳' : '⬇️'} {t('buttons.downloadPdf', { ns: 'viewer' })}
-                        </button>
-                    </div>
+                    {process.env.NODE_ENV === 'development' && (
+                        <div className={styles.testingArea}>
+                            {book.estimatedCost !== undefined && (
+                                <span className={styles.costBadge} title="Estimated AI Generation Cost">
+                                    💰 ${book.estimatedCost.toFixed(3)}
+                                </span>
+                            )}
+                            <button
+                                className={styles.testBtn}
+                                title={t('buttons.downloadPdf', { ns: 'viewer' })}
+                                onClick={handleDownload}
+                                disabled={isDownloading}
+                                aria-label={t('buttons.downloadPdf', { ns: 'viewer' })}
+                            >
+                                {isDownloading ? '⏳' : '⬇️'} {t('buttons.downloadPdf', { ns: 'viewer' })}
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Center Section: Page Management */}
@@ -615,12 +622,17 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         </>
                     ) : (
                         <>
-                            <button className={styles.editButton} onClick={() => setIsEditing(true)}>
+                            <button 
+                                className={styles.editButton} 
+                                onClick={() => setIsEditing(true)}
+                                aria-label={t('buttons.editStory', { ns: 'viewer' })}
+                            >
                                 ✎ {t('buttons.editStory', { ns: 'viewer' })}
                             </button>
                             <button
                                 className={styles.orderPrintButton}
                                 onClick={() => router.push(`/create/${book.id}/order`)}
+                                aria-label={t('buttons.orderPrint', { ns: 'viewer' })}
                             >
                                 🛒 {t('buttons.orderPrint', { ns: 'viewer' })}
                             </button>
@@ -728,7 +740,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             {!isEditing && (
                 <button
                     className={styles.floatingDownloadButton}
-                    onClick={() => router.push(`/create/${book.id}/checkout?format=digital`)}
+                    onClick={() => router.push(`/create/${book.id}/order`)}
+                    aria-label={t('buttons.downloadDigital', { ns: 'viewer' })}
                 >
                     ⬇️ {t('buttons.downloadDigital', { ns: 'viewer' })}
                 </button>
