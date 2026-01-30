@@ -205,7 +205,7 @@ export default function Home() {
           <div className={styles.stepsContainer}>
             <div className={styles.stepCard}>
               <div className={styles.stepNumber}>1</div>
-              <div className={styles.stepIcon}>👶</div>
+              <div className={styles.stepIcon}>✨</div>
               <h3 className={styles.stepTitle}>{t('howItWorks.step1.title')}</h3>
               <p className={styles.stepDesc}>
                 {t('howItWorks.step1.description')}
@@ -218,7 +218,7 @@ export default function Home() {
 
             <div className={styles.stepCard}>
               <div className={styles.stepNumber}>2</div>
-              <div className={styles.stepIcon}>🖼️</div>
+              <div className={styles.stepIcon}>🎨</div>
               <h3 className={styles.stepTitle}>{t('howItWorks.step2.title')}</h3>
               <p className={styles.stepDesc}>
                 {t('howItWorks.step2.description')}
@@ -231,10 +231,23 @@ export default function Home() {
 
             <div className={styles.stepCard}>
               <div className={styles.stepNumber}>3</div>
-              <div className={styles.stepIcon}>📬</div>
+              <div className={styles.stepIcon}>�</div>
               <h3 className={styles.stepTitle}>{t('howItWorks.step3.title')}</h3>
               <p className={styles.stepDesc}>
                 {t('howItWorks.step3.description')}
+              </p>
+            </div>
+
+            <div className={styles.stepConnector}>
+              <span>→</span>
+            </div>
+
+            <div className={styles.stepCard}>
+              <div className={styles.stepNumber}>4</div>
+              <div className={styles.stepIcon}>🎉</div>
+              <h3 className={styles.stepTitle}>{t('howItWorks.step4.title')}</h3>
+              <p className={styles.stepDesc}>
+                {t('howItWorks.step4.description')}
               </p>
             </div>
           </div>

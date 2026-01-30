@@ -50,20 +50,11 @@ export default function PricingPage() {
           <div className={styles.heroContent}>
             <h1 className={styles.heroTitle}>{t('subtitle')}</h1>
             <p className={styles.heroDescription}>{t('hero.description')}</p>
-            <button className={styles.ctaPrimary} onClick={handleCreateBook}>
-              <span className={styles.ctaIcon}>✨</span>
-              {t('cta.primary')}
-              <span className={styles.ctaArrow}>→</span>
-            </button>
           </div>
         </section>
 
         {/* Pricing Section */}
         <section className={styles.pricingSection}>
-          <div className={styles.pricingHeader}>
-            <h2 className={styles.pricingTitle}>{t('title')}</h2>
-            <p className={styles.pricingSubtitle}>{t('subtitle')}</p>
-          </div>
 
           <div className={styles.pricingGrid}>
             {/* Digital Book Card */}

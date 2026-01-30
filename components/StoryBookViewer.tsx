@@ -548,6 +548,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         <div
             ref={viewerRef}
             className={`${styles.viewer} ${isFullScreen || isFullscreen ? styles.fullScreen : ''}`}
+            dir={isRTL ? 'rtl' : 'ltr'}
         >
             {/* Header Controls */}
             <header className={styles.header}>

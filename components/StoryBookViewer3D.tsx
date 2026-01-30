@@ -25,6 +25,7 @@ export default function StoryBookViewer3D({ book, onClose, isFullScreen = false 
     const [currentPage, setCurrentPage] = useState(1);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const isRTL = (book.language || book.settings.language) === 'he';
 
     const themeColors = book.settings.bookTheme
         ? BookThemeInfo[book.settings.bookTheme]?.colors || ['#6366f1', '#ec4899']
@@ -185,6 +186,7 @@ export default function StoryBookViewer3D({ book, onClose, isFullScreen = false 
         <div
             ref={viewerRef}
             className={`${styles.viewer} ${isFullScreen || isFullscreen ? styles.fullScreen : ''}`}
+            dir={isRTL ? 'rtl' : 'ltr'}
         >
             {/* Header Controls */}
             <header className={styles.header}>

@@ -62,15 +62,19 @@
       "title": "So funktioniert's",
       "step1": {
         "title": "Buch einrichten",
-        "description": "Gib den Namen und das Alter deines Kindes ein und wähle den perfekten Buchtyp und das Thema."
+        "description": "Wähle den Namen deines Helden, das Alter und das perfekte Buchformat mit magischem Thema."
       },
       "step2": {
-        "title": "Inhalt hinzufügen",
-        "description": "Lade Fotos hoch und schreibe deine Geschichte. Ordne die Seiten genau so an, wie du möchtest."
+        "title": "Geschichte erstellen",
+        "description": "Lass die KI deine Vision mit atemberaubenden Illustrationen und personalisierten Geschichten zum Leben erwecken."
       },
       "step3": {
-        "title": "Bestellen & genießen",
-        "description": "Sieh dir dein Buch in der Vorschau an, gib deine Bestellung auf und erhalte ein wunderschön gedrucktes Buch."
+        "title": "Vorschau & Perfektionieren",
+        "description": "Überprüfe jede Seite, nimm Anpassungen vor und stelle sicher, dass deine Geschichte genau richtig ist."
+      },
+      "step4": {
+        "title": "Bestellen & Genießen",
+        "description": "Gib deine Bestellung auf und erhalte ein wunderschön gedrucktes Erinnerungsstück direkt nach Hause."
       }
     },
     "bookTypes": {
@@ -157,8 +161,8 @@
     "steps": {
       "child": {
         "title": "Für wen ist dieses Buch?",
-        "subtitle": "Erzähle uns von dem besonderen Kind, das dieses Buch genießen wird",
-        "nameLabel": "Name des Kindes",
+        "subtitle": "Erzähle uns von dem besonderen Helden, der in diesem Buch die Hauptrolle spielt",
+        "nameLabel": "Name der Hauptfigur",
         "namePlaceholder": "Name eingeben...",
         "ageLabel": "Alter:",
         "ageYears": "Jahre",
@@ -181,7 +185,15 @@
         "title": "Wähle ein Thema",
         "subtitle": "Was für eine Geschichte soll es werden?",
         "storyLabel": "Erzähle uns mehr über die Geschichte (optional)",
-        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt."
+        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt.",
+        "examples": {
+          "adventure": ["z.B. Eine mutige Reise durch verzauberte Wälder, um einen versteckten Schatz zu finden", "z.B. Ein spannendes Abenteuer, um ein magisches Wesen aus der Drachenhöhle zu retten"],
+          "bedtime": ["z.B. Eine friedliche Reise ins Traumland mit freundlichen Sternen", "z.B. Eine gemütliche Geschichte über das Gutenachtsagen an Waldfreunde"],
+          "learning": ["z.B. Die Freude am Zählen mit bunten Tieren entdecken", "z.B. Freundlichkeit lernen durch Helfen von Nachbarschaftsfreunden"],
+          "fantasy": ["z.B. Ein magisches Abenteuer mit Einhörnern in einem Regenbogenkönigreich", "z.B. Freundliche Zauberer treffen, die besondere Zaubersprüche lehren"],
+          "animals": ["z.B. Freundschaften mit Dschungeltieren auf einer Safari schließen", "z.B. Ein Tag auf dem Bauernhof, um verschiedene Tiere kennenzulernen"],
+          "custom": ["z.B. Jede Geschichte, die du dir vorstellen kannst - beschreibe deine einzigartige Idee!", "z.B. Erschaffe etwas Besonderes - erzähle uns deine kreative Vision!"]
+        }
       },
       "style": {
         "title": "Wähle einen Kunststil",

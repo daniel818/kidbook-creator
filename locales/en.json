@@ -62,15 +62,19 @@
       "title": "How It Works",
       "step1": {
         "title": "Setup Your Book",
-        "description": "Enter your child's name, age, and choose the perfect book type and theme."
+        "description": "Choose your hero's name, age, and pick the perfect book type and magical theme."
       },
       "step2": {
-        "title": "Add Content",
-        "description": "Upload photos and write your story. Arrange pages exactly how you want."
+        "title": "Create Your Story",
+        "description": "Let AI bring your vision to life with stunning illustrations and personalized tales."
       },
       "step3": {
+        "title": "Preview & Perfect",
+        "description": "Review every page, make adjustments, and ensure your story is exactly right."
+      },
+      "step4": {
         "title": "Order & Enjoy",
-        "description": "Preview your book, place your order, and receive a beautiful printed book."
+        "description": "Place your order and receive a beautifully printed keepsake delivered to your door."
       }
     },
     "bookTypes": {
@@ -157,8 +161,8 @@
     "steps": {
       "child": {
         "title": "Who is this book for?",
-        "subtitle": "Tell us about the special child who will enjoy this book",
-        "nameLabel": "Child's Name",
+        "subtitle": "Tell us about the special hero who will star in this book",
+        "nameLabel": "Main Character's Name",
         "namePlaceholder": "Enter name...",
         "ageLabel": "Age:",
         "ageYears": "years",
@@ -181,7 +185,15 @@
         "title": "Pick a theme",
         "subtitle": "What kind of story will this be?",
         "storyLabel": "Tell us more about the story (optional)",
-        "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
+        "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon.",
+        "examples": {
+          "adventure": ["e.g. A brave journey through enchanted forests to find a hidden treasure", "e.g. An exciting quest to rescue a magical creature from a dragon's lair"],
+          "bedtime": ["e.g. A peaceful journey to dreamland with friendly stars", "e.g. A cozy story about saying goodnight to forest friends"],
+          "learning": ["e.g. Discovering the joy of counting with colorful animals", "e.g. Learning about kindness through helping neighborhood friends"],
+          "fantasy": ["e.g. A magical adventure with unicorns in a rainbow kingdom", "e.g. Meeting friendly wizards who teach special spells"],
+          "animals": ["e.g. Making friends with jungle animals on a safari adventure", "e.g. A day at the farm learning about different animals"],
+          "custom": ["e.g. Any story you can imagine - describe your unique idea!", "e.g. Create something special - tell us your creative vision!"]
+        }
       },
       "style": {
         "title": "Choose an art style",

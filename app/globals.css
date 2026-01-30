@@ -632,3 +632,12 @@ a:hover {
     transform: rotate(360deg);
   }
 }
+
+/* ============================================
+   Page-Specific Overrides
+   ============================================ */
+
+/* Hide footer on book creation flow */
+body:has([data-hide-footer="true"]) footer {
+  display: none;
+}

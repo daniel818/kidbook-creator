@@ -20,6 +20,25 @@ import { AuthModal } from '@/components/AuthModal';
 import { AlertModal } from '@/components/AlertModal';
 import styles from './page.module.css';
 
+// Utility: Capitalize first letter of name (for LTR languages)
+function capitalizeFirstLetter(name: string): string {
+    if (!name) return name;
+    return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+// Utility: Convert string to Title Case (capitalize main words)
+function toTitleCase(str: string): string {
+    if (!str) return str;
+    const minorWords = ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'by', 'of', 'in'];
+    return str.split(' ').map((word, index) => {
+        if (!word) return word;
+        if (index === 0 || !minorWords.includes(word.toLowerCase())) {
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }
+        return word.toLowerCase();
+    }).join(' ');
+}
+
 type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
 
 export default function CreateBookPage() {
@@ -48,6 +67,7 @@ export default function CreateBookPage() {
     const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
     const [pendingLanguage, setPendingLanguage] = useState<string | null>(null);
     const previousLanguageRef = useRef<string>(i18n.language);
+    const [themeExampleIndex, setThemeExampleIndex] = useState<number>(0);
 
     // Track unsaved changes
     useEffect(() => {
@@ -293,7 +313,7 @@ export default function CreateBookPage() {
     return (
         <>
             <Navbar />
-            <main className={styles.main}>
+            <main className={styles.main} data-hide-footer="true">
                 {/* Background */}
                 <div className={styles.background}>
                     <div className={styles.bgShape1}></div>
@@ -349,6 +369,12 @@ export default function CreateBookPage() {
                                         placeholder={t('steps.child.namePlaceholder')}
                                         value={settings.childName || ''}
                                         onChange={(e) => updateSettings('childName', e.target.value)}
+                                        onBlur={(e) => {
+                                            // Auto-capitalize first letter for LTR languages
+                                            if (i18n.dir() === 'ltr' && e.target.value) {
+                                                updateSettings('childName', capitalizeFirstLetter(e.target.value));
+                                            }
+                                        }}
                                         autoFocus
                                     />
                                 </div>
@@ -527,7 +553,11 @@ export default function CreateBookPage() {
                                         <button
                                             key={theme}
                                             className={`${styles.themeCard} ${settings.bookTheme === theme ? styles.selected : ''}`}
-                                            onClick={() => updateSettings('bookTheme', theme)}
+                                            onClick={() => {
+                                                updateSettings('bookTheme', theme);
+                                                // Change example index when theme changes
+                                                setThemeExampleIndex(prev => (prev + 1) % 2);
+                                            }}
                                             style={{
                                                 '--theme-color-1': info.colors[0],
                                                 '--theme-color-2': info.colors[1]
@@ -550,7 +580,11 @@ export default function CreateBookPage() {
                                     </label>
                                     <textarea
                                         className={styles.formInput}
-                                        placeholder={t('steps.theme.storyPlaceholder')}
+                                        placeholder={
+                                            settings.bookTheme
+                                                ? (t(`steps.theme.examples.${settings.bookTheme}`, { returnObjects: true }) as string[])?.[themeExampleIndex] || t('steps.theme.storyPlaceholder')
+                                                : t('steps.theme.storyPlaceholder')
+                                        }
                                         value={settings.storyDescription || ''}
                                         onChange={(e) => setSettings(prev => ({ ...prev, storyDescription: e.target.value }))}
                                         rows={3}
@@ -686,6 +720,12 @@ export default function CreateBookPage() {
                                         placeholder={settings.childName ? t('steps.title.titlePlaceholder', { childName: settings.childName }) : t('steps.title.titlePlaceholderDefault')}
                                         value={settings.title || ''}
                                         onChange={(e) => updateSettings('title', e.target.value)}
+                                        onBlur={(e) => {
+                                            // Auto-format to Title Case for LTR languages
+                                            if (i18n.dir() === 'ltr' && e.target.value) {
+                                                updateSettings('title', toTitleCase(e.target.value));
+                                            }
+                                        }}
                                         autoFocus
                                     />
                                     <p className={styles.inputHint}>
