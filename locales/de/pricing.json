@@ -8,6 +8,7 @@
     "single": "Einzelnes Buch",
     "book": "Buch",
     "perBook": "pro Buch",
+    "plusShipping": "+ Versand",
     "total": "gesamt"
   },
   "features": {
@@ -43,7 +44,13 @@
     "q4": "Gibt es zusätzliche Gebühren?",
     "a4": "Steuern werden beim Checkout basierend auf deinem Standort berechnet. Versandkosten variieren je nach Land und werden vor Abschluss deines Kaufs angezeigt.",
     "q5": "Was ist mit den Druckspezifikationen?",
-    "a5": "Gedruckte Bücher sind professionell gebunden mit Premium-Papier. Spezifische Formatoptionen (Größe, Bindungsart) sind während des Bucherstellungsprozesses verfügbar."
+    "a5": "Gedruckte Bücher sind professionell gebunden mit Premium-Papier. Spezifische Formatoptionen (Größe, Bindungsart) sind während des Bucherstellungsprozesses verfügbar.",
+    "q6": "Wer druckt mein Buch?",
+    "a6": "Wir arbeiten mit einem hochwertigen, professionellen Druckdienstleister zusammen, um sicherzustellen, dass Ihr Buch nach höchsten Standards produziert wird. Während wir den gesamten Kundenservice, die Preisgestaltung und die Lieferkoordination übernehmen, fertigt unser vertrauenswürdiger Druckpartner Ihr Buch mit Premium-Materialien und modernster Drucktechnologie. Diese Partnerschaft ermöglicht es uns, Ihnen außergewöhnliche Qualität zu wettbewerbsfähigen Preisen anzubieten.",
+    "q7": "Warum druckt ihr nicht selbst?",
+    "a7": "Durch die Partnerschaft mit spezialisierten Druckexperten können wir uns auf das konzentrieren, was wir am besten können – magische, personalisierte Geschichten für Ihr Kind zu erstellen – und gleichzeitig sicherstellen, dass Ihr Buch mit professioneller Qualität, umweltfreundlichen Materialien und zuverlässiger Lieferung gedruckt wird. Unser Druckpartner verfügt über jahrzehntelange Erfahrung und kann Bestellungen weltweit abwickeln.",
+    "q8": "Beeinträchtigt dies die Qualität meines Buches?",
+    "a8": "Absolut nicht! Unser Druckpartner wird sorgfältig aufgrund seines Engagements für Qualität ausgewählt. Jedes Buch wird auf Premium-Papier mit lebendigen, lichtbeständigen Tinten und langlebiger Bindung gedruckt. Wir halten strenge Qualitätskontrollstandards ein, um sicherzustellen, dass Ihr Buch die Erwartungen übertrifft."
   },
   "disclaimers": {
     "shipping": "Versandkosten werden beim Checkout basierend auf dem Land berechnet",

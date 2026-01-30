@@ -4,25 +4,20 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
+import { PRICING, type Currency } from '@/lib/pricing/constants';
 import styles from './page.module.css';
-
-const PRICING = {
-  USD: { symbol: '$', digital: 15, printed: 45 },
-  EUR: { symbol: '€', digital: 14, printed: 42 },
-  ILS: { symbol: '₪', digital: 55, printed: 165 }
-};
 
 export default function PricingPage() {
   const { t } = useTranslation('pricing');
   const router = useRouter();
-  const [currency, setCurrency] = useState<'USD' | 'EUR' | 'ILS'>('USD');
+  const [currency, setCurrency] = useState<Currency>('USD');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('currency') as 'USD' | 'EUR' | 'ILS' | null;
+    const savedCurrency = localStorage.getItem('currency') as Currency | null;
     if (savedCurrency) setCurrency(savedCurrency);
 
-    const handleCurrencyChange = (event: CustomEvent<'USD' | 'EUR' | 'ILS'>) => {
+    const handleCurrencyChange = (event: CustomEvent<Currency>) => {
       setCurrency(event.detail);
     };
 
@@ -39,6 +34,9 @@ export default function PricingPage() {
     { question: t('faq.q3'), answer: t('faq.a3') },
     { question: t('faq.q4'), answer: t('faq.a4') },
     { question: t('faq.q5'), answer: t('faq.a5') },
+    { question: t('faq.q6'), answer: t('faq.a6') },
+    { question: t('faq.q7'), answer: t('faq.a7') },
+    { question: t('faq.q8'), answer: t('faq.a8') },
   ];
 
   return (
@@ -64,7 +62,7 @@ export default function PricingPage() {
                 <p className={styles.cardSubtitle}>PDF Download</p>
               </div>
               <div className={styles.cardPricing}>
-                <span className={styles.priceAmount}>{pricing.symbol}{pricing.digital}</span>
+                <span className={styles.priceAmount}>{pricing.symbol}{pricing.digital.toFixed(2)}</span>
                 <span className={styles.priceLabel}>{t('matrix.perBook')}</span>
               </div>
               <ul className={styles.featureList}>
@@ -85,8 +83,9 @@ export default function PricingPage() {
                 <p className={styles.cardSubtitle}>Hardcover Book</p>
               </div>
               <div className={styles.cardPricing}>
-                <span className={styles.priceAmount}>{pricing.symbol}{pricing.printed}</span>
+                <span className={styles.priceAmount}>{pricing.symbol}{pricing.print.toFixed(2)}</span>
                 <span className={styles.priceLabel}>{t('matrix.perBook')}</span>
+                <span className={styles.shippingNote}>{t('matrix.plusShipping')}</span>
               </div>
               <ul className={styles.featureList}>
                 <li>{t('features.printedFeature1')}</li>

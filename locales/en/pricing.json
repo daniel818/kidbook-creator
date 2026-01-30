@@ -8,6 +8,7 @@
     "single": "Single Book",
     "book": "book",
     "perBook": "per book",
+    "plusShipping": "+ shipping",
     "total": "total"
   },
   "features": {
@@ -43,7 +44,13 @@
     "q4": "Are there any additional fees?",
     "a4": "Taxes are calculated at checkout based on your location. Shipping costs vary by country and are shown before you complete your purchase.",
     "q5": "What about print specifications?",
-    "a5": "Printed books are professionally bound with premium paper. Specific format options (size, binding type) are available during the book creation process."
+    "a5": "Printed books are professionally bound with premium paper. Specific format options (size, binding type) are available during the book creation process.",
+    "q6": "Who prints my book?",
+    "a6": "We partner with a high-quality, professional printing provider to ensure your book is produced to the highest standards. While we handle all customer service, pricing, and delivery coordination, our trusted printing partner manufactures your book using premium materials and state-of-the-art printing technology. This partnership allows us to offer you exceptional quality at competitive prices.",
+    "q7": "Why don't you print in-house?",
+    "a7": "By partnering with specialized printing experts, we can focus on what we do best—creating magical, personalized stories for your child—while ensuring your book is printed with professional-grade quality, eco-friendly materials, and reliable delivery. Our printing partner has decades of experience and can handle orders worldwide.",
+    "q8": "Does this affect the quality of my book?",
+    "a8": "Absolutely not! Our printing partner is carefully selected for their commitment to quality. Every book is printed on premium paper with vibrant, fade-resistant inks and durable binding. We maintain strict quality control standards to ensure your book exceeds expectations."
   },
   "disclaimers": {
     "shipping": "Shipping costs calculated at checkout based on country",
