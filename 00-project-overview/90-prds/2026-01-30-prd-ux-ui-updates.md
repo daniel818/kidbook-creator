@@ -16,14 +16,14 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 ### 1. Book Creation Flow (`/create`)
 
-| ID | Issue | Description | Priority |
-|----|-------|-------------|----------|
-| 1a | **Name Label Update** | Change "Child's Name" to "Main Character's Name" - the hero may not be a child | High |
-| 1b | **Footer Visibility** | Hide footer during story creation flow - footer should not appear on scroll | High |
-| 1c | **Name Capitalization** | Auto-capitalize first letter of name for LTR languages (e.g., "daniel" → "Daniel") | Medium |
-| 1d | **Theme-Specific Examples** | Show 2 different story examples per theme that change when theme is selected | Medium |
-| 1e | **Title Formatting** | Auto-format book title to Title Case (capitalize main words) | Medium |
-| 1f | **Image Placeholders** | Replace current emojis/icons with transparent magical illustrations for book types, formats, and themes | High |
+| ID | Issue | Description | Priority | Status |
+|----|-------|-------------|----------|--------|
+| 1a | **Name Label Update** | Change "Child's Name" to "Main Character's Name" - the hero may not be a child | High | ✅ Done |
+| 1b | **Footer Visibility** | Hide footer during story creation flow - footer should not appear on scroll | High | ✅ Done |
+| 1c | **Name Capitalization** | Auto-capitalize first letter of name for LTR languages (e.g., "daniel" → "Daniel") | Medium | ✅ Done |
+| 1d | **Theme-Specific Examples** | Show 2 different story examples per theme that change when theme is selected | Medium | ✅ Done |
+| 1e | **Title Formatting** | Auto-format book title to Title Case (capitalize main words) | Medium | ✅ Done |
+| 1f | **Image Placeholders** | Replace current emojis/icons with transparent magical illustrations for book types, formats, and themes | High | ⏳ Pending |
 
 **Files to modify:**
 - `app/create/page.tsx` - Main wizard logic
@@ -33,10 +33,10 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 ### 2. Pricing Page (`/[locale]/pricing`)
 
-| ID | Issue | Description | Priority |
-|----|-------|-------------|----------|
-| 2a | **Title Redundancy** | Hero shows "Choose the perfect package..." and section shows "Pricing" + same subtitle - reduce to max 2 titles | Medium |
-| 2b | **CTA Button Placement** | Remove top "Start Creating" button in hero, keep only bottom CTA | Low |
+| ID | Issue | Description | Priority | Status |
+|----|-------|-------------|----------|--------|
+| 2a | **Title Redundancy** | Hero shows "Choose the perfect package..." and section shows "Pricing" + same subtitle - reduce to max 2 titles | Medium | ✅ Done |
+| 2b | **CTA Button Placement** | Remove top "Start Creating" button in hero, keep only bottom CTA | Low | ✅ Done |
 
 **Files to modify:**
 - `app/[locale]/pricing/page.tsx`
@@ -46,9 +46,9 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 ### 3. FAQ Page (`/[locale]/faq`)
 
-| ID | Issue | Description | Priority |
-|----|-------|-------------|----------|
-| 3a | **Missing Hero Section** | Add hero section similar to Pricing and About Us pages | Medium |
+| ID | Issue | Description | Priority | Status |
+|----|-------|-------------|----------|--------|
+| 3a | **Missing Hero Section** | Add hero section similar to Pricing and About Us pages | Medium | ✅ Done |
 
 **Files to modify:**
 - `app/[locale]/faq/page.tsx`
@@ -59,12 +59,12 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 ### 4. Order Page (`/create/[bookId]/order`)
 
-| ID | Issue | Description | Priority |
-|----|-------|-------------|----------|
-| 4a | **Missing Navbar** | Add Navbar component to order page | High |
-| 4b | **Missing Translations** | Add i18n translations for all order page text | High |
-| 4c | **Price Unavailable** | Show placeholder price based on pricing page values when Lulu API fails | High |
-| 4d | **Digital/Print Option** | Add choice between "Digital Only" (free shipping, instant) vs "Print + Digital" | High |
+| ID | Issue | Description | Priority | Status |
+|----|-------|-------------|----------|--------|
+| 4a | **Missing Navbar** | Add Navbar component to order page | High | ⏳ Pending |
+| 4b | **Missing Translations** | Add i18n translations for all order page text | High | ⏳ Pending |
+| 4c | **Price Unavailable** | Show placeholder price based on pricing page values when Lulu API fails | High | ⏳ Pending |
+| 4d | **Digital/Print Option** | Add choice between "Digital Only" (free shipping, instant) vs "Print + Digital" | High | ⏳ Pending |
 
 **Files to modify:**
 - `app/create/[bookId]/order/page.tsx`
@@ -74,9 +74,10 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 ### 5. Home Page - How It Works Section
 
-| ID | Issue | Description | Priority |
-|----|-------|-------------|----------|
-| 5a | **Uninspiring Flow** | Current 3-step flow doesn't match brand guidelines. Update to 4 inspiring stages: Setup Your Book, Create Your Story, Preview & Perfect, Order & Enjoy | Medium |
+| ID | Issue | Description | Priority | Status |
+|----|-------|-------------|----------|--------|
+| 5a | **Uninspiring Flow** | Current 3-step flow doesn't match brand guidelines. Update to 4 inspiring stages: Setup Your Book, Create Your Story, Preview & Perfect, Order & Enjoy | Medium | ✅ Done |
+| 5b | **Remove AI Wording** | Replace "Let AI bring your vision to life" with magical language that doesn't mention AI | High | 🔧 In Progress |
 
 **Files to modify:**
 - `app/[locale]/page.tsx` (home page)
@@ -91,9 +92,10 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 ### 6. Book Viewer - RTL/LTR Orientation Bug
 
-| ID | Issue | Description | Priority |
-|----|-------|-------------|----------|
-| 6a | **Wrong Text Orientation** | When viewing a book, the text orientation doesn't match the book's language. Hebrew books show LTR layout when UI is in English, and English books show RTL layout when UI is in Hebrew. Need to detect book language and apply correct direction. | High |
+| ID | Issue | Description | Priority | Status |
+|----|-------|-------------|----------|--------|
+| 6a | **Wrong Text Orientation** | When viewing a book, the text orientation doesn't match the book's language. Hebrew books show LTR layout when UI is in English, and English books show RTL layout when UI is in Hebrew. Need to detect book language and apply correct direction. | High | 🔧 In Progress |
+| 6b | **Letter Position Bug** | Large decorative letters on text pages are positioned incorrectly - should be on right for RTL books and left for LTR books | High | 🔧 In Progress |
 
 **Files to modify:**
 - `components/StoryBookViewer.tsx` or `components/StoryBookViewer3D.tsx`

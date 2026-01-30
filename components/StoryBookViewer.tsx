@@ -146,11 +146,12 @@ const TextPage = forwardRef<HTMLDivElement, {
     pageNumber: number;
     isEditing?: boolean;
     onTextChange?: (idx: number, val: string) => void;
+    isRTL?: boolean;
 }>((props, ref) => {
-    const { textElements, pageNumber, isEditing, onTextChange } = props;
+    const { textElements, pageNumber, isEditing, onTextChange, isRTL } = props;
 
     return (
-        <div className={styles.textPage} ref={ref}>
+        <div className={styles.textPage} ref={ref} dir={isRTL ? 'rtl' : 'ltr'}>
             <div className={styles.textPageContent}>
                 {textElements.map((text, idx) => (
                     isEditing ? (
@@ -483,6 +484,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             pageNumber={leftPageNum}
                             isEditing={isEditing}
                             onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                            isRTL={true}
                         />
                     </Page>
                 );
@@ -521,6 +523,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             pageNumber={rightPageNum}
                             isEditing={isEditing}
                             onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                            isRTL={false}
                         />
                     </Page>
                 );

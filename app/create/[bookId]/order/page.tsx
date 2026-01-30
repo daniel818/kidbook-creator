@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Book, BookTypeInfo, BookThemeInfo } from '@/lib/types';
 import { getBookById } from '@/lib/storage';
@@ -68,6 +69,7 @@ export default function OrderPage() {
     const params = useParams();
     const bookId = params.bookId as string;
     const { user } = useAuth();
+    const { t } = useTranslation('order');
 
     const [book, setBook] = useState<Book | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -550,9 +552,9 @@ export default function OrderPage() {
                     className={styles.backButton}
                     onClick={() => router.push(`/book/${bookId}`)}
                 >
-                    ← Back to Book
+                    {t('header.backButton')}
                 </button>
-                <h1 className={styles.headerTitle}>Order Your Book</h1>
+                <h1 className={styles.headerTitle}>{t('header.title')}</h1>
                 <div className={styles.placeholder}></div>
             </header>
 

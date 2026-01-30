@@ -66,7 +66,7 @@
       },
       "step2": {
         "title": "Create Your Story",
-        "description": "Let AI bring your vision to life with stunning illustrations and personalized tales."
+        "description": "Let our magic bring your vision to life with stunning illustrations and personalized tales."
       },
       "step3": {
         "title": "Preview & Perfect",
@@ -991,5 +991,81 @@
         "content": "If you have concerns about how we handle your data, you also have the right to lodge a complaint with your local data protection authority."
       }
     ]
+  },
+  "order": {
+    "header": {
+      "backButton": "← Back to Book",
+      "title": "Order Your Book"
+    },
+    "steps": {
+      "options": "Options",
+      "shipping": "Shipping",
+      "review": "Review",
+      "payment": "Payment"
+    },
+    "format": {
+      "title": "Choose Your Format",
+      "softcover": "Softcover",
+      "softcoverDesc": "Stapled booklet binding (Saddle Stitch)",
+      "hardcover": "Hardcover",
+      "hardcoverDesc": "Premium Hardcover (Casewrap)"
+    },
+    "size": {
+      "title": "Select Size",
+      "small": "7.5\" × 7.5\" (Small Square)",
+      "standard": "8\" × 8\" (Standard Square)",
+      "portrait": "8\" × 10\" (Portrait)"
+    },
+    "quantity": {
+      "title": "Quantity"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "format": "Format",
+      "size": "Size",
+      "pages": "Pages",
+      "quantity": "Quantity",
+      "bookPrice": "Book price (printing + production)",
+      "shipping": "Shipping",
+      "total": "Total",
+      "unavailable": "Unavailable",
+      "calculated": "Calculated after address",
+      "estimatedDelivery": "Estimated Delivery",
+      "businessDays": "business days {{min}}-{{max}}",
+      "premiumQuality": "Premium Quality",
+      "ecoFriendly": "Eco-Friendly",
+      "satisfactionGuaranteed": "Satisfaction Guaranteed",
+      "note": "Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method"
+    },
+    "shipping": {
+      "title": "Shipping Information",
+      "fullName": "Full Name",
+      "addressLine1": "Address Line 1",
+      "addressLine2": "Address Line 2 (Optional)",
+      "city": "City",
+      "state": "State / Province",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "phone": "Phone Number",
+      "method": "Shipping Method",
+      "selectMethod": "Select shipping method",
+      "loading": "Loading shipping options...",
+      "error": "Failed to load shipping options",
+      "free": "FREE"
+    },
+    "buttons": {
+      "continue": "Continue",
+      "back": "Back",
+      "placeOrder": "Place Order",
+      "processing": "Processing..."
+    },
+    "errors": {
+      "loadFailed": "Failed to load book",
+      "notFound": "Book not found",
+      "fillRequired": "Please fill in all required fields",
+      "selectShipping": "Please select a shipping method",
+      "agreeTerms": "Please agree to the terms and conditions",
+      "checkoutFailed": "Failed to create checkout session"
+    }
   }
 }
