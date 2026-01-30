@@ -218,27 +218,6 @@ export default function OrdersPage() {
                                             <div>{formatDate(order.createdAt)}</div>
                                         </div>
 
-                                        {/* Order Progress Timeline */}
-                                        {!isError && (
-                                            <div className={styles.progressTimeline}>
-                                                {PROGRESS_STEPS.map((step, i) => {
-                                                    const isCompleted = config.step > i + 1;
-                                                    const isCurrent = config.step === i + 1;
-                                                    return (
-                                                        <div
-                                                            key={step.key}
-                                                            className={`${styles.progressStep} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
-                                                        >
-                                                            <div className={styles.progressDot}>
-                                                                {isCompleted ? '✓' : isCurrent ? step.icon : (i + 1)}
-                                                            </div>
-                                                            <span className={styles.progressLabel}>{step.label}</span>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        )}
-
                                         <div className={styles.orderContent}>
                                             {order.bookThumbnail ? (
                                                 <img
@@ -255,7 +234,15 @@ export default function OrdersPage() {
                                                 </div>
                                             )}
                                             <div className={styles.orderDetails}>
-                                                <h3 className={styles.bookTitle}>{order.bookTitle}</h3>
+                                                <div className={styles.titleRow}>
+                                                    <h3 className={styles.bookTitle}>{order.bookTitle}</h3>
+                                                    <span
+                                                        className={styles.orderStatus}
+                                                        style={{ backgroundColor: `${config.color}20`, color: config.color }}
+                                                    >
+                                                        {config.icon} {config.label}
+                                                    </span>
+                                                </div>
                                                 {order.childName && (
                                                     <div className={styles.bookMeta}>For {order.childName}</div>
                                                 )}
@@ -264,51 +251,43 @@ export default function OrdersPage() {
                                                     <span className={styles.metaPill}>{SIZE_LABELS[order.size] || order.size}</span>
                                                     <span className={styles.metaPill}>Qty {order.quantity}</span>
                                                 </div>
-                                                {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax) && (
-                                                    <span className={styles.deliveryBadge}>
-                                                        <span className={styles.deliveryIcon}>📦</span>
-                                                        {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax)}
-                                                    </span>
+                                                <div className={styles.statusRow}>
+                                                    {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax) && (
+                                                        <span className={styles.deliveryBadge}>
+                                                            <span className={styles.deliveryIcon}>📦</span>
+                                                            {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax)}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {!isError && (
+                                                    <div className={styles.progressTimeline}>
+                                                        {PROGRESS_STEPS.map((step, i) => {
+                                                            const isCompleted = config.step > i + 1;
+                                                            const isCurrent = config.step === i + 1;
+                                                            return (
+                                                                <div
+                                                                    key={step.key}
+                                                                    className={`${styles.progressStep} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
+                                                                >
+                                                                    <div className={styles.progressDot}>
+                                                                        {isCompleted ? '✓' : isCurrent ? step.icon : (i + 1)}
+                                                                    </div>
+                                                                    <span className={styles.progressLabel}>{step.label}</span>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
                                                 )}
-                                                <span
-                                                    className={styles.orderStatus}
-                                                    style={{ backgroundColor: `${config.color}20`, color: config.color }}
-                                                >
-                                                    {config.icon} {config.label}
-                                                </span>
                                             </div>
                                         </div>
-
-                                        {/* Tracking Section */}
-                                        {(order.trackingUrl || order.trackingNumber) && (
-                                            <div className={styles.trackingSection}>
-                                                <span className={styles.trackingIcon}>🚚</span>
-                                                <div className={styles.trackingInfo}>
-                                                    <span className={styles.trackingLabel}>
-                                                        {order.carrierName ? `${order.carrierName} Tracking` : 'Tracking'}
-                                                    </span>
-                                                    <a
-                                                        href={order.trackingUrl || order.trackingNumber}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={styles.trackingLink}
-                                                    >
-                                                        {order.trackingNumber || 'Track Package →'}
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        )}
 
                                         <div className={styles.orderFooter}>
                                             <div className={styles.orderTotal}>
                                                 ${order.total.toFixed(2)}
+                                                <span className={styles.totalLabel}>Paid</span>
                                             </div>
                                             <div className={styles.orderActions}>
-                                                {order.bookId && (
-                                                    <Link href={`/book/${order.bookId}`} className={styles.viewBookBtn}>
-                                                        View Book
-                                                    </Link>
-                                                )}
                                                 {(order.trackingUrl || order.trackingNumber) && (
                                                     <a
                                                         href={order.trackingUrl || order.trackingNumber}
@@ -316,8 +295,13 @@ export default function OrdersPage() {
                                                         rel="noopener noreferrer"
                                                         className={styles.trackButton}
                                                     >
-                                                        {order.carrierName ? `Track via ${order.carrierName}` : 'Track'} →
+                                                        {order.carrierName ? `Track ${order.carrierName}` : 'Track Package'}
                                                     </a>
+                                                )}
+                                                {order.bookId && (
+                                                    <Link href={`/book/${order.bookId}`} className={styles.viewBookBtn}>
+                                                        View Book
+                                                    </Link>
                                                 )}
                                                 {isError && (
                                                     <a
