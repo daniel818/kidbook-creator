@@ -16,7 +16,7 @@ interface TermsData {
 }
 
 export default function TermsPage() {
-  const { t, ready, i18n } = useTranslation('terms');
+  const { ready, i18n } = useTranslation('terms');
 
   if (!ready) {
     return (
@@ -31,7 +31,20 @@ export default function TermsPage() {
     );
   }
 
-  const data: TermsData = i18n.getResourceBundle(i18n.language, 'terms') as TermsData;
+  const data = i18n.getResourceBundle(i18n.language, 'terms') as TermsData | undefined;
+
+  if (!data) {
+    return (
+      <>
+        <Navbar />
+        <main className={styles.legalPage}>
+          <div className={styles.container}>
+            <div style={{ textAlign: 'center', padding: '3rem 0' }}>Error loading terms data</div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>

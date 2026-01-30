@@ -16,7 +16,7 @@ interface PrivacyData {
 }
 
 export default function PrivacyPage() {
-  const { t, ready, i18n } = useTranslation('privacy');
+  const { ready, i18n } = useTranslation('privacy');
 
   if (!ready) {
     return (
@@ -31,7 +31,20 @@ export default function PrivacyPage() {
     );
   }
 
-  const data: PrivacyData = i18n.getResourceBundle(i18n.language, 'privacy') as PrivacyData;
+  const data = i18n.getResourceBundle(i18n.language, 'privacy') as PrivacyData | undefined;
+
+  if (!data) {
+    return (
+      <>
+        <Navbar />
+        <main className={styles.legalPage}>
+          <div className={styles.container}>
+            <div style={{ textAlign: 'center', padding: '3rem 0' }}>Error loading privacy data</div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>

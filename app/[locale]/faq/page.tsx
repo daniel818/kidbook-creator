@@ -6,7 +6,7 @@ import FAQList from '@/components/FAQ/FAQList';
 import { FAQData } from '@/lib/faq/types';
 
 export default function FAQPage() {
-  const { t, ready, i18n } = useTranslation('faq');
+  const { ready, i18n } = useTranslation('faq');
 
   if (!ready) {
     return (
@@ -19,7 +19,18 @@ export default function FAQPage() {
     );
   }
 
-  const data: FAQData = i18n.getResourceBundle(i18n.language, 'faq') as FAQData;
+  const data = i18n.getResourceBundle(i18n.language, 'faq') as FAQData | undefined;
+
+  if (!data) {
+    return (
+      <>
+        <Navbar />
+        <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
+          <div style={{ textAlign: 'center', padding: '3rem 0' }}>Error loading FAQ data</div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
