@@ -990,5 +990,88 @@
         "content": "Wenn Sie Bedenken darüber haben, wie wir Ihre Daten verarbeiten, haben Sie auch das Recht, sich bei Ihrer lokalen Datenschutzaufsichtsbehörde zu beschweren."
       }
     ]
+  },
+  "order": {
+    "header": {
+      "backButton": "← Zurück zum Buch",
+      "title": "Bestelle dein Buch"
+    },
+    "steps": {
+      "options": "Optionen",
+      "shipping": "Versand",
+      "review": "Überprüfen",
+      "payment": "Zahlung"
+    },
+    "delivery": {
+      "title": "Wähle deine Lieferung",
+      "digital": "Nur Digital",
+      "digitalDesc": "Sofortiger PDF-Download - kein Versand erforderlich",
+      "print": "Druck + Digital",
+      "printDesc": "Physisches Buch geliefert + PDF-Download"
+    },
+    "format": {
+      "title": "Wähle dein Format",
+      "softcover": "Softcover",
+      "softcoverDesc": "Geheftete Broschürenbindung (Rückendrahtheftung)",
+      "hardcover": "Hardcover",
+      "hardcoverDesc": "Premium Hardcover (Casewrap)"
+    },
+    "size": {
+      "title": "Größe auswählen",
+      "standard": "8\" × 8\" (Quadrat)",
+      "portrait": "8\" × 10\" (Novelle)"
+    },
+    "quantity": {
+      "title": "Menge"
+    },
+    "summary": {
+      "title": "Bestellübersicht",
+      "format": "Format",
+      "size": "Größe",
+      "pages": "Seiten",
+      "quantity": "Menge",
+      "bookPrice": "Buchpreis (Druck + Produktion)",
+      "shipping": "Versand",
+      "total": "Gesamt",
+      "unavailable": "Nicht verfügbar",
+      "calculated": "Nach Adresse berechnet",
+      "calculating": "Berechnung läuft...",
+      "estimatedDelivery": "Voraussichtliche Lieferung",
+      "businessDays": "Werktage {{min}}-{{max}}",
+      "premiumQuality": "Premium-Qualität",
+      "ecoFriendly": "Umweltfreundlich",
+      "satisfactionGuaranteed": "Zufriedenheit garantiert",
+      "note": "Der Buchpreis verwendet Lulu-Druckkosten mit einer Standard-US-Adresse. Der Versand wird aktualisiert, nachdem Sie Ihre Adresse eingegeben und eine Methode gewählt haben"
+    },
+    "shipping": {
+      "title": "Versandinformationen",
+      "fullName": "Vollständiger Name",
+      "addressLine1": "Adresszeile 1",
+      "addressLine2": "Adresszeile 2 (Optional)",
+      "city": "Stadt",
+      "state": "Bundesland / Provinz",
+      "postalCode": "Postleitzahl",
+      "country": "Land",
+      "phone": "Telefonnummer",
+      "method": "Versandart",
+      "selectMethod": "Versandart auswählen",
+      "loading": "Versandoptionen werden geladen...",
+      "error": "Fehler beim Laden der Versandoptionen",
+      "free": "KOSTENLOS"
+    },
+    "buttons": {
+      "continue": "Weiter",
+      "back": "Zurück",
+      "placeOrder": "Bestellung aufgeben",
+      "processing": "Wird verarbeitet..."
+    },
+    "errors": {
+      "loadFailed": "Buch konnte nicht geladen werden",
+      "notFound": "Buch nicht gefunden",
+      "fillRequired": "Bitte füllen Sie alle erforderlichen Felder aus",
+      "selectShipping": "Bitte wählen Sie eine Versandart",
+      "agreeTerms": "Bitte stimmen Sie den Allgemeinen Geschäftsbedingungen zu",
+      "checkoutFailed": "Checkout-Sitzung konnte nicht erstellt werden"
+    }
   }
 }

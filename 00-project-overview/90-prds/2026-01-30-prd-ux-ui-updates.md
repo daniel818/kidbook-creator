@@ -62,7 +62,7 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 | ID | Issue | Description | Priority | Status |
 |----|-------|-------------|----------|--------|
 | 4a | **Missing Navbar** | Add Navbar component to order page | High | ✅ Done |
-| 4b | **Missing Translations** | Add i18n translations for all order page text | High | 🔧 In Progress |
+| 4b | **Missing Translations** | Add i18n translations for all order page text | High | ✅ Done |
 | 4c | **Price Unavailable** | Show placeholder price based on pricing page values when Lulu API fails | High | ⏳ Pending |
 | 4d | **Digital/Print Option** | Add choice between "Digital Only" (free shipping, instant) vs "Print + Digital" | High | ✅ Done |
 | 4e | **Size Options** | Update size options to Square (8x8) and Novella (8x10) only | Medium | ✅ Done |

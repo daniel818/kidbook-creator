@@ -1019,9 +1019,8 @@
     },
     "size": {
       "title": "Select Size",
-      "small": "7.5\" × 7.5\" (Small Square)",
-      "standard": "8\" × 8\" (Standard Square)",
-      "portrait": "8\" × 10\" (Portrait)"
+      "standard": "8\" × 8\" (Square)",
+      "portrait": "8\" × 10\" (Novella)"
     },
     "quantity": {
       "title": "Quantity"
@@ -1037,6 +1036,7 @@
       "total": "Total",
       "unavailable": "Unavailable",
       "calculated": "Calculated after address",
+      "calculating": "Calculating...",
       "estimatedDelivery": "Estimated Delivery",
       "businessDays": "business days {{min}}-{{max}}",
       "premiumQuality": "Premium Quality",

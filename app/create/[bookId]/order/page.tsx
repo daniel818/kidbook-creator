@@ -17,7 +17,7 @@ import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 type BookFormat = 'softcover' | 'hardcover';
-type BookSize = '7.5x7.5' | '8x8' | '8x10';
+type BookSize = '8x8' | '8x10';
 type OrderStep = 'options' | 'shipping' | 'review' | 'payment';
 
 interface ShippingOption {
@@ -49,7 +49,6 @@ function formatShippingLevel(level: string): string {
 }
 
 const SIZE_LABELS: Record<BookSize, string> = {
-    '7.5x7.5': '7.5" × 7.5" (Small Square)',
     '8x8': '8" × 8" (Square)',
     '8x10': '8" × 10" (Novella)'
 };
@@ -344,17 +343,17 @@ export default function OrderPage() {
     const hasShippingQuote = Boolean(displayedShippingLevel) && Boolean(displayedPricing);
     const shippingCost = hasShippingQuote ? displayedPricing!.shipping : 0;
     const grandTotal = hasShippingQuote ? displayedPricing!.total : totalPrice;
-    const bookPriceLabel = 'Book price (printing + production)';
+    const bookPriceLabel = t('summary.bookPrice');
     const bookPriceValue = priceError
-        ? 'Unavailable'
+        ? t('summary.unavailable')
         : displayedPricing
             ? `$${totalPrice.toFixed(2)}`
-            : (isPriceLoading ? 'Calculating...' : '—');
+            : (isPriceLoading ? t('summary.calculating') : '—');
     const shippingValue = hasShippingQuote
         ? `$${shippingCost.toFixed(2)}`
         : (isShippingValid()
-            ? (isShippingOptionsLoading ? 'Calculating...' : 'Select a shipping method')
-            : 'Calculated after address');
+            ? (isShippingOptionsLoading ? t('summary.calculating') : t('shipping.selectMethod'))
+            : t('summary.calculated'));
 
     function isShippingValid() {
         // Strict Validation Rules for Lulu/FedEx
@@ -624,17 +623,10 @@ export default function OrderPage() {
                                             {f === 'softcover' ? '📄' : '📕'}
                                         </span>
                                         <span className={styles.formatName}>
-                                            {f.charAt(0).toUpperCase() + f.slice(1)}
+                                            {t(`format.${f}`)}
                                         </span>
                                         <span className={styles.formatDesc}>
-                                            {f === 'softcover'
-                                                ? (interiorPageCount < 32
-                                                    ? 'Stapled booklet binding (Saddle Stitch)'
-                                                    : 'Flexible, lightweight cover (Perfect Bound)')
-                                                : (interiorPageCount < 32
-                                                    ? 'Premium Hardcover (Casewrap)'
-                                                    : 'Premium, durable hardback')
-                                            }
+                                            {t(`format.${f}Desc`)}
                                         </span>
                                         {format === f && <span className={styles.checkmark}>✓</span>}
                                     </button>
@@ -644,7 +636,7 @@ export default function OrderPage() {
                                 Estimated price updates in the summary as you choose options.
                             </p>
 
-                            <h2 className={styles.sectionTitle}>Select Size</h2>
+                            <h2 className={styles.sectionTitle}>{t('size.title')}</h2>
 
                             <div className={styles.sizeGrid}>
                                 {availableSizes.map(s => (
@@ -657,8 +649,8 @@ export default function OrderPage() {
                                             <span
                                                 className={styles.sizeBox}
                                                 style={{
-                                                    width: s === '7.5x7.5' ? '46px' : s === '8x8' ? '50px' : '50px',
-                                                    height: s === '7.5x7.5' ? '46px' : s === '8x8' ? '50px' : '62px'
+                                                    width: '50px',
+                                                    height: s === '8x8' ? '50px' : '62px'
                                                 }}
                                             ></span>
                                         </span>
@@ -668,7 +660,7 @@ export default function OrderPage() {
                                 ))}
                             </div>
 
-                            <h2 className={styles.sectionTitle}>Quantity</h2>
+                            <h2 className={styles.sectionTitle}>{t('quantity.title')}</h2>
 
                             <div className={styles.quantitySelector}>
                                 <button
@@ -702,7 +694,7 @@ export default function OrderPage() {
                                     }
                                 }}
                             >
-                                {deliveryType === 'digital' ? t('buttons.continue') : 'Continue to Shipping →'}
+                                {deliveryType === 'digital' ? t('buttons.continue') : `${t('buttons.continue')} →`}
                             </button>
                         </motion.div>
                     )}
@@ -1081,7 +1073,7 @@ export default function OrderPage() {
                 {/* Right - Order Summary */}
                 <aside className={styles.summarySection}>
                     <div className={styles.summaryCard}>
-                        <h2 className={styles.summaryTitle}>Order Summary</h2>
+                        <h2 className={styles.summaryTitle}>{t('summary.title')}</h2>
 
                         {/* Book Preview */}
                         <div className={styles.bookPreview}>
@@ -1105,19 +1097,19 @@ export default function OrderPage() {
                         {/* Selected Options */}
                         <div className={styles.selectedOptions}>
                             <div className={styles.optionRow}>
-                                <span>Format</span>
-                                <span>{format.charAt(0).toUpperCase() + format.slice(1)}</span>
+                                <span>{t('summary.format')}</span>
+                                <span>{t(`format.${format}`)}</span>
                             </div>
                             <div className={styles.optionRow}>
-                                <span>Size</span>
+                                <span>{t('summary.size')}</span>
                                 <span>{size}</span>
                             </div>
                             <div className={styles.optionRow}>
-                                <span>Pages</span>
+                                <span>{t('summary.pages')}</span>
                                 <span>{interiorPageCount}</span>
                             </div>
                             <div className={styles.optionRow}>
-                                <span>Quantity</span>
+                                <span>{t('summary.quantity')}</span>
                                 <span>×{quantity}</span>
                             </div>
                         </div>
@@ -1133,22 +1125,22 @@ export default function OrderPage() {
                             {hasShippingQuote ? (
                                 <>
                                     <div className={styles.priceRow}>
-                                        <span>Shipping</span>
+                                        <span>{t('summary.shipping')}</span>
                                         <span>{shippingValue}</span>
                                     </div>
                                     <div className={`${styles.priceRow} ${styles.total}`}>
-                                        <span>Total</span>
+                                        <span>{t('summary.total')}</span>
                                         <span>${grandTotal.toFixed(2)}</span>
                                     </div>
                                 </>
                             ) : (
                                 <div className={styles.priceRow}>
-                                    <span>Shipping</span>
+                                    <span>{t('summary.shipping')}</span>
                                     <span>{shippingValue}</span>
                                 </div>
                             )}
                             <p className={styles.pricingNote}>
-                                Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method.
+                                {t('summary.note')}
                             </p>
                             {priceError && (
                                 <p className={styles.reviewNote}>
@@ -1161,8 +1153,8 @@ export default function OrderPage() {
                         <div className={styles.deliveryBox}>
                             <span className={styles.deliveryIcon}>📦</span>
                             <div>
-                                <strong>Estimated Delivery</strong>
-                                <p>5-10 business days</p>
+                                <strong>{t('summary.estimatedDelivery')}</strong>
+                                <p>5-10 {t('summary.businessDays', { min: 5, max: 10 })}</p>
                             </div>
                         </div>
 
@@ -1170,15 +1162,15 @@ export default function OrderPage() {
                         <div className={styles.trustBadges}>
                             <div className={styles.badge}>
                                 <span>✨</span>
-                                <span>Premium Quality</span>
+                                <span>{t('summary.premiumQuality')}</span>
                             </div>
                             <div className={styles.badge}>
                                 <span>🌱</span>
-                                <span>Eco-Friendly</span>
+                                <span>{t('summary.ecoFriendly')}</span>
                             </div>
                             <div className={styles.badge}>
                                 <span>💯</span>
-                                <span>Satisfaction Guaranteed</span>
+                                <span>{t('summary.satisfactionGuaranteed')}</span>
                             </div>
                         </div>
                     </div>

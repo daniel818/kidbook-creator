@@ -991,5 +991,88 @@
         "content": "אם יש לך חששות לגבי האופן שבו אנחנו מטפלים בנתונים שלך, יש לך גם את הזכות להגיש תלונה לרשות הגנת הנתונים המקומית שלך."
       }
     ]
+  },
+  "order": {
+    "header": {
+      "backButton": "→ חזרה לספר",
+      "title": "הזמן את הספר שלך"
+    },
+    "steps": {
+      "options": "אפשרויות",
+      "shipping": "משלוח",
+      "review": "סקירה",
+      "payment": "תשלום"
+    },
+    "delivery": {
+      "title": "בחר את סוג המשלוח",
+      "digital": "דיגיטלי בלבד",
+      "digitalDesc": "הורדת PDF מיידית - ללא צורך במשלוח",
+      "print": "הדפסה + דיגיטלי",
+      "printDesc": "ספר פיזי נשלח + הורדת PDF"
+    },
+    "format": {
+      "title": "בחר את הפורמט",
+      "softcover": "כריכה רכה",
+      "softcoverDesc": "כריכת חוברת מהודקת (תפירה אוכפית)",
+      "hardcover": "כריכה קשה",
+      "hardcoverDesc": "כריכה קשה פרמיום (Casewrap)"
+    },
+    "size": {
+      "title": "בחר גודל",
+      "standard": "8\" × 8\" (ריבוע)",
+      "portrait": "8\" × 10\" (נובלה)"
+    },
+    "quantity": {
+      "title": "כמות"
+    },
+    "summary": {
+      "title": "סיכום הזמנה",
+      "format": "פורמט",
+      "size": "גודל",
+      "pages": "עמודים",
+      "quantity": "כמות",
+      "bookPrice": "מחיר ספר (הדפסה + ייצור)",
+      "shipping": "משלוח",
+      "total": "סה\"כ",
+      "unavailable": "לא זמין",
+      "calculated": "מחושב לאחר כתובת",
+      "calculating": "מחשב...",
+      "estimatedDelivery": "משלוח משוער",
+      "businessDays": "ימי עסקים {{min}}-{{max}}",
+      "premiumQuality": "איכות פרמיום",
+      "ecoFriendly": "ידידותי לסביבה",
+      "satisfactionGuaranteed": "שביעות רצון מובטחת",
+      "note": "מחיר הספר משתמש בעלויות הדפסה של Lulu עם כתובת ברירת מחדל בארה\"ב. המשלוח מתעדכן לאחר שתזין את הכתובת שלך ותבחר שיטה"
+    },
+    "shipping": {
+      "title": "פרטי משלוח",
+      "fullName": "שם מלא",
+      "addressLine1": "שורת כתובת 1",
+      "addressLine2": "שורת כתובת 2 (אופציונלי)",
+      "city": "עיר",
+      "state": "מדינה / מחוז",
+      "postalCode": "מיקוד",
+      "country": "מדינה",
+      "phone": "מספר טלפון",
+      "method": "שיטת משלוח",
+      "selectMethod": "בחר שיטת משלוח",
+      "loading": "טוען אפשרויות משלוח...",
+      "error": "נכשל בטעינת אפשרויות משלוח",
+      "free": "חינם"
+    },
+    "buttons": {
+      "continue": "המשך",
+      "back": "חזור",
+      "placeOrder": "בצע הזמנה",
+      "processing": "מעבד..."
+    },
+    "errors": {
+      "loadFailed": "נכשל בטעינת הספר",
+      "notFound": "הספר לא נמצא",
+      "fillRequired": "אנא מלא את כל השדות הנדרשים",
+      "selectShipping": "אנא בחר שיטת משלוח",
+      "agreeTerms": "אנא הסכם לתנאים וההגבלות",
+      "checkoutFailed": "נכשל ביצירת הפעלת תשלום"
+    }
   }
 }
