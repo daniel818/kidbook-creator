@@ -429,6 +429,15 @@
   "viewer": {
     "controls": {
       "keyboardHint": "השתמש במקשי החצים ← → או לחץ כדי להפוך דפים"
+    },
+    "buttons": {
+      "myBooks": "הספרים שלי",
+      "editStory": "ערוך סיפור",
+      "downloadDigital": "הורד דיגיטלי",
+      "orderPrint": "הזמן הדפסה",
+      "downloadPdf": "הורד PDF",
+      "save": "שמור",
+      "cancel": "ביטול"
     }
   },
   "pricing": {

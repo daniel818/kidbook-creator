@@ -91,14 +91,18 @@
 
 .headerLeft,
 .headerRight {
-    min-width: 100px;
+    flex: 1;
     display: flex;
     align-items: center;
+    gap: 0.75rem;
+}
+
+.headerLeft {
+    justify-content: flex-start;
 }
 
 .headerRight {
     justify-content: flex-end;
-    gap: 0.5rem;
 }
 
 .headerCenter {
@@ -145,9 +149,8 @@
     letter-spacing: 0.02em;
 }
 
-/* Action Buttons */
-.closeBtn,
-.actionBtn {
+/* Back Button - Updated styling */
+.backBtn {
     background: transparent;
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: var(--text-secondary);
@@ -162,14 +165,46 @@
     gap: 0.4rem;
 }
 
-.closeBtn:hover,
-.actionBtn:hover {
+.backBtn:hover {
     background: rgba(0, 0, 0, 0.05);
     border-color: rgba(0, 0, 0, 0.15);
 }
 
+/* Testing Area */
+.testingArea {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.testBtn {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+    padding: 0.5rem 0.875rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.testBtn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.testBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 .costBadge {
-    margin-left: 15px;
     padding: 4px 8px;
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
@@ -183,13 +218,29 @@
     white-space: nowrap;
 }
 
-.actionBtn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+/* Edit Story Button */
+.editButton {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
-/* Order Button - Premium purple gradient */
-.orderButton {
+.editButton:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Order Print Button - Top Right Toolbar */
+.orderPrintButton {
     background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #ec4899 100%);
     color: white;
     border: none;
@@ -205,13 +256,71 @@
     transition: all 0.2s ease;
 }
 
-.orderButton:hover {
+.orderPrintButton:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
 }
 
-.orderButton:active {
+.orderPrintButton:active {
     transform: translateY(0);
+}
+
+/* Floating Download Digital Button - Bottom Right */
+.floatingDownloadButton {
+    position: fixed;
+    bottom: 4rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 
+        0 4px 12px rgba(99, 102, 241, 0.4),
+        0 8px 24px rgba(99, 102, 241, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+}
+
+.floatingDownloadButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 16px rgba(99, 102, 241, 0.5),
+        0 12px 32px rgba(99, 102, 241, 0.3);
+}
+
+.floatingDownloadButton:active {
+    transform: translateY(0);
+}
+
+/* Adjust keyboard hint position to not overlap with floating button */
+.keyboardHint {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 2rem;
+    transform: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1.25rem;
+    border-radius: 24px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+    transition: opacity var(--transition-normal);
+}
+
+.keyboardHint:hover {
+    opacity: 1;
 }
 
 /* ============================================
@@ -1153,34 +1262,6 @@
     cursor: wait;
 }
 
-/* Edit Toggle in Header */
-.editToggle {
-    background: white;
-    border: 1px solid var(--header-border);
-    color: var(--text-secondary);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow-button);
-}
-
-.editToggle:hover {
-    background: var(--viewer-bg-start);
-    border-color: var(--accent-primary);
-    color: var(--accent-primary);
-}
-
-.editToggle.active {
-    background: var(--accent-primary);
-    color: white;
-    border-color: var(--accent-primary);
-}
 
 .saveButton {
     background: var(--accent-secondary);
@@ -1217,10 +1298,4 @@
 .cancelButton:hover {
     color: var(--text-primary);
     background: rgba(0, 0, 0, 0.05);
-}
-
-.editToolbar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
 }

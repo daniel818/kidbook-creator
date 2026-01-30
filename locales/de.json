@@ -428,6 +428,15 @@
   "viewer": {
     "controls": {
       "keyboardHint": "Verwende ← → Pfeiltasten oder klicke, um Seiten umzublättern"
+    },
+    "buttons": {
+      "myBooks": "Meine Bücher",
+      "editStory": "Geschichte bearbeiten",
+      "downloadDigital": "Digital herunterladen",
+      "orderPrint": "Druck bestellen",
+      "downloadPdf": "PDF herunterladen",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
     }
   },
   "pricing": {

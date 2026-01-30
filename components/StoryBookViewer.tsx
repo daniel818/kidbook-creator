@@ -555,37 +555,33 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         >
             {/* Header Controls */}
             <header className={styles.header}>
+                {/* Left Section: Back Button + Testing Area */}
                 <div className={styles.headerLeft}>
-                    <div className={styles.editToolbar}>
-                        {isEditing ? (
-                            <>
-                                <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
-                                    {isSaving ? 'Saving...' : '💾 Save'}
-                                </button>
-                                <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
-                                    Cancel
-                                </button>
-                            </>
-                        ) : (
-                            <button className={styles.editToggle} onClick={() => setIsEditing(true)}>
-                                ✎ Edit
-                            </button>
-                        )}
-                        <span style={{ marginInline: '10px', height: '20px', width: '1px', background: 'rgba(0,0,0,0.1)' }}></span>
-                        {onClose && (
-                            <button className={styles.closeBtn} onClick={onClose}>
-                                ← Back
-                            </button>
-                        )}
-
+                    {onClose && (
+                        <button className={styles.backBtn} onClick={onClose}>
+                            ← {t('buttons.myBooks', { ns: 'viewer' })}
+                        </button>
+                    )}
+                    
+                    {/* Testing Area - Only visible in dev/testing mode */}
+                    <div className={styles.testingArea}>
                         {book.estimatedCost !== undefined && (
                             <span className={styles.costBadge} title="Estimated AI Generation Cost">
-                                💸 ${book.estimatedCost.toFixed(3)}
+                                💰 ${book.estimatedCost.toFixed(3)}
                             </span>
                         )}
+                        <button
+                            className={styles.testBtn}
+                            title={t('buttons.downloadPdf', { ns: 'viewer' })}
+                            onClick={handleDownload}
+                            disabled={isDownloading}
+                        >
+                            {isDownloading ? '⏳' : '⬇️'} {t('buttons.downloadPdf', { ns: 'viewer' })}
+                        </button>
                     </div>
                 </div>
 
+                {/* Center Section: Page Management */}
                 <div className={styles.headerCenter}>
                     <button
                         className={styles.navBtn}
@@ -606,29 +602,30 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                     </button>
                 </div>
 
+                {/* Right Section: Edit Story + Order Print */}
                 <div className={styles.headerRight}>
-                    <button
-                        className={styles.orderButton}
-                        onClick={() => router.push(`/create/${book.id}/order`)}
-                    >
-                        🛒 Order Print
-                    </button>
-                    <button
-                        className={styles.actionBtn}
-                        title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
-                        onClick={toggleFullscreen}
-                        aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-                    >
-                        {isFullscreen ? '⛶' : '⛶'}
-                    </button>
-                    <button
-                        className={styles.actionBtn}
-                        title="Download PDF"
-                        onClick={handleDownload}
-                        disabled={isDownloading}
-                    >
-                        {isDownloading ? '⏳' : '⬇️'}
-                    </button>
+                    {isEditing ? (
+                        <>
+                            <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
+                                {isSaving ? 'Saving...' : `💾 ${t('buttons.save', { ns: 'viewer' })}`}
+                            </button>
+                            <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
+                                {t('buttons.cancel', { ns: 'viewer' })}
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button className={styles.editButton} onClick={() => setIsEditing(true)}>
+                                ✎ {t('buttons.editStory', { ns: 'viewer' })}
+                            </button>
+                            <button
+                                className={styles.orderPrintButton}
+                                onClick={() => router.push(`/create/${book.id}/order`)}
+                            >
+                                🛒 {t('buttons.orderPrint', { ns: 'viewer' })}
+                            </button>
+                        </>
+                    )}
                 </div>
             </header>
 
@@ -724,8 +721,18 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
             {/* Keyboard Hint */}
             <div className={styles.keyboardHint}>
-                {t('viewer:controls.keyboardHint')}
+                {t('controls.keyboardHint', { ns: 'viewer' })}
             </div>
+
+            {/* Floating Download Digital Button - Bottom Right */}
+            {!isEditing && (
+                <button
+                    className={styles.floatingDownloadButton}
+                    onClick={() => router.push(`/create/${book.id}/checkout?format=digital`)}
+                >
+                    ⬇️ {t('buttons.downloadDigital', { ns: 'viewer' })}
+                </button>
+            )}
 
             {/* Hidden Print Generator */}
             {isGeneratingPrint && (

@@ -6,14 +6,15 @@
 
 ## Executive Summary
 
-Based on 6 book configurations from Lulu's Pricing Calculator (24 pages, Premium Color, Matte finish):
+Based on 12 book configurations from Lulu's Pricing Calculator (24 pages, Premium Color, Matte finish):
 
-- **Price Range**: €5.79 - €13.58
-- **Cheapest Option**: Novella Paperback Saddle Stitch (€5.79)
-- **Most Expensive**: Small Square Hardcover (€13.58)
-- **Hardcover Premium**: +€5.48 over paperback (constant across sizes)
-- **Size Premium**: Small Square costs +40% vs Novella (paperback)
-- **Comic Book**: €8.40 (mid-range paperback option)
+- **Price Range**: €5.79 - €17.04
+- **Cheapest Options**: Novella & US Trade Paperback (€5.79)
+- **Most Expensive**: Royal Hardcover Linen Wrap (€17.04)
+- **Hardcover Case Wrap Premium**: +€5.48 over paperback (constant across all sizes)
+- **Linen Wrap Premium**: +€3.46-3.74 over Case Wrap
+- **New Binding Type**: Linen Wrap with Dust Jacket (premium option)
+- **New Sizes**: US Trade (6x9"), Royal (6.14x9.21")
 
 ---
 
@@ -61,27 +62,80 @@ Based on 6 book configurations from Lulu's Pricing Calculator (24 pages, Premium
 - **Paper**: 70# White Coated
 - **Position**: Mid-range paperback option (between Small Square and Novella)
 
+### Configuration 7: US Trade Hardcover Case Wrap
+- **Lulu Cost**: €11.27
+- **Format**: Hardcover Case Wrap
+- **Size**: 6 x 9 in (152 x 229 mm)
+- **Paper**: 80# White Coated
+- **Position**: Standard publishing format, same price as Novella hardcover
+
+### Configuration 8: US Trade Paperback Saddle Stitch
+- **Lulu Cost**: €5.79
+- **Format**: Paperback Saddle Stitch
+- **Size**: 6 x 9 in (152 x 229 mm)
+- **Paper**: 80# White Coated
+- **Position**: Tied for cheapest option
+
+### Configuration 9: Royal Paperback Saddle Stitch
+- **Lulu Cost**: €8.10
+- **Format**: Paperback Saddle Stitch
+- **Size**: 6.14 x 9.21 in (156 x 234 mm)
+- **Paper**: 80# White Coated
+- **Position**: European standard, same price as Small Square paperback
+
+### Configuration 10: Royal Hardcover Case Wrap
+- **Lulu Cost**: €13.58
+- **Format**: Hardcover Case Wrap
+- **Size**: 6.14 x 9.21 in (156 x 234 mm)
+- **Paper**: 80# White Coated
+- **Position**: European standard, same price as Small Square hardcover
+
+### Configuration 11: Royal Hardcover Linen Wrap
+- **Lulu Cost**: €17.04
+- **Format**: Hardcover Linen Wrap (with Dust Jacket)
+- **Size**: 6.14 x 9.21 in (156 x 234 mm)
+- **Paper**: 80# White Coated
+- **Position**: Most expensive option overall
+
+### Configuration 12: US Trade Hardcover Linen Wrap
+- **Lulu Cost**: €15.01
+- **Format**: Hardcover Linen Wrap (with Dust Jacket)
+- **Size**: 6 x 9 in (152 x 229 mm)
+- **Paper**: 80# White Coated
+- **Position**: Premium US Trade option
+
 ---
 
 ## Cost Drivers Analysis
 
 ### 1. Binding Type Impact
 
-| Binding | Novella | Small Square | Average Premium |
-|---------|---------|--------------|-----------------|
-| Paperback SS | €5.79 | €8.10 | BASE |
-| Hardcover CW | €11.27 | €13.58 | +€5.48 (+94.6%) |
+| Binding | Novella | US Trade | Royal | Small Square | Average Premium |
+|---------|---------|----------|-------|--------------|-----------------|
+| Paperback SS | €5.79 | €5.79 | €8.10 | €8.10 | BASE |
+| Hardcover CW | €11.27 | €11.27 | €13.58 | €13.58 | +€5.48 |
+| Hardcover LW | N/A | €15.01 | €17.04 | N/A | +€9.08 |
 
-**Key Finding**: Hardcover adds exactly **€5.48** regardless of size
+**Key Findings**: 
+- Hardcover Case Wrap adds exactly **€5.48** over paperback (constant across all sizes)
+- Linen Wrap adds **€3.46-3.74** over Case Wrap
+- Total Linen Wrap premium: **€8.94-9.22** over paperback
 
 ### 2. Size Impact
 
-| Size | Paperback | Hardcover | Average Premium |
-|------|-----------|-----------|-----------------|
-| Novella (5x8") | €5.79 | €11.27 | BASE |
-| Small Square (7.5x7.5") | €8.10 | €13.58 | +€2.31 (+39.9%) |
+| Size | Paperback | Hardcover CW | Hardcover LW | Area (sq in) |
+|------|-----------|--------------|--------------|--------------|
+| Novella (5x8") | €5.79 | €11.27 | N/A | 40 |
+| US Trade (6x9") | €5.79 | €11.27 | €15.01 | 54 |
+| Small Square (7.5x7.5") | €8.10 | €13.58 | N/A | 56.25 |
+| Royal (6.14x9.21") | €8.10 | €13.58 | €17.04 | 56.55 |
 
-**Key Finding**: Small Square costs **€2.31 more** than Novella (constant across binding types)
+**Key Findings**: 
+- **Price Tiers**: Two distinct price tiers exist
+  - Tier 1 (Smaller): Novella & US Trade - €5.79 (PB) / €11.27 (HC)
+  - Tier 2 (Larger): Small Square & Royal - €8.10 (PB) / €13.58 (HC)
+- **Size doesn't always correlate with price**: US Trade (54 sq in) costs same as Novella (40 sq in)
+- **Linen Wrap only available**: US Trade & Royal sizes
 
 ### 3. Paper Type Impact (Novella Hardcover only)
 
@@ -118,11 +172,17 @@ export const PROFIT_MARGIN = 2.5; // 150% markup
 | Config | Lulu Cost | Retail Price | Profit | Margin % |
 |--------|-----------|--------------|--------|----------|
 | 3 | €5.79 | €14.48 | €8.69 | 60% |
+| 8 | €5.79 | €14.48 | €8.69 | 60% |
 | 4 | €8.10 | €20.25 | €12.15 | 60% |
+| 9 | €8.10 | €20.25 | €12.15 | 60% |
 | 6 | €8.40 | €21.00 | €12.60 | 60% |
 | 1 | €10.97 | €27.43 | €16.46 | 60% |
 | 2 | €11.27 | €28.18 | €16.91 | 60% |
+| 7 | €11.27 | €28.18 | €16.91 | 60% |
 | 5 | €13.58 | €33.95 | €20.37 | 60% |
+| 10 | €13.58 | €33.95 | €20.37 | 60% |
+| 12 | €15.01 | €37.53 | €22.52 | 60% |
+| 11 | €17.04 | €42.60 | €25.56 | 60% |
 
 **Note**: 2.5x multiplier = 60% profit margin
 
@@ -177,11 +237,17 @@ const MARKUP_BY_COST = {
 | Config | Lulu Cost | Markup | Retail Price | Profit | Margin % |
 |--------|-----------|--------|--------------|--------|----------|
 | 3 | €5.79 | 3.0x | €17.37 | €11.58 | 67% |
+| 8 | €5.79 | 3.0x | €17.37 | €11.58 | 67% |
 | 4 | €8.10 | 2.5x | €20.25 | €12.15 | 60% |
+| 9 | €8.10 | 2.5x | €20.25 | €12.15 | 60% |
 | 6 | €8.40 | 2.5x | €21.00 | €12.60 | 60% |
 | 1 | €10.97 | 2.2x | €24.13 | €13.16 | 55% |
 | 2 | €11.27 | 2.2x | €24.79 | €13.52 | 55% |
+| 7 | €11.27 | 2.2x | €24.79 | €13.52 | 55% |
 | 5 | €13.58 | 2.2x | €29.88 | €16.30 | 55% |
+| 10 | €13.58 | 2.2x | €29.88 | €16.30 | 55% |
+| 12 | €15.01 | 2.0x | €30.02 | €15.01 | 50% |
+| 11 | €17.04 | 2.0x | €34.08 | €17.04 | 50% |
 
 ---
 
@@ -383,7 +449,10 @@ const VOLUME_DISCOUNTS = {
 - ❌ Actual Lulu volume discount tiers
 - ❌ Shipping costs by region
 - ❌ Product IDs for 5x8" Novella size
+- ❌ Product IDs for 6x9" US Trade size
+- ❌ Product IDs for 6.14x9.21" Royal size
 - ❌ Product IDs for 6.625x10.25" Comic Book size
+- ❌ Product IDs for Linen Wrap binding type
 
 ### Action Items
 1. Query Lulu API for:
@@ -446,4 +515,4 @@ function applyVolumeDiscount(price: number, quantity: number): number {
 **Last Updated**: January 30, 2026  
 **Data Source**: Lulu Pricing Calculator  
 **Currency**: EUR  
-**Status**: All 6 configurations documented - Awaiting API verification for product IDs
+**Status**: All 12 configurations documented - Awaiting API verification for product IDs

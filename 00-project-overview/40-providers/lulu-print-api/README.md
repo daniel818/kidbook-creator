@@ -30,6 +30,12 @@ lulu-print-api/
 | **Config 4** | Small Square (7.5x7.5") | Paperback Saddle Stitch | 80# White Coated | €8.10 |
 | **Config 5** | Small Square (7.5x7.5") | Hardcover Case Wrap | 80# White Coated | €13.58 |
 | **Config 6** | Comic Book (6.625x10.25") | Paperback Saddle Stitch | 70# White Coated | €8.40 |
+| **Config 7** | US Trade (6x9") | Hardcover Case Wrap | 80# White Coated | €11.27 |
+| **Config 8** | US Trade (6x9") | Paperback Saddle Stitch | 80# White Coated | €5.79 |
+| **Config 9** | Royal (6.14x9.21") | Paperback Saddle Stitch | 80# White Coated | €8.10 |
+| **Config 10** | Royal (6.14x9.21") | Hardcover Case Wrap | 80# White Coated | €13.58 |
+| **Config 11** | Royal (6.14x9.21") | Hardcover Linen Wrap | 80# White Coated | €17.04 |
+| **Config 12** | US Trade (6x9") | Hardcover Linen Wrap | 80# White Coated | €15.01 |
 
 *All prices are for 24-page books with Premium Color interior and Matte cover finish*
 
@@ -42,12 +48,24 @@ lulu-print-api/
 - **Paperback Options**: €5.79
 - **Page Range**: MIN 24, MAX 2,800
 
-### 2. Small Square (7.5 x 7.5 in / 190 x 190 mm)
+### 2. US Trade (6 x 9 in / 152 x 229 mm)
+- **Hardcover Case Wrap**: €11.27
+- **Hardcover Linen Wrap**: €15.01
+- **Paperback Options**: €5.79
+- **Page Range**: MIN 24, MAX 2,800
+
+### 3. Royal (6.14 x 9.21 in / 156 x 234 mm)
+- **Hardcover Case Wrap**: €13.58
+- **Hardcover Linen Wrap**: €17.04
+- **Paperback Options**: €8.10
+- **Page Range**: MIN 24, MAX 2,800
+
+### 4. Small Square (7.5 x 7.5 in / 190 x 190 mm)
 - **Hardcover Options**: €13.58
 - **Paperback Options**: €8.10
 - **Page Range**: MIN 24, MAX 2,800
 
-### 3. Comic Book (6.625 x 10.25 in / 168 x 260 mm)
+### 5. Comic Book (6.625 x 10.25 in / 168 x 260 mm)
 - **Hardcover Options**: N/A
 - **Paperback Options**: €8.40
 - **Page Range**: MIN 24, MAX 4,800
@@ -56,11 +74,11 @@ lulu-print-api/
 
 ## Configuration Details
 
-### Common Specifications (All 6 Configs)
+### Common Specifications (All 12 Configs)
 - **Page Count**: 24 pages
 - **Interior Color**: Premium Color
-- **Cover Finish**: Matte
-- **Distribution**: Retail Distribution available (Configs 1, 2, 5 only)
+- **Cover Finish**: Matte (or Linen Wrap with Dust Jacket for Configs 11, 12)
+- **Distribution**: Retail Distribution available (Hardcover configs only: 1, 2, 5, 7, 10, 11, 12)
 - **Minimum Quantity**: 1 book
 
 ### Binding Types
