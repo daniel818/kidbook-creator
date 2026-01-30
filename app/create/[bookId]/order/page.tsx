@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Navbar } from '@/components/Navbar';
+import { getPrice, getCurrencyFromLocale, formatPrice, type Currency } from '@/lib/pricing/constants';
 import { Book, BookTypeInfo, BookThemeInfo } from '@/lib/types';
 import { getBookById } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -69,7 +70,8 @@ export default function OrderPage() {
     const params = useParams();
     const bookId = params.bookId as string;
     const { user } = useAuth();
-    const { t } = useTranslation('order');
+    const { t, i18n } = useTranslation('order');
+    const currency: Currency = getCurrencyFromLocale(i18n.language);
 
     const [book, setBook] = useState<Book | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -82,27 +84,17 @@ export default function OrderPage() {
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Dynamic pricing state
-    const [priceData, setPriceData] = useState<{
-        subtotal: number;
-        shipping: number;
-        total: number;
-        isEstimate: boolean;
-    } | null>(null);
-    const [isPriceLoading, setIsPriceLoading] = useState(false);
-    const [priceError, setPriceError] = useState<string | null>(null);
+    // Shipping state (pricing is now fixed, not from API)
+    const [shippingCost, setShippingCost] = useState<number>(0);
 
     const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
     const [shippingLevel, setShippingLevel] = useState<string>('');
     const [isShippingOptionsLoading, setIsShippingOptionsLoading] = useState(false);
     const [shippingOptionsError, setShippingOptionsError] = useState<string | null>(null);
     const [reviewQuote, setReviewQuote] = useState<{
-        pricing: {
-            subtotal: number;
-            shipping: number;
-            total: number;
-            isEstimate: boolean;
-        };
+        bookPrice: number;
+        shipping: number;
+        total: number;
         format: BookFormat;
         size: BookSize;
         quantity: number;
@@ -191,78 +183,52 @@ export default function OrderPage() {
         }
     }, [format, quantity, reviewQuote, shippingKey, shippingLevel, size, step]);
 
-    // Fetch price from API when options change
-    const fetchPrice = useCallback(async () => {
-        if (!book) return;
+    // Calculate fixed book price based on delivery type
+    const bookPrice = deliveryType === 'digital' 
+        ? getPrice(currency, 'digital')
+        : getPrice(currency, 'print');
 
-        const interiorPageCount = getPrintableInteriorPageCount(book, format, size);
-        setIsPriceLoading(true);
-        setPriceError(null);
-        try {
-            const pricingShipping = isShippingValid()
-                ? shipping
-                : {
-                    fullName: 'Pricing Estimate',
-                    addressLine1: '123 Main St',
-                    addressLine2: '',
-                    city: 'New York',
-                    state: 'NY',
-                    postalCode: '10001',
-                    country: shipping.country || 'US',
-                    phone: '0000000000',
-                };
-            const pricingShippingOption = shippingLevel || 'MAIL';
-
-            const response = await fetch('/api/lulu/calculate-cost', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    format,
-                    size,
-                    pageCount: interiorPageCount,
-                    quantity,
-                    countryCode: pricingShipping.country,
-                    postalCode: pricingShipping.postalCode,
-                    stateCode: pricingShipping.state,
-                    shippingOption: pricingShippingOption,
-                    shipping: pricingShipping,
-                }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setPriceData({
-                    subtotal: data.subtotal / 100, // Convert cents to dollars
-                    shipping: data.shipping / 100,
-                    total: data.total / 100,
-                    isEstimate: data.isEstimate,
-                });
-                setPriceError(null);
-            } else {
-                let message = 'Pricing unavailable. Please try again.';
-                try {
-                    const data = await response.json();
-                    if (data?.error) message = data.error;
-                } catch {
-                    // Ignore parsing errors
-                }
-                setPriceData(null);
-                setPriceError(message);
-            }
-        } catch (err) {
-            console.error('Price fetch error:', err);
-            setPriceData(null);
-            setPriceError('Pricing unavailable. Please try again.');
-        } finally {
-            setIsPriceLoading(false);
-        }
-    }, [book, format, size, quantity, shipping.postalCode, shipping.country, shippingLevel]);
-
-    // Debounced price fetch
+    // Fetch shipping cost from Lulu API (for print orders only)
     useEffect(() => {
-        const timer = setTimeout(fetchPrice, 300);
-        return () => clearTimeout(timer);
-    }, [fetchPrice]);
+        if (deliveryType === 'digital') {
+            setShippingCost(0);
+            return;
+        }
+
+        if (!book || !isShippingValid() || !shippingLevel) {
+            setShippingCost(0);
+            return;
+        }
+
+        const fetchShippingCost = async () => {
+            try {
+                const response = await fetch('/api/lulu/calculate-cost', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        format,
+                        size,
+                        pageCount: getPrintableInteriorPageCount(book, format, size),
+                        quantity,
+                        countryCode: shipping.country,
+                        postalCode: shipping.postalCode,
+                        stateCode: shipping.state,
+                        shippingOption: shippingLevel,
+                        shipping,
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setShippingCost(data.shipping / 100); // Convert cents to dollars
+                }
+            } catch (err) {
+                console.error('Shipping cost fetch error:', err);
+            }
+        };
+
+        fetchShippingCost();
+    }, [book, deliveryType, format, size, quantity, shipping, shippingLevel]);
 
     useEffect(() => {
         if (!book || !isShippingValid()) {
@@ -337,23 +303,20 @@ export default function OrderPage() {
         shipping.phone,
     ]);
 
-    const displayedPricing = reviewQuote?.pricing ?? priceData;
     const displayedShippingLevel = reviewQuote?.shippingLevel ?? shippingLevel;
-    const totalPrice = displayedPricing?.subtotal ?? 0;
-    const hasShippingQuote = Boolean(displayedShippingLevel) && Boolean(displayedPricing);
-    const shippingCost = hasShippingQuote ? displayedPricing!.shipping : 0;
-    const grandTotal = hasShippingQuote ? displayedPricing!.total : totalPrice;
+    const displayedBookPrice = reviewQuote?.bookPrice ?? bookPrice;
+    const displayedShippingCost = reviewQuote?.shipping ?? shippingCost;
+    const grandTotal = displayedBookPrice + displayedShippingCost;
+    
     const bookPriceLabel = t('summary.bookPrice');
-    const bookPriceValue = priceError
-        ? t('summary.unavailable')
-        : displayedPricing
-            ? `$${totalPrice.toFixed(2)}`
-            : (isPriceLoading ? t('summary.calculating') : '—');
-    const shippingValue = hasShippingQuote
-        ? `$${shippingCost.toFixed(2)}`
-        : (isShippingValid()
-            ? (isShippingOptionsLoading ? t('summary.calculating') : t('shipping.selectMethod'))
-            : t('summary.calculated'));
+    const bookPriceValue = formatPrice(displayedBookPrice, currency);
+    const shippingValue = deliveryType === 'digital'
+        ? t('summary.free')
+        : (displayedShippingCost > 0
+            ? formatPrice(displayedShippingCost, currency)
+            : (isShippingValid()
+                ? (isShippingOptionsLoading ? t('summary.calculating') : t('shipping.selectMethod'))
+                : t('summary.calculated')));
 
     function isShippingValid() {
         // Strict Validation Rules for Lulu/FedEx
@@ -372,26 +335,30 @@ export default function OrderPage() {
     }
 
     const handleContinueToReview = () => {
-        if (!priceData || !shippingLevel) return;
+        if (deliveryType === 'print' && !shippingLevel) return;
         setReviewQuote({
-            pricing: priceData,
+            bookPrice,
+            shipping: shippingCost,
+            total: bookPrice + shippingCost,
             format,
             size,
             quantity,
-            shippingLevel,
+            shippingLevel: deliveryType === 'digital' ? 'DIGITAL' : shippingLevel,
             shippingKey,
         });
         setStep('review');
     };
 
     const handleContinueToPayment = () => {
-        if (!reviewQuote && priceData && shippingLevel) {
+        if (!reviewQuote) {
             setReviewQuote({
-                pricing: priceData,
+                bookPrice,
+                shipping: shippingCost,
+                total: bookPrice + shippingCost,
                 format,
                 size,
                 quantity,
-                shippingLevel,
+                shippingLevel: deliveryType === 'digital' ? 'DIGITAL' : shippingLevel,
                 shippingKey,
             });
         }
@@ -887,7 +854,7 @@ export default function OrderPage() {
                                     <button
                                         className={styles.continueBtn}
                                         onClick={handleContinueToReview}
-                                        disabled={!isShippingValid() || !shippingLevel || isShippingOptionsLoading || isPriceLoading || !priceData}
+                                        disabled={!isShippingValid() || !shippingLevel || isShippingOptionsLoading}
                                     >
                                         Review Order →
                                     </button>
@@ -958,21 +925,18 @@ export default function OrderPage() {
                                             <span>Shipping</span>
                                             <span>{shippingValue}</span>
                                         </div>
-                                        {hasShippingQuote && (
+                                        {displayedShippingCost > 0 && (
                                             <div className={`${styles.priceRow} ${styles.total}`}>
                                                 <span>Total</span>
-                                                <span>${grandTotal.toFixed(2)}</span>
+                                                <span>{formatPrice(grandTotal, currency)}</span>
                                             </div>
                                         )}
                                     </div>
                                     <p className={styles.pricingNote}>
-                                        Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method.
+                                        {deliveryType === 'digital' 
+                                            ? 'Digital books are delivered instantly via email after purchase.'
+                                            : 'Shipping cost calculated based on your address and selected shipping method.'}
                                     </p>
-                                    {priceError && (
-                                        <p className={styles.reviewNote}>
-                                            {priceError}
-                                        </p>
-                                    )}
                                 </div>
                             </div>
 
@@ -989,7 +953,7 @@ export default function OrderPage() {
                                 <button
                                     className={styles.continueBtn}
                                     onClick={handleContinueToPayment}
-                                    disabled={!displayedPricing || !displayedShippingLevel}
+                                    disabled={deliveryType === 'print' && !displayedShippingLevel}
                                 >
                                     Continue to Payment →
                                 </button>
@@ -1122,31 +1086,19 @@ export default function OrderPage() {
                                 </span>
                                 <span>{bookPriceValue}</span>
                             </div>
-                            {hasShippingQuote ? (
-                                <>
-                                    <div className={styles.priceRow}>
-                                        <span>{t('summary.shipping')}</span>
-                                        <span>{shippingValue}</span>
-                                    </div>
-                                    <div className={`${styles.priceRow} ${styles.total}`}>
-                                        <span>{t('summary.total')}</span>
-                                        <span>${grandTotal.toFixed(2)}</span>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className={styles.priceRow}>
-                                    <span>{t('summary.shipping')}</span>
-                                    <span>{shippingValue}</span>
-                                </div>
-                            )}
+                            <div className={styles.priceRow}>
+                                <span>{t('summary.shipping')}</span>
+                                <span>{shippingValue}</span>
+                            </div>
+                            <div className={`${styles.priceRow} ${styles.total}`}>
+                                <span>{t('summary.total')}</span>
+                                <span>{formatPrice(grandTotal, currency)}</span>
+                            </div>
                             <p className={styles.pricingNote}>
-                                {t('summary.note')}
+                                {deliveryType === 'digital'
+                                    ? t('summary.digitalNote')
+                                    : t('summary.printNote')}
                             </p>
-                            {priceError && (
-                                <p className={styles.reviewNote}>
-                                    {priceError}
-                                </p>
-                            )}
                         </div>
 
                         {/* Delivery Estimate */}

@@ -1,0 +1,111 @@
+{
+  "meta": {
+    "title": "Häufig gestellte Fragen - KidBook Creator",
+    "description": "Finden Sie Antworten auf häufig gestellte Fragen zur Erstellung personalisierter, KI-generierter Kinderbücher, Preisen, Versand und mehr."
+  },
+  "heading": "Häufig gestellte Fragen",
+  "searchPlaceholder": "FAQs durchsuchen...",
+  "noResults": "Keine Ergebnisse gefunden. Versuchen Sie andere Suchbegriffe oder durchsuchen Sie die Kategorien unten.",
+  "relatedQuestions": "Verwandte Fragen",
+  "stillHaveQuestions": "Kontaktieren Sie uns",
+  "contactDescription": "Haben Sie Fragen oder benötigen Hilfe? Wir freuen uns von Ihnen zu hören!",
+  "contactSupport": "Kontakt aufnehmen",
+  "categories": [
+    {
+      "id": "book-creation",
+      "title": "Bucherstellung",
+      "faqs": [
+        {
+          "id": "ai-creation-process",
+          "question": "Wie funktioniert der KI-Bucherstellungsprozess?",
+          "answer": "<p>Die Erstellung Ihres personalisierten Kinderbuchs ist einfach und dauert nur wenige Minuten:</p><ol><li><strong>Wählen Sie Ihre Geschichte:</strong> Durchsuchen Sie unsere Sammlung von Geschichtenthemen und wählen Sie eines aus, das zu den Interessen und dem Alter Ihres Kindes passt.</li><li><strong>Laden Sie ein Foto hoch:</strong> Laden Sie ein klares, gut beleuchtetes Foto Ihres Kindes hoch. Unsere KI verwendet dies, um eine konsistente Figur im gesamten Buch zu erstellen.</li><li><strong>Passen Sie Details an:</strong> Fügen Sie den Namen Ihres Kindes hinzu, wählen Sie Präferenzen aus und personalisieren Sie die Widmungsseite.</li><li><strong>Vorschau & Bearbeiten:</strong> Überprüfen Sie das KI-generierte Buch und nehmen Sie bei Bedarf Änderungen am Text vor oder fordern Sie eine Neugenerierung der Illustrationen an.</li><li><strong>Bestellen:</strong> Wählen Sie zwischen digitalem PDF oder gedrucktem Hardcover-Buch.</li></ol><p>Der gesamte Prozess dauert normalerweise 5-10 Minuten, und Sie sehen eine Vorschau, bevor Sie Ihre Bestellung abschließen.</p>",
+          "relatedFaqs": ["photo-upload", "customize-story"]
+        },
+        {
+          "id": "photo-upload",
+          "question": "Wie lade ich Fotos hoch und welche Qualität wird benötigt?",
+          "answer": "<p>Um die besten KI-generierten Charakterergebnisse zu erzielen, befolgen Sie diese Fotorichtlinien:</p><h4>Fotoanforderungen:</h4><ul><li><strong>Auflösung:</strong> Mindestens 1024x1024 Pixel (höher ist besser)</li><li><strong>Format:</strong> JPG- oder PNG-Dateien</li><li><strong>Gesichtssichtbarkeit:</strong> Das Gesicht des Kindes sollte deutlich sichtbar sein und nach vorne schauen</li><li><strong>Beleuchtung:</strong> Gut beleuchtete Fotos mit natürlichem Licht funktionieren am besten</li><li><strong>Hintergrund:</strong> Einfache, aufgeräumte Hintergründe helfen der KI, sich auf das Gesicht zu konzentrieren</li><li><strong>Einzelnes Motiv:</strong> Ein Kind pro Foto (keine Gruppenfotos)</li></ul><h4>Tipps für beste Ergebnisse:</h4><ul><li>Verwenden Sie aktuelle Fotos, die bei guter Beleuchtung aufgenommen wurden</li><li>Vermeiden Sie verschwommene, dunkle oder stark gefilterte Bilder</li><li>Fotos, die draußen bei natürlichem Licht aufgenommen wurden, funktionieren oft am besten</li><li>Stellen Sie sicher, dass die Augen des Kindes geöffnet sind und das Gesicht nicht verdeckt ist</li></ul><p>Sie können mehrere Fotos hochladen und dasjenige auswählen, das die beste Charakterdarstellung erzeugt.</p>",
+          "relatedFaqs": ["ai-creation-process", "ai-quality"]
+        },
+        {
+          "id": "customize-story",
+          "question": "Kann ich die Geschichte, den Text und die Illustrationen anpassen?",
+          "answer": "<p>Ja! Wir bieten Anpassungsoptionen:</p><h4>Textanpassung:</h4><ul><li>Bearbeiten Sie jeden Text in der Geschichte, um ihn weiter zu personalisieren</li><li>Ändern Sie Charakternamen und Details</li><li>Fügen Sie die Widmungsnachricht hinzu oder ändern Sie sie</li><li>Passen Sie Geschichtenelemente an die Vorlieben Ihres Kindes an</li></ul><h4>Charakteranpassung:</h4><ul><li>Der Name des Kindes erscheint in der gesamten Geschichte</li><li>Charakter wird basierend auf hochgeladenem Foto erstellt</li><li>Konsistentes Charakteraussehen auf allen Seiten</li></ul><h4>Wichtiger Hinweis:</h4><p><strong>Sobald Illustrationen erstellt wurden, können sie nicht mehr geändert werden.</strong> Bitte überprüfen Sie sorgfältig in der Vorschauphase, bevor Sie Ihre Bestellung aufgeben. Alle Anpassungen erfolgen in der Vorschauphase, sodass Sie das Buch genau so perfektionieren können, wie Sie es möchten.</p>",
+          "relatedFaqs": ["ai-creation-process", "photo-upload"]
+        },
+        {
+          "id": "languages-supported",
+          "question": "Welche Sprachen unterstützen Sie?",
+          "answer": "<p>Wir unterstützen derzeit die folgenden Sprachen sowohl für die Website-Oberfläche als auch für Buchinhalte:</p><h4>Vollständig unterstützte Sprachen:</h4><ul><li><strong>Englisch:</strong> Vollständige Unterstützung für alle Funktionen</li><li><strong>Hebräisch:</strong> Vollständige RTL-Layout-Unterstützung (Rechts-nach-Links)</li><li><strong>Deutsch:</strong> Vollständige Übersetzung und Lokalisierung</li></ul><h4>Buchinhalt:</h4><p>Sie können Bücher in jeder der unterstützten Sprachen erstellen. Die KI generiert altersgerechte, grammatikalisch korrekte Inhalte in Ihrer ausgewählten Sprache.</p><h4>Website-Oberfläche:</h4><p>Die gesamte Website, einschließlich Navigation, Checkout und Hilfeinhalte, ist in allen unterstützten Sprachen verfügbar. Verwenden Sie einfach den Sprachumschalter im Navigationsmenü.</p><h4>Demnächst:</h4><p>Wir arbeiten daran, Unterstützung für Spanisch, Französisch und Arabisch hinzuzufügen. Melden Sie sich für unseren Newsletter an, um benachrichtigt zu werden, wenn neue Sprachen verfügbar sind.</p>",
+          "relatedFaqs": ["ai-creation-process"]
+        },
+        {
+          "id": "satisfaction-results",
+          "question": "Was ist, wenn ich mit den Ergebnissen nicht zufrieden bin?",
+          "answer": "<p>Wir sind Ihrer Zufriedenheit verpflichtet und bieten mehrere Sicherheitsmaßnahmen:</p><h4>Vorschau vor der Bestellung:</h4><p><strong>Vor Abschluss Ihrer Bestellung können Sie überprüfen und bearbeiten:</strong></p><ul><li>Die erste Seitenillustration (Titelbild)</li><li>Den vollständigen Geschichtentext</li><li>Alle Personalisierungsdetails</li></ul><p><strong>Wichtig:</strong> Die restlichen Illustrationen werden <em>nach</em> Abschluss Ihres digitalen Kaufs generiert. Dann geschieht die Magie!</p><h4>Was Sie bearbeiten können:</h4><ul><li><strong>Nur Text:</strong> Sie können jeden Text in der Geschichte bearbeiten, um sie weiter zu personalisieren</li><li>Charakternamen und Details ändern</li><li>Geschichtenelemente an die Vorlieben Ihres Kindes anpassen</li><li>Die Widmungsnachricht ändern</li></ul><h4>Was Sie nicht bearbeiten können:</h4><ul><li><strong>Illustrationen können nicht geändert werden</strong>, sobald sie generiert wurden</li><li>Das Aussehen der Figur basiert auf Ihrem hochgeladenen Foto</li><li>Der Kunststil wird durch das von Ihnen gewählte Geschichtenthema bestimmt</li></ul><h4>Qualitätserklärung:</h4><p>Unsere Geschichtenerstellungstechnologie produziert einzigartige, personalisierte Bücher, aber die Ergebnisse können je nach Fotoqualität und Komplexität variieren. Kleinere künstlerische Variationen sind normal und Teil der kreativen Interpretation. <strong>Generierte Inhalte werden 'wie besehen' ohne Garantien für Perfektion bereitgestellt.</strong></p><h4>Was als Mangel gilt:</h4><ul><li>Druckfehler oder physische Schäden</li><li>Fehlende Seiten oder falsche Bindung</li><li>Erhebliche Abweichung von der genehmigten Vorschau</li><li>Während des Versands beschädigte Bücher</li></ul><h4>Was NICHT als Mangel gilt:</h4><ul><li>Kleinere künstlerische Variationen in generierten Illustrationen</li><li>Leichte Farbunterschiede zur digitalen Vorschau (normal beim Drucken)</li><li>Persönliche Präferenzunterschiede im Kunststil</li><li>Kreative Interpretation von Gesichtszügen</li></ul><p>Wenn Sie ein mangelhaftes Buch erhalten, bieten wir innerhalb von 14 Tagen nach Lieferung eine vollständige Rückerstattung oder einen Ersatz an.</p>",
+          "relatedFaqs": ["photo-upload", "return-policy"]
+        },
+        {
+          "id": "photo-privacy",
+          "question": "Was passiert mit dem Foto meines Kindes? Wie wird es geschützt?",
+          "answer": "<p>Wir nehmen Ihre Privatsphäre und die Sicherheit Ihres Kindes sehr ernst:</p><h4>Fotoverwendung:</h4><ul><li><strong>Fotos werden nur zur Generierung von Charakterillustrationen für Ihr Buch verwendet</strong></li><li><strong>NICHT zum Training von KI-Modellen verwendet</strong></li><li><strong>NICHT mit Dritten geteilt</strong> (außer unserem sicheren KI-Dienstanbieter)</li><li><strong>NICHT für Marketing oder andere Zwecke verwendet</strong></li></ul><h4>Automatische Löschung:</h4><ul><li><strong>Fotos werden automatisch nach 7 Tagen</strong> nach Bestellabschluss gelöscht</li><li>Dies ist viel kürzer als Industriestandards (normalerweise 30-90 Tage)</li><li>Die Löschung ist dauerhaft und kann nicht rückgängig gemacht werden</li></ul><h4>Sicherheitsmaßnahmen:</h4><ul><li>Alle Fotos werden während des Uploads und der Speicherung verschlüsselt (SSL/TLS)</li><li>Auf sicheren, zugriffskontrollierten Servern gespeichert</li><li>Nur autorisierte Systeme können auf Fotos zur Verarbeitung zugreifen</li><li>Vollständige Einhaltung von DSGVO, CCPA und Datenschutzgesetzen für Kinder</li></ul><h4>Ihre Rechte:</h4><ul><li><strong>Fordern Sie jederzeit sofortige Löschung an</strong>, indem Sie den Support kontaktieren</li><li>Zugriff auf eine Kopie Ihrer Daten</li><li>Informationen darüber anfordern, wie Ihre Daten verarbeitet werden</li></ul><p>Für vollständige Details lesen Sie bitte unsere <a href='/privacy'>Datenschutzrichtlinie</a>.</p>",
+          "relatedFaqs": ["photo-upload", "data-privacy"]
+        },
+        {
+          "id": "digital-vs-physical",
+          "question": "Kann ich eine digitale Version bestellen oder nur physische Bücher?",
+          "answer": "<p>Wir bieten sowohl digitale als auch physische Buchoptionen an:</p><h4>Digitales PDF-Buch:</h4><ul><li><strong>Preis:</strong> Als Teil Ihrer Bestellung verfügbar</li><li><strong>Lieferung:</strong> Sofortiger Download nach Abschluss der Bestellung</li><li><strong>Format:</strong> Hochauflösendes PDF, optimiert für Bildschirmansicht</li><li><strong>Verwendung:</strong> Ansicht auf Tablets, Computern oder E-Readern</li><li><strong>Teilen:</strong> Nur für den persönlichen Gebrauch (nicht für kommerzielle Verbreitung)</li></ul><h4>Physisches Hardcover-Buch:</h4><ul><li><strong>Format:</strong> Premium-Hardcover mit glänzenden Seiten</li><li><strong>Größe:</strong> 8,5\" x 11\" (Standard-Kinderbuchgröße)</li><li><strong>Seiten:</strong> 24-32 Seiten je nach Geschichte</li><li><strong>Qualität:</strong> Professioneller Druck mit lebendigen Farben</li><li><strong>Lieferung:</strong> Versand innerhalb von 5-7 Werktagen</li></ul><h4>Bundle-Option:</h4><p>Bestellen Sie digital und physisch zusammen für das beste Preis-Leistungs-Verhältnis. Die digitale Version ist perfekt für sofortigen Genuss, während Sie auf das gedruckte Buch warten.</p>",
+          "relatedFaqs": ["pricing-options", "shipping-delivery"]
+        }
+      ]
+    },
+    {
+      "id": "pricing-payments",
+      "title": "Preise & Zahlungen",
+      "faqs": [
+        {
+          "id": "pricing-options",
+          "question": "Was sind Ihre Preisoptionen und Rabatte?",
+          "answer": "<p>Wir bieten transparente, unkomplizierte Preise ohne versteckte Gebühren:</p><h4>Einzelbuchpreise:</h4><ul><li><strong>Digitales PDF:</strong> €14 - Sofortiger Download nach Bestellung</li><li><strong>Physisches Hardcover:</strong> €42 - Inklusive digitaler Kopie, professionellem Druck und Versand</li></ul><h4>Zahlungsmethoden:</h4><p>Wir akzeptieren alle gängigen Kreditkarten (Visa, Mastercard, American Express, Discover), PayPal und Apple Pay.</p><h4>Währung & Preise:</h4><p>Alle Preise werden in Ihrer lokalen Währung basierend auf Ihrem Standort angezeigt. Keine Währungsumrechnungsgebühren. Besuchen Sie unsere Preisseite für genaue Preise in Ihrer Währung.</p>",
+          "relatedFaqs": ["shipping-delivery"]
+        }
+      ]
+    },
+    {
+      "id": "shipping-delivery",
+      "title": "Versand & Lieferung",
+      "faqs": [
+        {
+          "id": "shipping-delivery",
+          "question": "Was ist Ihre Versand- und Lieferrichtlinie?",
+          "answer": "<p>Wir bieten zuverlässigen Versand mit klaren Zeitplänen:</p><h4>Produktionszeit:</h4><ul><li><strong>KI-Generierung:</strong> Sofort (während des Erstellungsprozesses)</li><li><strong>Buchdruck:</strong> 3-5 Werktage nach Bestellung</li><li><strong>Qualitätsprüfung:</strong> 1 Werktag</li><li><strong>Gesamtproduktion:</strong> 4-6 Werktage</li></ul><h4>Versandoptionen:</h4><ul><li><strong>Standardversand:</strong> 5-7 Werktage (Kostenlos bei qualifizierenden Bestellungen)</li><li><strong>Expressversand:</strong> 2-3 Werktage (zusätzliche Gebühr)</li><li><strong>Eilversand:</strong> 1-2 Werktage (zusätzliche Gebühr)</li></ul><h4>Internationaler Versand:</h4><ul><li><strong>Europa:</strong> 7-14 Werktage</li><li><strong>Andere Regionen:</strong> 10-21 Werktage</li><li><strong>Zoll:</strong> Kunde ist für alle Einfuhrzölle/-steuern verantwortlich</li></ul><h4>Bestellverfolgung:</h4><p>Sie erhalten eine Tracking-Nummer per E-Mail, sobald Ihr Buch versendet wird. Verfolgen Sie Ihre Bestellung in Echtzeit über unsere Website oder die Website des Spediteurs.</p><h4>Lieferprobleme:</h4><p>Wenn Ihr Buch nicht innerhalb des erwarteten Zeitrahmens ankommt, kontaktieren Sie unser Support-Team und wir werden sofort ermitteln.</p>",
+          "relatedFaqs": ["pricing-options", "cancellation-policy"]
+        }
+      ]
+    },
+    {
+      "id": "legal-policies",
+      "title": "Rechtliches & Richtlinien",
+      "faqs": [
+        {
+          "id": "cancellation-policy",
+          "question": "Was ist Ihre Stornierung- und Rückerstattungsrichtlinie?",
+          "answer": "<p>Wir möchten, dass Sie mit Ihrem Kauf vollständig zufrieden sind. Hier ist unsere Stornierungsrichtlinie:</p><h4>Stornierungsfenster:</h4><ul><li><strong>Vor der Produktion:</strong> Vollständige Rückerstattung bei Stornierung innerhalb von 48 Stunden nach Bestellaufgabe und vor Druckbeginn</li><li><strong>Während der Produktion:</strong> Kann nicht storniert werden, sobald das Buch in den Druck geht (normalerweise 48 Stunden nach Bestellung)</li><li><strong>Nach dem Versand:</strong> Kann nicht storniert werden, aber Rückgaberichtlinie gilt für defekte Bücher</li></ul><h4>So stornieren Sie:</h4><ol><li>Senden Sie eine E-Mail an den Support mit Ihrer Bestellnummer</li><li>Wir bestätigen, ob Ihre Bestellung für eine Stornierung berechtigt ist</li><li>Rückerstattung wird innerhalb von 5-7 Werktagen auf die ursprüngliche Zahlungsmethode verarbeitet</li></ol><h4>Hinweis zu personalisierten Produkten:</h4><p>Da personalisierte Produkte speziell für Sie hergestellt werden, können sie nicht storniert werden, sobald die Produktion beginnt. Dies ist branchenübliche Praxis und entspricht den Verbraucherschutzgesetzen (EU-Verbraucherrechterichtlinie Artikel 16(c)).</p><h4>Ausnahmen:</h4><ul><li>Defekte oder beschädigte Bücher können für vollständige Rückerstattung zurückgegeben werden (siehe Rückgaberichtlinie)</li><li>Erhebliche Produktionsfehler qualifizieren für Rückerstattung oder Ersatz</li></ul><p>Wir werden immer mit Ihnen zusammenarbeiten, um eine faire Lösung zu finden, wenn Probleme auftreten.</p>",
+          "relatedFaqs": ["return-policy", "shipping-delivery"]
+        },
+        {
+          "id": "return-policy",
+          "question": "Was ist Ihre Rückgaberichtlinie für defekte Bücher?",
+          "answer": "<p>Wir stehen hinter der Qualität unserer Bücher und bieten eine umfassende Rückgaberichtlinie für defekte Produkte:</p><h4>Rückgabeberechtigung:</h4><ul><li><strong>Zeitrahmen:</strong> Melden Sie Mängel innerhalb von 14 Tagen nach Lieferung</li><li><strong>Zustand:</strong> Buch muss sich im Originalzustand befinden (ungelesen oder sanft gelesen)</li><li><strong>Nachweis erforderlich:</strong> Fotos des Mangels müssen bereitgestellt werden</li></ul><h4>Was gilt als defekt:</h4><ul><li>Druckfehler (verschwommene Bilder, Farbprobleme, Textfehler)</li><li>Physische Schäden (zerrissene Seiten, gebrochene Bindung, beschädigter Einband)</li><li>Fehlende Seiten oder falsche Seitenreihenfolge</li><li>Erhebliche Abweichung von der genehmigten Vorschau</li><li>Während des Versands beschädigte Bücher</li></ul><h4>Was nicht als defekt gilt:</h4><ul><li>Geringfügige Farbabweichungen von der digitalen Vorschau (normal beim Drucken)</li><li>KI-künstlerische Interpretationsunterschiede</li><li>Persönliche Präferenz bezüglich Kunststil</li><li>Geringfügige Unvollkommenheiten in KI-generierten Illustrationen</li></ul><h4>Rückgabeprozess:</h4><ol><li>Kontaktieren Sie den Support innerhalb von 14 Tagen mit Fotos des Mangels</li><li>Wir prüfen und genehmigen Ihre Rückgabeanfrage</li><li>Wir stellen ein vorausbezahltes Rückversandetikett bereit (kostenlos für Mängel)</li><li>Wählen Sie zwischen vollständiger Rückerstattung oder Ersatzbuch</li><li>Rückerstattung wird innerhalb von 5-7 Werktagen nach Erhalt der Rücksendung verarbeitet</li></ol><h4>Unsere Garantie:</h4><p>Wenn Ihr Buch defekt ist, machen wir es mit einer vollständigen Rückerstattung oder kostenlosem Ersatz richtig - Ihre Wahl. Keine Fragen gestellt.</p>",
+          "relatedFaqs": ["cancellation-policy", "ai-quality"]
+        },
+        {
+          "id": "data-privacy",
+          "question": "Wie schützen Sie meine persönlichen Daten und Fotos?",
+          "answer": "<p>Wir nehmen Ihre Privatsphäre und Datensicherheit sehr ernst:</p><h4>Datenerfassung:</h4><ul><li><strong>Persönliche Informationen:</strong> Name, E-Mail, Lieferadresse, Zahlungsinformationen</li><li><strong>Fotos:</strong> Nur für die Bucherstellung hochgeladene Bilder</li><li><strong>Nutzungsdaten:</strong> Website-Analysen zur Verbesserung der Benutzererfahrung</li></ul><h4>Fotospeicherung & -löschung:</h4><ul><li><strong>Speicherdauer:</strong> Fotos werden 90 Tage nach Bestellabschluss gespeichert</li><li><strong>Automatische Löschung:</strong> Fotos werden nach 90 Tagen automatisch gelöscht</li><li><strong>Vorzeitige Löschung:</strong> Fordern Sie sofortige Löschung an, indem Sie den Support kontaktieren</li><li><strong>Sichere Speicherung:</strong> Alle Fotos werden verschlüsselt und auf sicheren Servern gespeichert</li></ul><h4>Datenschutz-Compliance:</h4><ul><li><strong>DSGVO-konform:</strong> Vollständige Einhaltung der EU-Datenschutzbestimmungen</li><li><strong>CCPA-konform:</strong> Einhaltung des kalifornischen Verbraucherdatenschutzgesetzes</li><li><strong>Keine Weitergabe an Dritte:</strong> Wir verkaufen oder teilen Ihre Daten niemals mit Dritten</li><li><strong>Sichere Verarbeitung:</strong> Alle Zahlungsabwicklungen über PCI-konforme Anbieter</li></ul><h4>Ihre Rechte:</h4><ul><li><strong>Zugriff:</strong> Fordern Sie eine Kopie Ihrer persönlichen Daten an</li><li><strong>Löschung:</strong> Fordern Sie jederzeit die Löschung Ihrer Daten an</li><li><strong>Korrektur:</strong> Aktualisieren oder korrigieren Sie Ihre Informationen</li><li><strong>Abmeldung:</strong> Abmeldung von Marketing-E-Mails jederzeit</li></ul><h4>Sicherheitsmaßnahmen:</h4><ul><li>SSL-Verschlüsselung für alle Datenübertragungen</li><li>Sichere, verschlüsselte Datenbankspeicherung</li><li>Regelmäßige Sicherheitsüberprüfungen und Updates</li><li>Eingeschränkter Mitarbeiterzugriff auf persönliche Daten</li></ul><p>Für vollständige Details lesen Sie bitte unsere <a href=\"/privacy-policy\">Datenschutzrichtlinie</a> und <a href=\"/cookies\">Cookie-Richtlinie</a>.</p>",
+          "relatedFaqs": ["ai-creation-process"]
+        }
+      ]
+    }
+  ]
+}

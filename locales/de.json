@@ -1041,7 +1041,10 @@
       "premiumQuality": "Premium-Qualität",
       "ecoFriendly": "Umweltfreundlich",
       "satisfactionGuaranteed": "Zufriedenheit garantiert",
-      "note": "Der Buchpreis verwendet Lulu-Druckkosten mit einer Standard-US-Adresse. Der Versand wird aktualisiert, nachdem Sie Ihre Adresse eingegeben und eine Methode gewählt haben"
+      "free": "Kostenlos",
+      "note": "Der Buchpreis verwendet Lulu-Druckkosten mit einer Standard-US-Adresse. Der Versand wird aktualisiert, nachdem Sie Ihre Adresse eingegeben und eine Methode gewählt haben",
+      "digitalNote": "Digitale Bücher werden sofort nach dem Kauf per E-Mail zugestellt.",
+      "printNote": "Versandkosten werden basierend auf Ihrer Adresse und der gewählten Versandart berechnet."
     },
     "shipping": {
       "title": "Versandinformationen",

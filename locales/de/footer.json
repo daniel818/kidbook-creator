@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "quickLinks": {
+      "title": "Schnellzugriff",
+      "myBooks": "Meine Bücher",
+      "createStory": "Geschichte erstellen",
+      "community": "Unsere Bücher",
+      "pricing": "Preise",
+      "faq": "FAQ",
+      "about": "Über uns"
+    },
+    "legal": {
+      "title": "Rechtliches & Vertrauen",
+      "privacy": "Datenschutz",
+      "terms": "AGB",
+      "cookies": "Cookie-Richtlinie",
+      "refunds": "Rückgaberecht",
+      "shipping": "Versandinformationen",
+      "contact": "Kontakt"
+    }
+  },
+  "bottom": {
+    "copyright": "© {{year}} KidBook Creator. Alle Rechte vorbehalten.",
+    "madeWith": "Gemacht mit",
+    "love": "Liebe",
+    "for": "für Familien überall"
+  },
+  "aria": {
+    "footerNavigation": "Fußzeilennavigation",
+    "socialMedia": "Social-Media-Links",
+    "newsletter": "Newsletter-Anmeldung",
+    "languageSelector": "Sprache auswählen"
+  }
+}

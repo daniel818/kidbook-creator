@@ -1,0 +1,419 @@
+{
+  "common": {
+    "test": "Hello World",
+    "communityBooks": "Community Books",
+    "faq": "FAQ",
+    "aboutUs": "About Us",
+    "alerts": {
+      "warning": "Warning",
+      "error": "Error",
+      "success": "Success",
+      "info": "Information",
+      "ok": "OK",
+      "cancel": "Cancel",
+      "dontAskAgain": "Don't ask again",
+      "loading": "Loading...",
+      "unsavedChanges": {
+        "title": "Unsaved Changes",
+        "message": "You have unsaved changes. Are you sure you want to leave? Your progress will be lost."
+      }
+    }
+  },
+  "navbar": {
+    "communityBooks": "Community Books",
+    "faq": "FAQ",
+    "aboutUs": "About Us",
+    "createBook": "Create a Book",
+    "signIn": "Sign In",
+    "myBooks": "My Books",
+    "purchases": "Purchases",
+    "profile": "Profile",
+    "signOut": "Sign Out"
+  },
+  "home": {
+    "hero": {
+      "badge": "Create magical stories",
+      "title": "Create",
+      "titleHighlight": "Personalized",
+      "titleEnd": "Children's Books",
+      "subtitle": "Design beautiful custom books for your little ones. Upload photos, write stories, and order professionally printed books delivered to your door.",
+      "ctaButton": "Create Your Book",
+      "noBooks": "No books yet. Create your first book!",
+      "createNewBook": "Create New Book",
+      "bookCard": {
+        "pages": "{{count}} pgs",
+        "forChild": "For {{childName}}, age {{age}}",
+        "status": {
+          "draft": "Draft",
+          "complete": "Complete",
+          "published": "Published"
+        }
+      },
+      "features": {
+        "easyToUse": "Easy to use",
+        "printShip": "Print & ship",
+        "perfectGift": "Perfect gift"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Setup Your Book",
+        "description": "Enter your child's name, age, and choose the perfect book type and theme."
+      },
+      "step2": {
+        "title": "Add Content",
+        "description": "Upload photos and write your story. Arrange pages exactly how you want."
+      },
+      "step3": {
+        "title": "Order & Enjoy",
+        "description": "Preview your book, place your order, and receive a beautiful printed book."
+      }
+    },
+    "bookTypes": {
+      "title": "Choose Your Book Type",
+      "board": {
+        "title": "Board Book",
+        "description": "Durable pages for little hands",
+        "age": "Ages 0-3"
+      },
+      "picture": {
+        "title": "Picture Book",
+        "description": "Beautiful illustrations with short text",
+        "age": "Ages 3-6"
+      },
+      "story": {
+        "title": "Story Book",
+        "description": "Engaging stories for growing readers",
+        "age": "Ages 5-10"
+      },
+      "alphabet": {
+        "title": "Alphabet Book",
+        "description": "Learn letters in a fun way",
+        "age": "Ages 2-5"
+      }
+    },
+    "footer": {
+      "tagline": "Made with ❤️ for parents who want to create magical memories"
+    },
+    "deleteModal": {
+      "title": "Delete Book",
+      "message": "Are you sure you want to delete this book? This action cannot be undone.",
+      "confirmText": "Delete"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back!",
+      "subtitle": "Sign in to save your books and order prints",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Sign In",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up",
+      "continueWithGoogle": "Continue with Google",
+      "or": "or"
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Join us to create amazing books for your kids",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Create Account",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "continueWithGoogle": "Continue with Google",
+      "or": "or",
+      "successMessage": "Check your email to confirm your account!"
+    },
+    "forgot": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email and we'll send you a reset link",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "submitButton": "Send Reset Link",
+      "backToSignIn": "← Back to sign in",
+      "successMessage": "Check your email for a password reset link!"
+    },
+    "errors": {
+      "timeout": "Request timed out",
+      "unexpected": "An unexpected error occurred"
+    }
+  },
+  "create": {
+    "wizard": {
+      "back": "← Back",
+      "next": "Next →",
+      "creating": "Creating your book..."
+    },
+    "steps": {
+      "child": {
+        "title": "Who is this book for?",
+        "subtitle": "Tell us about the special child who will enjoy this book",
+        "nameLabel": "Child's Name",
+        "namePlaceholder": "Enter name...",
+        "ageLabel": "Age:",
+        "ageYears": "years",
+        "photoLabel": "📷 Upload a photo (optional)",
+        "photoHint": "Upload a photo of the child to personalize the illustrations. The AI will use this to make the main character look like them!",
+        "photoButton": "Choose Photo",
+        "photoSelected": "Photo selected",
+        "photoChange": "Change Photo"
+      },
+      "type": {
+        "title": "Choose a book type",
+        "subtitle": "Select the perfect format for {{childName}}",
+        "subtitleDefault": "Select the perfect format for your child"
+      },
+      "format": {
+        "title": "Choose a Format",
+        "subtitle": "Prepare your book for professional printing"
+      },
+      "theme": {
+        "title": "Pick a theme",
+        "subtitle": "What kind of story will this be?",
+        "storyLabel": "Tell us more about the story (optional)",
+        "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
+      },
+      "style": {
+        "title": "Choose an art style",
+        "subtitle": "How should your book's illustrations look?"
+      },
+      "title": {
+        "title": "Name your book",
+        "subtitle": "Give your story an amazing title",
+        "titleLabel": "Book Title",
+        "titlePlaceholder": "{{childName}}'s Amazing Adventure",
+        "titlePlaceholderDefault": "My Amazing Adventure"
+      }
+    },
+    "bookTypes": {
+      "board": {
+        "label": "Board Book",
+        "description": "Durable pages perfect for little hands",
+        "ageRange": "0-3 years"
+      },
+      "picture": {
+        "label": "Picture Book",
+        "description": "Beautiful illustrations with short text",
+        "ageRange": "3-6 years"
+      },
+      "story": {
+        "label": "Story Book",
+        "description": "Engaging stories for growing readers",
+        "ageRange": "5-10 years"
+      },
+      "alphabet": {
+        "label": "Alphabet Book",
+        "description": "Learn letters in a fun way",
+        "ageRange": "2-5 years"
+      }
+    },
+    "formats": {
+      "square": {
+        "label": "Square Hardcover",
+        "description": "8.5\" x 8.5\" Premium. The gold standard for kids' books.",
+        "pages": "Min 24 Pages (Auto-set)"
+      },
+      "portrait": {
+        "label": "Portrait / Digital",
+        "description": "6\" x 9\" Standard. Great for softcover or phones.",
+        "pages": "Flexible Pages"
+      }
+    },
+    "themes": {
+      "adventure": "Adventure",
+      "bedtime": "Bedtime",
+      "learning": "Learning",
+      "fantasy": "Fantasy",
+      "animals": "Animals",
+      "custom": "Custom"
+    },
+    "artStyles": {
+      "storybook_classic": "Classic Storybook",
+      "watercolor": "Watercolor",
+      "digital_art": "Digital Art",
+      "cartoon": "Cartoon",
+      "pixel_art": "Pixel Art",
+      "coloring_book": "Coloring Book"
+    },
+    "imageQuality": {
+      "label": "✨ Image Quality",
+      "fast": "⚡ Fast (Standard)",
+      "pro": "💎 Pro (Imagen 4 Ultra)",
+      "fastDescription": "Standard mode generates beautiful images quickly using Imagen 4.",
+      "proDescription": "Pro mode uses Imagen 4 Ultra for stunning, high-resolution illustrations. Takes a bit longer."
+    },
+    "preview": {
+      "forChild": "For {{childName}}, {{age}} years old",
+      "defaultTitle": "{{childName}}'s Amazing Adventure"
+    },
+    "buttons": {
+      "back": "← Back",
+      "continue": "Continue →",
+      "generateBook": "✨ Generate Book with AI 🪄",
+      "createBook": "Create My Book ✨",
+      "signInToCreate": "Sign In to Create"
+    },
+    "errors": {
+      "creationFailed": "Failed to create book. Please try again.",
+      "createFailed": "Failed to create book. Please try again.",
+      "photoUploadFailed": "Failed to upload photo. Please try again.",
+      "invalidSettings": "Please complete all required fields.",
+      "emptyTitleHint": "Leave empty to use the default title"
+    },
+    "status": {
+      "extractingCharacter": "Analyzing photo...",
+      "generatingStory": "Creating your story...",
+      "openingBook": "Opening your book..."
+    }
+  },
+  "profile": {
+    "header": {
+      "title": "My Profile",
+      "subtitle": "Manage your account settings and preferences"
+    },
+    "generalInfo": {
+      "title": "General Information",
+      "editButton": "✏️ Edit",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "emailHint": "Email cannot be changed",
+      "language": "Language Preference",
+      "accountCreated": "Account Created",
+      "notSet": "Not set",
+      "firstNamePlaceholder": "Enter first name",
+      "lastNamePlaceholder": "Enter last name",
+      "cancelButton": "Cancel",
+      "saveButton": "Save Changes"
+    },
+    "languages": {
+      "en": "English",
+      "de": "German",
+      "he": "Hebrew"
+    },
+    "childProfiles": {
+      "title": "Child Profiles",
+      "addButton": "+ Add Child",
+      "emptyTitle": "No child profiles yet",
+      "emptySubtitle": "Add a child profile to create personalized stories",
+      "emptyButton": "Add Your First Child",
+      "age": "Age {{age}}"
+    },
+    "myBooks": {
+      "title": "My Books",
+      "viewAllButton": "View All →",
+      "emptyTitle": "Your created books will appear here",
+      "emptyButton": "Create Your First Book"
+    },
+    "purchases": {
+      "title": "Recent Purchases",
+      "viewAllButton": "View All →",
+      "emptyTitle": "No purchases yet",
+      "emptySubtitle": "Order your first book to see it here"
+    },
+    "accountSettings": {
+      "title": "Account Settings",
+      "changePassword": {
+        "label": "Change Password",
+        "description": "Update your password"
+      },
+      "paymentMethods": {
+        "label": "Payment Methods",
+        "description": "Manage saved cards"
+      },
+      "shippingAddresses": {
+        "label": "Shipping Addresses",
+        "description": "Manage delivery addresses"
+      },
+      "notifications": {
+        "label": "Notifications",
+        "description": "Email and push preferences"
+      }
+    },
+    "deleteModal": {
+      "title": "Delete Book",
+      "message": "Are you sure you want to delete this book? This action cannot be undone.",
+      "confirmText": "Delete"
+    }
+  },
+  "orders": {
+    "header": {
+      "backButton": "← Back to Home",
+      "title": "My Orders"
+    },
+    "loading": "Loading orders...",
+    "empty": {
+      "title": "No Orders Yet",
+      "subtitle": "When you order a printed book, it will appear here.",
+      "button": "Create Your First Book →"
+    },
+    "orderCard": {
+      "orderId": "Order #{{id}}",
+      "for": "For {{childName}}",
+      "format": "Format",
+      "quantity": "Quantity",
+      "total": "Total",
+      "trackingLabel": "Tracking Number",
+      "viewBookButton": "View Book",
+      "reorderButton": "Order Again"
+    },
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "processing": "Processing",
+      "printed": "Printed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "purchases": {
+    "header": {
+      "title": "My Purchases",
+      "subtitle": "Track your orders and download receipts"
+    },
+    "empty": {
+      "title": "No purchases yet",
+      "subtitle": "Create a book and order a printed copy to see your purchases here",
+      "button": "Create Your First Book"
+    }
+  },
+  "mybooks": {
+    "header": {
+      "title": "My Books",
+      "booksCount": "{{count}} book created",
+      "booksCount_other": "{{count}} books created"
+    },
+    "empty": {
+      "title": "No books yet",
+      "subtitle": "Create your first personalized children's book and watch the magic happen",
+      "button": "✨ Create Your First Book"
+    },
+    "deleteModal": {
+      "title": "Delete Book",
+      "message": "Are you sure you want to delete this book? This action cannot be undone.",
+      "confirmText": "Delete"
+    },
+    "bookCard": {
+      "pages": "{{count}} pgs",
+      "forChild": "For {{childName}}, age {{age}}",
+      "status": {
+        "draft": "Draft",
+        "complete": "Complete",
+        "published": "Published"
+      }
+    }
+  },
+  "viewer": {
+    "controls": {
+      "keyboardHint": "Use ← → arrow keys or click to flip pages"
+    }
+  }
+}

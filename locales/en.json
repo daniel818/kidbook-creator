@@ -1042,7 +1042,10 @@
       "premiumQuality": "Premium Quality",
       "ecoFriendly": "Eco-Friendly",
       "satisfactionGuaranteed": "Satisfaction Guaranteed",
-      "note": "Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method"
+      "free": "Free",
+      "note": "Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method",
+      "digitalNote": "Digital books are delivered instantly via email after purchase.",
+      "printNote": "Shipping cost calculated based on your address and selected shipping method."
     },
     "shipping": {
       "title": "Shipping Information",

@@ -1,0 +1,418 @@
+{
+  "common": {
+    "test": "Hallo Welt",
+    "communityBooks": "Community-Bücher",
+    "faq": "FAQ",
+    "aboutUs": "Über uns",
+    "alerts": {
+      "warning": "Warnung",
+      "error": "Fehler",
+      "success": "Erfolg",
+      "info": "Information",
+      "ok": "OK",
+      "cancel": "Abbrechen",
+      "dontAskAgain": "Nicht mehr fragen",
+      "loading": "Lädt...",
+      "unsavedChanges": {
+        "title": "Nicht gespeicherte Änderungen",
+        "message": "Sie haben nicht gespeicherte Änderungen. Möchten Sie wirklich fortfahren? Ihr Fortschritt geht verloren."
+      }
+    }
+  },
+  "navbar": {
+    "communityBooks": "Community-Bücher",
+    "faq": "FAQ",
+    "aboutUs": "Über uns",
+    "createBook": "Buch erstellen",
+    "signIn": "Anmelden",
+    "myBooks": "Meine Bücher",
+    "purchases": "Käufe",
+    "profile": "Profil",
+    "signOut": "Abmelden"
+  },
+  "home": {
+    "hero": {
+      "badge": "Magische Geschichten erstellen",
+      "title": "Erstelle",
+      "titleHighlight": "Personalisierte",
+      "titleEnd": "Kinderbücher",
+      "subtitle": "Gestalte wunderschöne individuelle Bücher für deine Kleinen. Lade Fotos hoch, schreibe Geschichten und bestelle professionell gedruckte Bücher direkt nach Hause.",
+      "ctaButton": "Dein Buch erstellen",
+      "noBooks": "Noch keine Bücher. Erstelle dein erstes Buch!",
+      "createNewBook": "Neues Buch erstellen",
+      "bookCard": {
+        "pages": "{{count}} S.",
+        "forChild": "Für {{childName}}, {{age}} Jahre alt",
+        "status": {
+          "draft": "Entwurf",
+          "complete": "Fertig",
+          "published": "Veröffentlicht"
+        }
+      },
+      "features": {
+        "easyToUse": "Einfach zu bedienen",
+        "printShip": "Drucken & versenden",
+        "perfectGift": "Perfektes Geschenk"
+      }
+    },
+    "howItWorks": {
+      "title": "So funktioniert's",
+      "step1": {
+        "title": "Buch einrichten",
+        "description": "Gib den Namen und das Alter deines Kindes ein und wähle den perfekten Buchtyp und das Thema."
+      },
+      "step2": {
+        "title": "Inhalt hinzufügen",
+        "description": "Lade Fotos hoch und schreibe deine Geschichte. Ordne die Seiten genau so an, wie du möchtest."
+      },
+      "step3": {
+        "title": "Bestellen & genießen",
+        "description": "Sieh dir dein Buch in der Vorschau an, gib deine Bestellung auf und erhalte ein wunderschön gedrucktes Buch."
+      }
+    },
+    "bookTypes": {
+      "title": "Wähle deinen Buchtyp",
+      "board": {
+        "title": "Pappbuch",
+        "description": "Robuste Seiten für kleine Hände",
+        "age": "0-3 Jahre"
+      },
+      "picture": {
+        "title": "Bilderbuch",
+        "description": "Schöne Illustrationen mit kurzem Text",
+        "age": "3-6 Jahre"
+      },
+      "story": {
+        "title": "Geschichtenbuch",
+        "description": "Spannende Geschichten für wachsende Leser",
+        "age": "5-10 Jahre"
+      },
+      "alphabet": {
+        "title": "Alphabetbuch",
+        "description": "Buchstaben auf spielerische Weise lernen",
+        "age": "2-5 Jahre"
+      }
+    },
+    "footer": {
+      "tagline": "Mit ❤️ gemacht für Eltern, die magische Erinnerungen schaffen möchten"
+    },
+    "deleteModal": {
+      "title": "Buch löschen",
+      "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmText": "Löschen"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Willkommen zurück!",
+      "subtitle": "Melde dich an, um deine Bücher zu speichern und Drucke zu bestellen",
+      "email": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Anmelden",
+      "forgotPassword": "Passwort vergessen?",
+      "noAccount": "Noch kein Konto?",
+      "signUpLink": "Registrieren",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "or": "oder"
+    },
+    "signup": {
+      "title": "Konto erstellen",
+      "subtitle": "Tritt uns bei, um tolle Bücher für deine Kinder zu erstellen",
+      "email": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Konto erstellen",
+      "haveAccount": "Bereits ein Konto?",
+      "signInLink": "Anmelden",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "or": "oder",
+      "successMessage": "Überprüfe deine E-Mail, um dein Konto zu bestätigen!"
+    },
+    "forgot": {
+      "title": "Passwort zurücksetzen",
+      "subtitle": "Gib deine E-Mail ein und wir senden dir einen Reset-Link",
+      "email": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "submitButton": "Reset-Link senden",
+      "backToSignIn": "← Zurück zur Anmeldung",
+      "successMessage": "Überprüfe deine E-Mail für einen Passwort-Reset-Link!"
+    },
+    "errors": {
+      "timeout": "Zeitüberschreitung der Anfrage",
+      "unexpected": "Ein unerwarteter Fehler ist aufgetreten"
+    }
+  },
+  "create": {
+    "wizard": {
+      "back": "← Zurück",
+      "next": "Weiter →",
+      "creating": "Dein Buch wird erstellt..."
+    },
+    "steps": {
+      "child": {
+        "title": "Für wen ist dieses Buch?",
+        "subtitle": "Erzähle uns von dem besonderen Kind, das dieses Buch genießen wird",
+        "nameLabel": "Name des Kindes",
+        "namePlaceholder": "Name eingeben...",
+        "ageLabel": "Alter:",
+        "ageYears": "Jahre",
+        "photoLabel": "📷 Foto hochladen (optional)",
+        "photoHint": "Lade ein Foto des Kindes hoch, um die Illustrationen zu personalisieren. Die KI wird dies verwenden, damit die Hauptfigur wie das Kind aussieht!",
+        "photoButton": "Foto auswählen",
+        "photoSelected": "Foto ausgewählt",
+        "photoChange": "Foto ändern"
+      },
+      "type": {
+        "title": "Wähle einen Buchtyp",
+        "subtitle": "Wähle das perfekte Format für {{childName}}",
+        "subtitleDefault": "Wähle das perfekte Format für dein Kind"
+      },
+      "format": {
+        "title": "Wähle ein Format",
+        "subtitle": "Bereite dein Buch für den professionellen Druck vor"
+      },
+      "theme": {
+        "title": "Wähle ein Thema",
+        "subtitle": "Was für eine Geschichte soll es werden?",
+        "storyLabel": "Erzähle uns mehr über die Geschichte (optional)",
+        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt."
+      },
+      "style": {
+        "title": "Wähle einen Kunststil",
+        "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?"
+      },
+      "title": {
+        "title": "Benenne dein Buch",
+        "subtitle": "Gib deiner Geschichte einen tollen Titel",
+        "titleLabel": "Buchtitel",
+        "titlePlaceholder": "{{childName}}s Tolles Abenteuer",
+        "titlePlaceholderDefault": "Mein Tolles Abenteuer"
+      }
+    },
+    "bookTypes": {
+      "board": {
+        "label": "Pappbilderbuch",
+        "description": "Robuste Seiten perfekt für kleine Hände",
+        "ageRange": "0-3 Jahre"
+      },
+      "picture": {
+        "label": "Bilderbuch",
+        "description": "Schöne Illustrationen mit kurzem Text",
+        "ageRange": "3-6 Jahre"
+      },
+      "story": {
+        "label": "Geschichtenbuch",
+        "description": "Fesselnde Geschichten für wachsende Leser",
+        "ageRange": "5-10 Jahre"
+      },
+      "alphabet": {
+        "label": "Alphabet-Buch",
+        "description": "Buchstaben auf spielerische Weise lernen",
+        "ageRange": "2-5 Jahre"
+      }
+    },
+    "formats": {
+      "square": {
+        "label": "Quadratisches Hardcover",
+        "description": "21,6 x 21,6 cm Premium. Der Goldstandard für Kinderbücher.",
+        "pages": "Min. 24 Seiten (Auto-Set)"
+      },
+      "portrait": {
+        "label": "Hochformat / Digital",
+        "description": "15,2 x 22,9 cm Standard. Ideal für Softcover oder Handys.",
+        "pages": "Flexible Seitenzahl"
+      }
+    },
+    "themes": {
+      "adventure": "Abenteuer",
+      "bedtime": "Schlafenszeit",
+      "learning": "Lernen",
+      "fantasy": "Fantasy",
+      "animals": "Tiere",
+      "custom": "Individuell"
+    },
+    "artStyles": {
+      "storybook_classic": "Klassisches Märchenbuch",
+      "watercolor": "Aquarell",
+      "digital_art": "Digitale Kunst",
+      "cartoon": "Cartoon",
+      "pixel_art": "Pixel-Art",
+      "coloring_book": "Malbuch"
+    },
+    "imageQuality": {
+      "label": "✨ Bildqualität",
+      "fast": "⚡ Schnell (Standard)",
+      "pro": "💎 Pro (Imagen 4 Ultra)",
+      "fastDescription": "Der Standardmodus erzeugt schnell schöne Bilder mit Imagen 4.",
+      "proDescription": "Der Pro-Modus verwendet Imagen 4 Ultra für atemberaubende, hochauflösende Illustrationen. Dauert etwas länger."
+    },
+    "preview": {
+      "forChild": "Für {{childName}}, {{age}} Jahre",
+      "defaultTitle": "{{childName}}s Tolles Abenteuer"
+    },
+    "buttons": {
+      "back": "← Zurück",
+      "continue": "Weiter →",
+      "generateBook": "✨ Buch mit KI erstellen 🪄",
+      "createBook": "Mein Buch erstellen ✨",
+      "signInToCreate": "Anmelden zum Erstellen"
+    },
+    "errors": {
+      "createFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
+      "photoUploadFailed": "Foto-Upload fehlgeschlagen. Bitte versuche es erneut.",
+      "invalidSettings": "Bitte fülle alle erforderlichen Felder aus.",
+      "emptyTitleHint": "Leer lassen, um den Standardtitel zu verwenden"
+    },
+    "status": {
+      "extractingCharacter": "Foto wird analysiert...",
+      "generatingStory": "Deine Geschichte wird erstellt...",
+      "openingBook": "Dein Buch wird geöffnet..."
+    }
+  },
+  "profile": {
+    "header": {
+      "title": "Mein Profil",
+      "subtitle": "Verwalte deine Kontoeinstellungen und Präferenzen"
+    },
+    "generalInfo": {
+      "title": "Allgemeine Informationen",
+      "editButton": "✏️ Bearbeiten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "emailHint": "E-Mail kann nicht geändert werden",
+      "language": "Sprachpräferenz",
+      "accountCreated": "Konto erstellt",
+      "notSet": "Nicht festgelegt",
+      "firstNamePlaceholder": "Vorname eingeben",
+      "lastNamePlaceholder": "Nachname eingeben",
+      "cancelButton": "Abbrechen",
+      "saveButton": "Änderungen speichern"
+    },
+    "languages": {
+      "en": "Englisch",
+      "de": "Deutsch",
+      "he": "Hebräisch"
+    },
+    "childProfiles": {
+      "title": "Kinderprofile",
+      "addButton": "+ Kind hinzufügen",
+      "emptyTitle": "Noch keine Kinderprofile",
+      "emptySubtitle": "Füge ein Kinderprofil hinzu, um personalisierte Geschichten zu erstellen",
+      "emptyButton": "Dein erstes Kind hinzufügen",
+      "age": "{{age}} Jahre"
+    },
+    "myBooks": {
+      "title": "Meine Bücher",
+      "viewAllButton": "Alle anzeigen →",
+      "emptyTitle": "Deine erstellten Bücher erscheinen hier",
+      "emptyButton": "Dein erstes Buch erstellen"
+    },
+    "purchases": {
+      "title": "Letzte Käufe",
+      "viewAllButton": "Alle anzeigen →",
+      "emptyTitle": "Noch keine Käufe",
+      "emptySubtitle": "Bestelle dein erstes Buch, um es hier zu sehen"
+    },
+    "accountSettings": {
+      "title": "Kontoeinstellungen",
+      "changePassword": {
+        "label": "Passwort ändern",
+        "description": "Aktualisiere dein Passwort"
+      },
+      "paymentMethods": {
+        "label": "Zahlungsmethoden",
+        "description": "Gespeicherte Karten verwalten"
+      },
+      "shippingAddresses": {
+        "label": "Lieferadressen",
+        "description": "Lieferadressen verwalten"
+      },
+      "notifications": {
+        "label": "Benachrichtigungen",
+        "description": "E-Mail- und Push-Einstellungen"
+      }
+    },
+    "deleteModal": {
+      "title": "Buch löschen",
+      "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmText": "Löschen"
+    }
+  },
+  "orders": {
+    "header": {
+      "backButton": "← Zurück zur Startseite",
+      "title": "Meine Bestellungen"
+    },
+    "loading": "Bestellungen werden geladen...",
+    "empty": {
+      "title": "Noch keine Bestellungen",
+      "subtitle": "Wenn du ein gedrucktes Buch bestellst, erscheint es hier.",
+      "button": "Dein erstes Buch erstellen →"
+    },
+    "orderCard": {
+      "orderId": "Bestellung #{{id}}",
+      "for": "Für {{childName}}",
+      "format": "Format",
+      "quantity": "Menge",
+      "total": "Gesamt",
+      "trackingLabel": "Sendungsnummer",
+      "viewBookButton": "Buch ansehen",
+      "reorderButton": "Erneut bestellen"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "paid": "Bezahlt",
+      "processing": "In Bearbeitung",
+      "printed": "Gedruckt",
+      "shipped": "Versandt",
+      "delivered": "Zugestellt",
+      "cancelled": "Storniert"
+    }
+  },
+  "purchases": {
+    "header": {
+      "title": "Meine Käufe",
+      "subtitle": "Verfolge deine Bestellungen und lade Quittungen herunter"
+    },
+    "empty": {
+      "title": "Noch keine Käufe",
+      "subtitle": "Erstelle ein Buch und bestelle eine gedruckte Kopie, um deine Käufe hier zu sehen",
+      "button": "Dein erstes Buch erstellen"
+    }
+  },
+  "mybooks": {
+    "header": {
+      "title": "Meine Bücher",
+      "booksCount": "{{count}} Buch erstellt",
+      "booksCount_other": "{{count}} Bücher erstellt"
+    },
+    "empty": {
+      "title": "Noch keine Bücher",
+      "subtitle": "Erstelle dein erstes personalisiertes Kinderbuch und erlebe die Magie",
+      "button": "✨ Dein erstes Buch erstellen"
+    },
+    "deleteModal": {
+      "title": "Buch löschen",
+      "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmText": "Löschen"
+    },
+    "bookCard": {
+      "pages": "{{count}} S.",
+      "forChild": "Für {{childName}}, {{age}} Jahre alt",
+      "status": {
+        "draft": "Entwurf",
+        "complete": "Fertig",
+        "published": "Veröffentlicht"
+      }
+    }
+  },
+  "viewer": {
+    "controls": {
+      "keyboardHint": "Verwende ← → Pfeiltasten oder klicke, um Seiten umzublättern"
+    }
+  }
+}
