@@ -1003,6 +1003,13 @@
       "review": "Review",
       "payment": "Payment"
     },
+    "delivery": {
+      "title": "Choose Your Delivery",
+      "digital": "Digital Only",
+      "digitalDesc": "Instant PDF download - no shipping needed",
+      "print": "Print + Digital",
+      "printDesc": "Physical book delivered + PDF download"
+    },
     "format": {
       "title": "Choose Your Format",
       "softcover": "Softcover",

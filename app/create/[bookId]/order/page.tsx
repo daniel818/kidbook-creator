@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { Navbar } from '@/components/Navbar';
 import { Book, BookTypeInfo, BookThemeInfo } from '@/lib/types';
 import { getBookById } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -49,13 +50,13 @@ function formatShippingLevel(level: string): string {
 
 const SIZE_LABELS: Record<BookSize, string> = {
     '7.5x7.5': '7.5" × 7.5" (Small Square)',
-    '8x8': '8.5" × 8.5" (Standard Square)',
-    '8x10': '8.5" × 11" (Standard Portrait)'
+    '8x8': '8" × 8" (Square)',
+    '8x10': '8" × 10" (Novella)'
 };
 
-const ALL_SIZES: BookSize[] = ['7.5x7.5', '8x8', '8x10'];
+const ALL_SIZES: BookSize[] = ['8x8', '8x10'];
 const SIZES_BY_RATIO: Record<'square' | 'portrait', BookSize[]> = {
-    square: ['7.5x7.5', '8x8'],
+    square: ['8x8'],
     portrait: ['8x10']
 };
 
@@ -74,6 +75,7 @@ export default function OrderPage() {
     const [book, setBook] = useState<Book | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [deliveryType, setDeliveryType] = useState<'digital' | 'print'>('print');
     const [format, setFormat] = useState<BookFormat>('softcover');
     const [size, setSize] = useState<BookSize>('8x8');
     const [quantity, setQuantity] = useState(1);
@@ -545,9 +547,11 @@ export default function OrderPage() {
     const shippingLevelLabel = displayedShippingLevel ? formatShippingLevel(displayedShippingLevel) : '';
 
     return (
-        <main className={styles.main}>
-            {/* Header */}
-            <header className={styles.header}>
+        <>
+            <Navbar />
+            <main className={styles.main}>
+                {/* Header */}
+                <header className={styles.header}>
                 <button
                     className={styles.backButton}
                     onClick={() => router.push(`/book/${bookId}`)}
@@ -581,7 +585,33 @@ export default function OrderPage() {
                             animate={{ opacity: 1, y: 0 }}
                             className={styles.stepContent}
                         >
-                            <h2 className={styles.sectionTitle}>Choose Your Format</h2>
+                            {/* Delivery Type Selection */}
+                            <h2 className={styles.sectionTitle}>{t('delivery.title')}</h2>
+                            <div className={styles.formatGrid}>
+                                <button
+                                    className={`${styles.formatCard} ${deliveryType === 'digital' ? styles.selected : ''}`}
+                                    onClick={() => setDeliveryType('digital')}
+                                >
+                                    <span className={styles.formatIcon}>📱</span>
+                                    <span className={styles.formatName}>{t('delivery.digital')}</span>
+                                    <span className={styles.formatDesc}>{t('delivery.digitalDesc')}</span>
+                                    {deliveryType === 'digital' && <span className={styles.checkmark}>✓</span>}
+                                </button>
+                                <button
+                                    className={`${styles.formatCard} ${deliveryType === 'print' ? styles.selected : ''}`}
+                                    onClick={() => setDeliveryType('print')}
+                                >
+                                    <span className={styles.formatIcon}>📦</span>
+                                    <span className={styles.formatName}>{t('delivery.print')}</span>
+                                    <span className={styles.formatDesc}>{t('delivery.printDesc')}</span>
+                                    {deliveryType === 'print' && <span className={styles.checkmark}>✓</span>}
+                                </button>
+                            </div>
+
+                            {/* Format Selection - Only show for print */}
+                            {deliveryType === 'print' && (
+                                <>
+                                    <h2 className={styles.sectionTitle} style={{ marginTop: '2rem' }}>{t('format.title')}</h2>
 
                             <div className={styles.formatGrid}>
                                 {(['softcover', 'hardcover'] as BookFormat[]).map(f => (
@@ -657,14 +687,22 @@ export default function OrderPage() {
                                 </button>
                             </div>
 
+                                    </>
+                                )}
+
                             <button
                                 className={styles.continueBtn}
                                 onClick={() => {
-                                    setReviewQuote(null);
-                                    setStep('shipping');
+                                    if (deliveryType === 'digital') {
+                                        // Skip shipping for digital
+                                        setStep('review');
+                                    } else {
+                                        setReviewQuote(null);
+                                        setStep('shipping');
+                                    }
                                 }}
                             >
-                                Continue to Shipping →
+                                {deliveryType === 'digital' ? t('buttons.continue') : 'Continue to Shipping →'}
                             </button>
                         </motion.div>
                     )}
@@ -1147,5 +1185,6 @@ export default function OrderPage() {
                 </aside>
             </div>
         </main>
+        </>
     );
 }

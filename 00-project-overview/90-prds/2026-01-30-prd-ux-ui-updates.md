@@ -61,10 +61,11 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 | ID | Issue | Description | Priority | Status |
 |----|-------|-------------|----------|--------|
-| 4a | **Missing Navbar** | Add Navbar component to order page | High | ⏳ Pending |
-| 4b | **Missing Translations** | Add i18n translations for all order page text | High | ⏳ Pending |
+| 4a | **Missing Navbar** | Add Navbar component to order page | High | ✅ Done |
+| 4b | **Missing Translations** | Add i18n translations for all order page text | High | 🔧 In Progress |
 | 4c | **Price Unavailable** | Show placeholder price based on pricing page values when Lulu API fails | High | ⏳ Pending |
-| 4d | **Digital/Print Option** | Add choice between "Digital Only" (free shipping, instant) vs "Print + Digital" | High | ⏳ Pending |
+| 4d | **Digital/Print Option** | Add choice between "Digital Only" (free shipping, instant) vs "Print + Digital" | High | ✅ Done |
+| 4e | **Size Options** | Update size options to Square (8x8) and Novella (8x10) only | Medium | ✅ Done |
 
 **Files to modify:**
 - `app/create/[bookId]/order/page.tsx`
@@ -77,7 +78,7 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 | ID | Issue | Description | Priority | Status |
 |----|-------|-------------|----------|--------|
 | 5a | **Uninspiring Flow** | Current 3-step flow doesn't match brand guidelines. Update to 4 inspiring stages: Setup Your Book, Create Your Story, Preview & Perfect, Order & Enjoy | Medium | ✅ Done |
-| 5b | **Remove AI Wording** | Replace "Let AI bring your vision to life" with magical language that doesn't mention AI | High | 🔧 In Progress |
+| 5b | **Remove AI Wording** | Replace "Let AI bring your vision to life" with magical language that doesn't mention AI | High | ✅ Done |
 
 **Files to modify:**
 - `app/[locale]/page.tsx` (home page)
@@ -94,8 +95,8 @@ This PRD covers a collection of UX/UI improvements across multiple pages of the 
 
 | ID | Issue | Description | Priority | Status |
 |----|-------|-------------|----------|--------|
-| 6a | **Wrong Text Orientation** | When viewing a book, the text orientation doesn't match the book's language. Hebrew books show LTR layout when UI is in English, and English books show RTL layout when UI is in Hebrew. Need to detect book language and apply correct direction. | High | 🔧 In Progress |
-| 6b | **Letter Position Bug** | Large decorative letters on text pages are positioned incorrectly - should be on right for RTL books and left for LTR books | High | 🔧 In Progress |
+| 6a | **Wrong Text Orientation** | When viewing a book, the text orientation doesn't match the book's language. Hebrew books show LTR layout when UI is in English, and English books show RTL layout when UI is in Hebrew. Need to detect book language and apply correct direction. | High | ✅ Done |
+| 6b | **Letter Position Bug** | Large decorative letters on text pages are positioned incorrectly - should be on right for RTL books and left for LTR books | High | ✅ Done |
 
 **Files to modify:**
 - `components/StoryBookViewer.tsx` or `components/StoryBookViewer3D.tsx`
