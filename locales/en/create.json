@@ -122,6 +122,7 @@
   },
   "status": {
     "extractingCharacter": "Analyzing photo...",
+    "generatingPreview": "Creating your preview...",
     "generatingStory": "Creating your story...",
     "openingBook": "Opening your book..."
   }

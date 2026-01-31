@@ -78,6 +78,7 @@ export default function OrderPage() {
     const [step, setStep] = useState<OrderStep>('options');
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isUnlockCheckout, setIsUnlockCheckout] = useState(false);
 
     // Dynamic pricing state
     const [priceData, setPriceData] = useState<{
@@ -166,6 +167,30 @@ export default function OrderPage() {
 
         loadBook();
     }, [bookId, router]);
+
+    const handleUnlockCheckout = async () => {
+        if (isUnlockCheckout) return;
+        setIsUnlockCheckout(true);
+        try {
+            const response = await fetch('/api/checkout/digital', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookId }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data?.error || 'Failed to start unlock checkout');
+            }
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        } catch (err) {
+            console.error('Unlock checkout error:', err);
+            setError(err instanceof Error ? err.message : 'Failed to start unlock checkout');
+        } finally {
+            setIsUnlockCheckout(false);
+        }
+    };
 
     useEffect(() => {
         if (!book) return;
@@ -541,6 +566,7 @@ export default function OrderPage() {
         shipping.phone,
     ].filter(Boolean) as string[];
     const shippingLevelLabel = displayedShippingLevel ? formatShippingLevel(displayedShippingLevel) : '';
+    const isPreview = book.status === 'preview' || book.isPreview;
 
     return (
         <main className={styles.main}>
@@ -555,6 +581,30 @@ export default function OrderPage() {
                 <h1 className={styles.headerTitle}>Order Your Book</h1>
                 <div className={styles.placeholder}></div>
             </header>
+
+            {isPreview && (
+                <div className={styles.previewNotice}>
+                    <div>
+                        <strong>Preview Mode</strong>
+                        <p>Unlock the full book to generate all pages before ordering.</p>
+                    </div>
+                    <div className={styles.previewNoticeActions}>
+                        <button
+                            className={styles.previewNoticeBtn}
+                            onClick={handleUnlockCheckout}
+                            disabled={isUnlockCheckout}
+                        >
+                            {isUnlockCheckout ? 'Opening checkout…' : 'Unlock $15'}
+                        </button>
+                        <button
+                            className={styles.previewNoticeSecondary}
+                            onClick={() => router.push(`/book/${bookId}`)}
+                        >
+                            Back to Preview
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className={styles.orderLayout}>
                 {/* Left - Options */}
@@ -661,6 +711,7 @@ export default function OrderPage() {
                                     setReviewQuote(null);
                                     setStep('shipping');
                                 }}
+                                disabled={isPreview}
                             >
                                 Continue to Shipping →
                             </button>
@@ -855,7 +906,7 @@ export default function OrderPage() {
                                     <button
                                         className={styles.continueBtn}
                                         onClick={handleContinueToReview}
-                                        disabled={!isShippingValid() || !shippingLevel || isShippingOptionsLoading || isPriceLoading || !priceData}
+                                        disabled={isPreview || !isShippingValid() || !shippingLevel || isShippingOptionsLoading || isPriceLoading || !priceData}
                                     >
                                         Review Order →
                                     </button>
@@ -957,7 +1008,7 @@ export default function OrderPage() {
                                 <button
                                     className={styles.continueBtn}
                                     onClick={handleContinueToPayment}
-                                    disabled={!displayedPricing || !displayedShippingLevel}
+                                    disabled={isPreview || !displayedPricing || !displayedShippingLevel}
                                 >
                                     Continue to Payment →
                                 </button>
@@ -1022,7 +1073,7 @@ export default function OrderPage() {
                                 <button
                                     className={styles.payBtn}
                                     onClick={handleCheckout}
-                                    disabled={isProcessing || !user}
+                                    disabled={isPreview || isProcessing || !user}
                                 >
                                     {isProcessing ? (
                                         <>

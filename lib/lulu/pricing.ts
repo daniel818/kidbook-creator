@@ -1,6 +1,5 @@
 import { createLuluClient, CostCalculationOptions } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
-import { PROFIT_MARGIN } from '@/lib/pricing/book-price';
 
 export interface RetailPricingInput {
     format: 'softcover' | 'hardcover';
@@ -30,6 +29,17 @@ export interface RetailPricingResult {
     total: number;
     margin: number;
     isEstimate: boolean;
+}
+
+const MARKUP_MULTIPLIER = 3; // 200% margin => wholesale * 3
+const MIN_SUBTOTAL_PER_BOOK = 4000; // $40.00 in cents
+const ROUND_TO = 100; // round up to nearest $1
+
+function applyPricingRules(wholesale: number, quantity: number) {
+    const markedUp = wholesale * MARKUP_MULTIPLIER;
+    const rounded = Math.ceil(markedUp / ROUND_TO) * ROUND_TO;
+    const minSubtotal = MIN_SUBTOTAL_PER_BOOK * Math.max(1, quantity);
+    return Math.max(rounded, minSubtotal);
 }
 
 export async function calculateRetailPricing(input: RetailPricingInput): Promise<RetailPricingResult> {
@@ -84,7 +94,7 @@ export async function calculateRetailPricing(input: RetailPricingInput): Promise
         wholesale = result.productCost;
     }
 
-    const subtotal = Math.round(wholesale * PROFIT_MARGIN);
+    const subtotal = applyPricingRules(wholesale, input.quantity);
     const total = subtotal + shipping;
     const isEstimate = false;
 
@@ -93,7 +103,7 @@ export async function calculateRetailPricing(input: RetailPricingInput): Promise
         subtotal,
         shipping,
         total,
-        margin: PROFIT_MARGIN,
+        margin: MARKUP_MULTIPLIER,
         isEstimate,
     };
 }

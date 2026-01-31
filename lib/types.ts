@@ -61,12 +61,17 @@ export interface Book {
   id: string;
   settings: BookSettings;
   pages: BookPage[];
-  status: 'draft' | 'completed' | 'ordered';
+  status: 'preview' | 'draft' | 'completed' | 'ordered';
   createdAt: Date;
   updatedAt: Date;
   thumbnailUrl?: string;
   estimatedCost?: number;
   language?: 'en' | 'de' | 'he';
+  isPreview?: boolean;
+  previewPageCount?: number;
+  totalPageCount?: number;
+  referenceImageUrl?: string;
+  digitalUnlockPaid?: boolean;
 }
 
 export interface OrderDetails {

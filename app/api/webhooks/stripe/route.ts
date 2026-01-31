@@ -44,7 +44,11 @@ export async function POST(request: NextRequest) {
         switch (event.type) {
             case 'checkout.session.completed': {
                 const session = event.data.object as Stripe.Checkout.Session;
-                await handleCheckoutComplete(session);
+                if (session.metadata?.unlockType === 'digital') {
+                    await handleDigitalUnlock(session);
+                } else {
+                    await handleCheckoutComplete(session);
+                }
                 break;
             }
 
@@ -131,7 +135,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
     if (metadata?.bookId) {
         const { data: bookData } = await supabase
             .from('books')
-            .update({ status: 'ordered' })
+            .update({ status: 'ordered', digital_unlock_paid: true })
             .eq('id', metadata.bookId)
             .select()
             .single();
@@ -139,7 +143,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
     } else if (order.book_id) {
         const { data: bookData } = await supabase
             .from('books')
-            .update({ status: 'ordered' })
+            .update({ status: 'ordered', digital_unlock_paid: true })
             .eq('id', order.book_id)
             .select()
             .single();
@@ -194,6 +198,27 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
         }
     } catch (fulfillError) {
         console.error(`[Webhook] Fulfillment error for order ${orderId}:`, fulfillError);
+    }
+}
+
+async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<void> {
+    const supabase = await createAdminClient();
+    const bookId = session.metadata?.bookId;
+    if (!bookId) {
+        console.error('[Webhook] Digital unlock missing bookId');
+        return;
+    }
+
+    const { error } = await supabase
+        .from('books')
+        .update({
+            digital_unlock_paid: true,
+            digital_unlock_session_id: session.id,
+        })
+        .eq('id', bookId);
+
+    if (error) {
+        console.error('[Webhook] Failed to mark digital unlock paid', error);
     }
 }
 

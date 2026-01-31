@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client';
+import { uploadReferenceImage } from '@/lib/supabase/upload';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -76,8 +77,8 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language } = body;
-        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language });
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = body;
+        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
 
         if (!childName || !bookTheme || !bookType) {
             log('ERROR: Missing required fields');
@@ -125,7 +126,21 @@ export async function POST(request: NextRequest) {
         // Generate the complete book (story + illustrations)
         log('Step 3: Starting book generation...');
         const genStartTime = Date.now();
-        const result = await generateCompleteBook(input);
+        const isPreview = preview === true;
+        const defaultPreviewCount = 3;
+        const maxPreviewCount = 4;
+        const effectivePreviewCount = Math.min(
+            maxPreviewCount,
+            Math.max(1, Number(previewPageCount || defaultPreviewCount))
+        );
+        const result = await generateCompleteBook(
+            input,
+            undefined,
+            {
+                illustrationLimit: isPreview ? effectivePreviewCount : undefined,
+                includeBackCover: !isPreview
+            }
+        );
 
         // Calculate Costs from Logs
         let totalCost = 0;
@@ -143,6 +158,23 @@ export async function POST(request: NextRequest) {
         const userId = user.id;
         const bookId = crypto.randomUUID();
         log(`Created bookId: ${bookId}`);
+        let referenceImageUrl: string | null = null;
+        if (childPhoto) {
+            const matches = childPhoto.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+            if (matches && matches.length === 3) {
+                const contentType = matches[1];
+                const buffer = Buffer.from(matches[2], 'base64');
+                try {
+                    referenceImageUrl = await uploadReferenceImage(userId, bookId, buffer, contentType);
+                } catch (err) {
+                    log('Reference image upload failed', err);
+                }
+            }
+        }
+        const previewCountClamped = isPreview
+            ? Math.min(effectivePreviewCount, result.story.pages.length)
+            : result.story.pages.length;
+        const totalPageCount = result.story.pages.length + (result.story.backCoverBlurb ? 1 : 0);
 
         // ---------------------------------------------------------
         // IMAGE UPLOAD LOGIC
@@ -219,9 +251,17 @@ export async function POST(request: NextRequest) {
             book_theme: bookTheme,
             book_type: bookType,
             print_format: aspectRatio === '1:1' ? 'square' : 'portrait',
-            status: 'draft',
+            status: isPreview ? 'preview' : 'draft',
             estimated_cost: totalCost, // Save aggregated cost
-            language: language || 'en' // Save book language
+            language: language || 'en', // Save book language
+            is_preview: isPreview,
+            preview_page_count: previewCountClamped,
+            total_page_count: totalPageCount,
+            character_description: result.story.characterDescription || characterDescription || null,
+            art_style: artStyle || input.artStyle || null,
+            image_quality: imageQuality || input.imageQuality || null,
+            story_description: storyDescription || null,
+            reference_image_url: referenceImageUrl
         });
 
         if (dbError) {
@@ -250,6 +290,7 @@ export async function POST(request: NextRequest) {
             page_number: page.pageNumber,
             page_type: page.pageNumber === 1 ? 'cover' : 'inside',
             background_color: '#ffffff',
+            image_prompt: page.imagePrompt,
             text_elements: page.text ? [{
                 id: crypto.randomUUID(),
                 content: page.text,

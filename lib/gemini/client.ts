@@ -261,7 +261,11 @@ export async function extractCharacterFromPhoto(photoBase64: string, language: L
 // Generate complete book
 export async function generateCompleteBook(
     input: StoryGenerationInput,
-    onProgress?: (step: string, progress: number) => void
+    onProgress?: (step: string, progress: number) => void,
+    options?: {
+        illustrationLimit?: number;
+        includeBackCover?: boolean;
+    }
 ): Promise<{
     story: GeneratedStory;
     illustrations: string[];
@@ -286,6 +290,7 @@ export async function generateCompleteBook(
     const characterDescription = story.characterDescription || input.characterDescription || `A cute child named ${input.childName}`;
 
     const illustrations: string[] = new Array(story.pages.length).fill('');
+    const maxIllustrations = Math.min(options?.illustrationLimit ?? story.pages.length, story.pages.length);
 
     // Concurrency Settings
     const CONCURRENCY_LIMIT = 1;
@@ -318,13 +323,13 @@ export async function generateCompleteBook(
     };
 
     // Process in Batches
-    for (let i = 0; i < story.pages.length; i += CONCURRENCY_LIMIT) {
+    for (let i = 0; i < maxIllustrations; i += CONCURRENCY_LIMIT) {
         const batchStart = i;
-        const batchEnd = Math.min(i + CONCURRENCY_LIMIT, story.pages.length);
+        const batchEnd = Math.min(i + CONCURRENCY_LIMIT, maxIllustrations);
         const batchPromises: Promise<void>[] = [];
 
         logWithTime(`Starting batch ${Math.ceil((i + 1) / CONCURRENCY_LIMIT)}: Pages ${batchStart + 1} to ${batchEnd}`);
-        onProgress?.(`Painting pages ${batchStart + 1}-${batchEnd} of ${story.pages.length}...`, 20 + (70 * (i + 1) / story.pages.length));
+        onProgress?.(`Painting pages ${batchStart + 1}-${batchEnd} of ${maxIllustrations}...`, 20 + (70 * (i + 1) / maxIllustrations));
 
         for (let j = batchStart; j < batchEnd; j++) {
             batchPromises.push(generatePageFn(j));
@@ -333,7 +338,7 @@ export async function generateCompleteBook(
         await Promise.all(batchPromises);
 
         // Delay between batches (unless it's the last one)
-        if (batchEnd < story.pages.length) {
+        if (batchEnd < maxIllustrations) {
             logWithTime(`Batch complete. Waiting ${SAFETY_DELAY_MS}ms safely...`);
             await new Promise(r => setTimeout(r, SAFETY_DELAY_MS));
         }
@@ -342,26 +347,28 @@ export async function generateCompleteBook(
     // Generate Back Cover
     onProgress?.('Creating back cover...', 95);
     let backCoverImage: string | undefined;
-    try {
-        const backCoverPrompt = "A magical background pattern or simple scenic view suitable for a book back cover. No characters, just atmosphere matching the book theme.";
-        const { imageUrl, usage: backUsage } = await generateIllustration(
-            backCoverPrompt, // Scene
-            "", // No character description needed for back cover background usually
-            input.artStyle,
-            input.imageQuality,
-            undefined, // No reference
-            input.aspectRatio
-        );
-        backCoverImage = imageUrl;
-        generationLogs.push({
-            stepName: 'back_cover',
-            model: backUsage.model,
-            inputTokens: 0,
-            outputTokens: 0,
-            imageCount: 1
-        });
-    } catch (e) {
-        logWithTime('Failed to generate back cover', e);
+    if (options?.includeBackCover !== false) {
+        try {
+            const backCoverPrompt = "A magical background pattern or simple scenic view suitable for a book back cover. No characters, just atmosphere matching the book theme.";
+            const { imageUrl, usage: backUsage } = await generateIllustration(
+                backCoverPrompt, // Scene
+                "", // No character description needed for back cover background usually
+                input.artStyle,
+                input.imageQuality,
+                undefined, // No reference
+                input.aspectRatio
+            );
+            backCoverImage = imageUrl;
+            generationLogs.push({
+                stepName: 'back_cover',
+                model: backUsage.model,
+                inputTokens: 0,
+                outputTokens: 0,
+                imageCount: 1
+            });
+        } catch (e) {
+            logWithTime('Failed to generate back cover', e);
+        }
     }
 
     logWithTime(`=== FINISHED ===`);

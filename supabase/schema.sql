@@ -52,9 +52,20 @@ CREATE TABLE IF NOT EXISTS books (
   age_group TEXT NOT NULL,
   book_type TEXT NOT NULL CHECK (book_type IN ('board', 'picture', 'story', 'alphabet')),
   book_theme TEXT NOT NULL CHECK (book_theme IN ('adventure', 'bedtime', 'learning', 'fantasy', 'animals', 'custom')),
+  print_format TEXT NOT NULL DEFAULT 'portrait' CHECK (print_format IN ('square', 'portrait')),
+  character_description TEXT,
+  art_style TEXT,
+  image_quality TEXT,
+  story_description TEXT,
+  reference_image_url TEXT,
+  digital_unlock_paid BOOLEAN DEFAULT FALSE,
+  digital_unlock_session_id TEXT,
   
   -- Status
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'completed', 'ordered')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('preview', 'draft', 'completed', 'ordered')),
+  is_preview BOOLEAN DEFAULT FALSE,
+  preview_page_count INTEGER DEFAULT 0,
+  total_page_count INTEGER DEFAULT 0,
   
   -- Thumbnail
   thumbnail_url TEXT,
@@ -78,6 +89,7 @@ CREATE TABLE IF NOT EXISTS pages (
   -- Content
   background_color TEXT DEFAULT '#ffffff',
   background_image TEXT,
+  image_prompt TEXT,
   text_elements JSONB DEFAULT '[]'::jsonb,
   image_elements JSONB DEFAULT '[]'::jsonb,
   

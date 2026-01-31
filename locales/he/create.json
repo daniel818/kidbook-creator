@@ -122,6 +122,7 @@
   },
   "status": {
     "extractingCharacter": "מנתח תמונה...",
+    "generatingPreview": "יוצר תצוגה מקדימה...",
     "generatingStory": "יוצר את הסיפור שלך...",
     "openingBook": "פותח את הספר שלך..."
   }

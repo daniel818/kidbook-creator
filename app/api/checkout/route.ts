@@ -58,6 +58,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Book not found or unauthorized' }, { status: 404 });
         }
 
+        const isPreview = book.is_preview || book.status === 'preview';
+        if (isPreview && !book.digital_unlock_paid) {
+            return NextResponse.json({ error: 'Unlock required before ordering' }, { status: 402 });
+        }
+
         // Validate quantity
         if (!Number.isInteger(quantity) || quantity < 1) {
             return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });

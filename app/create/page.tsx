@@ -219,7 +219,7 @@ export default function CreateBookPage() {
             // Step 2: Generate the complete book with AI
             console.log('[CLIENT] Step 2: Generating complete book...');
             const genStart = Date.now();
-            setCreatingStatus(t('status.generatingStory'));
+            setCreatingStatus(t('status.generatingPreview'));
 
             // Convert photo to base64 if present for the generation API
             let base64Photo: string | undefined;
@@ -244,6 +244,8 @@ export default function CreateBookPage() {
                 imageQuality: settings.imageQuality || 'fast',
                 childPhoto: base64Photo,
                 language: i18n.language || 'en',
+                preview: true,
+                previewPageCount: 3,
             };
             console.log('[CLIENT] Request body:', requestBody);
 

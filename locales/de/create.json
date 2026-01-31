@@ -121,6 +121,7 @@
   },
   "status": {
     "extractingCharacter": "Foto wird analysiert...",
+    "generatingPreview": "Vorschau wird erstellt...",
     "generatingStory": "Deine Geschichte wird erstellt...",
     "openingBook": "Dein Buch wird geöffnet..."
   }
