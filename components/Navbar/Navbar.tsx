@@ -23,7 +23,7 @@ export function Navbar() {
   const isLibrary = pathname.startsWith('/mybooks') || pathname.startsWith('/book');
   const isCreate = pathname.startsWith('/create');
   const isOrders = pathname.startsWith('/orders');
-  const isProfile = pathname.startsWith('/profile');
+
 
   // Close more menu when clicking outside
   useEffect(() => {
@@ -224,21 +224,7 @@ export function Navbar() {
                 </button>
               )}
 
-              {user && (
-                <button
-                  className={`${styles.bottomSheetItem} ${isProfile ? styles.bottomSheetItemActive : ''}`}
-                  onClick={() => {
-                    setShowMoreMenu(false);
-                    router.push('/profile');
-                  }}
-                >
-                  <svg className={styles.bottomSheetIcon} viewBox="0 0 24 24">
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 20a8 8 0 0 1 16 0" />
-                  </svg>
-                  <span>{t('profile', 'Profile')}</span>
-                </button>
-              )}
+
 
               <div className={styles.bottomSheetDivider}></div>
 

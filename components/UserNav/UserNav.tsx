@@ -132,14 +132,6 @@ export function UserNav() {
               <span className={styles.menuIcon}>📦</span>
               <span>{t('orders')}</span>
             </button>
-
-            <button
-              className={styles.menuItem}
-              onClick={() => handleNavigation('/profile')}
-            >
-              <span className={styles.menuIcon}>👤</span>
-              <span>{t('profile')}</span>
-            </button>
           </nav>
 
           <div className={styles.dropdownDivider}></div>
