@@ -1,10 +1,13 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './LanguageSwitcher.module.css';
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
   const { i18n } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const languages = [
     { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -16,11 +19,31 @@ export function LanguageSwitcher() {
 
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode);
+    setIsOpen(false);
   };
 
+  useEffect(() => {
+    const handleOutside = (event: MouseEvent) => {
+      if (!containerRef.current) return;
+      if (containerRef.current.contains(event.target as Node)) return;
+      setIsOpen(false);
+    };
+
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
   return (
-    <div className={styles.languageSwitcher}>
-      <button className={styles.currentLanguage}>
+    <div
+      className={`${styles.languageSwitcher} ${isOpen ? styles.open : ''} ${compact ? styles.compact : ''}`}
+      ref={containerRef}
+    >
+      <button
+        className={styles.currentLanguage}
+        onClick={() => setIsOpen(prev => !prev)}
+        aria-label="Change language"
+        aria-expanded={isOpen}
+      >
         <span className={styles.flag}>{currentLanguage.flag}</span>
         <span className={styles.label}>{currentLanguage.code.toUpperCase()}</span>
       </button>

@@ -1,39 +1,48 @@
+/* ============================================
+   NAVBAR - Modern Redesign
+   ============================================ */
+
+/* Top Navigation Bar */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 32px;
-  background: white;
-  border-bottom: 1px solid #E5E7EB;
   position: sticky;
   top: 0;
   z-index: 200;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-.navBrand {
+.navInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.navBrand:hover {
-  opacity: 0.9;
+/* Brand / Logo */
+.navBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
 }
 
 .logoWrapper {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%);
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at top, #a78bfa 0%, #6366f1 55%, #4338ca 100%);
+  border-radius: 12px;
   padding: 6px;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.25);
 }
 
 .logo {
@@ -43,81 +52,43 @@
 }
 
 .navName {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
-  color: #111827;
-  letter-spacing: -0.01em;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
-.navLinks {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Center spacer for balanced layout */
+.navSpacer {
+  flex: 1;
 }
 
-.navLink {
-  display: flex;
-  align-items: center;
-  padding: 10px 18px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #6B7280;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  letter-spacing: -0.01em;
-}
-
-.navLink:hover {
-  background: #F3F4F6;
-  color: #111827;
-}
-
-.navLink.active {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
-  color: #7C3AED;
-  font-weight: 600;
-}
-
-.navLink.disabled {
-  color: #D1D5DB;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.navLink.disabled:hover {
-  background: transparent;
-  color: #D1D5DB;
-}
-
+/* Actions Section */
 .navActions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .createButton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%);
-  color: white;
+  padding: 10px 18px;
+  border-radius: 999px;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
-  letter-spacing: -0.01em;
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .createButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px rgba(99, 102, 241, 0.4);
 }
 
 .createButton:active {
@@ -133,21 +104,20 @@
 }
 
 .signInButton {
-  padding: 10px 20px;
-  background: transparent;
-  color: #7C3AED;
-  border: 1.5px solid #7C3AED;
-  border-radius: 10px;
-  font-size: 15px;
+  padding: 10px 18px;
+  background: white;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 999px;
+  font-size: 14px;
   font-weight: 600;
+  color: #4338ca;
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: -0.01em;
 }
 
 .signInButton:hover {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
-  border-color: #6D28D9;
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.5);
 }
 
 .navSkeleton {
@@ -156,68 +126,445 @@
   background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
-  border-radius: 8px;
+  border-radius: 999px;
 }
+
+.desktopActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.languageDesktop {
+  display: flex;
+  align-items: center;
+}
+
+.languageMobile {
+  display: none;
+}
+
+/* ============================================
+   MOBILE BOTTOM NAVIGATION
+   ============================================ */
+
+.mobileBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  z-index: 210;
+  box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.08);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  align-items: center;
+}
+
+.mobileTab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.mobileTab:active {
+  transform: scale(0.95);
+}
+
+.mobileIcon {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+
+.mobileLabel {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.mobileActive {
+  color: #6366f1;
+}
+
+.mobileActive .mobileIcon {
+  stroke-width: 2.2;
+}
+
+.mobileDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ============================================
+   FLOATING CREATE FAB
+   ============================================ */
+
+.floatingFab {
+  display: none;
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  right: 20px;
+  z-index: 220;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    0 8px 24px rgba(99, 102, 241, 0.4),
+    0 4px 12px rgba(236, 72, 153, 0.2);
+  align-items: center;
+  gap: 8px;
+  animation: fabEntrance 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floatingFab:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 12px 32px rgba(99, 102, 241, 0.5),
+    0 6px 16px rgba(236, 72, 153, 0.3);
+}
+
+.floatingFab:active {
+  transform: scale(0.98);
+}
+
+.fabIcon {
+  font-size: 18px;
+}
+
+.fabLabel {
+  font-weight: 700;
+}
+
+@keyframes fabEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Idle pulse animation */
+@keyframes fabPulse {
+
+  0%,
+  100% {
+    box-shadow:
+      0 8px 24px rgba(99, 102, 241, 0.4),
+      0 4px 12px rgba(236, 72, 153, 0.2);
+  }
+
+  50% {
+    box-shadow:
+      0 12px 32px rgba(99, 102, 241, 0.5),
+      0 6px 16px rgba(236, 72, 153, 0.3),
+      0 0 0 8px rgba(99, 102, 241, 0.1);
+  }
+}
+
+/* ============================================
+   BOTTOM SHEET MENU
+   ============================================ */
+
+.bottomSheetOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 300;
+  animation: overlayFadeIn 0.2s ease;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.bottomSheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+  max-height: 70vh;
+  overflow-y: auto;
+  animation: sheetSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes sheetSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bottomSheetHandle {
+  width: 40px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  margin: 0 auto 16px;
+}
+
+.bottomSheetUser {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f1ff 100%);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.bottomSheetAvatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.bottomSheetUserInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.bottomSheetUserName {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.bottomSheetUserEmail {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bottomSheetNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bottomSheetItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.bottomSheetItem:hover,
+.bottomSheetItem:active {
+  background: #f1f5f9;
+}
+
+.bottomSheetItemActive {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.bottomSheetIcon {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.bottomSheetLanguage {
+  margin-left: auto;
+}
+
+.bottomSheetDivider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 8px 0;
+}
+
+.bottomSheetSignOut {
+  color: #ef4444;
+}
+
+.bottomSheetSignOut:hover,
+.bottomSheetSignOut:active {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
 
 @keyframes loading {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
 }
 
-/* Mobile Responsive */
-@media (max-width: 1024px) {
-  .navLink {
-    padding: 8px 14px;
-    font-size: 14px;
-  }
-}
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: 12px 20px;
-  }
-
-  .logoWrapper {
-    width: 36px;
-    height: 36px;
+  .navInner {
+    padding: 10px 14px;
   }
 
   .navName {
-    font-size: 18px;
+    font-size: 15px;
   }
 
-  .navLinks {
-    gap: 4px;
-  }
-
-  .navLink {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
-  .createButtonText {
+  .createButton,
+  .desktopActions {
     display: none;
   }
 
-  .createButton {
-    padding: 10px 14px;
+  .languageMobile {
+    display: flex;
+    align-items: center;
+  }
+
+  .mobileBar {
+    display: grid;
+  }
+
+  .floatingFab {
+    display: flex;
+    animation: fabEntrance 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .bottomSheetOverlay {
+    display: block;
+  }
+
+  :global(body) {
+    padding-bottom: 80px;
   }
 }
 
-@media (max-width: 480px) {
-  .navbar {
+/* Small phones */
+@media (max-width: 375px) {
+  .floatingFab {
     padding: 12px 16px;
+    font-size: 14px;
+    right: 16px;
   }
 
-  .navLinks {
-    display: none;
-  }
-
-  .navName {
+  .fabIcon {
     font-size: 16px;
   }
+
+  .mobileTab {
+    padding: 6px 2px;
+  }
+
+  .mobileLabel {
+    font-size: 10px;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .floatingFab {
+  right: auto;
+  left: 20px;
+}
+
+[dir="rtl"] .bottomSheetLanguage {
+  margin-left: 0;
+  margin-right: auto;
 }

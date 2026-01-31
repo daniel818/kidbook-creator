@@ -348,33 +348,140 @@
   color: #6366f1;
 }
 
+/* Tablet */
 @media (max-width: 768px) {
   .booksGrid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 24px 16px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 32px 20px;
+    justify-items: center;
+  }
+
+  .bookItem {
+    max-width: 220px;
   }
 
   .book3DContainer {
-    height: 240px;
+    height: 280px;
   }
 
   .book3D {
-    width: 140px;
-    height: 200px;
-    transform: rotateY(-20deg) rotateX(10deg);
+    width: 160px;
+    height: 224px;
+    transform: rotateY(-20deg) rotateX(8deg);
+    margin-left: 15px;
+  }
+
+  .book3DSpine {
+    width: 28px;
+    transform: translateX(-14px) rotateY(-90deg);
+  }
+
+  .book3DFront {
+    transform: translateZ(14px);
+  }
+
+  .book3DBack {
+    transform: translateZ(-14px) rotateY(180deg);
   }
 
   .bookPagesTop,
   .bookPagesBottom {
-    width: 134px;
+    width: 154px;
+    height: 24px;
+    transform: translateY(2px) rotateX(90deg) translateZ(12px);
+  }
+
+  .bookPagesBottom {
+    transform: translateY(-2px) rotateX(-90deg) translateZ(12px);
   }
 
   .bookPagesRight {
-    transform: rotateY(90deg) translateZ(134px);
+    width: 24px;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+    transform: rotateY(90deg) translateZ(12px);
   }
 
   .metaActions {
     opacity: 1;
     transform: none;
+  }
+
+  .metaTitle {
+    font-size: 15px;
+  }
+
+  .metaSubtitle {
+    font-size: 12px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .booksGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 16px 0;
+  }
+
+  .bookItem {
+    max-width: 280px;
+    width: 100%;
+  }
+
+  .book3DContainer {
+    height: 300px;
+  }
+
+  .book3D {
+    width: 180px;
+    height: 252px;
+    transform: rotateY(-18deg) rotateX(6deg);
+    margin-left: 20px;
+  }
+
+  .book3DSpine {
+    width: 30px;
+    transform: translateX(-15px) rotateY(-90deg);
+  }
+
+  .book3DFront {
+    transform: translateZ(15px);
+  }
+
+  .book3DBack {
+    transform: translateZ(-15px) rotateY(180deg);
+  }
+
+  .bookPagesTop,
+  .bookPagesBottom {
+    width: 174px;
+    height: 26px;
+    transform: translateY(2px) rotateX(90deg) translateZ(13px);
+  }
+
+  .bookPagesBottom {
+    transform: translateY(-2px) rotateX(-90deg) translateZ(13px);
+  }
+
+  .bookPagesRight {
+    width: 26px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    transform: rotateY(90deg) translateZ(13px);
+  }
+
+  .book3DShadow {
+    width: 150px;
+  }
+
+  .book3DTitle {
+    font-size: 18px;
+  }
+
+  .book3DEmoji {
+    font-size: 3rem;
   }
 }

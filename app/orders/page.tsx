@@ -75,6 +75,7 @@ export default function OrdersPage() {
     const { user, isLoading: authLoading } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [expandedTimelines, setExpandedTimelines] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -161,6 +162,10 @@ export default function OrdersPage() {
         return value.charAt(0).toUpperCase() + value.slice(1);
     };
 
+    const toggleTimeline = (orderId: string) => {
+        setExpandedTimelines(prev => ({ ...prev, [orderId]: !prev[orderId] }));
+    };
+
     if (authLoading || (isLoading && !orders.length)) {
         return (
             <div className={styles.loading}>
@@ -212,10 +217,12 @@ export default function OrdersPage() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, amount: 0.2 }}
                                     >
                                         <div className={styles.orderHeader}>
                                             <div className={styles.orderId}>ORDER #{order.id.slice(0, 8).toUpperCase()}</div>
-                                            <div>{formatDate(order.createdAt)}</div>
+                                            <div className={styles.orderDate}>{formatDate(order.createdAt)}</div>
                                         </div>
 
                                         <div className={styles.orderContent}>
@@ -246,6 +253,17 @@ export default function OrdersPage() {
                                                 {order.childName && (
                                                     <div className={styles.bookMeta}>For {order.childName}</div>
                                                 )}
+                                                <div className={styles.orderSummaryRow}>
+                                                    <span className={styles.summaryStatus}>
+                                                        <span className={styles.summaryDot} style={{ backgroundColor: config.color }}></span>
+                                                        {config.label}
+                                                    </span>
+                                                    {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax) && (
+                                                        <span className={styles.summaryDelivery}>
+                                                            {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax)}
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <div className={styles.metaRow}>
                                                     <span className={styles.metaPill}>{formatLabel(order.format)}</span>
                                                     <span className={styles.metaPill}>{SIZE_LABELS[order.size] || order.size}</span>
@@ -261,23 +279,33 @@ export default function OrdersPage() {
                                                 </div>
 
                                                 {!isError && (
-                                                    <div className={styles.progressTimeline}>
-                                                        {PROGRESS_STEPS.map((step, i) => {
-                                                            const isCompleted = config.step > i + 1;
-                                                            const isCurrent = config.step === i + 1;
-                                                            return (
-                                                                <div
-                                                                    key={step.key}
-                                                                    className={`${styles.progressStep} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
-                                                                >
-                                                                    <div className={styles.progressDot}>
-                                                                        {isCompleted ? '✓' : isCurrent ? step.icon : (i + 1)}
+                                                    <>
+                                                        <button
+                                                            className={styles.timelineToggle}
+                                                            onClick={() => toggleTimeline(order.id)}
+                                                        >
+                                                            {expandedTimelines[order.id] ? 'Hide progress' : 'Show progress'}
+                                                        </button>
+                                                        <div
+                                                            className={`${styles.progressTimeline} ${expandedTimelines[order.id] ? styles.timelineExpanded : styles.timelineCollapsed}`}
+                                                        >
+                                                            {PROGRESS_STEPS.map((step, i) => {
+                                                                const isCompleted = config.step > i + 1;
+                                                                const isCurrent = config.step === i + 1;
+                                                                return (
+                                                                    <div
+                                                                        key={step.key}
+                                                                        className={`${styles.progressStep} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
+                                                                    >
+                                                                        <div className={styles.progressDot}>
+                                                                            {isCompleted ? '✓' : isCurrent ? step.icon : (i + 1)}
+                                                                        </div>
+                                                                        <span className={styles.progressLabel}>{step.label}</span>
                                                                     </div>
-                                                                    <span className={styles.progressLabel}>{step.label}</span>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </>
                                                 )}
                                             </div>
                                         </div>
