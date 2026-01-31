@@ -36,6 +36,14 @@ export interface ShippingEmailData extends OrderEmailData {
   estimatedDelivery: string;
 }
 
+export interface DigitalUnlockEmailData {
+  bookId: string;
+  customerEmail: string;
+  customerName: string;
+  bookTitle: string;
+  childName: string;
+}
+
 // Send order confirmation email
 export async function sendOrderConfirmation(data: OrderEmailData) {
   try {
@@ -98,6 +106,29 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
     }
 
     console.log('Delivery confirmation sent:', result?.id);
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error('Email error:', error);
+    return { success: false, error };
+  }
+}
+
+// Send digital unlock email
+export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
+  try {
+    const { data: result, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.customerEmail,
+      subject: `Your digital book "${data.bookTitle}" is ready ✨`,
+      html: generateDigitalUnlockHtml(data),
+    });
+
+    if (error) {
+      console.error('Failed to send digital unlock email:', error);
+      return { success: false, error };
+    }
+
+    console.log('Digital unlock email sent:', result?.id);
     return { success: true, id: result?.id };
   } catch (error) {
     console.error('Email error:', error);
@@ -209,6 +240,71 @@ function generateOrderConfirmationHtml(data: OrderEmailData): string {
             <td>
               <p style="color: #94a3b8; font-size: 13px; margin: 0;">Questions? Reply to this email or contact us at support@kidbookcreator.com</p>
               <p style="color: #94a3b8; font-size: 13px; margin: 12px 0 0 0;">© ${new Date().getFullYear()} KidBook Creator. Made with ❤️ for parents.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+function generateDigitalUnlockHtml(data: DigitalUnlockEmailData): string {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  const bookUrl = `${appUrl}/book/${data.bookId}`;
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Digital Book Is Ready</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <tr>
+      <td>
+        <!-- Header -->
+        <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%); border-radius: 16px 16px 0 0; padding: 40px 30px; text-align: center;">
+          <tr>
+            <td>
+              <div style="font-size: 48px; margin-bottom: 16px;">✨</div>
+              <h1 style="color: white; font-size: 28px; font-weight: 700; margin: 0;">Your book is ready!</h1>
+              <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 12px 0 0 0;">Hi ${data.customerName}, your digital copy is unlocked.</p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Content -->
+        <table width="100%" cellpadding="0" cellspacing="0" style="background: white; padding: 30px; border-radius: 0 0 16px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+          <tr>
+            <td>
+              <h3 style="margin: 0 0 8px 0; font-size: 20px; color: #1e293b;">${data.bookTitle}</h3>
+              <p style="margin: 0 0 16px 0; color: #64748b; font-size: 15px;">For ${data.childName}</p>
+              <p style="margin: 0 0 24px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+                Your book is ready to view and download. The digital PDF is available inside the viewer.
+              </p>
+
+              <div style="text-align: center; margin: 24px 0 16px 0;">
+                <a href="${bookUrl}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px;">View & Download</a>
+              </div>
+
+              <p style="color: #94a3b8; font-size: 13px; margin: 0; text-align: center;">
+                If the button doesn’t work, copy and paste this link:<br>
+                ${bookUrl}
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Footer -->
+        <table width="100%" cellpadding="0" cellspacing="0" style="padding: 30px; text-align: center;">
+          <tr>
+            <td>
+              <p style="color: #94a3b8; font-size: 13px; margin: 0;">Questions? Reply to this email or contact us at support@kidbookcreator.com</p>
+              <p style="color: #94a3b8; font-size: 13px; margin: 12px 0 0 0;">© ${new Date().getFullYear()} KidBook Creator</p>
             </td>
           </tr>
         </table>

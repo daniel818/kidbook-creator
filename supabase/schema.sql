@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS books (
   reference_image_url TEXT,
   digital_unlock_paid BOOLEAN DEFAULT FALSE,
   digital_unlock_session_id TEXT,
+  digital_unlock_email_sent BOOLEAN DEFAULT FALSE,
   
   -- Status
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('preview', 'draft', 'completed', 'ordered')),

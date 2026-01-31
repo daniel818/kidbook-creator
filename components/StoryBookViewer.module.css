@@ -103,6 +103,7 @@
 .headerRight {
     justify-content: flex-end;
     gap: 0.5rem;
+    position: relative;
 }
 
 .headerCenter {
@@ -135,53 +136,57 @@
 
 /* Navigation Buttons */
 .navBtn {
-    background: rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    color: var(--text-secondary);
-    width: 38px;
-    height: 38px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 300;
     transition: all var(--transition-fast);
-    box-shadow: var(--shadow-button);
+    box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
 }
 
 .navBtn:hover {
-    background: rgba(0, 0, 0, 0.08);
-    transform: scale(1.08);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: 0 14px 24px rgba(15, 23, 42, 0.16);
 }
 
 .navBtn:active {
-    transform: scale(0.96);
+    transform: translateY(0) scale(0.96);
 }
 
 .pageIndicator {
-    font-family: 'Inter', -apple-system, sans-serif;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    min-width: 80px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    color: #334155;
+    min-width: 84px;
     text-align: center;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
 }
 
 /* Action Buttons */
-.closeBtn,
-.actionBtn {
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+.closeBtn {
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     color: var(--text-secondary);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
     cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 0.85rem;
+    font-weight: 600;
     transition: all var(--transition-fast);
     display: flex;
     align-items: center;
@@ -189,11 +194,35 @@
     white-space: nowrap;
 }
 
-.closeBtn:hover,
-.actionBtn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.15);
+.closeBtn:hover {
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--text-primary);
+    transform: translateY(-1px);
 }
+
+.actionBtn {
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actionBtn:hover {
+    background: rgba(15, 23, 42, 0.08);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(15, 23, 42, 0.15);
+}
+
 
 .costBadge {
     padding: 4px 8px;
@@ -214,26 +243,41 @@
     cursor: not-allowed;
 }
 
-/* Order Button - Premium purple gradient */
+/* Order Button - Primary CTA */
 .orderButton {
-    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #ec4899 100%);
+    background: var(--accent-gradient);
     color: white;
     border: none;
-    padding: 0.5rem 1.25rem;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.875rem;
+    padding: 0.55rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-    transition: all 0.2s ease;
+    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.orderButton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 10%, rgba(255, 255, 255, 0.35) 45%, transparent 80%);
+    transform: translateX(-120%);
+    transition: transform 0.6s ease;
 }
 
 .orderButton:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(99, 102, 241, 0.4);
+}
+
+.orderButton:hover::after {
+    transform: translateX(120%);
 }
 
 .orderButton:active {
@@ -708,12 +752,19 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform var(--transition-slow);
+    transition: transform 1.2s ease, filter 1.2s ease, opacity 1.2s ease;
+    will-change: transform, filter, opacity;
 }
 
 /* Subtle zoom on hover */
 .illustrationPage:hover .fullBleedImage {
     transform: scale(1.02);
+}
+
+.fullBleedImageLoading {
+    filter: blur(18px);
+    transform: scale(1.05);
+    opacity: 0.7;
 }
 
 /* Vignette overlay for depth */
@@ -1332,21 +1383,31 @@
 }
 
 .generationBanner {
+    position: absolute;
+    top: 76px;
+    right: 1.5rem;
+    z-index: 12;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.75rem 2rem 0.9rem;
-    background: rgba(15, 23, 42, 0.06);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+    gap: 0.35rem;
+    padding: 0.6rem 0.75rem;
+    width: min(260px, 88vw);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+    backdrop-filter: blur(10px);
 }
 
 .generationMeta {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #111827;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 .generationLabel {
@@ -1359,7 +1420,7 @@
 
 .generationBar {
     width: 100%;
-    height: 8px;
+    height: 6px;
     border-radius: 999px;
     background: rgba(148, 163, 184, 0.25);
     overflow: hidden;
@@ -1374,7 +1435,7 @@
 
 .generationHint {
     margin: 0;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #6b7280;
 }
 
@@ -1393,18 +1454,18 @@
     background: var(--accent-gradient);
     border: none;
     color: #fff;
-    padding: 0.45rem 1rem;
+    padding: 0.5rem 1.1rem;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     font-size: 0.8rem;
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .previewCta:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(99, 102, 241, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 24px rgba(99, 102, 241, 0.35);
 }
 
 .previewCta:disabled {
@@ -1487,16 +1548,16 @@
 
 .drawerCard,
 .drawerCardAlt {
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    border-radius: 18px;
-    padding: 1rem 1.25rem;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 20px;
+    padding: 1.1rem 1.35rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
     text-align: left;
     cursor: pointer;
-    background: #f8fafc;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(226, 232, 240, 0.6) 100%);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1507,7 +1568,7 @@
 }
 
 .drawerCardAlt {
-    background: #111827;
+    background: linear-gradient(135deg, #0f172a 0%, #111827 100%);
     color: #fff;
     border-color: transparent;
 }
@@ -1534,6 +1595,7 @@
     padding: 0.5rem 1rem;
     border-radius: 999px;
     cursor: pointer;
+    font-weight: 600;
 }
 
 .paywallTitle {
@@ -1585,7 +1647,8 @@
     }
 
     .generationBanner {
-        padding: 0.75rem 1rem 0.9rem;
+        right: 1rem;
+        top: 70px;
     }
 
     .previewCta {
@@ -1644,11 +1707,11 @@
 
 /* Edit Toggle in Header */
 .editToggle {
-    background: white;
-    border: 1px solid var(--header-border);
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     color: var(--text-secondary);
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: 999px;
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -1656,13 +1719,12 @@
     align-items: center;
     gap: 0.5rem;
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-button);
 }
 
 .editToggle:hover {
-    background: var(--viewer-bg-start);
-    border-color: var(--accent-primary);
-    color: var(--accent-primary);
+    background: rgba(15, 23, 42, 0.08);
+    border-color: rgba(15, 23, 42, 0.2);
+    color: var(--text-primary);
 }
 
 .editToggle.active {
@@ -1672,15 +1734,15 @@
 }
 
 .saveButton {
-    background: var(--accent-secondary);
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
     color: white;
     border: none;
-    padding: 0.5rem 1.25rem;
-    border-radius: 20px;
+    padding: 0.5rem 1.3rem;
+    border-radius: 999px;
     font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
@@ -1688,16 +1750,16 @@
 }
 
 .saveButton:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 26px rgba(34, 197, 94, 0.35);
 }
 
 .cancelButton {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid transparent;
+    background: rgba(15, 23, 42, 0.04);
+    color: var(--text-secondary);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: 999px;
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1705,7 +1767,7 @@
 
 .cancelButton:hover {
     color: var(--text-primary);
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(15, 23, 42, 0.08);
 }
 
 .editToolbar {

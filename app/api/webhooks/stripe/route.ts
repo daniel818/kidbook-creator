@@ -8,7 +8,7 @@ import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
 import { createAdminClient } from '@/lib/supabase/server';
-import { sendOrderConfirmation, OrderEmailData } from '@/lib/email/client';
+import { sendOrderConfirmation, sendDigitalUnlockEmail, OrderEmailData, DigitalUnlockEmailData } from '@/lib/email/client';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2025-02-24.acacia',
@@ -209,16 +209,61 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
         return;
     }
 
-    const { error } = await supabase
+    const { data: book, error } = await supabase
         .from('books')
         .update({
             digital_unlock_paid: true,
             digital_unlock_session_id: session.id,
         })
-        .eq('id', bookId);
+        .eq('id', bookId)
+        .select('id, user_id, title, child_name, digital_unlock_email_sent')
+        .single();
 
-    if (error) {
+    if (error || !book) {
         console.error('[Webhook] Failed to mark digital unlock paid', error);
+        return;
+    }
+
+    if (book.digital_unlock_email_sent) {
+        return;
+    }
+
+    const customerEmail = session.customer_email || session.customer_details?.email;
+    let recipientEmail = customerEmail || '';
+    let recipientName = session.customer_details?.name || 'Customer';
+
+    if (!recipientEmail) {
+        const { data: userResult, error: userError } = await supabase.auth.admin.getUserById(book.user_id);
+        if (userError) {
+            console.error('[Webhook] Failed to load user email', userError);
+        } else {
+            recipientEmail = userResult?.user?.email || '';
+            recipientName = userResult?.user?.user_metadata?.full_name || recipientName;
+        }
+    }
+
+    if (!recipientEmail) {
+        console.error('[Webhook] Missing recipient email for digital unlock');
+        return;
+    }
+
+    try {
+        const emailData: DigitalUnlockEmailData = {
+            bookId: book.id,
+            customerEmail: recipientEmail,
+            customerName: recipientName,
+            bookTitle: book.title || 'Personalized Book',
+            childName: book.child_name || 'your child',
+        };
+        const emailResult = await sendDigitalUnlockEmail(emailData);
+        if (emailResult.success) {
+            await supabase
+                .from('books')
+                .update({ digital_unlock_email_sent: true })
+                .eq('id', book.id);
+        }
+    } catch (emailError) {
+        console.error('[Webhook] Digital unlock email error:', emailError);
     }
 }
 

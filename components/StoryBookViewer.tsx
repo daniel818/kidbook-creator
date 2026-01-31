@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
-import { generateInteriorPDF, downloadPDF as downloadLuluPDF } from '@/lib/lulu/pdf-generator';
-import { generateCoverPDF } from '@/lib/lulu/cover-generator';
 import PrintGenerator from './PrintGenerator';
 import styles from './StoryBookViewer.module.css';
 
@@ -97,15 +95,32 @@ const IllustrationPage = forwardRef<HTMLDivElement, {
     isLocked?: boolean;
 }>((props, ref) => {
     const { imageUrl, pageNumber, themeColors, isEditing, onRegenerate, isRegenerating, isGenerating, isLocked } = props;
+    const [isLoaded, setIsLoaded] = useState(false);
+    const imageRef = useRef<HTMLImageElement | null>(null);
+
+    useEffect(() => {
+        if (!imageUrl) return;
+        setIsLoaded(false);
+    }, [imageUrl]);
+
+    useEffect(() => {
+        if (!imageUrl) return;
+        if (imageRef.current?.complete) {
+            setIsLoaded(true);
+        }
+    }, [imageUrl]);
 
     return (
         <div className={styles.illustrationPage} ref={ref}>
             <div className={styles.illustrationPageWrapper}>
                 {imageUrl ? (
                     <img
+                        ref={imageRef}
                         src={imageUrl}
                         alt={`Illustration ${pageNumber || ''}`}
-                        className={styles.fullBleedImage}
+                        className={`${styles.fullBleedImage} ${!isLoaded ? styles.fullBleedImageLoading : ''}`}
+                        onLoad={() => setIsLoaded(true)}
+                        loading="lazy"
                     />
                 ) : (
                     <div
@@ -436,7 +451,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     // Event Handlers
     // ============================================
 
-    const handleDownload = async (e: React.MouseEvent) => {
+    const handleDownload = async () => {
         if (isDownloading) return;
         if (!isPaidAccess) {
             setShowPaywall(true);
@@ -445,26 +460,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
         try {
             setIsDownloading(true);
-
-            // Secret developer mode: Alt/Option + Click = Download Lulu Print Files
-            if (e.altKey) {
-                // Defaults to book format (square -> 8x8, portrait -> 8x10)
-                const size = liveBook.settings.printFormat === 'square' ? '8x8' : '8x10';
-                const format: 'softcover' | 'hardcover' = 'softcover';
-
-                // 1. Generate Interior
-                const interiorBlob = await generateInteriorPDF(liveBook, format, size);
-                downloadLuluPDF(interiorBlob, `${liveBook.settings.title || 'book'}_interior_${size}.pdf`);
-
-                // 2. Generate Cover
-                const coverBlob = await generateCoverPDF(liveBook, format, size);
-                downloadLuluPDF(coverBlob, `${liveBook.settings.title || 'book'}_cover_${size}.pdf`);
-
-                return;
-            }
-
             const blob = await generateBookPDF(liveBook);
-            const filename = `${liveBook.settings.title || 'story-book'}.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const filename = `${liveBook.settings.title || 'story-book'}_digital.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             downloadPDF(blob, filename);
         } catch (error) {
             console.error('Error generating PDF:', error);
