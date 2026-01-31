@@ -198,6 +198,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const themeColors = book.settings.bookTheme
         ? BookThemeInfo[book.settings.bookTheme]?.colors || ['#6366f1', '#ec4899']
         : ['#6366f1', '#ec4899'];
+    const canRegenerateImages = false;
 
     // Get total page count for progress indicator
     // Cover + (inner pages * 2 for spreads) + Back cover
@@ -493,7 +494,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             imageUrl={displayImage || undefined}
                             pageNumber={rightPageNum}
                             themeColors={themeColors}
-                            isEditing={isEditing}
+                            isEditing={isEditing && canRegenerateImages}
                             isRegenerating={regeneratingPage === pageNum}
                             onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
                         />
@@ -507,7 +508,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             imageUrl={displayImage || undefined}
                             pageNumber={leftPageNum}
                             themeColors={themeColors}
-                            isEditing={isEditing}
+                            isEditing={isEditing && canRegenerateImages}
                             isRegenerating={regeneratingPage === pageNum}
                             onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
                         />
