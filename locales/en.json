@@ -764,7 +764,7 @@
       },
       {
         "title": "Cancellation Window",
-        "content": "You may cancel your order within 48 hours of placing it, provided that book generation has not yet begun. Once book generation starts, orders cannot be cancelled due to the personalized nature of our products."
+        "content": "Print Orders: Partial refund available if cancelled within 24 hours of order placement and before printing begins. The digital book portion is non-refundable as it is created immediately. Within 48 hours: Partial refund for print book cost only. Digital pricing remains non-refundable. Digital Orders: No refunds available as the book is created immediately upon order completion. Once book enters printing (typically 24 hours after order), cancellation is not possible."
       },
       {
         "title": "Personalized Products Exclusion",
@@ -772,7 +772,7 @@
       },
       {
         "title": "Defective Products",
-        "content": "If your book arrives with manufacturing defects (printing errors, binding issues, damage during shipping), please contact us within 14 days of receipt. We will arrange for a free replacement or full refund, including shipping costs."
+        "content": "Our books are personalized products created specifically for you. Returns are only accepted for actual manufacturing defects, not personal preferences or artistic interpretations. If your book arrives with genuine defects (printing errors, binding issues, damage during shipping), please contact our support team within 14 days of delivery. We will review your case and work with you to the best of our abilities to resolve the issue."
       },
       {
         "title": "Cancellation Process",
@@ -965,7 +965,7 @@
       },
       {
         "title": "Photo Retention",
-        "content": "Photos are stored for 90 days after order completion, then automatically deleted. You can request early deletion at any time."
+        "content": "Photos are stored for 7 days after order completion, then automatically deleted. You can request early deletion at any time."
       },
       {
         "title": "Service Provider Sharing",
