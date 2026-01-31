@@ -9,6 +9,14 @@ import { uploadReferenceImage } from '@/lib/supabase/upload';
 import * as fs from 'fs';
 import * as path from 'path';
 
+const safeStringify = (value: unknown) => {
+    try {
+        return JSON.stringify(value, null, 2);
+    } catch {
+        return String(value);
+    }
+};
+
 // Helper function for logging with timestamps
 const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
@@ -18,14 +26,14 @@ const log = (message: string, data?: unknown) => {
     // Also write to file for deeper debugging
     try {
         const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
+        const dataStr = data !== undefined ? (typeof data === 'string' ? data : safeStringify(data)) : '';
         fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
     } catch (e) {
         // ignore write error
     }
 
     if (data !== undefined) {
-        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 500));
+        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : safeStringify(data).slice(0, 500));
     }
 };
 
@@ -41,6 +49,21 @@ const PRICING = {
     'gemini-2.5-flash-image': {
         image: 0.039 // ~$30/1M output tokens (approx 1290 tokens/img)
     }
+};
+
+const parseDataUrl = (value: unknown): { contentType: string; base64: string } | null => {
+    if (typeof value !== 'string') return null;
+    if (!value.startsWith('data:')) return null;
+    const commaIndex = value.indexOf(',');
+    if (commaIndex === -1) return null;
+    const header = value.slice(5, commaIndex);
+    const base64 = value.slice(commaIndex + 1);
+    if (!base64) return null;
+    const [contentType] = header.split(';');
+    return {
+        contentType: contentType || 'image/jpeg',
+        base64
+    };
 };
 
 function calculateCost(log: any): number {
@@ -160,15 +183,16 @@ export async function POST(request: NextRequest) {
         log(`Created bookId: ${bookId}`);
         let referenceImageUrl: string | null = null;
         if (childPhoto) {
-            const matches = childPhoto.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-            if (matches && matches.length === 3) {
-                const contentType = matches[1];
-                const buffer = Buffer.from(matches[2], 'base64');
+            const parsed = parseDataUrl(childPhoto);
+            if (parsed) {
+                const buffer = Buffer.from(parsed.base64, 'base64');
                 try {
-                    referenceImageUrl = await uploadReferenceImage(userId, bookId, buffer, contentType);
+                    referenceImageUrl = await uploadReferenceImage(userId, bookId, buffer, parsed.contentType);
                 } catch (err) {
                     log('Reference image upload failed', err);
                 }
+            } else {
+                log('Reference image skipped: invalid data URL');
             }
         }
         const previewCountClamped = isPreview
@@ -187,25 +211,23 @@ export async function POST(request: NextRequest) {
         const uploadBase64 = async (base64Str: string, filename: string) => {
             if (!base64Str || base64Str.length < 100) return null;
             try {
-                const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-                if (matches && matches.length === 3) {
-                    const contentType = matches[1];
-                    const buffer = Buffer.from(matches[2], 'base64');
-                    // log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
+                const parsed = parseDataUrl(base64Str);
+                if (!parsed) return null;
+                const buffer = Buffer.from(parsed.base64, 'base64');
+                // log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
 
-                    const { error: uploadError } = await supabase.storage
-                        .from('book-images')
-                        .upload(filename, buffer, { contentType, upsert: true });
+                const { error: uploadError } = await supabase.storage
+                    .from('book-images')
+                    .upload(filename, buffer, { contentType: parsed.contentType, upsert: true });
 
-                    if (uploadError) {
-                        log(`Upload FAILED for ${filename}`, uploadError.message);
-                        return null;
-                    }
-                    const { data: { publicUrl } } = supabase.storage
-                        .from('book-images')
-                        .getPublicUrl(filename);
-                    return publicUrl;
+                if (uploadError) {
+                    log(`Upload FAILED for ${filename}`, uploadError.message);
+                    return null;
                 }
+                const { data: { publicUrl } } = supabase.storage
+                    .from('book-images')
+                    .getPublicUrl(filename);
+                return publicUrl;
             } catch (e) {
                 log(`Processing ERROR for ${filename}`, e);
             }
@@ -312,6 +334,7 @@ export async function POST(request: NextRequest) {
                 page_number: pagesData.length + 1,
                 page_type: 'back',
                 background_color: '#ffffff',
+                image_prompt: '', // Back cover doesn't have a specific image prompt
                 text_elements: result.story.backCoverBlurb ? [{
                     id: crypto.randomUUID(),
                     content: result.story.backCoverBlurb,

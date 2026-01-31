@@ -158,6 +158,23 @@ export async function PUT(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        const { data: bookAccess, error: accessError } = await supabase
+            .from('books')
+            .select('id, is_preview, status, digital_unlock_paid, user_id')
+            .eq('id', bookId)
+            .eq('user_id', user.id)
+            .single();
+
+        if (accessError || !bookAccess) {
+            return NextResponse.json({ error: 'Book not found' }, { status: 404 });
+        }
+
+        const isPreview = !!bookAccess.is_preview || bookAccess.status === 'preview';
+        const hasPaidAccess = !isPreview || !!bookAccess.digital_unlock_paid;
+        if (!hasPaidAccess) {
+            return NextResponse.json({ error: 'Unlock required' }, { status: 402 });
+        }
+
         const body = await request.json();
         const { settings, pages, status } = body;
 

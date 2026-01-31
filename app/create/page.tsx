@@ -13,7 +13,7 @@ import {
     getAgeGroup,
 } from '@/lib/types';
 import { saveBook } from '@/lib/storage';
-import { ART_STYLES, ArtStyle, ImageQuality } from '@/lib/art-styles';
+import { ART_STYLES, ArtStyle } from '@/lib/art-styles';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
@@ -617,50 +617,6 @@ export default function CreateBookPage() {
                                 })}
                             </div>
 
-                            <div className={styles.qualitySection} style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                <label className={styles.fieldLabel} style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#1e293b' }}>
-                                    {t('imageQuality.label')}
-                                </label>
-                                <div className={styles.qualityToggle} style={{ display: 'flex', gap: '1rem' }}>
-                                    <button
-                                        onClick={() => setSettings(prev => ({ ...prev, imageQuality: 'fast' }))}
-                                        style={{
-                                            flex: 1,
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: settings.imageQuality === 'fast' || !settings.imageQuality ? '2px solid #6366f1' : '1px solid #cbd5e1',
-                                            background: settings.imageQuality === 'fast' || !settings.imageQuality ? '#e0e7ff' : 'white',
-                                            color: settings.imageQuality === 'fast' || !settings.imageQuality ? '#4338ca' : '#64748b',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        {t('imageQuality.fast')}
-                                    </button>
-                                    <button
-                                        onClick={() => setSettings(prev => ({ ...prev, imageQuality: 'pro' }))}
-                                        style={{
-                                            flex: 1,
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: settings.imageQuality === 'pro' ? '2px solid #ec4899' : '1px solid #cbd5e1',
-                                            background: settings.imageQuality === 'pro' ? '#fce7f3' : 'white',
-                                            color: settings.imageQuality === 'pro' ? '#be185d' : '#64748b',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        {t('imageQuality.pro')}
-                                    </button>
-                                </div>
-                                <p style={{ marginTop: '0.75rem', fontSize: '0.875rem', color: '#64748b' }}>
-                                    {settings.imageQuality === 'pro'
-                                        ? t('imageQuality.proDescription')
-                                        : t('imageQuality.fastDescription')}
-                                </p>
-                            </div>
                         </motion.div>
                     )}
 

@@ -244,6 +244,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const canRegenerateImages = false;
     const isPreview = liveBook.isPreview || liveBook.status === 'preview';
     const previewPageCount = liveBook.previewPageCount || 0;
+    const isPaidAccess = !isPreview || !!liveBook.digitalUnlockPaid;
 
     // Get total page count for progress indicator
     // Cover + (inner pages * 2 for spreads) + Back cover
@@ -363,6 +364,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         setUnlockState('generating');
     }, [isPreview, liveBook.digitalUnlockPaid, unlockState]);
 
+    useEffect(() => {
+        if (!isPaidAccess && isEditing) {
+            setIsEditing(false);
+        }
+    }, [isPaidAccess, isEditing]);
+
     const handleCheckoutComplete = useCallback((payload?: { bookId?: string }) => {
         if (payload?.bookId && payload.bookId !== book.id) return;
         checkoutWindowRef.current?.close();
@@ -431,6 +438,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
     const handleDownload = async (e: React.MouseEvent) => {
         if (isDownloading) return;
+        if (!isPaidAccess) {
+            setShowPaywall(true);
+            return;
+        }
 
         try {
             setIsDownloading(true);
@@ -480,9 +491,22 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         return page.backgroundImage || (page as unknown as { background_image?: string }).background_image || null;
     };
 
-    const totalInnerPages = liveBook.pages.filter(p => p.type === 'inside').length;
-    const generatedInnerPages = liveBook.pages.filter(p => p.type === 'inside' && getPageImage(p)).length;
-    const generationPercent = totalInnerPages ? Math.round((generatedInnerPages / totalInnerPages) * 100) : 0;
+    const readyTextPages = innerPages.filter(page => {
+        const content = page.textElements?.[0]?.content || '';
+        return content.trim().length > 0;
+    }).length;
+    const readyImagePages = innerPages.filter(page => !!getPageImage(page)).length;
+    const backCoverPageForProgress = liveBook.pages.find(p => p.type === 'back');
+    const backCoverReady = backCoverPageForProgress
+        ? !!getPageImage(backCoverPageForProgress) || !!(backCoverPageForProgress.textElements?.[0]?.content || '').trim()
+        : false;
+    const readyPhysicalPages = Math.min(
+        totalFlipPages,
+        1 + readyTextPages + readyImagePages + (backCoverReady ? 1 : 0)
+    );
+    const generationPercent = totalFlipPages
+        ? Math.round((readyPhysicalPages / totalFlipPages) * 100)
+        : 0;
 
     const onFlip = useCallback((e: { data: number }) => {
         setCurrentPageIndex(e.data);
@@ -810,7 +834,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                 </button>
                             </>
                         ) : (
-                            <button className={styles.editToggle} onClick={() => setIsEditing(true)}>
+                            <button
+                                className={styles.editToggle}
+                                onClick={() => (isPaidAccess ? setIsEditing(true) : setShowPaywall(true))}
+                                title={isPaidAccess ? undefined : 'Unlock to edit'}
+                            >
                                 ✎ Edit
                             </button>
                         )}
@@ -865,8 +893,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             {unlockState === 'generating' && (
                 <div className={styles.generationBanner}>
                     <div className={styles.generationMeta}>
-                        <span className={styles.generationLabel}>Generating illustrations</span>
-                        <span className={styles.generationCount}>{generatedInnerPages}/{totalInnerPages}</span>
+                        <span className={styles.generationLabel}>Pages ready</span>
+                        <span className={styles.generationCount}>{readyPhysicalPages}/{totalFlipPages}</span>
                     </div>
                     <div className={styles.generationBar}>
                         <div
@@ -874,7 +902,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             style={{ width: `${generationPercent}%` }}
                         />
                     </div>
-                    <p className={styles.generationHint}>Stay in the story while we paint the rest.</p>
+                    <p className={styles.generationHint}>Text is ready. We&apos;re painting the remaining illustrations.</p>
                 </div>
             )}
 
