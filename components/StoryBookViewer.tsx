@@ -234,6 +234,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const [isDownloading, setIsDownloading] = useState(false);
     const [isGeneratingPrint, setIsGeneratingPrint] = useState(false);
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+    const [hudVisible, setHudVisible] = useState(true);
+    const hudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [pageSize, setPageSize] = useState({ width: 550, height: 733 });
 
     // Editor State
     const [isEditing, setIsEditing] = useState(false);
@@ -260,12 +264,55 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const isPreview = liveBook.isPreview || liveBook.status === 'preview';
     const previewPageCount = liveBook.previewPageCount || 0;
     const isPaidAccess = !isPreview || !!liveBook.digitalUnlockPaid;
+    const isSquare = liveBook.settings.printFormat === 'square';
 
     // Get total page count for progress indicator
     // Cover + (inner pages * 2 for spreads) + Back cover
     const innerPages = liveBook.pages.filter(p => p.type === 'inside');
     const totalFlipPages = 2 + (innerPages.length * 2); // Front cover, spreads, back cover
     const totalPageCount = liveBook.totalPageCount || totalFlipPages;
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const handleChange = () => {
+            const minDimension = Math.min(window.innerWidth, window.innerHeight);
+            setIsMobile(minDimension <= 600);
+        };
+        handleChange();
+        window.addEventListener('resize', handleChange);
+        return () => {
+            window.removeEventListener('resize', handleChange);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const updateSize = () => {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const horizontalPadding = isMobile ? 28 : 160;
+            const verticalPadding = isMobile ? 220 : (isSquare ? 280 : 220);
+            const baseWidth = 550;
+            const maxWidth = Math.max(240, viewportWidth - horizontalPadding);
+            let width = Math.min(baseWidth, maxWidth);
+            const maxHeight = Math.max(320, viewportHeight - verticalPadding);
+            if (isSquare) {
+                width = Math.min(width, maxHeight);
+            }
+            let height = isSquare ? width : Math.round(width * 4 / 3);
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = isSquare ? height : Math.round(height * 3 / 4);
+            }
+            setPageSize({
+                width: Math.max(240, Math.round(width)),
+                height: Math.max(320, Math.round(height))
+            });
+        };
+        updateSize();
+        window.addEventListener('resize', updateSize);
+        return () => window.removeEventListener('resize', updateSize);
+    }, [isMobile, isSquare]);
 
     // ============================================
     // Fullscreen Handling
@@ -505,9 +552,50 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         ? Math.round((readyPhysicalPages / totalFlipPages) * 100)
         : 0;
 
+    const scheduleHudHide = useCallback(() => {
+        if (!isMobile) return;
+        if (showPaywall || isEditing || unlockState !== 'idle') return;
+        if (hudTimerRef.current) {
+            window.clearTimeout(hudTimerRef.current);
+        }
+        hudTimerRef.current = window.setTimeout(() => {
+            setHudVisible(false);
+        }, 2600);
+    }, [isMobile, showPaywall, isEditing, unlockState]);
+
+    const showHud = useCallback(() => {
+        if (!isMobile) return;
+        setHudVisible(true);
+        scheduleHudHide();
+    }, [isMobile, scheduleHudHide]);
+
+    useEffect(() => {
+        if (!isMobile) {
+            setHudVisible(true);
+            return;
+        }
+        showHud();
+        return () => {
+            if (hudTimerRef.current) {
+                window.clearTimeout(hudTimerRef.current);
+            }
+        };
+    }, [isMobile, showHud]);
+
+    useEffect(() => {
+        if (!isMobile) return;
+        if (showPaywall || unlockState !== 'idle' || isEditing) {
+            setHudVisible(true);
+            if (hudTimerRef.current) {
+                window.clearTimeout(hudTimerRef.current);
+            }
+        }
+    }, [isMobile, showPaywall, unlockState, isEditing]);
+
     const onFlip = useCallback((e: { data: number }) => {
         setCurrentPageIndex(e.data);
-    }, []);
+        showHud();
+    }, [showHud]);
 
     const flipPrev = useCallback(() => {
         bookRef.current?.pageFlip().flipPrev();
@@ -759,7 +847,6 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
 
     // Calculate dimensions based on format
-    const isSquare = liveBook.settings.printFormat === 'square';
     const displayTitle = liveBook.settings.title || 'Untitled story';
     const bookSubtitle = [
         liveBook.settings.childName,
@@ -767,9 +854,6 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     ]
         .filter(Boolean)
         .join(' · ');
-
-    const bookWidth = 550;
-    const bookHeight = isSquare ? 550 : 733; // 1:1 vs 3:4
 
     // Find custom back cover if it exists
     const backCoverPage = liveBook.pages.find(p => p.type === 'back');
@@ -781,7 +865,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     return (
         <div
             ref={viewerRef}
-            className={`${styles.viewer} ${isFullScreen || isFullscreen ? styles.fullScreen : ''}`}
+            className={`${styles.viewer} ${isFullScreen || isFullscreen ? styles.fullScreen : ''} ${isMobile ? styles.mobile : ''} ${isMobile && !hudVisible ? styles.hudHidden : ''}`}
+            onClickCapture={() => showHud()}
         >
             {/* Header Controls */}
             <header className={styles.header}>
@@ -916,28 +1001,28 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 <div className={styles.centeringWrapper}>
                     {/* @ts-ignore - Library types are tricky */}
                     <HTMLFlipBook
-                        width={bookWidth}
-                        height={bookHeight}
+                        width={pageSize.width}
+                        height={pageSize.height}
                         size="fixed"
-                        minWidth={315}
+                        minWidth={240}
                         maxWidth={1000}
-                        minHeight={400}
+                        minHeight={320}
                         maxHeight={1533}
-                        maxShadowOpacity={0.5}
+                        maxShadowOpacity={isMobile ? 0.3 : 0.5}
                         showCover={true}
-                        mobileScrollSupport={true}
+                        mobileScrollSupport={isMobile}
                         onFlip={onFlip}
                         ref={bookRef}
                         className={styles.flipBook}
                         flippingTime={600}
-                        usePortrait={false}
+                        usePortrait={isMobile}
                         startPage={0}
                         drawShadow={true}
                         autoSize={true}
                         clickEventForward={true}
-                        useMouseEvents={true}
+                        useMouseEvents={!isEditing}
                         swipeDistance={30}
-                        showPageCorners={true}
+                        showPageCorners={!isMobile}
                         disableFlipByClick={isEditing}
                     >
                         {/* Front Cover */}

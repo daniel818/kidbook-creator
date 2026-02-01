@@ -58,6 +58,10 @@
     overflow: hidden;
 }
 
+.mobile {
+    --book-edge-width: 4px;
+}
+
 /* Subtle grain texture overlay */
 .viewer::before {
     content: '';
@@ -72,6 +76,13 @@
     position: fixed;
     inset: 0;
     z-index: 1000;
+}
+
+.hudHidden .header,
+.hudHidden .progressContainer {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
 }
 
 /* ============================================
@@ -90,6 +101,18 @@
     z-index: 10;
     position: sticky;
     top: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.mobile .header {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: 0.5rem 0.85rem;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 55%, rgba(15, 23, 42, 0) 100%);
+    border-bottom: none;
+    box-shadow: none;
+    color: #fff;
 }
 
 .headerLeft,
@@ -98,6 +121,12 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+.mobile .headerLeft,
+.mobile .headerRight {
+    min-width: 0;
+    gap: 0.5rem;
 }
 
 .headerRight {
@@ -110,6 +139,10 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+.mobile .headerCenter {
+    display: none;
 }
 
 .bookMeta {
@@ -127,11 +160,21 @@
     line-height: 1.1;
 }
 
+.mobile .bookTitle {
+    color: #fff;
+    font-size: 0.9rem;
+}
+
 .bookSubtitle {
     font-family: 'Outfit', sans-serif;
     font-size: 0.75rem;
     color: var(--text-muted);
     letter-spacing: 0.02em;
+}
+
+.mobile .bookSubtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.65rem;
 }
 
 /* Navigation Buttons */
@@ -177,6 +220,14 @@
     border-radius: 999px;
 }
 
+.mobile .pageIndicator {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+
 /* Action Buttons */
 .closeBtn {
     background: rgba(15, 23, 42, 0.04);
@@ -192,6 +243,14 @@
     align-items: center;
     gap: 0.4rem;
     white-space: nowrap;
+}
+
+.mobile .closeBtn {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
 }
 
 .closeBtn:hover {
@@ -217,6 +276,15 @@
     justify-content: center;
 }
 
+.mobile .actionBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.12);
+}
+
 .actionBtn:hover {
     background: rgba(15, 23, 42, 0.08);
     transform: translateY(-1px);
@@ -236,6 +304,10 @@
     align-items: center;
     gap: 4px;
     white-space: nowrap;
+}
+
+.mobile .costBadge {
+    display: none;
 }
 
 .actionBtn:disabled {
@@ -260,6 +332,12 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
     overflow: hidden;
+}
+
+.mobile .orderButton {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.78rem;
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.28);
 }
 
 .orderButton::after {
@@ -293,6 +371,18 @@
     width: 100%;
     position: relative;
     overflow: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.mobile .progressContainer {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 12px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.18);
+    z-index: 12;
 }
 
 .progressBar {
@@ -344,6 +434,10 @@
     position: relative;
 }
 
+.mobile .bookContainer {
+    padding: 1rem 0.75rem 4.5rem;
+}
+
 .flipBook {
     box-shadow: var(--shadow-book);
     /* Rounded corners on BOTH outer sides - like a real open book */
@@ -355,6 +449,11 @@
     position: relative;
     overflow: hidden;
     animation: pickupBook 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.mobile .flipBook {
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
 }
 
 @keyframes pickupBook {
@@ -417,6 +516,10 @@
     pointer-events: none;
 }
 
+.mobile .flipBook::before {
+    display: none;
+}
+
 /* ============================================
    Cover Mode - Centered single-page cover display
    ============================================ */
@@ -438,6 +541,11 @@
 
 .backCoverMode .centeringWrapper {
     transform: translateX(25%);
+}
+
+.mobile .coverMode .centeringWrapper,
+.mobile .backCoverMode .centeringWrapper {
+    transform: none;
 }
 
 .coverInner {
@@ -643,6 +751,13 @@
 .backCoverMode :global(.stf__item.--right),
 .backCoverMode :global(.stf__block.--right) {
     display: none !important;
+}
+
+.mobile .coverMode :global(.stf__item.--left),
+.mobile .coverMode :global(.stf__block--left),
+.mobile .backCoverMode :global(.stf__item.--right),
+.mobile .backCoverMode :global(.stf__block--right) {
+    display: block !important;
 }
 
 .backCoverMode .flipBook {
@@ -1079,6 +1194,10 @@
     opacity: 1;
 }
 
+.mobile .keyboardHint {
+    display: none;
+}
+
 /* ============================================
    Legacy Support - Keep for backwards compat
    ============================================ */
@@ -1382,6 +1501,20 @@
     color: var(--text-secondary);
 }
 
+.mobile .previewBanner {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+    border-radius: 16px;
+    padding: 0.75rem 1rem;
+    z-index: 15;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
+    backdrop-filter: blur(10px);
+}
+
 .generationBanner {
     position: absolute;
     top: 76px;
@@ -1397,6 +1530,14 @@
     border-radius: 14px;
     box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
     backdrop-filter: blur(10px);
+}
+
+.mobile .generationBanner {
+    top: auto;
+    bottom: 96px;
+    left: 16px;
+    right: 16px;
+    width: auto;
 }
 
 .generationMeta {
