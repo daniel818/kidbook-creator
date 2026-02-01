@@ -590,6 +590,62 @@ In addition to quantitative scoring, evaluate these subjective qualities:
 | **Coping Strategy Quality** | N/A/Weak/Strong | For challenging themes only |
 | **Helper Character Effectiveness** | N/A/Weak/Strong | For fantasy/adventure only |
 
+### 6.3a Image Prompt Quality Evaluation
+
+Evaluate the quality of image prompts (imagePrompt field) for illustration generation:
+
+**Image Prompt Score (IPS): 10 points**
+
+| Criterion | Points | Description | Scoring Guide |
+|-----------|--------|-------------|---------------|
+| **Character Detail** | 0-2 | Physical description completeness | 0=Missing, 1=Basic, 2=Detailed (appearance, clothing, expression) |
+| **Setting Specificity** | 0-2 | Environment and location detail | 0=Vague, 1=Basic location, 2=Rich environment (time, atmosphere, details) |
+| **Action Clarity** | 0-2 | Clear description of what's happening | 0=Static/unclear, 1=Basic action, 2=Dynamic with movement |
+| **Visual Details** | 0-2 | Colors, textures, objects, scale | 0=Generic, 1=Some details, 2=Rich sensory details |
+| **Composition Guidance** | 0-1 | Focal point and spatial relationships | 0=Unclear, 1=Clear composition |
+| **Consistency** | 0-1 | Matches character description and previous pages | 0=Inconsistent, 1=Consistent |
+
+**Image Prompt Interpretation:**
+- **9-10:** Excellent - Highly detailed, illustration-ready
+- **7-8:** Good - Sufficient detail for quality illustration
+- **5-6:** Fair - Needs more specificity
+- **<5:** Poor - Too vague for consistent illustration
+
+**Subjective Image Prompt Criteria:**
+
+| Criterion | Rating | Description |
+|-----------|--------|-------------|
+| **Illustratability** | Low/Medium/High | How easy would this be to illustrate accurately? |
+| **Visual Interest** | Low/Medium/High | Does the scene sound visually engaging? |
+| **Age Appropriateness** | Poor/Good/Excellent | Visual complexity matches age group? |
+| **Magical/Emotional Quality** | Weak/Adequate/Strong | Does it capture the story's emotional tone? |
+| **Creativity** | Generic/Adequate/Unique | Original vs. clichéd visual descriptions? |
+
+**Word Count Check:**
+- Target: 40-100 words per imagePrompt
+- <40 words: Too sparse, likely missing details
+- 40-100 words: Optimal range
+- >100 words: May be overly complex
+
+**Mandatory Elements Checklist:**
+
+For each imagePrompt, verify presence of:
+- [ ] Character physical description (if character present)
+- [ ] Character expression/emotion
+- [ ] Setting/location details
+- [ ] Time of day/lighting
+- [ ] Action/movement description
+- [ ] At least 3 specific visual details (colors, objects, textures)
+- [ ] Composition/spatial information
+
+**Consistency Checks:**
+
+Across all pages in a story:
+- [ ] Character appearance consistent (hair, eyes, clothing unless changed)
+- [ ] Setting details build logically (if same location)
+- [ ] Time progression makes sense (morning → afternoon → evening)
+- [ ] Character clothing consistent unless story mentions change
+
 ### 6.4 Age-Specific Validation Checks
 
 **Ages 0-2 (Board Books):**
@@ -846,6 +902,79 @@ interface StoryEvaluation {
 - Story generation includes evaluation
 - All evaluations logged to DB
 - Critical flags trigger alerts
+
+### Phase 6: Character Description Prompt Improvement (Week 9-10)
+
+**Objective:** Enhance character extraction from photos for better consistency
+
+**Current State:**
+- Character extraction uses basic prompt: "Analyze this image and create a highly detailed character reference description"
+- Results in generic descriptions that may miss key details
+- No guidance on what makes a good character description for illustration consistency
+
+**Improvements:**
+1. **Enhanced Character Extraction Prompt:**
+   - Add specific feature categories (facial structure, expressions, unique traits)
+   - Request illustration-friendly descriptions (e.g., "round face with rosy cheeks" vs "circular facial structure")
+   - Include age-appropriate appearance notes
+   - Request clothing/accessory details for character consistency
+   - Add guidance on avoiding ambiguous terms
+
+2. **Testing Process:**
+   - Test with 20 diverse child photos (different ages, ethnicities, features)
+   - Compare original vs enhanced character descriptions
+   - Generate 3 illustrations per character to test consistency
+   - Evaluate: specificity, illustration consistency, age-appropriateness
+
+3. **Success Metrics:**
+   - Character descriptions are 50% more detailed (word count)
+   - Illustration consistency score improves by 30%
+   - 90%+ of descriptions include all key feature categories
+
+**Deliverables:**
+- Enhanced `getCharacterExtractionPrompt()` in `lib/gemini/prompts/en.ts`
+- Character description quality evaluation framework
+- Documentation of best practices for character descriptions
+
+### Phase 7: Art Style Prompt Refinement (Week 11-12)
+
+**Objective:** Optimize art style prompts for better illustration quality
+
+**Current State:**
+- 6 predefined art styles in `lib/art-styles.ts`
+- Generic style descriptions (e.g., "classic children's book illustration style")
+- No age-specific style variations
+- No guidance on composition, lighting, or mood
+
+**Improvements:**
+1. **Enhanced Style Prompts:**
+   - Add composition guidance (framing, perspective, focal points)
+   - Include lighting/mood instructions appropriate for children's books
+   - Add age-specific style variations (0-2: simpler, bolder; 9-12: more detailed)
+   - Specify color palette guidance for each style
+   - Add safety/appropriateness constraints per style
+
+2. **New Style Categories:**
+   - Age-optimized variants of existing styles
+   - Theme-specific style recommendations
+   - Emotional tone alignment (fun, magical, calming)
+
+3. **Testing Process:**
+   - Generate 10 illustrations per style with same scene
+   - Test across all age groups
+   - Evaluate: visual appeal, age-appropriateness, consistency, emotional tone
+   - Parent/child feedback on style preferences
+
+4. **Success Metrics:**
+   - Illustration quality scores improve by 25%
+   - Style consistency across pages improves by 40%
+   - Parent satisfaction with visual quality increases by 30%
+
+**Deliverables:**
+- Enhanced art style definitions in `lib/art-styles.ts`
+- Age-specific style variant system
+- Style selection guidance documentation
+- Updated `getIllustrationPrompt()` with enhanced style integration
 
 ---
 

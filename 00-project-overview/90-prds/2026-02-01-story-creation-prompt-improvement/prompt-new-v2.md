@@ -253,6 +253,86 @@ CRITICALLY IMPORTANT:
 - Use only English words, grammar, and syntax
 
 ═══════════════════════════════════════════════════════════════
+IMAGE PROMPT REQUIREMENTS (CRITICAL)
+═══════════════════════════════════════════════════════════════
+
+Each page's imagePrompt must be a RICH, DETAILED scene description that enables consistent, high-quality illustration generation.
+
+**MANDATORY ELEMENTS FOR EVERY IMAGE PROMPT:**
+
+1. **Character Details (if character present):**
+   - Physical appearance: "${input.childName} with [hair color/style] and [eye color], wearing [clothing description]"
+   - Expression/emotion: "looking [happy/nervous/excited/curious], with [specific facial expression]"
+   - Body language/pose: "standing tall/sitting cross-legged/reaching out/running"
+
+2. **Setting & Environment:**
+   - Location: "in a [specific place with details]"
+   - Time of day: "morning sunlight/afternoon glow/evening shadows/nighttime"
+   - Atmosphere: "warm and cozy/bright and cheerful/calm and peaceful/exciting and vibrant"
+
+3. **Action & Movement:**
+   - What is happening: "pointing at/holding/building/running toward/looking at"
+   - Dynamic elements: "leaves falling/water splashing/wind blowing/butterflies flying"
+
+4. **Visual Details:**
+   - Colors: "bright red ball/soft blue blanket/golden sunlight/purple flowers"
+   - Textures: "fluffy/smooth/rough/sparkly/glistening"
+   - Scale/size: "large/small/colossal/tiny/towering"
+   - Specific objects: Name actual items, not generic "toys" or "things"
+
+5. **Composition Guidance:**
+   - Focal point: What should be the center of attention
+   - Background elements: What's visible in the scene
+   - Spatial relationships: "in front of/behind/next to/surrounded by"
+
+6. **Emotional/Magical Elements:**
+   - Mood indicators: "joyful/peaceful/exciting/magical"
+   - Special effects (if appropriate): "glowing/sparkling/shimmering/floating"
+
+**QUALITY STANDARDS:**
+
+✓ **GOOD:** "Sofia with curly blonde hair and bright blue eyes, wearing a soft blue sweater, sitting on a colorful classroom rug next to Leo, a boy with messy brown hair. She is pointing at three bright red blocks they are stacking together. The classroom is filled with toys and books in the background. Morning sunlight streams through the windows. Both children look happy and engaged."
+
+✗ **BAD:** "Sofia and Leo playing with blocks in a classroom."
+
+✓ **GOOD:** "Ethan with sandy hair wearing a bright red and white soccer uniform, running fast across a green soccer field. His legs are in motion and his face shows determination. A black and white soccer ball is ahead of him. Other children in similar uniforms are visible in the background. Bright afternoon sun overhead. The grass is freshly cut and glistening."
+
+✗ **BAD:** "Ethan playing soccer."
+
+**AGE-SPECIFIC IMAGE PROMPT GUIDANCE:**
+
+Ages 0-2:
+- Focus on simple, clear focal points
+- Bright, primary colors
+- Minimal background complexity
+- Large, recognizable objects
+
+Ages 3-4:
+- More detailed scenes with 2-3 focal points
+- Vibrant, varied colors
+- Simple background elements
+- Clear character expressions
+
+Ages 5-6:
+- Detailed scenes with multiple elements
+- Rich color palettes
+- Background storytelling elements
+- Action and movement
+
+Ages 7-12:
+- Complex, layered scenes
+- Sophisticated composition
+- Detailed backgrounds with depth
+- Nuanced expressions and body language
+
+**CONSISTENCY REQUIREMENTS:**
+
+- Character appearance MUST match characterDescription exactly in every image
+- Clothing should remain consistent unless story explicitly mentions a change
+- Setting details should build on previous pages (if same location)
+- Lighting/time of day should progress naturally through the story
+
+═══════════════════════════════════════════════════════════════
 OUTPUT FORMAT
 ═══════════════════════════════════════════════════════════════
 
@@ -266,7 +346,7 @@ Return ONLY a valid JSON object with this EXACT structure:
         {
             "pageNumber": 1,
             "text": "Story text for this page following age-specific word count and sentence length guidelines",
-            "imagePrompt": "Detailed scene description for illustration. Describe ONLY the scene, characters, actions, and setting. Do NOT include art style descriptions (e.g., 'watercolor', 'cartoon') as these are handled separately."
+            "imagePrompt": "RICH, DETAILED scene description following ALL IMAGE PROMPT REQUIREMENTS above. Include character details, setting, action, visual details, composition, and emotional elements. Describe ONLY the scene - art style is handled separately."
         },
         {
             "pageNumber": 2,
@@ -277,7 +357,10 @@ Return ONLY a valid JSON object with this EXACT structure:
     ]
 }
 
-CRITICAL: Generate exactly ${input.pageCount} pages. No more, no less.
+CRITICAL: 
+- Generate exactly ${input.pageCount} pages. No more, no less.
+- Every imagePrompt must be 40-100 words and include ALL mandatory elements.
+- Character appearance must be consistent across all pages.
 ```
 
 ---
