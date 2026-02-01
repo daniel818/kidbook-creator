@@ -376,7 +376,7 @@ These prompts simulate what real parents and children would type when creating a
 | T19 | Isabella | 11 | Identity | Growth |
 | T20 | Alex | 10 | STEM | Educational |
 
-### Coverage Analysis
+### Coverage Analysis (Tests T01-T20)
 
 | Age Group | Tests | Characters Used |
 |-----------|-------|-----------------|
@@ -397,6 +397,201 @@ These prompts simulate what real parents and children would type when creating a
 | Celebration | 2 |
 | Career | 1 |
 | Educational | 1 |
+
+---
+
+## 7. Additional Test Prompts (T21-T30)
+
+These 10 additional tests focus on edge cases and challenging scenarios to better differentiate prompt versions.
+
+### Ages 0-2 Tests (2 Additional)
+
+#### Test 21: Sensory Exploration
+| Field | Value |
+|-------|-------|
+| **Test ID** | T21 |
+| **Character** | C3 - Lily (1.5 years old) |
+| **Story** | S5 - [Name] and Mommy's Special Day |
+| **Book Type** | board |
+| **Theme** | custom |
+| **Story Description** | "A story about Lily and her mommy spending the day together. Lots of textures and sounds - soft blankets, splashing water, crunchy leaves." |
+| **Challenge Focus** | Sensory vocabulary, parent-child bonding |
+
+#### Test 22: First Words
+| Field | Value |
+|-------|-------|
+| **Test ID** | T22 |
+| **Character** | C2 - Noah (2 years old) |
+| **Story** | Custom - Learning Words |
+| **Book Type** | board |
+| **Theme** | learning |
+| **Story Description** | "Noah is learning to talk! He says 'ball', 'dog', 'mama'. Make it interactive where he points and names things." |
+| **Challenge Focus** | Vocabulary building, interactive elements |
+
+---
+
+### Ages 3-4 Tests (3 Additional)
+
+#### Test 23: New Sibling
+| Field | Value |
+|-------|-------|
+| **Test ID** | T23 |
+| **Character** | C6 - Sofia (3.5 years old) |
+| **Story** | S15 - [Name] Becomes a Big Sister |
+| **Book Type** | picture |
+| **Theme** | custom |
+| **Story Description** | "Sofia is getting a baby brother soon. She's excited but also worried she won't be special anymore. Help her feel confident about being a big sister." |
+| **Challenge Focus** | Complex emotions, family transition, reassurance |
+
+#### Test 24: Jungle Safari
+| Field | Value |
+|-------|-------|
+| **Test ID** | T24 |
+| **Character** | C5 - Liam (4 years old) |
+| **Story** | S14 - [Name]'s Jungle Safari |
+| **Book Type** | picture |
+| **Theme** | adventure |
+| **Story Description** | "Liam wants to go on a jungle adventure! He wants to see lions, monkeys, and elephants. Make it exciting but not scary." |
+| **Challenge Focus** | Balancing excitement with safety, animal accuracy |
+
+#### Test 25: Sharing is Hard
+| Field | Value |
+|-------|-------|
+| **Test ID** | T25 |
+| **Character** | C4 - Emma (3 years old) |
+| **Story** | Custom - Learning to Share |
+| **Book Type** | picture |
+| **Theme** | learning |
+| **Story Description** | "Emma doesn't want to share her toys with her cousin. Help her learn that sharing can be fun without being preachy." |
+| **Challenge Focus** | Teaching without preaching, natural lesson integration |
+
+---
+
+### Ages 5-6 Tests (2 Additional)
+
+#### Test 26: Losing a Tooth
+| Field | Value |
+|-------|-------|
+| **Test ID** | T26 |
+| **Character** | C9 - Ethan (5.5 years old) |
+| **Story** | S18 - [Name] Loses a Tooth! |
+| **Book Type** | story |
+| **Theme** | custom |
+| **Story Description** | "Ethan's first tooth is wiggly! He's a little nervous about it falling out. Make it exciting with the tooth fairy!" |
+| **Challenge Focus** | Addressing mild anxiety, magical elements |
+
+#### Test 27: Soccer Star
+| Field | Value |
+|-------|-------|
+| **Test ID** | T27 |
+| **Character** | C9 - Ethan (5.5 years old) |
+| **Story** | S22 - [Name] the Soccer Star |
+| **Book Type** | story |
+| **Theme** | adventure |
+| **Story Description** | "Ethan loves soccer! He has a big game coming up. He's nervous but wants to do his best. Focus on teamwork and trying hard, not just winning." |
+| **Challenge Focus** | Sports theme, effort over outcome, teamwork |
+
+---
+
+### Ages 7-8 Tests (2 Additional)
+
+#### Test 28: Dragon Quest
+| Field | Value |
+|-------|-------|
+| **Test ID** | T28 |
+| **Character** | C11 - Jack (8 years old) |
+| **Story** | S24 - [Name] and the Dragon's Quest |
+| **Book Type** | story |
+| **Theme** | fantasy |
+| **Story Description** | "Jack discovers a baby dragon in his backyard! The dragon needs help finding its way home to Dragon Mountain. An epic quest with friendship and bravery." |
+| **Challenge Focus** | Fantasy world-building, longer narrative, humor |
+
+#### Test 29: Superhero Origin
+| Field | Value |
+|-------|-------|
+| **Test ID** | T29 |
+| **Character** | C10 - Maya (7 years old) |
+| **Story** | S26 - [Name] the Superhero Origin |
+| **Book Type** | story |
+| **Theme** | fantasy |
+| **Story Description** | "Maya discovers she has a superpower - she can talk to animals! She uses her power to help animals in her neighborhood. Origin story vibes." |
+| **Challenge Focus** | Superhero theme, agency, using powers for good |
+
+---
+
+### Ages 9-12 Tests (1 Additional)
+
+#### Test 30: Epic Quest
+| Field | Value |
+|-------|-------|
+| **Test ID** | T30 |
+| **Character** | C15 - Daniel (9 years old) |
+| **Story** | S28 - [Name]'s Epic Quest |
+| **Book Type** | story |
+| **Theme** | fantasy |
+| **Story Description** | "Daniel finds an old book in his grandmother's attic that transports him into a fantasy world. He must complete three challenges to return home. Make it feel like a real adventure novel." |
+| **Challenge Focus** | Complex narrative, multiple challenges, literary quality |
+
+---
+
+## 8. Updated Test Matrix (T01-T30)
+
+| Test ID | Character | Age | Theme | Category | Challenge Focus |
+|---------|-----------|-----|-------|----------|-----------------|
+| T01 | Mia | 1 | Bedtime | Daily Routine | - |
+| T02 | Noah | 2 | Animals | Animals | - |
+| T03 | Lily | 1.5 | Bedtime | Family | - |
+| T04 | Mia | 1 | Birthday | Celebration | - |
+| T05 | Emma | 3 | Potty Training | Milestone | - |
+| T06 | Emma | 3 | Unicorns | Fantasy | - |
+| T07 | Liam | 4 | Superheroes | Fantasy | - |
+| T08 | Liam | 4 | Dinosaurs | Adventure | - |
+| T09 | Sofia | 3.5 | Birthday | Celebration | - |
+| T10 | Sofia | 3.5 | Friendship | Social | - |
+| T11 | Emma | 3 | Emotions | Social-Emotional | - |
+| T12 | Liam | 4 | Space | Adventure | - |
+| T13 | Oliver | 5 | School | Milestone | - |
+| T14 | Ethan | 5.5 | Bike Riding | Milestone | - |
+| T15 | Oliver | 5 | Firefighter | Career | - |
+| T16 | Ava | 6 | Courage | Emotions | - |
+| T17 | Zoe | 7.5 | Time Travel | Adventure | - |
+| T18 | Maya | 7 | Mystery | Adventure | - |
+| T19 | Isabella | 11 | Identity | Growth | - |
+| T20 | Alex | 10 | STEM | Educational | - |
+| **T21** | Lily | 1.5 | Custom | Family | Sensory vocabulary |
+| **T22** | Noah | 2 | Learning | Educational | Interactive elements |
+| **T23** | Sofia | 3.5 | Custom | Family | Complex emotions |
+| **T24** | Liam | 4 | Adventure | Adventure | Excitement vs safety |
+| **T25** | Emma | 3 | Learning | Social | Teaching without preaching |
+| **T26** | Ethan | 5.5 | Custom | Milestone | Addressing anxiety |
+| **T27** | Ethan | 5.5 | Adventure | Sports | Effort over outcome |
+| **T28** | Jack | 8 | Fantasy | Fantasy | World-building, humor |
+| **T29** | Maya | 7 | Fantasy | Fantasy | Superhero agency |
+| **T30** | Daniel | 9 | Fantasy | Fantasy | Complex narrative |
+
+### Updated Coverage Analysis (Tests T01-T30)
+
+| Age Group | Tests | Characters Used |
+|-----------|-------|-----------------|
+| 0-2 | 6 | Mia, Noah, Lily |
+| 3-4 | 11 | Emma, Liam, Sofia |
+| 5-6 | 6 | Oliver, Ava, Ethan |
+| 7-8 | 4 | Maya, Zoe, Jack |
+| 9-12 | 3 | Alex, Isabella, Daniel |
+| **Total** | **30** | **15** |
+
+| Category | Tests |
+|----------|-------|
+| Adventure | 7 |
+| Fantasy | 7 |
+| Milestone | 5 |
+| Social-Emotional | 3 |
+| Daily Routine | 2 |
+| Celebration | 2 |
+| Family | 3 |
+| Educational | 3 |
+| Career | 1 |
+| Sports | 1 |
 
 ---
 

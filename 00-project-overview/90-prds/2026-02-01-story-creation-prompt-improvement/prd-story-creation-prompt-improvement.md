@@ -533,7 +533,7 @@ The story MUST follow this structure across exactly 12 pages:
 
 ## 6. Evaluation Framework
 
-### 6.1 Story Quality Score (SQS)
+### 6.1 Story Quality Score (SQS) - Basic Framework
 
 **Total: 10 points**
 
@@ -552,7 +552,129 @@ The story MUST follow this structure across exactly 12 pages:
 - **5-6:** Fair - Needs revision
 - **<5:** Poor - Regeneration required
 
-### 6.2 Automated Validation Checks
+### 6.2 Enhanced SQS Framework (v2 - Stricter Criteria)
+
+To better differentiate between prompt versions, we use an **Enhanced 20-point scale** with more granular criteria:
+
+**Total: 20 points**
+
+| Criterion | Points | Description | Scoring Guide |
+|-----------|--------|-------------|---------------|
+| **Age Appropriateness** | 0-3 | Word count, sentence length, concepts | 0=Wrong age, 1=Partially correct, 2=Mostly correct, 3=Perfect match |
+| **Narrative Coherence** | 0-3 | Logical progression, clear arc | 0=Disjointed, 1=Basic structure, 2=Good flow, 3=Excellent arc |
+| **Theme Alignment** | 0-2 | Story matches requested theme | 0=Off-theme, 1=Partially aligned, 2=Perfect alignment |
+| **Safety Compliance** | 0-2 | No prohibited content | 0=Violation, 1=Minor concern, 2=Fully compliant |
+| **Emotional Engagement** | 0-3 | Fun, magical, exciting, delightful | 0=Flat/boring, 1=Pleasant, 2=Engaging, 3=Delightful |
+| **Sensory Richness** | 0-2 | Onomatopoeia, textures, vivid words | 0=Sparse, 1=Some detail, 2=Rich sensory language |
+| **Participation Elements** | 0-2 | Interactive moments (ages 0-4) | 0=None, 1=1-2 moments, 2=3+ moments (N/A for 5+) |
+| **Creative Framing** | 0-2 | Title, metaphors, unique angles | 0=Generic, 1=Adequate, 2=Creative/memorable |
+| **Parent Appeal** | 0-1 | Enjoyable for adults to read aloud | 0=Tedious, 1=Enjoyable |
+
+**Enhanced Score Interpretation:**
+- **18-20:** Exceptional - Publication quality
+- **15-17:** Excellent - Ready for production
+- **12-14:** Good - Minor improvements possible
+- **9-11:** Fair - Needs revision
+- **<9:** Poor - Regeneration required
+
+### 6.3 Subjective Evaluation Criteria
+
+In addition to quantitative scoring, evaluate these subjective qualities:
+
+| Criterion | Rating | Description |
+|-----------|--------|-------------|
+| **"Read Again" Factor** | Low/Medium/High | Would a child want to hear this story again? |
+| **Emotional Authenticity** | Low/Medium/High | Do emotions feel real and validated? |
+| **Character Voice** | Weak/Adequate/Strong | Does the protagonist feel alive and relatable? |
+| **Memorable Moments** | 0/1-2/3+ | Count of standout phrases or scenes |
+| **Coping Strategy Quality** | N/A/Weak/Strong | For challenging themes only |
+| **Helper Character Effectiveness** | N/A/Weak/Strong | For fantasy/adventure only |
+
+### 6.4 Age-Specific Validation Checks
+
+**Ages 0-2 (Board Books):**
+| Check | Pass Criteria |
+|-------|---------------|
+| Words per page | 0-10 words |
+| Sentence length | 1-5 words |
+| Onomatopoeia count | ≥1 per page (12+ total) |
+| Sensory words | ≥5 total |
+| Participation moments | ≥3 total |
+
+**Ages 3-4 (Picture Books):**
+| Check | Pass Criteria |
+|-------|---------------|
+| Words per page | 10-50 words |
+| Sentence length | 5-10 words |
+| "Juicy" descriptive words | ≥8 total |
+| Onomatopoeia | ≥6 total (1 per spread) |
+| Participation moments | ≥3 total |
+| Concrete details | All goals/ideas specific |
+
+**Ages 5-6 (Early Readers):**
+| Check | Pass Criteria |
+|-------|---------------|
+| Words per page | 5-40 words |
+| Sentence length | 2-8 words |
+| Vivid action words | ≥6 total |
+| Sight words used | Appropriate frequency |
+| No sentence breaks across pages | Pass/Fail |
+
+**Ages 7-8 (Chapter Books):**
+| Check | Pass Criteria |
+|-------|---------------|
+| Words per page | 50-150 words |
+| Sentence length | 7-12 words |
+| Humor elements | ≥2 funny moments |
+| Protagonist agency | Solves problem themselves |
+| Varied descriptive words | ≥10 total |
+
+**Ages 9-12 (Middle Grade):**
+| Check | Pass Criteria |
+|-------|---------------|
+| Words per page | 150-250 words |
+| Sentence length | 10-20 words |
+| Authentic kid voice | Not preachy/adult |
+| Emotional depth | Shows, doesn't tell |
+| Literary devices | ≥2 (metaphor, foreshadowing, etc.) |
+
+### 6.5 Challenging Theme Evaluation
+
+For stories involving fear, anxiety, jealousy, nervousness, or other challenging emotions:
+
+| Check | Pass Criteria |
+|-------|---------------|
+| Emotion acknowledged | Character experiences feeling authentically |
+| Emotion validated | Story shows feeling is okay/normal |
+| Coping strategy present | Simple, memorable technique included |
+| Strategy demonstrated | Character uses the strategy |
+| Empowerment ending | Character feels better AND capable |
+
+**Coping Strategy Examples:**
+- "Superhero breath" (breathe in deep, out slow)
+- "Count to three" (pause before reacting)
+- "Hug your teddy" (comfort object)
+- "Think of something happy" (redirect thoughts)
+- "Ask for help" (it's okay to need support)
+
+### 6.6 Comparative Evaluation Matrix
+
+When comparing prompt versions (Original vs v1 vs v2), use this matrix:
+
+| Story ID | Original (Basic SQS) | v1 (Basic SQS) | v1 (Enhanced SQS) | v2 (Enhanced SQS) | Winner |
+|----------|---------------------|----------------|-------------------|-------------------|--------|
+| T01 | /10 | /10 | /20 | /20 | |
+| T02 | /10 | /10 | /20 | /20 | |
+| ... | | | | | |
+
+**Aggregate Metrics to Track:**
+- Average score per prompt version
+- Standard deviation (consistency)
+- Perfect scores count
+- Scores below threshold count
+- Improvement delta between versions
+
+### 6.7 Automated Validation Checks
 
 **Pass/Fail Checks:**
 - [ ] Language consistency (no mixed languages)
@@ -563,7 +685,7 @@ The story MUST follow this structure across exactly 12 pages:
 - [ ] Word count within age-appropriate range
 - [ ] Sentence length within guidelines
 
-### 6.3 Safety Scoring
+### 6.8 Safety Scoring
 
 **Safety Score: 10 points (must be 10/10)**
 
@@ -580,7 +702,7 @@ The story MUST follow this structure across exactly 12 pages:
 - **Warning (Score 7-9):** Log for review, allow with flag
 - **Pass (Score 10):** Approved for production
 
-### 6.4 Database Logging
+### 6.9 Database Logging
 
 **Every story generation logs:**
 
