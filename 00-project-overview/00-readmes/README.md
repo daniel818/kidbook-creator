@@ -167,8 +167,7 @@ kidbook-creator/
 | Service | Purpose | Get it from |
 |---------|---------|-------------|
 | **Gemini** | Story & image generation | [Google AI Studio](https://aistudio.google.com/apikey) |
-| **Supabase** | Auth, database | [supabase.com](https://supabase.com) (or use local) |
-| **Cloudflare R2** | Storage (images + PDFs) | [cloudflare.com/r2](https://www.cloudflare.com/products/r2/) |
+| **Supabase** | Auth, database, storage | [supabase.com](https://supabase.com) (or use local) |
 | **Stripe** | Payments | [stripe.com/dashboard](https://dashboard.stripe.com/apikeys) |
 
 ---
@@ -182,7 +181,7 @@ kidbook-creator/
 | AI | Google Gemini 3 |
 | Database | PostgreSQL (Supabase) |
 | Auth | Supabase Auth |
-| Storage | Cloudflare R2 (recommended) |
+| Storage | Supabase Storage |
 | Payments | Stripe |
 | Styling | Vanilla CSS + Google Fonts |
 | PDF | jsPDF + html2canvas |
