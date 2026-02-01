@@ -5,7 +5,7 @@ This document provides extensive research on the most successful children's book
 
 ---
 
-## Age Group 1: "The Sensory Explorer" (Ages 0-3)
+## Age Group 1: "The Sensory Explorer" (Ages 0-2)
 
 ### Developmental Context
 - Books are toys - chewed, thrown, patted
@@ -29,7 +29,7 @@ This document provides extensive research on the most successful children's book
 | 9 | **First Words/Labels** | "First 100 Words", "Baby's First Words" | Vocabulary building, pointing games |
 | 10 | **Peek-a-Boo/Hide & Seek** | "Where's Spot?" (Eric Hill), "Peek-a-Who?" | Object permanence, surprise element |
 
-### Additional Important Topics for Ages 0-3
+### Additional Important Topics for Ages 0-2
 - **Seasons/Weather** - Simple nature concepts
 - **Numbers/Counting** - "1, 2, 3 to the Zoo"
 - **Bath Time** - Daily routine books
@@ -44,7 +44,7 @@ This document provides extensive research on the most successful children's book
 
 ---
 
-## Age Group 2: "The Curious Listener" (Ages 3-5)
+## Age Group 2: "The Curious Listener" (Ages 3-4)
 
 ### Developmental Context
 - Picture book era - 32-page format standard
@@ -69,7 +69,7 @@ This document provides extensive research on the most successful children's book
 | 9 | **Silly/Humor** | "Don't Let the Pigeon Drive the Bus!" (Mo Willems), "Buffalo Fluffalo" | Engagement through laughter |
 | 10 | **Fairy Tales/Magic** | "The Three Little Pigs", "Cinderella" adaptations | Classic narrative structures |
 
-### Additional Important Topics for Ages 3-5
+### Additional Important Topics for Ages 3-4
 - **Potty Training** - Developmental milestone
 - **Pacifier/Thumb Weaning** - Habit transitions
 - **New Sibling** - Family changes
@@ -102,7 +102,7 @@ This document provides extensive research on the most successful children's book
 
 ---
 
-## Age Group 3: "The Emergent Decoder" (Ages 5-7)
+## Age Group 3: "The Emergent Decoder" (Ages 5-6)
 
 ### Developmental Context
 - Transition from "being read to" to "reading alone"
@@ -128,7 +128,7 @@ This document provides extensive research on the most successful children's book
 | 9 | **Fairy Tales Retold** | "Fractured Fairy Tales", "The Princess in Black" | Familiar with twists |
 | 10 | **Humor/Silly** | "Captain Underpants" (Dav Pilkey), "Diary of a Wimpy Kid" intro | Reluctant reader engagement |
 
-### Additional Important Topics for Ages 5-7
+### Additional Important Topics for Ages 5-6
 - **First Grade/School Transitions** - Major milestone
 - **Losing Teeth** - Physical changes
 - **Learning to Read** - Meta-awareness
@@ -161,7 +161,7 @@ This document provides extensive research on the most successful children's book
 
 ---
 
-## Age Group 4: "The Independent Voyager" (Ages 7-9)
+## Age Group 4: "The Independent Voyager" (Ages 7-8)
 
 ### Developmental Context
 - Chapter book stage
@@ -189,7 +189,7 @@ This document provides extensive research on the most successful children's book
 | 9 | **Historical Adventure** | "I Survived" series, "Magic Tree House" advanced | Learning through story |
 | 10 | **Sci-Fi/Space** | "The Wild Robot", "Ender's Game" (intro) | Imagination, technology |
 
-### Additional Important Topics for Ages 7-9
+### Additional Important Topics for Ages 7-8
 - **Sibling Relationships** - Complex family dynamics
 - **Moving/New School** - Life transitions
 - **Making Mistakes** - Growth mindset

@@ -28,7 +28,7 @@ This document consolidates all research from competitor analysis and successful 
 
 ## Part 2: Themes by Age Group
 
-### Age Group 1: Sensory Explorer (Ages 0-3)
+### Age Group 1: Sensory Explorer (Ages 0-2)
 
 #### Recommended Themes (10 per category)
 
@@ -76,7 +76,7 @@ This document consolidates all research from competitor analysis and successful 
 
 ---
 
-### Age Group 2: Curious Listener (Ages 3-5)
+### Age Group 2: Curious Listener (Ages 3-4)
 
 #### Recommended Themes (15+ per category)
 
@@ -98,6 +98,18 @@ This document consolidates all research from competitor analysis and successful 
 | Moving House | Limited | MEDIUM | ★★ |
 | New Sibling | Wonderbly, Hooray Heroes, BOOQLI | VERY HIGH | ★★★ |
 | Learning to Swim | Limited | MEDIUM | ★★ |
+
+**Emotions & Social Skills** (Lumebook Specialty)
+| Theme | Competitor Coverage | Market Demand | Priority |
+|-------|---------------------|---------------|----------|
+| Self-Confidence | Lumebook | HIGH | ★★★ |
+| Social Acceptance | Lumebook | HIGH | ★★★ |
+| Making Choices | Lumebook | MEDIUM | ★★ |
+| Belonging | Lumebook | HIGH | ★★★ |
+| Self-Expression | Lumebook | MEDIUM | ★★ |
+| Adapting to Change | Lumebook | HIGH | ★★★ |
+| Independence | Lumebook | MEDIUM | ★★ |
+| Cultural Heritage | Lumebook | MEDIUM | ★★ |
 
 **Fantasy & Magic**
 | Theme | Competitor Coverage | Market Demand | Priority |
@@ -148,7 +160,7 @@ This document consolidates all research from competitor analysis and successful 
 
 ---
 
-### Age Group 3: Emergent Decoder (Ages 5-7)
+### Age Group 3: Emergent Decoder (Ages 5-6)
 
 #### Recommended Themes
 
@@ -196,7 +208,7 @@ This document consolidates all research from competitor analysis and successful 
 
 ---
 
-### Age Group 4: Independent Voyager (Ages 7-9)
+### Age Group 4: Independent Voyager (Ages 7-8)
 
 #### Recommended Themes
 

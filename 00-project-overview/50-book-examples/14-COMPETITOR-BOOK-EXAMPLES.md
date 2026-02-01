@@ -228,13 +228,182 @@ This document catalogs all book examples found across competitor websites, organ
 - **Tagline:** "Turning Challenges Into Adventures"
 - **Focus:** Building self-confidence, facing challenges
 
-### Theme Approach
-- **Challenge-Based Narratives:** Stories helping children overcome obstacles
-- **Empowerment Themes:** Building confidence and resilience
-- **Adventure Format:** Challenges presented as exciting adventures
-- **Parent-Child Connection:** Bonding through reading
+### Book Catalog by Theme
 
-*Note: Limited specific book titles available publicly*
+| Hebrew Title | English Translation | Theme/Challenge | Target Age |
+|--------------|---------------------|-----------------|------------|
+| הן הקסמים של הבגדים | The Magic of Clothes | Self-confidence, appearance | 3-7 |
+| הסיפור של אלי | Eli's Story | Personal journey | 3-7 |
+| בית בית מתוק | Home Sweet Home | Family, belonging | 3-7 |
+| מלכת הפופולריות | The Popularity Queen | Social acceptance, friendship | 5-9 |
+| הקסם של הבגירות | The Magic of Growing Up | Maturity, development | 5-9 |
+| אחד חדש - שישי מיוחד | One New - Special Friday | Transitions, new experiences | 3-7 |
+| הרפתקה המופלאה | The Wonderful Adventure | Courage, exploration | 3-7 |
+| הרפתקת הקסמופוליטה | The Cosmopolitan Adventure | World exploration | 5-9 |
+| רבים בעלי חיים | Many Animals | Nature, animals | 3-7 |
+| הסיפור של הבגדים | The Story of Clothes | Self-expression | 3-7 |
+| אני בחר/ת לשחק | I Choose to Play | Independence, choice | 3-7 |
+| אחת חדשה | Something New | Change, adaptation | 3-7 |
+| הבל של ישראל - מהדורה למשפחה ומסורת | The Vanity of Israel - Family & Tradition Edition | Heritage, tradition | 5-9 |
+| באזו חשק עדיף | In This Desire is Better | Decision making | 5-9 |
+| אלי והחרות המופתית | Eli and the Wonderful Freedom | Independence, freedom | 5-9 |
+| צורות בעל מקום | Shapes Everywhere | Learning, discovery | 3-7 |
+| נפרדים מהטיטולים | Separated from Superheroes | Letting go, transitions | 3-7 |
+| עדי והחומים הקסומים | Adi and the Magic Materials | Creativity, imagination | 3-7 |
+| הסיפור למלכת ההזדמנות | The Kingdom of Opportunities | Possibilities, growth | 5-9 |
+| רוי והעולם המופלא | Roy and the Wonderful World | Exploration, wonder | 3-7 |
+| מוצאי האבא | Finding Dad | Family connection | 3-7 |
+| חביבי הרכב | My Dear Vehicle | Transportation, adventure | 3-7 |
+| מה השמים לובשים? | What Do the Skies Wear? | Nature, curiosity | 3-7 |
+| ספר הרגשות | The Feelings Book | Emotions, self-awareness | 3-7 |
+| הגן הקסום של הגדולים | The Magic Garden of the Grown-ups | Growing up, maturity | 5-9 |
+| הסוד של חנוכית סבתא | The Secret of Grandma's Hanukkah | Heritage, holidays | 3-7 |
+| מלכת הסופגניות | The Donut Queen | Hanukkah, traditions | 3-7 |
+| את הדרך - שומרי מסורת | The Way - Keepers of Tradition | Cultural heritage | 5-9 |
+| הגל של אריאל - מהדורה לשומרי מסורת | Ariel's Wave - Tradition Keepers Edition | Religious tradition | 5-9 |
+| אליקה של שמחה - מהדורה לשומרי מסורת | Elika of Joy - Tradition Keepers Edition | Religious tradition | 5-9 |
+| חביבים בעלי חיים שונים | Different Animal Friends | Diversity, acceptance | 3-7 |
+| הגל של זינב | Zinab's Wave | Personal journey | 3-7 |
+| הב המוצא של אלי | Eli's Found Treasure | Discovery, adventure | 3-7 |
+| הסיפור הגדול של מי | The Big Story of Who | Identity, self-discovery | 5-9 |
+| הסיפור של עמית באורווה | The Story of Amit in the Barn | Farm, animals | 3-7 |
+| עץ המוצצים | The Pacifier Tree | Pacifier weaning | 3-5 |
+| שלום כיתה א' | Hello First Grade | School transition | 5-7 |
+| מזה והלידה | Who and the Birth | New sibling | 3-7 |
+| בי בי מוצץ | Bye Bye Pacifier | Pacifier weaning | 3-5 |
+| אחות חדשה | New Sister | New sibling | 3-7 |
+| חביבים בעצמים | Friends in Objects | Friendship, imagination | 3-7 |
+| הרפתקת הספארי של הגבולות | The Safari Adventure of Boundaries | Body safety, boundaries | 3-7 |
+| טירת החברות | The Friendship Castle | Friendship, social skills | 3-7 |
+| המצפן של הבחירות | The Compass of Choices | Decision making, responsibility | 5-9 |
+| דובי מבקר אצל הרופא | Teddy Visits the Doctor | Doctor visits, healthcare | 3-7 |
+| ארמון הנימוסים | The Manners Palace | Manners, etiquette | 3-7 |
+| מה אהיה כשאגדל | What Will I Be When I Grow Up | Careers, aspirations | 5-9 |
+| מסע החלומות | The Journey of Dreams | Dreams, imagination | 3-7 |
+| בי בי שמיכי | Bye Bye Blankie | Comfort object weaning | 3-5 |
+| מסע התספורת של אריאל | Ariel's Haircut Journey | First haircut | 3-7 |
+| נועם והשפתון הקסום | Noam and the Magic Lipstick | Self-expression, creativity | 3-7 |
+| גפן והטוס המיוחד | Gefen and the Special Flight | Travel, airplanes | 3-7 |
+| אור והסוד שבים | Or and the Secret of the Sea | Ocean, discovery | 5-9 |
+| ליאל והזיקוקים ביום העצמאות | Liel and the Independence Day Fireworks | Israeli holidays, patriotism | 5-9 |
+| גל מתלבש/ת לבד | Gal Gets Dressed Alone | Independence, self-care | 3-5 |
+| ערכת העוזר המיוחדת | The Special Helper Kit | New sibling, responsibility | 3-7 |
+| היום הראשון באקדמיה לגיבורי-על | First Day at Superhero Academy | School, confidence | 5-9 |
+| הדובי משנה צבעים | The Color-Changing Teddy | Emotions, feelings | 3-7 |
+| המסע המדהים במערכת השמש | The Amazing Journey in the Solar System | Space, science | 5-9 |
+| ארגז הצעצועים המיוחד | The Special Toy Box | Sharing, organization | 3-7 |
+| היום הראשון בבית הספר | The First Day of School | School transition | 5-7 |
+| הגן הקסום שלי | My Magic Garden | Nature, growth | 3-7 |
+| בוחר צבעים | Choosing Colors | Colors, decisions | 3-5 |
+| הטיל הטוב של אריאל - מהדורה לשומרי מסורת | Ariel's Good Rocket - Tradition Keepers Edition | Space, religious values | 5-9 |
+| הגן הקסום של הגדולים - מהדורה לשומרי מסורת | The Magic Garden - Tradition Keepers Edition | Nature, religious values | 5-9 |
+| אחות חדשה - שומרי מסורת | New Sister - Tradition Keepers Edition | New sibling, religious values | 3-7 |
+| הרפתקת השן הקסומה | The Magic Tooth Adventure | Losing teeth | 5-7 |
+| המיקרופון הקסום | The Magic Microphone | Self-expression, confidence | 5-9 |
+
+### Theme Categories (62 Books Total)
+
+**Self-Confidence & Identity**
+- The Magic of Clothes
+- The Story of Clothes
+- The Popularity Queen
+- The Magic of Growing Up
+- The Feelings Book
+- The Big Story of Who
+- The Color-Changing Teddy
+- The Magic Microphone
+- Gal Gets Dressed Alone
+
+**Family & Belonging**
+- Home Sweet Home
+- Family & Tradition Edition
+- Finding Dad
+- Who and the Birth
+- New Sister
+- The Special Helper Kit
+- New Sister - Tradition Keepers Edition
+
+**Courage & Adventure**
+- The Wonderful Adventure
+- The Cosmopolitan Adventure
+- Eli and the Wonderful Freedom
+- Roy and the Wonderful World
+- Eli's Found Treasure
+- The Safari Adventure of Boundaries
+- First Day at Superhero Academy
+- Or and the Secret of the Sea
+
+**Social & Emotional**
+- The Popularity Queen
+- I Choose to Play
+- Something New
+- Separated from Superheroes
+- Different Animal Friends
+- Friends in Objects
+- The Friendship Castle
+- The Compass of Choices
+- The Manners Palace
+
+**Nature & Animals**
+- Many Animals
+- The Story of Amit in the Barn
+- What Do the Skies Wear?
+- My Magic Garden
+
+**Milestones & Transitions**
+- The Pacifier Tree
+- Bye Bye Pacifier
+- Bye Bye Blankie
+- Hello First Grade
+- The First Day of School
+- One New - Special Friday
+- Ariel's Haircut Journey
+- The Magic Tooth Adventure
+
+**Cultural & Religious Heritage**
+- The Way - Keepers of Tradition
+- Ariel's Wave - Tradition Keepers Edition
+- Elika of Joy - Tradition Keepers Edition
+- The Secret of Grandma's Hanukkah
+- The Donut Queen
+- Liel and the Independence Day Fireworks
+- Ariel's Good Rocket - Tradition Keepers Edition
+- The Magic Garden - Tradition Keepers Edition
+
+**Learning & Discovery**
+- Shapes Everywhere
+- Adi and the Magic Materials
+- The Kingdom of Opportunities
+- Choosing Colors
+- The Amazing Journey in the Solar System
+
+**Healthcare & Body Safety**
+- Teddy Visits the Doctor
+- The Safari Adventure of Boundaries
+
+**Transportation & Travel**
+- My Dear Vehicle
+- Gefen and the Special Flight
+
+**Dreams & Imagination**
+- The Journey of Dreams
+- Noam and the Magic Lipstick
+
+**Careers & Aspirations**
+- What Will I Be When I Grow Up
+
+**Organization & Responsibility**
+- The Special Toy Box
+
+**Growing Up & Maturity**
+- The Magic Garden of the Grown-ups
+
+### Unique Differentiators
+- **Challenge-Based Narratives:** Every story helps children overcome a specific obstacle
+- **Empowerment Focus:** Building confidence and resilience through adventure
+- **Hebrew Market Specialization:** Deep understanding of Israeli culture and values
+- **Parent-Child Bonding:** Stories designed for shared reading experiences
+- **Developmental Approach:** Age-appropriate challenges and solutions
 
 ---
 

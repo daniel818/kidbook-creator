@@ -485,6 +485,50 @@ The story MUST follow this structure across exactly 12 pages:
 - ⚠️ Exclusion or rejection themes
 - ⚠️ Any potentially scary imagery
 
+### 5.4 Emotional Tone Requirements
+
+**Primary Goal:** Every story should create a **joyful, memorable reading experience** for both children AND parents.
+
+**Core Emotions to Evoke:**
+
+| Emotion | For Children | For Parents |
+|---------|--------------|-------------|
+| **Fun** | Playful moments, silly surprises, humor | Enjoyable to read aloud, engaging |
+| **Magic** | Wonder, enchantment, imagination | Nostalgia, sense of wonder |
+| **Excitement** | Adventure, anticipation, discovery | Pride in child's engagement |
+| **Delight** | Joy, happiness, satisfaction | Heartwarming moments |
+| **Connection** | Seeing themselves in the story | Bonding with child, shared experience |
+
+**Tone Guidelines by Theme:**
+
+| Theme | Primary Tone | Secondary Emotions |
+|-------|--------------|-------------------|
+| **Adventure** | Exciting, empowering | Wonder, courage, triumph |
+| **Bedtime** | Soothing, gentle | Comfort, safety, peace |
+| **Learning** | Playful, encouraging | Curiosity, pride, accomplishment |
+| **Fantasy** | Whimsical, magical | Wonder, imagination, delight |
+| **Animals** | Warm, educational | Empathy, connection, respect |
+| **Custom** | Match user intent | Positive, engaging, memorable |
+
+**Writing for Dual Audience:**
+- **Children:** Use playful language, sound effects, repetition, and surprises
+- **Parents:** Include subtle humor, beautiful imagery, and heartfelt moments
+- **Both:** Create "read it again!" appeal through engaging rhythm and satisfying endings
+
+**Emotional Arc Requirements:**
+1. **Opening:** Warm, inviting, establishes comfort
+2. **Middle:** Building excitement, gentle tension, discovery
+3. **Climax:** Thrilling but safe, empowering moment
+4. **Resolution:** Satisfying, heartwarming, celebratory
+5. **Ending:** Warm, encouraging, leaves reader feeling good
+
+**Avoid:**
+- ❌ Flat, boring, or monotonous tone
+- ❌ Preachy or lecturing voice
+- ❌ Overly serious or heavy themes
+- ❌ Anxiety-inducing tension
+- ❌ Sad or melancholic endings
+
 ---
 
 ## 6. Evaluation Framework
