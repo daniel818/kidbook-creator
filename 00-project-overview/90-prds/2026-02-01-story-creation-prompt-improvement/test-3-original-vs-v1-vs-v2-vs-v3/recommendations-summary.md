@@ -2,60 +2,85 @@
 
 **Date:** February 2, 2026  
 **Evaluator:** Cascade AI  
-**Goal:** Restore narrative soul and logical grounding while maintaining technical excellence and token efficiency.
+**Goal:** Maintain the spark and engagement of v3 while making helper characters and magic contextually appropriate.
 
 ---
 
-## 1. The Core Problem: "Creative Over-Correction"
+## 1. The Core Problem: Context-Blind Magic
 
-The transition from the "boring" Original prompt to the "feature-rich" v2/v3 prompts introduced a dependency on supernatural elements to satisfy instructions for "magic" and "wonder." This resulted in a loss of logic and relatability in realistic stories.
+The issue in `v3` was not magic itself, but **applying supernatural magic uniformly** regardless of context. A jungle safari doesn't need a rainbow portal—the real animals are exciting enough. A bike ride with Dad doesn't need a glowing bunny—Dad's proud smile is the magic.
+
+**Key Insight:** Helper characters and wonder are GOOD. They just need to match the story's world.
 
 ---
 
 ## 2. Key Improvements for prompt-new-v4
 
-### A. Helper Character Restraint
-- **Remove Specific Name Examples:** Delete "Pip," "Whiskers," and "Flicker" from the prompt. This prevents the AI from anchoring on these specific names and forces it to invent contextually appropriate characters (or none at all).
-- **Preference for Existing Characters:** Add an instruction: "PRIORITIZE using existing characters (parents, siblings, pets) as helpers before inventing new ones."
-- **Explicit "No-Helper" Permission:** Add: "If the child can solve the problem through their own effort or with a parent's support, DO NOT add a fantasy helper."
+### A. Diverse Helper Characters (Keep the Spark!)
+Helpers can still have names and personalities. The key is **contextual fit**:
 
-### B. Redefining "Magic" and "Wonder"
-- **Introduce "Realistic Wonder":** Add a section explaining that wonder can come from:
-    - **Achievement:** Learning to ride a bike, finishing an invention.
-    - **Nature:** A real lion in a safari, the vastness of the real night sky.
-    - **Relationships:** A proud look from a father, a new friendship.
-- **Limit Literal Magic:** Add a rule: "Supernatural elements (glowing, portals, talking objects) are ONLY permitted in FANTASY themes. Keep REALISTIC themes grounded in the real world."
+| Story Type | Appropriate Helpers |
+|------------|---------------------|
+| **Fantasy/Adventure** | Magical creatures, talking animals, fairies, robots |
+| **Realistic Milestone** | Parents, siblings, grandparents, teachers, coaches |
+| **Nature/Safari** | The animals themselves (a wise elephant, a chatty parrot) |
+| **Bedtime** | Stuffed animals, the moon, gentle creatures |
+| **School/Sports** | Friends, teammates, older/younger siblings, neighbors |
 
-### C. Vocabulary Guidance
-- **Variety over Repetition:** Instead of requiring words like "glistening" and "colossal," provide categories of descriptive words:
-    - **Texture:** velvety, rough, smooth, bumpy.
-    - **Scale:** towering, tiny, wide, cozy.
-    - **Emotion:** proud, wobbly, brave, determined.
-- **Relatability Rule:** "Use adjectives that enhance the specific setting. A soccer field should be 'freshly cut' or 'vibrant,' not 'magical' or 'glowing.'"
+**Examples of Good Helpers:**
+- Jungle Safari: "Leo the Lion" who guides Liam through the savanna
+- Bike Riding: Dad (the real helper) with encouraging words
+- New Sibling: Grandma who shares her own "big sister" story
+- Space Adventure: "Sparky" the robot co-pilot
 
-### D. Image Prompt Refinement
-- **Cinematic Lighting:** Replace general "magical glow" instructions with "cinematic lighting" (e.g., "dappled sunlight," "warm lamp light," "cool moonlight").
-- **Interaction over Effect:** Focus descriptions on the **interaction** between characters rather than visual effects.
-- **Maintain Consistency:** Keep the "No Visual Text" and "Character Consistency" rules as they were highly effective in v3.
+### B. Wonder Without Supernatural Effects
+For realistic stories, "magic" means emotional moments:
+- The **spark of pride** when mastering a skill
+- The **warmth of connection** with family
+- The **thrill of discovery** in nature
+- The **joy of friendship** forming
+
+For fantasy stories, literal magic is perfect and encouraged!
+
+### C. Helper Character Rules (Refined)
+1. **Match the World:** If the story is realistic, helpers should be realistic (but can still be fun!)
+2. **Names are Good:** Give helpers memorable names (Coach Marcus, Grandpa Joe, Whiskers the garden cat)
+3. **No Glowing Required:** Helpers don't need to glow or shimmer unless it's a fantasy setting
+4. **Child Still Solves:** The helper supports, but the child achieves
+
+### D. Image Prompt Adjustments
+- **Realistic Stories:** Focus on expressions, body language, natural lighting
+- **Fantasy Stories:** Embrace sparkles, glows, magical atmospheres
+- **Both:** Prioritize emotional connection between characters
 
 ---
 
-## 3. Structural Simplification (Token Efficiency)
-
-Maintain the 74% compression achieved in v3 but reorganize for clarity:
-1. **The "Soul" Section:** Define the balance between grounded reality and engaging wonder.
-2. **Contextual Rules:** Group rules by "Realistic" vs "Fantasy" settings.
-3. **Mandatory Elements:** Keep the concise checklists for onomatopoeia and participation.
+## 3. What v4 Keeps from v3
+- ✅ Token efficiency (~825 tokens)
+- ✅ No visual text in images
+- ✅ Age-appropriate guidelines
+- ✅ Onomatopoeia and participation requirements
+- ✅ Sensory vocabulary mandates
+- ✅ Story structure (12 pages)
+- ✅ Coping strategies for challenging themes
 
 ---
 
-## 4. Implementation Strategy
+## 4. What v4 Changes from v3
+- 🔄 Helper character guidance: Context-driven, not magic-default
+- 🔄 "Wonder" definition: Emotional moments for realistic, literal magic for fantasy
+- 🔄 Theme structures: Clearer guidance on when magic fits
+- 🔄 Examples: Diverse helpers (human AND creature)
 
-1. **Step 1:** Create `prompt-new-v4.md` incorporating these refinements.
-2. **Step 2:** Generate a few "problem cases" from v3 (T14, T19, T24) to verify the fix.
-3. **Step 3:** Re-evaluate against the Consolidated Framework.
+---
+
+## 5. Implementation Strategy
+
+1. **Step 1:** Create `prompt-new-v4.md` with refined helper guidance
+2. **Step 2:** Test on problem cases (T14, T19, T24, T27)
+3. **Step 3:** Verify fantasy stories still have full spark (T06, T28, T30)
 
 ---
 
 ## Final Goal for v4
-To create stories that feel **real** to the child and parent while still being **technically superior** in their engagement and illustration guidance. v4 should move from "A story generated by AI" to "A story written for a child."
+Stories that feel **alive and engaging** with helpers and wonder that **fit the world**. A soccer story should feel like a real game with real teammates. A dragon quest should feel like an epic fantasy adventure. Both should spark joy.
