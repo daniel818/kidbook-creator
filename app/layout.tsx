@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { AuthProvider } from "@/lib/auth/AuthContext";
 import { I18nProvider } from "@/lib/i18n/provider";
-import Footer from "@/components/Footer/Footer";
 import "./globals.css";
 import "./rtl.css";
 
@@ -14,9 +12,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const showFooter = pathname !== '/';
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -44,7 +39,6 @@ export default function RootLayout({
           <AuthProvider>
             <DirectionController />
             {children}
-            {showFooter && <Footer />}
           </AuthProvider>
         </I18nProvider>
       </body>

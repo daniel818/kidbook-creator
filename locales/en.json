@@ -524,7 +524,7 @@
       }
     },
     "bottom": {
-      "copyright": " KidBook Creator. All rights reserved.",
+      "copyright": "© {{year}} KidBook Creator. All rights reserved.",
       "madeWith": "Made with",
       "love": "love",
       "for": "for families everywhere"

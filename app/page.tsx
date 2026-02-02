@@ -267,23 +267,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <footer className="bg-white dark:bg-[#221019]/50 border-t border-indigo-100 dark:border-white/10 py-12 px-6">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="bg-[#f4258c]/20 p-1.5 rounded-lg flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#f4258c] text-xl font-bold">auto_stories</span>
-              </div>
-              <span className="text-lg font-extrabold tracking-tight text-[#1c0d14] dark:text-white">KidBook Creator</span>
-            </div>
-            <div className="flex gap-8 text-sm font-medium opacity-60 dark:text-white">
-              <a className="hover:text-[#f4258c]" href="/about">About Us</a>
-              <a className="hover:text-[#f4258c]" href="/faq">Support</a>
-              <a className="hover:text-[#f4258c]" href="/privacy">Privacy</a>
-              <a className="hover:text-[#f4258c]" href="/terms">Terms</a>
-            </div>
-            <p className="text-sm opacity-40 dark:text-white">© {new Date().getFullYear()} KidBook Creator V2. All rights reserved.</p>
-          </div>
-        </footer>
         </main>
       </div>
 
