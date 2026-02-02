@@ -1,0 +1,982 @@
+{
+  "common": {
+    "test": "Hallo Welt",
+    "communityBooks": "Community-Bücher",
+    "faq": "FAQ",
+    "aboutUs": "Über uns",
+    "alerts": {
+      "warning": "Warnung",
+      "error": "Fehler",
+      "success": "Erfolg",
+      "info": "Information",
+      "ok": "OK",
+      "cancel": "Abbrechen",
+      "dontAskAgain": "Nicht mehr fragen",
+      "loading": "Lädt...",
+      "unsavedChanges": {
+        "title": "Nicht gespeicherte Änderungen",
+        "message": "Sie haben nicht gespeicherte Änderungen. Möchten Sie wirklich fortfahren? Ihr Fortschritt geht verloren."
+      }
+    }
+  },
+  "navbar": {
+    "communityBooks": "Unsere Bücher",
+    "pricing": "Preise",
+    "faq": "FAQ",
+    "aboutUs": "Über uns",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "createBook": "Buch erstellen",
+    "signIn": "Anmelden",
+    "myBooks": "Meine Bücher",
+    "purchases": "Käufe",
+    "profile": "Profil",
+    "signOut": "Abmelden"
+  },
+  "home": {
+    "hero": {
+      "badge": "Magische Geschichten erstellen",
+      "title": "Erstelle",
+      "titleHighlight": "Personalisierte",
+      "titleEnd": "Kinderbücher",
+      "subtitle": "Gestalte wunderschöne individuelle Bücher für deine Kleinen. Lade Fotos hoch, schreibe Geschichten und bestelle professionell gedruckte Bücher direkt nach Hause.",
+      "ctaButton": "Dein Buch erstellen",
+      "noBooks": "Noch keine Bücher. Erstelle dein erstes Buch!",
+      "createNewBook": "Neues Buch erstellen",
+      "bookCard": {
+        "pages": "{{count}} S.",
+        "forChild": "Für {{childName}}, {{age}} Jahre alt",
+        "status": {
+          "draft": "Entwurf",
+          "complete": "Fertig",
+          "published": "Veröffentlicht"
+        }
+      },
+      "features": {
+        "easyToUse": "Einfach zu bedienen",
+        "printShip": "Drucken & versenden",
+        "perfectGift": "Perfektes Geschenk"
+      }
+    },
+    "howItWorks": {
+      "title": "So funktioniert's",
+      "step1": {
+        "title": "Buch einrichten",
+        "description": "Gib den Namen und das Alter deines Kindes ein und wähle den perfekten Buchtyp und das Thema."
+      },
+      "step2": {
+        "title": "Inhalt hinzufügen",
+        "description": "Lade Fotos hoch und schreibe deine Geschichte. Ordne die Seiten genau so an, wie du möchtest."
+      },
+      "step3": {
+        "title": "Bestellen & genießen",
+        "description": "Sieh dir dein Buch in der Vorschau an, gib deine Bestellung auf und erhalte ein wunderschön gedrucktes Buch."
+      }
+    },
+    "bookTypes": {
+      "title": "Wähle deinen Buchtyp",
+      "board": {
+        "title": "Pappbuch",
+        "description": "Robuste Seiten für kleine Hände",
+        "age": "0-3 Jahre"
+      },
+      "picture": {
+        "title": "Bilderbuch",
+        "description": "Schöne Illustrationen mit kurzem Text",
+        "age": "3-6 Jahre"
+      },
+      "story": {
+        "title": "Geschichtenbuch",
+        "description": "Spannende Geschichten für wachsende Leser",
+        "age": "5-10 Jahre"
+      },
+      "alphabet": {
+        "title": "Alphabetbuch",
+        "description": "Buchstaben auf spielerische Weise lernen",
+        "age": "2-5 Jahre"
+      }
+    },
+    "footer": {
+      "tagline": "Mit ❤️ gemacht für Eltern, die magische Erinnerungen schaffen möchten"
+    },
+    "deleteModal": {
+      "title": "Buch löschen",
+      "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmText": "Löschen"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Willkommen zurück!",
+      "subtitle": "Melde dich an, um deine Bücher zu speichern und Drucke zu bestellen",
+      "email": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Anmelden",
+      "forgotPassword": "Passwort vergessen?",
+      "noAccount": "Noch kein Konto?",
+      "signUpLink": "Registrieren",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "or": "oder"
+    },
+    "signup": {
+      "title": "Konto erstellen",
+      "subtitle": "Tritt uns bei, um tolle Bücher für deine Kinder zu erstellen",
+      "email": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Konto erstellen",
+      "haveAccount": "Bereits ein Konto?",
+      "signInLink": "Anmelden",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "or": "oder",
+      "successMessage": "Überprüfe deine E-Mail, um dein Konto zu bestätigen!"
+    },
+    "forgot": {
+      "title": "Passwort zurücksetzen",
+      "subtitle": "Gib deine E-Mail ein und wir senden dir einen Reset-Link",
+      "email": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "submitButton": "Reset-Link senden",
+      "backToSignIn": "← Zurück zur Anmeldung",
+      "successMessage": "Überprüfe deine E-Mail für einen Passwort-Reset-Link!"
+    },
+    "errors": {
+      "timeout": "Zeitüberschreitung der Anfrage",
+      "unexpected": "Ein unerwarteter Fehler ist aufgetreten"
+    }
+  },
+  "create": {
+    "wizard": {
+      "back": "← Zurück",
+      "next": "Weiter →",
+      "creating": "Dein Buch wird erstellt..."
+    },
+    "steps": {
+      "child": {
+        "title": "Für wen ist dieses Buch?",
+        "subtitle": "Erzähle uns von dem besonderen Kind, das dieses Buch genießen wird",
+        "nameLabel": "Name des Kindes",
+        "namePlaceholder": "Name eingeben...",
+        "ageLabel": "Alter:",
+        "ageYears": "Jahre",
+        "photoLabel": "📷 Foto hochladen (optional)",
+        "photoHint": "Lade ein Foto des Kindes hoch, um die Illustrationen zu personalisieren. Die KI wird dies verwenden, damit die Hauptfigur wie das Kind aussieht!",
+        "photoButton": "Foto auswählen",
+        "photoSelected": "Foto ausgewählt",
+        "photoChange": "Foto ändern"
+      },
+      "type": {
+        "title": "Wähle einen Buchtyp",
+        "subtitle": "Wähle das perfekte Format für {{childName}}",
+        "subtitleDefault": "Wähle das perfekte Format für dein Kind"
+      },
+      "format": {
+        "title": "Wähle ein Format",
+        "subtitle": "Bereite dein Buch für den professionellen Druck vor"
+      },
+      "theme": {
+        "title": "Wähle ein Thema",
+        "subtitle": "Was für eine Geschichte soll es werden?",
+        "storyLabel": "Erzähle uns mehr über die Geschichte (optional)",
+        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt."
+      },
+      "style": {
+        "title": "Wähle einen Kunststil",
+        "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?"
+      },
+      "title": {
+        "title": "Benenne dein Buch",
+        "subtitle": "Gib deiner Geschichte einen tollen Titel",
+        "titleLabel": "Buchtitel",
+        "titlePlaceholder": "{{childName}}s Tolles Abenteuer",
+        "titlePlaceholderDefault": "Mein Tolles Abenteuer"
+      }
+    },
+    "bookTypes": {
+      "board": {
+        "label": "Pappbilderbuch",
+        "description": "Robuste Seiten perfekt für kleine Hände",
+        "ageRange": "0-3 Jahre"
+      },
+      "picture": {
+        "label": "Bilderbuch",
+        "description": "Schöne Illustrationen mit kurzem Text",
+        "ageRange": "3-6 Jahre"
+      },
+      "story": {
+        "label": "Geschichtenbuch",
+        "description": "Fesselnde Geschichten für wachsende Leser",
+        "ageRange": "5-10 Jahre"
+      },
+      "alphabet": {
+        "label": "Alphabet-Buch",
+        "description": "Buchstaben auf spielerische Weise lernen",
+        "ageRange": "2-5 Jahre"
+      }
+    },
+    "formats": {
+      "square": {
+        "label": "Quadratisches Hardcover",
+        "description": "21,6 x 21,6 cm Premium. Der Goldstandard für Kinderbücher.",
+        "pages": "Min. 24 Seiten (Auto-Set)"
+      },
+      "portrait": {
+        "label": "Hochformat / Digital",
+        "description": "15,2 x 22,9 cm Standard. Ideal für Softcover oder Handys.",
+        "pages": "Flexible Seitenzahl"
+      }
+    },
+    "themes": {
+      "adventure": "Abenteuer",
+      "bedtime": "Schlafenszeit",
+      "learning": "Lernen",
+      "fantasy": "Fantasy",
+      "animals": "Tiere",
+      "custom": "Individuell"
+    },
+    "artStyles": {
+      "storybook_classic": "Klassisches Märchenbuch",
+      "watercolor": "Aquarell",
+      "digital_art": "Digitale Kunst",
+      "cartoon": "Cartoon",
+      "pixel_art": "Pixel-Art",
+      "coloring_book": "Malbuch"
+    },
+    "imageQuality": {
+      "label": "✨ Bildqualität",
+      "fast": "⚡ Schnell (Standard)",
+      "pro": "💎 Pro (Imagen 4 Ultra)",
+      "fastDescription": "Der Standardmodus erzeugt schnell schöne Bilder mit Imagen 4.",
+      "proDescription": "Der Pro-Modus verwendet Imagen 4 Ultra für atemberaubende, hochauflösende Illustrationen. Dauert etwas länger."
+    },
+    "preview": {
+      "forChild": "Für {{childName}}, {{age}} Jahre",
+      "defaultTitle": "{{childName}}s Tolles Abenteuer"
+    },
+    "buttons": {
+      "back": "← Zurück",
+      "continue": "Weiter →",
+      "generateBook": "✨ Buch mit KI erstellen 🪄",
+      "createBook": "Mein Buch erstellen ✨",
+      "signInToCreate": "Anmelden zum Erstellen"
+    },
+    "errors": {
+      "createFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
+      "photoUploadFailed": "Foto-Upload fehlgeschlagen. Bitte versuche es erneut.",
+      "invalidSettings": "Bitte fülle alle erforderlichen Felder aus.",
+      "emptyTitleHint": "Leer lassen, um den Standardtitel zu verwenden"
+    },
+    "status": {
+      "extractingCharacter": "Foto wird analysiert...",
+      "generatingStory": "Deine Geschichte wird erstellt...",
+      "openingBook": "Dein Buch wird geöffnet..."
+    }
+  },
+  "profile": {
+    "header": {
+      "title": "Mein Profil",
+      "subtitle": "Verwalte deine Kontoeinstellungen und Präferenzen"
+    },
+    "generalInfo": {
+      "title": "Allgemeine Informationen",
+      "editButton": "✏️ Bearbeiten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "emailHint": "E-Mail kann nicht geändert werden",
+      "language": "Sprachpräferenz",
+      "accountCreated": "Konto erstellt",
+      "notSet": "Nicht festgelegt",
+      "firstNamePlaceholder": "Vorname eingeben",
+      "lastNamePlaceholder": "Nachname eingeben",
+      "cancelButton": "Abbrechen",
+      "saveButton": "Änderungen speichern"
+    },
+    "languages": {
+      "en": "Englisch",
+      "de": "Deutsch",
+      "he": "Hebräisch"
+    },
+    "childProfiles": {
+      "title": "Kinderprofile",
+      "addButton": "+ Kind hinzufügen",
+      "emptyTitle": "Noch keine Kinderprofile",
+      "emptySubtitle": "Füge ein Kinderprofil hinzu, um personalisierte Geschichten zu erstellen",
+      "emptyButton": "Dein erstes Kind hinzufügen",
+      "age": "{{age}} Jahre"
+    },
+    "myBooks": {
+      "title": "Meine Bücher",
+      "viewAllButton": "Alle anzeigen →",
+      "emptyTitle": "Deine erstellten Bücher erscheinen hier",
+      "emptyButton": "Dein erstes Buch erstellen"
+    },
+    "purchases": {
+      "title": "Letzte Käufe",
+      "viewAllButton": "Alle anzeigen →",
+      "emptyTitle": "Noch keine Käufe",
+      "emptySubtitle": "Bestelle dein erstes Buch, um es hier zu sehen"
+    },
+    "accountSettings": {
+      "title": "Kontoeinstellungen",
+      "changePassword": {
+        "label": "Passwort ändern",
+        "description": "Aktualisiere dein Passwort"
+      },
+      "paymentMethods": {
+        "label": "Zahlungsmethoden",
+        "description": "Gespeicherte Karten verwalten"
+      },
+      "shippingAddresses": {
+        "label": "Lieferadressen",
+        "description": "Lieferadressen verwalten"
+      },
+      "notifications": {
+        "label": "Benachrichtigungen",
+        "description": "E-Mail- und Push-Einstellungen"
+      }
+    },
+    "deleteModal": {
+      "title": "Buch löschen",
+      "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmText": "Löschen"
+    }
+  },
+  "orders": {
+    "header": {
+      "backButton": "← Zurück zur Startseite",
+      "title": "Meine Bestellungen"
+    },
+    "loading": "Bestellungen werden geladen...",
+    "empty": {
+      "title": "Noch keine Bestellungen",
+      "subtitle": "Wenn du ein gedrucktes Buch bestellst, erscheint es hier.",
+      "button": "Dein erstes Buch erstellen →"
+    },
+    "orderCard": {
+      "orderId": "Bestellung #{{id}}",
+      "for": "Für {{childName}}",
+      "format": "Format",
+      "quantity": "Menge",
+      "total": "Gesamt",
+      "trackingLabel": "Sendungsnummer",
+      "viewBookButton": "Buch ansehen",
+      "reorderButton": "Erneut bestellen"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "paid": "Bezahlt",
+      "processing": "In Bearbeitung",
+      "printed": "Gedruckt",
+      "shipped": "Versandt",
+      "delivered": "Zugestellt",
+      "cancelled": "Storniert"
+    }
+  },
+  "purchases": {
+    "header": {
+      "title": "Meine Käufe",
+      "subtitle": "Verfolge deine Bestellungen und lade Quittungen herunter"
+    },
+    "empty": {
+      "title": "Noch keine Käufe",
+      "subtitle": "Erstelle ein Buch und bestelle eine gedruckte Kopie, um deine Käufe hier zu sehen",
+      "button": "Dein erstes Buch erstellen"
+    }
+  },
+  "mybooks": {
+    "header": {
+      "title": "Meine Bücher",
+      "booksCount": "{{count}} Buch erstellt",
+      "booksCount_other": "{{count}} Bücher erstellt"
+    },
+    "empty": {
+      "title": "Noch keine Bücher",
+      "subtitle": "Erstelle dein erstes personalisiertes Kinderbuch und erlebe die Magie",
+      "button": "✨ Dein erstes Buch erstellen"
+    },
+    "deleteModal": {
+      "title": "Buch löschen",
+      "message": "Bist du sicher, dass du dieses Buch löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmText": "Löschen"
+    },
+    "bookCard": {
+      "pages": "{{count}} S.",
+      "forChild": "Für {{childName}}, {{age}} Jahre alt",
+      "status": {
+        "draft": "Entwurf",
+        "complete": "Fertig",
+        "published": "Veröffentlicht"
+      }
+    }
+  },
+  "viewer": {
+    "controls": {
+      "keyboardHint": "Verwende ← → Pfeiltasten oder klicke, um Seiten umzublättern"
+    }
+  },
+  "pricing": {
+    "title": "Preise",
+    "subtitle": "Wähle das perfekte Paket für deine magische Geschichte",
+    "matrix": {
+      "package": "Paket",
+      "digital": "Digital",
+      "printed": "Gedruckt",
+      "single": "Einzelnes Buch",
+      "book": "Buch",
+      "perBook": "pro Buch",
+      "total": "gesamt"
+    },
+    "features": {
+      "digitalIncludes": "Digital beinhaltet:",
+      "digitalFeature1": "Sofortiger Download",
+      "digitalFeature2": "PDF-Format",
+      "digitalFeature3": "Zu Hause drucken",
+      "printedIncludes": "Gedruckt beinhaltet:",
+      "printedFeature1": "Professioneller Druck",
+      "printedFeature2": "Premium-Papierqualität",
+      "printedFeature3": "Versand nach Hause"
+    },
+    "hero": {
+      "description": "Erstellen Sie magische personalisierte Bücher für Ihre Kleinen. Wählen Sie das perfekte Paket für Ihre Geschichte!"
+    },
+    "cta": {
+      "primary": "Jetzt erstellen",
+      "secondary": "Mehr erfahren",
+      "title": "Bereit, Ihre magische Geschichte zu erschaffen?",
+      "subtitle": "Erwecken Sie die Fantasie Ihres Kindes noch heute zum Leben!"
+    },
+    "footer": {
+      "tagline": "Wo jedes Kind zum Helden seiner eigenen Geschichte wird"
+    },
+    "faq": {
+      "title": "Preisfragen",
+      "q1": "Was ist im gedruckten Preis enthalten?",
+      "a1": "Der gedruckte Preis beinhaltet professionellen Druck auf Premium-Papier, Hardcover-Bindung und Versand nach Hause.",
+      "q2": "Kann ich eine digitale Kopie mit meinem gedruckten Buch erhalten?",
+      "a2": "Ja! Jede Bestellung eines gedruckten Buches enthält eine kostenlose digitale PDF-Version, die Sie sofort herunterladen können.",
+      "q3": "Welche Zahlungsmethoden akzeptiert ihr?",
+      "a3": "Wir akzeptieren alle gängigen Kredit- und Debitkarten sowie PayPal über unseren sicheren Zahlungsanbieter.",
+      "q4": "Gibt es zusätzliche Gebühren?",
+      "a4": "Steuern werden beim Checkout basierend auf deinem Standort berechnet. Versandkosten variieren je nach Land und werden vor Abschluss deines Kaufs angezeigt.",
+      "q5": "Was ist mit den Druckspezifikationen?",
+      "a5": "Gedruckte Bücher sind professionell gebunden mit Premium-Papier. Spezifische Formatoptionen (Größe, Bindungsart) sind während des Bucherstellungsprozesses verfügbar."
+    },
+    "disclaimers": {
+      "shipping": "Versandkosten werden beim Checkout basierend auf dem Land berechnet",
+      "tax": "Steuern werden beim Checkout gemäß lokaler Vorschriften berechnet",
+      "currency": "Preise angezeigt in"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Wir sind Geschichtenerzähler, Eltern & Träumer",
+      "subtitle": "Wir erschaffen magische Geschichten, die lehren, inspirieren und begeistern"
+    },
+    "story": {
+      "heading": "Unsere Geschichte",
+      "paragraph1": "Wir sind ein Team junger Unternehmer, die Eltern sind und im Herzen selbst noch Kinder. Wir glauben an die Magie des Geschichtenerzählens und die Kraft einer guten Geschichte, junge Köpfe zu formen.",
+      "paragraph2": "Wir lieben Geschichten, die Kindern Bedeutung vermitteln – Geschichten, die die Fantasie anregen, Charakter aufbauen und bleibende Erinnerungen schaffen. Jedes auf unserer Plattform erstellte Buch ist eine Gelegenheit, Werte, Lektionen und Liebe zu teilen.",
+      "paragraph3": "Kreativität und Innovation treiben alles an, was wir tun. Wir erforschen ständig neue Wege, um das Geschichtenerzählen zugänglicher, persönlicher und bedeutungsvoller für Familien auf der ganzen Welt zu machen."
+    },
+    "images": {
+      "placeholder1Alt": "KidBook Creator Team bei der Zusammenarbeit",
+      "placeholder2Alt": "KidBook Creator kreativer Arbeitsbereich",
+      "comingSoon": "Foto folgt in Kürze"
+    },
+    "cta": {
+      "heading": "Bereit, Magie zu erschaffen?",
+      "description": "Schließen Sie sich Tausenden von Familien an, die personalisierte Geschichten erstellen, die Kindern auf der ganzen Welt Freude und Staunen bringen.",
+      "primary": "Jetzt erstellen",
+      "secondary": "Entdecken Sie unsere Bücher"
+    },
+    "contact": {
+      "heading": "Kontaktieren Sie uns",
+      "description": "Haben Sie Fragen oder benötigen Hilfe? Wir freuen uns von Ihnen zu hören!",
+      "button": "Kontakt aufnehmen"
+    }
+  },
+  "footer": {
+    "sections": {
+      "quickLinks": {
+        "title": "Schnellzugriff",
+        "myBooks": "Meine Bücher",
+        "createStory": "Geschichte erstellen",
+        "community": "Unsere Bücher",
+        "pricing": "Preise",
+        "faq": "FAQ",
+        "about": "Über uns"
+      },
+      "legal": {
+        "title": "Rechtliches & Vertrauen",
+        "privacy": "Datenschutz",
+        "terms": "AGB",
+        "cookies": "Cookie-Richtlinie",
+        "refunds": "Rückgaberecht",
+        "shipping": "Versandinformationen",
+        "contact": "Kontakt"
+      }
+    },
+    "bottom": {
+      "copyright": "© {{year}} KidBook Creator. Alle Rechte vorbehalten.",
+      "madeWith": "Gemacht mit",
+      "love": "Liebe",
+      "for": "für Familien überall"
+    },
+    "aria": {
+      "footerNavigation": "Fußzeilennavigation",
+      "socialMedia": "Social-Media-Links",
+      "newsletter": "Newsletter-Anmeldung",
+      "languageSelector": "Sprache auswählen"
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Häufig gestellte Fragen - KidBook Creator",
+      "description": "Finden Sie Antworten auf häufig gestellte Fragen zur Erstellung personalisierter, KI-generierter Kinderbücher, Preisen, Versand und mehr."
+    },
+    "heading": "Häufig gestellte Fragen",
+    "searchPlaceholder": "FAQs durchsuchen...",
+    "noResults": "Keine Ergebnisse gefunden. Versuchen Sie andere Suchbegriffe oder durchsuchen Sie die Kategorien unten.",
+    "relatedQuestions": "Verwandte Fragen",
+    "stillHaveQuestions": "Kontaktieren Sie uns",
+    "contactDescription": "Haben Sie Fragen oder benötigen Hilfe? Wir freuen uns von Ihnen zu hören!",
+    "contactSupport": "Kontakt aufnehmen",
+    "categories": [
+      {
+        "id": "book-creation",
+        "title": "Bucherstellung",
+        "faqs": [
+          {
+            "id": "ai-creation-process",
+            "question": "Wie funktioniert der KI-Bucherstellungsprozess?",
+            "answer": "<p>Die Erstellung Ihres personalisierten Kinderbuchs ist einfach und dauert nur wenige Minuten:</p><ol><li><strong>Wählen Sie Ihre Geschichte:</strong> Durchsuchen Sie unsere Sammlung von Geschichtenthemen und wählen Sie eines aus, das zu den Interessen und dem Alter Ihres Kindes passt.</li><li><strong>Laden Sie ein Foto hoch:</strong> Laden Sie ein klares, gut beleuchtetes Foto Ihres Kindes hoch. Unsere KI verwendet dies, um eine konsistente Figur im gesamten Buch zu erstellen.</li><li><strong>Passen Sie Details an:</strong> Fügen Sie den Namen Ihres Kindes hinzu, wählen Sie Präferenzen aus und personalisieren Sie die Widmungsseite.</li><li><strong>Vorschau & Bearbeiten:</strong> Überprüfen Sie das KI-generierte Buch und nehmen Sie bei Bedarf Änderungen am Text vor oder fordern Sie eine Neugenerierung der Illustrationen an.</li><li><strong>Bestellen:</strong> Wählen Sie zwischen digitalem PDF oder gedrucktem Hardcover-Buch.</li></ol><p>Der gesamte Prozess dauert normalerweise 5-10 Minuten, und Sie sehen eine Vorschau, bevor Sie Ihre Bestellung abschließen.</p>",
+            "relatedFaqs": [
+              "photo-upload",
+              "customize-story"
+            ]
+          },
+          {
+            "id": "photo-upload",
+            "question": "Wie lade ich Fotos hoch und welche Qualität wird benötigt?",
+            "answer": "<p>Um die besten KI-generierten Charakterergebnisse zu erzielen, befolgen Sie diese Fotorichtlinien:</p><h4>Fotoanforderungen:</h4><ul><li><strong>Auflösung:</strong> Mindestens 1024x1024 Pixel (höher ist besser)</li><li><strong>Format:</strong> JPG- oder PNG-Dateien</li><li><strong>Gesichtssichtbarkeit:</strong> Das Gesicht des Kindes sollte deutlich sichtbar sein und nach vorne schauen</li><li><strong>Beleuchtung:</strong> Gut beleuchtete Fotos mit natürlichem Licht funktionieren am besten</li><li><strong>Hintergrund:</strong> Einfache, aufgeräumte Hintergründe helfen der KI, sich auf das Gesicht zu konzentrieren</li><li><strong>Einzelnes Motiv:</strong> Ein Kind pro Foto (keine Gruppenfotos)</li></ul><h4>Tipps für beste Ergebnisse:</h4><ul><li>Verwenden Sie aktuelle Fotos, die bei guter Beleuchtung aufgenommen wurden</li><li>Vermeiden Sie verschwommene, dunkle oder stark gefilterte Bilder</li><li>Fotos, die draußen bei natürlichem Licht aufgenommen wurden, funktionieren oft am besten</li><li>Stellen Sie sicher, dass die Augen des Kindes geöffnet sind und das Gesicht nicht verdeckt ist</li></ul><p>Sie können mehrere Fotos hochladen und dasjenige auswählen, das die beste Charakterdarstellung erzeugt.</p>",
+            "relatedFaqs": [
+              "ai-creation-process",
+              "ai-quality"
+            ]
+          },
+          {
+            "id": "customize-story",
+            "question": "Kann ich die Geschichte, den Text und die Illustrationen anpassen?",
+            "answer": "<p>Ja! Wir bieten Anpassungsoptionen:</p><h4>Textanpassung:</h4><ul><li>Bearbeiten Sie jeden Text in der Geschichte, um ihn weiter zu personalisieren</li><li>Ändern Sie Charakternamen und Details</li><li>Fügen Sie die Widmungsnachricht hinzu oder ändern Sie sie</li><li>Passen Sie Geschichtenelemente an die Vorlieben Ihres Kindes an</li></ul><h4>Charakteranpassung:</h4><ul><li>Der Name des Kindes erscheint in der gesamten Geschichte</li><li>Charakter wird basierend auf hochgeladenem Foto erstellt</li><li>Konsistentes Charakteraussehen auf allen Seiten</li></ul><h4>Wichtiger Hinweis:</h4><p><strong>Sobald Illustrationen erstellt wurden, können sie nicht mehr geändert werden.</strong> Bitte überprüfen Sie sorgfältig in der Vorschauphase, bevor Sie Ihre Bestellung aufgeben. Alle Anpassungen erfolgen in der Vorschauphase, sodass Sie das Buch genau so perfektionieren können, wie Sie es möchten.</p>",
+            "relatedFaqs": [
+              "ai-creation-process",
+              "photo-upload"
+            ]
+          },
+          {
+            "id": "languages-supported",
+            "question": "Welche Sprachen unterstützen Sie?",
+            "answer": "<p>Wir unterstützen derzeit die folgenden Sprachen sowohl für die Website-Oberfläche als auch für Buchinhalte:</p><h4>Vollständig unterstützte Sprachen:</h4><ul><li><strong>Englisch:</strong> Vollständige Unterstützung für alle Funktionen</li><li><strong>Hebräisch:</strong> Vollständige RTL-Layout-Unterstützung (Rechts-nach-Links)</li><li><strong>Deutsch:</strong> Vollständige Übersetzung und Lokalisierung</li></ul><h4>Buchinhalt:</h4><p>Sie können Bücher in jeder der unterstützten Sprachen erstellen. Die KI generiert altersgerechte, grammatikalisch korrekte Inhalte in Ihrer ausgewählten Sprache.</p><h4>Website-Oberfläche:</h4><p>Die gesamte Website, einschließlich Navigation, Checkout und Hilfeinhalte, ist in allen unterstützten Sprachen verfügbar. Verwenden Sie einfach den Sprachumschalter im Navigationsmenü.</p><h4>Demnächst:</h4><p>Wir arbeiten daran, Unterstützung für Spanisch, Französisch und Arabisch hinzuzufügen. Melden Sie sich für unseren Newsletter an, um benachrichtigt zu werden, wenn neue Sprachen verfügbar sind.</p>",
+            "relatedFaqs": [
+              "ai-creation-process"
+            ]
+          },
+          {
+            "id": "satisfaction-results",
+            "question": "Was ist, wenn ich mit den Ergebnissen nicht zufrieden bin?",
+            "answer": "<p>Wir sind Ihrer Zufriedenheit verpflichtet und bieten mehrere Sicherheitsmaßnahmen:</p><h4>Vorschau vor der Bestellung:</h4><p><strong>Vor Abschluss Ihrer Bestellung können Sie überprüfen und bearbeiten:</strong></p><ul><li>Die erste Seitenillustration (Titelbild)</li><li>Den vollständigen Geschichtentext</li><li>Alle Personalisierungsdetails</li></ul><p><strong>Wichtig:</strong> Die restlichen Illustrationen werden <em>nach</em> Abschluss Ihres digitalen Kaufs generiert. Dann geschieht die Magie!</p><h4>Was Sie bearbeiten können:</h4><ul><li><strong>Nur Text:</strong> Sie können jeden Text in der Geschichte bearbeiten, um sie weiter zu personalisieren</li><li>Charakternamen und Details ändern</li><li>Geschichtenelemente an die Vorlieben Ihres Kindes anpassen</li><li>Die Widmungsnachricht ändern</li></ul><h4>Was Sie nicht bearbeiten können:</h4><ul><li><strong>Illustrationen können nicht geändert werden</strong>, sobald sie generiert wurden</li><li>Das Aussehen der Figur basiert auf Ihrem hochgeladenen Foto</li><li>Der Kunststil wird durch das von Ihnen gewählte Geschichtenthema bestimmt</li></ul><h4>Qualitätserklärung:</h4><p>Unsere Geschichtenerstellungstechnologie produziert einzigartige, personalisierte Bücher, aber die Ergebnisse können je nach Fotoqualität und Komplexität variieren. Kleinere künstlerische Variationen sind normal und Teil der kreativen Interpretation. <strong>Generierte Inhalte werden 'wie besehen' ohne Garantien für Perfektion bereitgestellt.</strong></p><h4>Was als Mangel gilt:</h4><ul><li>Druckfehler oder physische Schäden</li><li>Fehlende Seiten oder falsche Bindung</li><li>Erhebliche Abweichung von der genehmigten Vorschau</li><li>Während des Versands beschädigte Bücher</li></ul><h4>Was NICHT als Mangel gilt:</h4><ul><li>Kleinere künstlerische Variationen in generierten Illustrationen</li><li>Leichte Farbunterschiede zur digitalen Vorschau (normal beim Drucken)</li><li>Persönliche Präferenzunterschiede im Kunststil</li><li>Kreative Interpretation von Gesichtszügen</li></ul><p>Wenn Sie ein mangelhaftes Buch erhalten, bieten wir innerhalb von 14 Tagen nach Lieferung eine vollständige Rückerstattung oder einen Ersatz an.</p>",
+            "relatedFaqs": [
+              "photo-upload",
+              "return-policy"
+            ]
+          },
+          {
+            "id": "photo-privacy",
+            "question": "Was passiert mit dem Foto meines Kindes? Wie wird es geschützt?",
+            "answer": "<p>Wir nehmen Ihre Privatsphäre und die Sicherheit Ihres Kindes sehr ernst:</p><h4>Fotoverwendung:</h4><ul><li><strong>Fotos werden nur zur Generierung von Charakterillustrationen für Ihr Buch verwendet</strong></li><li><strong>NICHT zum Training von KI-Modellen verwendet</strong></li><li><strong>NICHT mit Dritten geteilt</strong> (außer unserem sicheren KI-Dienstanbieter)</li><li><strong>NICHT für Marketing oder andere Zwecke verwendet</strong></li></ul><h4>Automatische Löschung:</h4><ul><li><strong>Fotos werden automatisch nach 7 Tagen</strong> nach Bestellabschluss gelöscht</li><li>Dies ist viel kürzer als Industriestandards (normalerweise 30-90 Tage)</li><li>Die Löschung ist dauerhaft und kann nicht rückgängig gemacht werden</li></ul><h4>Sicherheitsmaßnahmen:</h4><ul><li>Alle Fotos werden während des Uploads und der Speicherung verschlüsselt (SSL/TLS)</li><li>Auf sicheren, zugriffskontrollierten Servern gespeichert</li><li>Nur autorisierte Systeme können auf Fotos zur Verarbeitung zugreifen</li><li>Vollständige Einhaltung von DSGVO, CCPA und Datenschutzgesetzen für Kinder</li></ul><h4>Ihre Rechte:</h4><ul><li><strong>Fordern Sie jederzeit sofortige Löschung an</strong>, indem Sie den Support kontaktieren</li><li>Zugriff auf eine Kopie Ihrer Daten</li><li>Informationen darüber anfordern, wie Ihre Daten verarbeitet werden</li></ul><p>Für vollständige Details lesen Sie bitte unsere <a href='/privacy'>Datenschutzrichtlinie</a>.</p>",
+            "relatedFaqs": [
+              "photo-upload",
+              "data-privacy"
+            ]
+          },
+          {
+            "id": "digital-vs-physical",
+            "question": "Kann ich eine digitale Version bestellen oder nur physische Bücher?",
+            "answer": "<p>Wir bieten sowohl digitale als auch physische Buchoptionen an:</p><h4>Digitales PDF-Buch:</h4><ul><li><strong>Preis:</strong> Als Teil Ihrer Bestellung verfügbar</li><li><strong>Lieferung:</strong> Sofortiger Download nach Abschluss der Bestellung</li><li><strong>Format:</strong> Hochauflösendes PDF, optimiert für Bildschirmansicht</li><li><strong>Verwendung:</strong> Ansicht auf Tablets, Computern oder E-Readern</li><li><strong>Teilen:</strong> Nur für den persönlichen Gebrauch (nicht für kommerzielle Verbreitung)</li></ul><h4>Physisches Hardcover-Buch:</h4><ul><li><strong>Format:</strong> Premium-Hardcover mit glänzenden Seiten</li><li><strong>Größe:</strong> 8,5\" x 11\" (Standard-Kinderbuchgröße)</li><li><strong>Seiten:</strong> 24-32 Seiten je nach Geschichte</li><li><strong>Qualität:</strong> Professioneller Druck mit lebendigen Farben</li><li><strong>Lieferung:</strong> Versand innerhalb von 5-7 Werktagen</li></ul><h4>Bundle-Option:</h4><p>Bestellen Sie digital und physisch zusammen für das beste Preis-Leistungs-Verhältnis. Die digitale Version ist perfekt für sofortigen Genuss, während Sie auf das gedruckte Buch warten.</p>",
+            "relatedFaqs": [
+              "pricing-options",
+              "shipping-delivery"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pricing-payments",
+        "title": "Preise & Zahlungen",
+        "faqs": [
+          {
+            "id": "pricing-options",
+            "question": "Was sind Ihre Preisoptionen und Rabatte?",
+            "answer": "<p>Wir bieten transparente, unkomplizierte Preise ohne versteckte Gebühren:</p><h4>Einzelbuchpreise:</h4><ul><li><strong>Digitales PDF:</strong> €14 - Sofortiger Download nach Bestellung</li><li><strong>Physisches Hardcover:</strong> €42 - Inklusive digitaler Kopie, professionellem Druck und Versand</li></ul><h4>Zahlungsmethoden:</h4><p>Wir akzeptieren alle gängigen Kreditkarten (Visa, Mastercard, American Express, Discover), PayPal und Apple Pay.</p><h4>Währung & Preise:</h4><p>Alle Preise werden in Ihrer lokalen Währung basierend auf Ihrem Standort angezeigt. Keine Währungsumrechnungsgebühren. Besuchen Sie unsere Preisseite für genaue Preise in Ihrer Währung.</p>",
+            "relatedFaqs": [
+              "shipping-delivery"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shipping-delivery",
+        "title": "Versand & Lieferung",
+        "faqs": [
+          {
+            "id": "shipping-delivery",
+            "question": "Was ist Ihre Versand- und Lieferrichtlinie?",
+            "answer": "<p>Wir bieten zuverlässigen Versand mit klaren Zeitplänen:</p><h4>Produktionszeit:</h4><ul><li><strong>KI-Generierung:</strong> Sofort (während des Erstellungsprozesses)</li><li><strong>Buchdruck:</strong> 3-5 Werktage nach Bestellung</li><li><strong>Qualitätsprüfung:</strong> 1 Werktag</li><li><strong>Gesamtproduktion:</strong> 4-6 Werktage</li></ul><h4>Versandoptionen:</h4><ul><li><strong>Standardversand:</strong> 5-7 Werktage (Kostenlos bei qualifizierenden Bestellungen)</li><li><strong>Expressversand:</strong> 2-3 Werktage (zusätzliche Gebühr)</li><li><strong>Eilversand:</strong> 1-2 Werktage (zusätzliche Gebühr)</li></ul><h4>Internationaler Versand:</h4><ul><li><strong>Europa:</strong> 7-14 Werktage</li><li><strong>Andere Regionen:</strong> 10-21 Werktage</li><li><strong>Zoll:</strong> Kunde ist für alle Einfuhrzölle/-steuern verantwortlich</li></ul><h4>Bestellverfolgung:</h4><p>Sie erhalten eine Tracking-Nummer per E-Mail, sobald Ihr Buch versendet wird. Verfolgen Sie Ihre Bestellung in Echtzeit über unsere Website oder die Website des Spediteurs.</p><h4>Lieferprobleme:</h4><p>Wenn Ihr Buch nicht innerhalb des erwarteten Zeitrahmens ankommt, kontaktieren Sie unser Support-Team und wir werden sofort ermitteln.</p>",
+            "relatedFaqs": [
+              "pricing-options",
+              "cancellation-policy"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "legal-policies",
+        "title": "Rechtliches & Richtlinien",
+        "faqs": [
+          {
+            "id": "cancellation-policy",
+            "question": "Was ist Ihre Stornierung- und Rückerstattungsrichtlinie?",
+            "answer": "<p>Wir möchten, dass Sie mit Ihrem Kauf vollständig zufrieden sind. Hier ist unsere Stornierungsrichtlinie:</p><h4>Stornierungsfenster:</h4><ul><li><strong>Vor der Produktion:</strong> Vollständige Rückerstattung bei Stornierung innerhalb von 48 Stunden nach Bestellaufgabe und vor Druckbeginn</li><li><strong>Während der Produktion:</strong> Kann nicht storniert werden, sobald das Buch in den Druck geht (normalerweise 48 Stunden nach Bestellung)</li><li><strong>Nach dem Versand:</strong> Kann nicht storniert werden, aber Rückgaberichtlinie gilt für defekte Bücher</li></ul><h4>So stornieren Sie:</h4><ol><li>Senden Sie eine E-Mail an den Support mit Ihrer Bestellnummer</li><li>Wir bestätigen, ob Ihre Bestellung für eine Stornierung berechtigt ist</li><li>Rückerstattung wird innerhalb von 5-7 Werktagen auf die ursprüngliche Zahlungsmethode verarbeitet</li></ol><h4>Hinweis zu personalisierten Produkten:</h4><p>Da personalisierte Produkte speziell für Sie hergestellt werden, können sie nicht storniert werden, sobald die Produktion beginnt. Dies ist branchenübliche Praxis und entspricht den Verbraucherschutzgesetzen (EU-Verbraucherrechterichtlinie Artikel 16(c)).</p><h4>Ausnahmen:</h4><ul><li>Defekte oder beschädigte Bücher können für vollständige Rückerstattung zurückgegeben werden (siehe Rückgaberichtlinie)</li><li>Erhebliche Produktionsfehler qualifizieren für Rückerstattung oder Ersatz</li></ul><p>Wir werden immer mit Ihnen zusammenarbeiten, um eine faire Lösung zu finden, wenn Probleme auftreten.</p>",
+            "relatedFaqs": [
+              "return-policy",
+              "shipping-delivery"
+            ]
+          },
+          {
+            "id": "return-policy",
+            "question": "Was ist Ihre Rückgaberichtlinie für defekte Bücher?",
+            "answer": "<p>Wir stehen hinter der Qualität unserer Bücher und bieten eine umfassende Rückgaberichtlinie für defekte Produkte:</p><h4>Rückgabeberechtigung:</h4><ul><li><strong>Zeitrahmen:</strong> Melden Sie Mängel innerhalb von 14 Tagen nach Lieferung</li><li><strong>Zustand:</strong> Buch muss sich im Originalzustand befinden (ungelesen oder sanft gelesen)</li><li><strong>Nachweis erforderlich:</strong> Fotos des Mangels müssen bereitgestellt werden</li></ul><h4>Was gilt als defekt:</h4><ul><li>Druckfehler (verschwommene Bilder, Farbprobleme, Textfehler)</li><li>Physische Schäden (zerrissene Seiten, gebrochene Bindung, beschädigter Einband)</li><li>Fehlende Seiten oder falsche Seitenreihenfolge</li><li>Erhebliche Abweichung von der genehmigten Vorschau</li><li>Während des Versands beschädigte Bücher</li></ul><h4>Was nicht als defekt gilt:</h4><ul><li>Geringfügige Farbabweichungen von der digitalen Vorschau (normal beim Drucken)</li><li>KI-künstlerische Interpretationsunterschiede</li><li>Persönliche Präferenz bezüglich Kunststil</li><li>Geringfügige Unvollkommenheiten in KI-generierten Illustrationen</li></ul><h4>Rückgabeprozess:</h4><ol><li>Kontaktieren Sie den Support innerhalb von 14 Tagen mit Fotos des Mangels</li><li>Wir prüfen und genehmigen Ihre Rückgabeanfrage</li><li>Wir stellen ein vorausbezahltes Rückversandetikett bereit (kostenlos für Mängel)</li><li>Wählen Sie zwischen vollständiger Rückerstattung oder Ersatzbuch</li><li>Rückerstattung wird innerhalb von 5-7 Werktagen nach Erhalt der Rücksendung verarbeitet</li></ol><h4>Unsere Garantie:</h4><p>Wenn Ihr Buch defekt ist, machen wir es mit einer vollständigen Rückerstattung oder kostenlosem Ersatz richtig - Ihre Wahl. Keine Fragen gestellt.</p>",
+            "relatedFaqs": [
+              "cancellation-policy",
+              "ai-quality"
+            ]
+          },
+          {
+            "id": "data-privacy",
+            "question": "Wie schützen Sie meine persönlichen Daten und Fotos?",
+            "answer": "<p>Wir nehmen Ihre Privatsphäre und Datensicherheit sehr ernst:</p><h4>Datenerfassung:</h4><ul><li><strong>Persönliche Informationen:</strong> Name, E-Mail, Lieferadresse, Zahlungsinformationen</li><li><strong>Fotos:</strong> Nur für die Bucherstellung hochgeladene Bilder</li><li><strong>Nutzungsdaten:</strong> Website-Analysen zur Verbesserung der Benutzererfahrung</li></ul><h4>Fotospeicherung & -löschung:</h4><ul><li><strong>Speicherdauer:</strong> Fotos werden 90 Tage nach Bestellabschluss gespeichert</li><li><strong>Automatische Löschung:</strong> Fotos werden nach 90 Tagen automatisch gelöscht</li><li><strong>Vorzeitige Löschung:</strong> Fordern Sie sofortige Löschung an, indem Sie den Support kontaktieren</li><li><strong>Sichere Speicherung:</strong> Alle Fotos werden verschlüsselt und auf sicheren Servern gespeichert</li></ul><h4>Datenschutz-Compliance:</h4><ul><li><strong>DSGVO-konform:</strong> Vollständige Einhaltung der EU-Datenschutzbestimmungen</li><li><strong>CCPA-konform:</strong> Einhaltung des kalifornischen Verbraucherdatenschutzgesetzes</li><li><strong>Keine Weitergabe an Dritte:</strong> Wir verkaufen oder teilen Ihre Daten niemals mit Dritten</li><li><strong>Sichere Verarbeitung:</strong> Alle Zahlungsabwicklungen über PCI-konforme Anbieter</li></ul><h4>Ihre Rechte:</h4><ul><li><strong>Zugriff:</strong> Fordern Sie eine Kopie Ihrer persönlichen Daten an</li><li><strong>Löschung:</strong> Fordern Sie jederzeit die Löschung Ihrer Daten an</li><li><strong>Korrektur:</strong> Aktualisieren oder korrigieren Sie Ihre Informationen</li><li><strong>Abmeldung:</strong> Abmeldung von Marketing-E-Mails jederzeit</li></ul><h4>Sicherheitsmaßnahmen:</h4><ul><li>SSL-Verschlüsselung für alle Datenübertragungen</li><li>Sichere, verschlüsselte Datenbankspeicherung</li><li>Regelmäßige Sicherheitsüberprüfungen und Updates</li><li>Eingeschränkter Mitarbeiterzugriff auf persönliche Daten</li></ul><p>Für vollständige Details lesen Sie bitte unsere <a href=\"/privacy-policy\">Datenschutzrichtlinie</a> und <a href=\"/cookies\">Cookie-Richtlinie</a>.</p>",
+            "relatedFaqs": [
+              "ai-creation-process"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Nutzungsbedingungen",
+      "lastUpdated": "Zuletzt aktualisiert: 27. Januar 2026",
+      "version": "Version 1.0"
+    },
+    "sections": [
+      {
+        "title": "1. Einleitung & Geltungsbereich",
+        "content": "Diese Nutzungsbedingungen ('Bedingungen') regeln Ihre Nutzung von KidBook Creator ('der Dienst'), betrieben von KidBook Creator Ltd. ('wir', 'uns', 'unser'). Durch den Zugriff oder die Nutzung unseres Dienstes stimmen Sie zu, an diese Bedingungen gebunden zu sein."
+      },
+      {
+        "title": "Annahme der Bedingungen",
+        "content": "Durch die Nutzung unseres Dienstes bestätigen Sie, dass Sie mindestens 16 Jahre alt (oder 13 Jahre alt in den Vereinigten Staaten) sind und die rechtliche Fähigkeit besitzen, diese Bedingungen zu akzeptieren. Wenn Sie den Dienst im Namen einer anderen Person nutzen, vertreten Sie, dass Sie die Befugnis haben, diese Person an diese Bedingungen zu binden."
+      },
+      {
+        "title": "2. Kontobedingungen & Berechtigung",
+        "content": "Um unseren Dienst zu nutzen, müssen Sie ein Konto erstellen und genaue, vollständige und aktuelle Informationen angeben."
+      },
+      {
+        "title": "Berechtigungsvoraussetzungen",
+        "content": "Sie müssen mindestens 16 Jahre alt sein (oder 13 Jahre alt in den Vereinigten Staaten), um ein Konto zu erstellen. Sie müssen eine gültige E-Mail-Adresse und andere erforderliche Informationen angeben. Sie sind dafür verantwortlich, die Vertraulichkeit Ihrer Kontodaten zu wahren."
+      },
+      {
+        "title": "Kontoverantwortlichkeiten",
+        "content": "Sie sind für alle Aktivitäten verantwortlich, die unter Ihrem Konto stattfinden. Sie müssen uns sofort über jede unbefugte Nutzung Ihres Kontos informieren. Wir behalten uns das Recht vor, Konten zu sperren oder zu kündigen, die gegen diese Bedingungen verstoßen."
+      },
+      {
+        "title": "3. Bestellprozess & Bestellannahme",
+        "content": "Unser Bestellprozess ist darauf ausgelegt, einfach und transparent zu sein."
+      },
+      {
+        "title": "Bestellaufgabe",
+        "content": "Bestellungen werden über unsere Webschnittstelle aufgegeben. Sie erhalten eine Bestellbestätigungs-E-Mail, sobald Ihre Bestellung erfolgreich übermittelt wurde. Wir nehmen keine Bestellung an, bis wir Ihnen eine Bestellbestätigung senden."
+      },
+      {
+        "title": "Bestellannahme",
+        "content": "Wir behalten uns das Recht vor, jede Bestellung aus beliebigen Grund anzunehmen oder abzulehnen, einschließlich aber nicht beschränkt auf: Preisfehler, unzureichender Lagerbestand oder Verletzung dieser Bedingungen. Wir können auch zusätzliche Überprüfungen vor der Bestellannahme verlangen."
+      },
+      {
+        "title": "Bestellprüfung",
+        "content": "Sie sind dafür verantwortlich, Ihre Bestelldaten sofort nach Erhalt der Bestätigungs-E-Mail zu überprüfen. Sie müssen uns über Fehler innerhalb von 24 Stunden nach Erhalt der Bestätigung informieren."
+      },
+      {
+        "title": "4. Preise & Zahlungsbedingungen",
+        "content": "Unsere Preisgestaltung ist transparent und umfassend."
+      },
+      {
+        "title": "Produktpreise",
+        "content": "Preise werden in Ihrer lokalen Währung angezeigt, zutreffend. Alle Preise enthalten anwendbare Steuern für EU-Kunden. Nicht-EU-Kunden können für Einfuhrzölle und Steuern in ihrem Land verantwortlich sein."
+      },
+      {
+        "title": "Zahlungsverarbeitung",
+        "content": "Die Zahlung wird über sichere Drittanbieter-Zahlungsverarbeiter abgewickelt. Wir speichern Ihre Zahlungskarteninformationen nicht. Die Zahlung muss bei Bestellaufgabe vollständig erfolgen."
+      },
+      {
+        "title": "Preisfehler",
+        "content": "Wir behalten uns das Recht vor, Preisfehler zu korrigieren. Wenn wir nach der Bestellaufgabe einen Preisfehler feststellen, werden wir Sie kontaktieren, um den korrekten Preis zu bestätigen oder die Bestellung zu stornieren, wenn Sie dies bevorzugen."
+      },
+      {
+        "title": "5. Stornierungs- & Rückerstattungsrichtlinie",
+        "content": "Wir verstehen, dass sich Pläne ändern, und haben unsere Richtlinien gestaltet, um fair und transparent zu sein."
+      },
+      {
+        "title": "Stornierungsfenster",
+        "content": "Sie können Ihre Bestellung innerhalb von 48 Stunden nach Aufgabe stornieren, vorausgesetzt, die KI-Generierung hat noch nicht begonnen. Sobald die KI-Generierung beginnt, können Bestellungen aufgrund des personalisierten Charakters unserer Produkte nicht storniert werden."
+      },
+      {
+        "title": "Ausschluss personalisierter Produkte",
+        "content": "Gemäß Artikel 16(c) der EU-Verbraucherrechterichtlinie und ähnlichen Gesetzen in anderen Rechtsordnungen sind personalisierte Produkte von standardmäßigen Rückgaberechten ausgeschlossen. Unsere Produkte werden nach Ihren Spezifikationen hergestellt und sind klar personalisiert."
+      },
+      {
+        "title": "Defekte Produkte",
+        "content": "Wenn Ihr Buch mit Herstellungsfehlern ankommt (Druckfehler, Bindungsprobleme, Beschädigung beim Versand), kontaktieren Sie uns bitte innerhalb von 14 Tagen nach Erhalt. Wir werden einen kostenlosen Ersatz oder eine volle Rückerstattung einschließlich Versandkosten arrangieren."
+      },
+      {
+        "title": "Stornierungsprozess",
+        "content": "Um eine Bestellung zu stornieren, kontaktieren Sie bitte unseren Kundenservice mit Ihrer Bestellnummer. Wir bearbeiten Stornierungen innerhalb von 24 Stunden an Werktagen."
+      },
+      {
+        "title": "6. Lieferung & Versand",
+        "content": "Wir liefern weltweit mit zuverlässigen Versandpartnern."
+      },
+      {
+        "title": "Lieferfristen",
+        "content": "Die Herstellung dauert typischerweise 3-5 Werktage plus Versandzeit. Versandzeiten variieren je nach Standort: 3-5 Tage für Inlandsbestellungen, 7-14 Tage für internationale Bestellungen. Dies sind Schätzungen und nicht garantiert."
+      },
+      {
+        "title": "Risiko und Eigentum",
+        "content": "Das Verlustrisiko geht auf Sie über, wenn die Ware an den Spediteur übergeben wird. Das Eigentum an den Produkten geht nach vollständiger Zahlung auf Sie über. Sie müssen für die Annahme der Lieferung verfügbar sein oder Vorkehrungen für den Empfang treffen."
+      },
+      {
+        "title": "Bestellverfolgung",
+        "content": "Sie erhalten Sendungsinformationen, sobald Ihre Bestellung versandt wird. Wir empfehlen, Ihre Sendung zu überwachen und den Spediteur direkt bei Lieferproblemen zu kontaktieren."
+      },
+      {
+        "title": "7. Geistige Eigentumsrechte",
+        "content": "Wir respektieren geistige Eigentumsrechte und definieren das Eigentum klar."
+      },
+      {
+        "title": "Unser geistiges Eigentum",
+        "content": "Alle Inhalte, Funktionen und Funktionalitäten des Dienstes gehören KidBook Creator Ltd. und sind durch Urheberrecht, Warenzeichen und andere Gesetze zum geistigen Eigentum geschützt."
+      },
+      {
+        "title": "Ihre Rechte an gekauften Inhalten",
+        "content": "Nach vollständiger Zahlung erhalten Sie eine nicht-exklusive, nicht übertragbare Lizenz zur Nutzung Ihres gekauften Buches für persönliche, nicht-kommerzielle Zwecke. Sie dürfen die Inhalte ohne unsere schriftliche Zustimmung nicht reproduzieren, verbreiten oder kommerziell auswerten."
+      },
+      {
+        "title": "KI-generierte Inhalte",
+        "content": "KI-generierte Illustrationen und Inhalte sind Ihnen nur zur persönlichen Nutzung lizenziert. Wir behalten alle Rechte an den zugrundeliegenden KI-Modellen und Algorithmen."
+      },
+      {
+        "title": "8. Nutzerinhalte & Verantwortlichkeiten",
+        "content": "Sie sind für die Inhalte verantwortlich, die Sie unserem Dienst zur Verfügung stellen."
+      },
+      {
+        "title": "Ihre Gewährleistungen",
+        "content": "Sie gewährleisten, dass Sie alle notwendigen Rechte an den von Ihnen bereitgestellten Inhalten haben, einschließlich Fotos und Texten. Sie bestätigen, dass Sie die Erlaubnis aller auf Fotos abgebildeten Personen haben oder dass Sie ihr gesetzlicher Vormund sind."
+      },
+      {
+        "title": "Verbotene Inhalte",
+        "content": "Sie dürfen keine Inhalte hochladen, die: illegal, bedrohend, verleumderisch, hassvoll oder diskriminierend sind; geistige Eigentumsrechte verletzen; urheberrechtlich geschützte Zeichen oder geschützte Markenzeichen enthalten; Datenschutzrechte verletzen; oder anderweitig unangemessen sind."
+      },
+      {
+        "title": "Freistellung",
+        "content": "Sie stimmen zu, uns von allen Ansprüchen, Schäden oder Aufwendungen freizustellen, die aus Ihrer Verletzung dieser Gewährleistungen oder Ihrer Nutzung des Dienstes resultieren."
+      },
+      {
+        "title": "9. Bedingungen für KI-generierte Inhalte",
+        "content": "Unser Dienst nutzt künstliche Intelligenz zur Erstellung personalisierter Inhalte."
+      },
+      {
+        "title": "KI-Qualitätshinweis",
+        "content": "KI-generierte Inhalte können unerwartete oder unvollkommene Ergebnisse enthalten. Geringfügige Abweichungen in Stil, Farbe oder Interpretation gelten nicht als Fehler und sind Teil des kreativen Prozesses. Das KI-System unternimmt sein Bestes, um Ihren Spezifikationen zu entsprechen, kann aber keine perfekten Ergebnisse garantieren."
+      },
+      {
+        "title": "Vorschau und Bearbeitung",
+        "content": "Sie haben die Möglichkeit, KI-generierte Inhalte vor der endgültigen Bestellung zu überprüfen und zu bearbeiten. Wir empfehlen, alle Inhalte sorgfältig zu prüfen, bevor Sie zur Zahlung fortfahren."
+      },
+      {
+        "title": "KI-Beschränkungen",
+        "content": "Unser KI-System kann urheberrechtlich geschützte Zeichen, Markenzeichen oder bestimmte reale Personen nicht perfekt reproduzieren. Ergebnisse sind künstlerische Interpretationen basierend auf Ihrer Eingabe."
+      },
+      {
+        "title": "10. Haftung & Gewährleistungsausschlüsse",
+        "content": "Unsere Haftung ist wie in diesem Abschnitt beschrieben begrenzt."
+      },
+      {
+        "title": "Dienst 'wie besehen' bereitgestellt",
+        "content": "Unser Dienst wird 'wie besehen' und 'wie verfügbar' bereitgestellt. Wir geben keine Gewährleistungen, ausdrücklich oder stillschweigend, über den Betrieb des Dienstes oder die darin enthaltenen Informationen, Inhalte oder Materialien."
+      },
+      {
+        "title": "Haftungsbeschränkung",
+        "content": "Nach dem maximal zulässigen Umfang des Gesetzes beträgt unsere Gesamthaftung für jeden Anspruch aus diesen Bedingungen oder Ihrer Nutzung des Dienstes nicht mehr als den Kaufpreis des betreffenden Produkts. Wir sind nicht haftbar für indirekte, Folgeschäden oder Strafschäden."
+      },
+      {
+        "title": "Ausnahmen",
+        "content": "Einige Rechtsordnungen erlauben den Ausschluss oder die Beschränkung der Haftung für Folgeschäden oder zufällige Schäden, daher gelten diese Beschränkungen möglicherweise nicht für Sie."
+      },
+      {
+        "title": "11. Höhere Gewalt",
+        "content": "Wir sind nicht haftbar für Leistungsausfälle aufgrund von Umständen außerhalb unserer zumutbaren Kontrolle, einschließlich aber nicht beschränkt auf: Naturkatastrophen, Krieg, Terrorismus, Arbeitsstreitigkeiten, Regierungsmaßnahmen oder Ausfälle der Internetinfrastruktur. Während solcher Ereignisse können wir Dienste aussetzen oder kündigen und Rückerstattungen geben, wo angemessen."
+      },
+      {
+        "title": "12. Geltendes Recht & Streitbeilegung",
+        "content": "Diese Bedingungen unterliegen den Gesetzen Irlands ohne Rücksicht auf Kollisionsrecht."
+      },
+      {
+        "title": "Gerichtsbarkeit",
+        "content": "Jeder Streit, der aus diesen Bedingungen entsteht, wird vor den Gerichten Irlands beigelegt. Für EU-Verbraucher können zusätzliche Schutzrechte nach lokalen Verbrauchergesetzen gelten."
+      },
+      {
+        "title": "Schiedsverfahren",
+        "content": "Die meisten Streitigkeiten können über unseren Kundenserviceprozess gelöst werden. Für ungelöste Streitigkeiten bieten wir verbindliche Schiedsverfahren als Alternative zu Gerichtsverfahren an, außer für Ansprüche, die vor dem Kleinklagergericht geltend gemacht werden können."
+      },
+      {
+        "title": "13. Änderungen der Bedingungen",
+        "content": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern."
+      },
+      {
+        "title": "Benachrichtigung über Änderungen",
+        "content": "Bei wesentlichen Änderungen werden wir Sie per E-Mail oder prominenter Website-Mitteilung benachrichtigen. Geringfügige Änderungen werden sofort nach Veröffentlichung wirksam. Ihre fortgesetzte Nutzung des Dienstes nach Änderungen stellt die Annahme der geänderten Bedingungen dar."
+      },
+      {
+        "title": "Regelmäßige Überprüfung",
+        "content": "Wir empfehlen Ihnen, diese Bedingungen regelmäßig zu überprüfen. Das Datum 'Zuletzt aktualisiert' am Anfang dieser Seite zeigt, wann diese Bedingungen zuletzt geändert wurden."
+      },
+      {
+        "title": "14. Kontaktinformationen",
+        "content": "Wenn Sie Fragen zu diesen Bedingungen haben, kontaktieren Sie uns bitte:"
+      }
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Datenschutzerklärung",
+      "lastUpdated": "Zuletzt aktualisiert: 27. Januar 2026",
+      "version": "Version 1.0"
+    },
+    "sections": [
+      {
+        "title": "Informationen zum Verantwortlichen",
+        "content": "KidBook Creator Ltd. ('wir', 'uns', 'unser') ist der für Ihre persönlichen Informationen verantwortliche Datenverantwortliche."
+      },
+      {
+        "title": "Erforderliche vs. optionale Daten",
+        "content": "Einige Informationen sind erforderlich, um unseren Dienst bereitzustellen (Name, E-Mail für Kontoerstellung), während andere Informationen optional sind (zusätzliche Fotos, Umfrageantworten). Wir geben während des Sammelprozesses an, was erforderlich ist."
+      },
+      {
+        "title": "Vertragserfüllung",
+        "content": "Wir verarbeiten Daten, die zur Erfüllung unserer vertraglichen Verpflichtungen erforderlich sind, wie z.B. Bestellabwicklung, Lieferung von Büchern und Bereitstellung von Kundenservice."
+      },
+      {
+        "title": "Berechtigtes Interesse",
+        "content": "Wir verarbeiten Daten bei berechtigtem Interesse, wie z.B. Verbesserung unseres Dienstes, Betrugsprävention, Sicherheitssicherung und Analyse von Nutzungsmustern."
+      },
+      {
+        "title": "Einwilligung",
+        "content": "Wir verarbeiten Daten auf Basis Ihrer ausdrücklichen Einwilligung, wie z.B. für Marketingkommunikation, nicht-essentielle Cookies und Newsletter-Abonnements."
+      },
+      {
+        "title": "Rechtliche Verpflichtung",
+        "content": "Wir verarbeiten Daten zur Einhaltung gesetzlicher Anforderungen, wie z.B. Aufbewahrung von Steuerunterlagen (7 Jahre) und Beantwortung rechtlicher Anfragen."
+      },
+      {
+        "title": "Datenschutz-Sicherheitsmaßnahmen",
+        "content": "Alle Dritten unterzeichnen Datenverarbeitungsvereinbarungen und sind vertraglich verpflichtet, Ihre Daten zu schützen. Wir teilen nur die für jeden Dienst erforderlichen Mindestdaten."
+      },
+      {
+        "title": "Wir verkaufen Ihre Daten nicht",
+        "content": "Wir verkaufen, vermieten oder tauschen Ihre persönlichen Informationen niemals an Dritte für Marketingzwecke."
+      },
+      {
+        "title": "Automatische Löschung",
+        "content": "Wir implementieren automatische Löschprozesse für Fotos und temporäre Daten. Sie können auch eine vorzeitige Löschung Ihrer Daten beantragen."
+      },
+      {
+        "title": "Wie Sie Ihre Rechte ausüben",
+        "content": "Um diese Rechte auszuüben, senden Sie uns eine E-Mail an privacy@kidbookcreator.com. Wir antworten innerhalb von 30 Tagen (können bei komplexen Anfragen auf 90 Tage verlängern). Wir können Ihre Identität vor der Bearbeitung von Anfragen überprüfen."
+      },
+      {
+        "title": "Cookie-Einwilligung",
+        "content": "Wir fragen Ihre Einwilligung, bevor wir nicht-essentielle Cookies platzieren. Sie können Präferenzen über unseren Cookie-Banner oder Browsereinstellungen verwalten."
+      },
+      {
+        "title": "Keine absolute Garantie",
+        "content": "Obwohl wir angemessene Maßnahmen zum Schutz Ihrer Daten ergreifen, ist keine Methode der Übertragung über das Internet 100% sicher. Wir werden Sie über Datenschutzverletzungen benachrichtigen, die ein Risiko für Ihre Rechte darstellen."
+      },
+      {
+        "title": "Altersanforderungen",
+        "content": "Sie müssen mindestens 16 Jahre alt sein (oder 13 in den Vereinigten Staaten), um ein Konto zu erstellen. Wir sammeln wissentlich keine persönlichen Informationen von Kindern unter diesem Alter."
+      },
+      {
+        "title": "Elternrechte",
+        "content": "Wenn Sie glauben, dass wir Informationen von einem Kind unter dem erforderlichen Alter gesammelt haben, kontaktieren Sie uns bitte sofort. Wir werden die Informationen umgehend löschen. Eltern können jederzeit die Löschung der Daten ihres Kindes beantragen."
+      },
+      {
+        "title": "Informationen über Kinder",
+        "content": "Wir können Informationen über Kinder (Namen, Fotos) nur sammeln, wenn sie von ihren Eltern oder gesetzlichen Vormündern bereitgestellt werden. Diese Informationen werden ausschließlich zur Erstellung personalisierter Bücher verwendet und nicht für andere Zwecke."
+      },
+      {
+        "title": "Fotoverarbeitung",
+        "content": "Von Ihnen hochgeladene Fotos werden von KI-Systemen analysiert, um Charakterillustrationen zu erstellen. Fotos werden nur für diesen Zweck verwendet und nicht zum Training von KI-Modellen oder andere Zwecke."
+      },
+      {
+        "title": "Fotospeicherung",
+        "content": "Fotos werden 90 Tage nach Bestellabschluss gespeichert, dann automatisch gelöscht. Sie können jederzeit eine vorzeitige Löschung beantragen."
+      },
+      {
+        "title": "KI-Anbieter-Freigabe",
+        "content": "Fotos können an KI-Dienstleister unter strengen Datenverarbeitungsvereinbarungen weitergegeben werden. Diese Anbieter sind davon ausgeschlossen, Fotos für andere Zwecke als die Generierung Ihrer Illustrationen zu verwenden."
+      },
+      {
+        "title": "Ihre Rechte",
+        "content": "Sie bestätigen, dass Sie das Recht haben, Fotos hochzuladen und die Erlaubnis aller abgebildeten Personen haben. Bei Fotos von Kindern bestätigen Sie, dass Sie deren Elternteil oder gesetzlicher Vormund sind."
+      },
+      {
+        "title": "Übertragungsmechanismen",
+        "content": "Wenn wir Daten außerhalb des Europäischen Wirtschaftsraums übertragen, verwenden wir angemessene Schutzmaßnahmen wie Standardvertragsklauseln (SCCs), die von der Europäischen Kommission genehmigt wurden. Diese stellen sicher, dass Ihre Daten geschützt bleiben."
+      },
+      {
+        "title": "Einwilligung erforderlich",
+        "content": "Wir senden nur Werbe-E-Mails, Newsletter und Marketing-Nachrichten mit Ihrer ausdrücklichen Einwilligung. Sie können die Einwilligung jederzeit widerrufen."
+      },
+      {
+        "title": "Abmeldungsoptionen",
+        "content": "Sie können sich von Marketingkommunikation abmelden, indem Sie auf den Abmeldelink in E-Mails klicken, Ihre Kontoeinstellungen aktualisieren oder uns direkt kontaktieren."
+      },
+      {
+        "title": "Benachrichtigung über Änderungen",
+        "content": "Bei wesentlichen Änderungen werden wir Sie per E-Mail oder prominenter Website-Mitteilung benachrichtigen. Geringfügige Änderungen werden sofort nach Veröffentlichung wirksam. Das Datum 'Zuletzt aktualisiert' zeigt an, wann diese Richtlinie zuletzt geändert wurde."
+      },
+      {
+        "title": "Regelmäßige Überprüfung",
+        "content": "Wir überprüfen diese Richtlinie regelmäßig, um sicherzustellen, dass sie genau und mit geltenden Gesetzen konform bleibt. Wir empfehlen Ihnen, sie regelmäßig zu überprüfen."
+      },
+      {
+        "title": "Datenschutzaufsichtsbehörden",
+        "content": "Wenn Sie Bedenken darüber haben, wie wir Ihre Daten verarbeiten, haben Sie auch das Recht, sich bei Ihrer lokalen Datenschutzaufsichtsbehörde zu beschweren."
+      }
+    ]
+  }
+}

@@ -34,6 +34,12 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
+# Documentation and internal files
+00-prds/
+00-readmes/
+00-project-overview/
+docs/
+
 # Misc
 *.log
 *.pid

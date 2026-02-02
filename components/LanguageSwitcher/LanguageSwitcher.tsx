@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import styles from './LanguageSwitcher.module.css';
 
 export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
   const { i18n } = useTranslation();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -19,6 +23,20 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
 
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode);
+    document.cookie = `NEXT_LOCALE=${langCode}; path=/; max-age=31536000`;
+
+    if (pathname) {
+      const segments = pathname.split('/');
+      if (segments.length > 1 && ['en', 'de', 'he'].includes(segments[1])) {
+        segments[1] = langCode;
+        const basePath = segments.join('/') || '/';
+        const query = searchParams?.toString();
+        const hash = typeof window !== 'undefined' ? window.location.hash : '';
+        const nextPath = `${basePath}${query ? `?${query}` : ''}${hash}`;
+        router.push(nextPath);
+      }
+    }
+
     setIsOpen(false);
   };
 
