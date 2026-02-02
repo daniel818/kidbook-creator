@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import styles from './LanguageSwitcher.module.css';
 
-export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
+export function LanguageSwitcher({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'navbar' }) {
   const { i18n } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
@@ -53,7 +53,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
 
   return (
     <div
-      className={`${styles.languageSwitcher} ${isOpen ? styles.open : ''} ${compact ? styles.compact : ''}`}
+      className={`${styles.languageSwitcher} ${isOpen ? styles.open : ''} ${compact ? styles.compact : ''} ${variant === 'navbar' ? styles.navbarVariant : ''}`}
       ref={containerRef}
     >
       <button
@@ -64,6 +64,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
       >
         <span className={styles.flag}>{currentLanguage.flag}</span>
         <span className={styles.label}>{currentLanguage.code.toUpperCase()}</span>
+        <span className={`material-symbols-outlined ${styles.caret}`}>expand_more</span>
       </button>
       <div className={styles.dropdown}>
         {languages.map((lang) => (

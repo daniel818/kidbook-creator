@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -16,6 +15,7 @@ export function Navbar() {
   const { user, isLoading, signOut } = useAuth();
   const { t } = useTranslation('navbar');
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
 
@@ -66,58 +66,60 @@ export function Navbar() {
           {/* Logo / Brand */}
           <button className={styles.navBrand} onClick={() => router.push('/')}>
             <div className={styles.logoWrapper}>
-              <Image
-                src="/media/logo.png"
-                alt="KidBook Creator"
-                width={32}
-                height={32}
-                className={styles.logo}
-              />
+              <span className={`material-symbols-outlined ${styles.logoIcon}`}>auto_stories</span>
             </div>
             <span className={styles.navName}>KidBook Creator</span>
           </button>
 
-          {/* Spacer for desktop layout balance */}
-          <div className={styles.navSpacer}></div>
-
-          {/* Desktop Actions */}
           <div className={styles.navActions}>
-            {!isLoading && (
-              <button
-                className={styles.createButton}
-                onClick={() => router.push('/create')}
-              >
-                <span className={styles.createIcon}>✨</span>
-                <span className={styles.createButtonText}>{t('createBook', 'Create a Book')}</span>
+            <div className={styles.navLinks}>
+              <button className={styles.navLink} onClick={() => router.push('/pricing')}>
+                {t('pricing', 'Pricing')}
               </button>
-            )}
-
-            {/* Mobile Language (shown on mobile top bar) */}
-            <div className={styles.languageMobile}>
-              <LanguageSwitcher compact />
+              <div className={styles.languageDesktop}>
+                <LanguageSwitcher compact variant="navbar" />
+              </div>
             </div>
+
+            <button
+              className={styles.createButton}
+              onClick={() => router.push('/create')}
+            >
+              {t('createBook', 'Create a Book')}
+            </button>
 
             {isLoading ? (
               <div className={styles.navSkeleton}></div>
+            ) : user ? (
+              <div className={styles.userSlot}>
+                <UserNav />
+              </div>
             ) : (
               <div className={styles.desktopActions}>
-                {!user && (
-                  <button
-                    className={styles.signInButton}
-                    onClick={() => setShowAuthModal(true)}
-                  >
-                    {t('signIn', 'Sign In')}
-                  </button>
-                )}
-                {user && <UserNav />}
-                <div className={styles.languageDesktop}>
-                  <LanguageSwitcher />
-                </div>
+                <button
+                  className={styles.loginButton}
+                  onClick={() => {
+                    setAuthMode('login');
+                    setShowAuthModal(true);
+                  }}
+                >
+                  {t('signIn', 'Login')}
+                </button>
+                <button
+                  className={styles.signupButton}
+                  onClick={() => {
+                    setAuthMode('signup');
+                    setShowAuthModal(true);
+                  }}
+                >
+                  {t('signUp', 'Sign Up')}
+                </button>
               </div>
             )}
           </div>
         </div>
       </nav>
+      {!isHome && <div className={styles.navOffset} aria-hidden="true"></div>}
 
       {/* Mobile Bottom Navigation Bar */}
       <div className={styles.mobileBar} role="navigation" aria-label="Primary">
@@ -212,6 +214,7 @@ export function Navbar() {
                   className={styles.bottomSheetItem}
                   onClick={() => {
                     setShowMoreMenu(false);
+                    setAuthMode('login');
                     setShowAuthModal(true);
                   }}
                 >
@@ -279,7 +282,7 @@ export function Navbar() {
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        initialMode="login"
+        initialMode={authMode}
       />
     </>
   );

@@ -425,7 +425,7 @@
     "matrix": {
       "package": "חבילה",
       "digital": "דיגיטלי",
-      "printed": "מודפס",
+      "printed": "מודפס + דיגיטלי",
       "single": "ספר בודד",
       "book": "ספר",
       "perBook": "לספר",
@@ -439,7 +439,9 @@
       "printedIncludes": "מודפס כולל:",
       "printedFeature1": "הדפסה מקצועית",
       "printedFeature2": "איכות נייר פרמיום",
-      "printedFeature3": "משלוח עד הבית"
+      "printedFeature3": "גימור איכותי לשימור לדורות",
+      "printedFeature4": "כולל עותק דיגיטלי",
+      "printedFeature5": "משלוח עד הבית"
     },
     "hero": {
       "description": "צור ספרים מותאמים אישית קסומים לילדים הקטנים שלך. בחר את החבילה המושלמת לסיפור שלך!"

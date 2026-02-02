@@ -53,14 +53,12 @@ const STATUS_CONFIG: Record<string, { label: string; icon: string; color: string
     'FAILED': { label: 'Failed', icon: '❌', color: '#ef4444', step: 0 },
 };
 
-// Progress steps for the timeline
+// Progress steps for the timeline (Stitch layout)
 const PROGRESS_STEPS = [
-    { key: 'ordered', label: 'Ordered', icon: '📝' },
-    { key: 'confirmed', label: 'Confirmed', icon: '✓' },
-    { key: 'preparing', label: 'Preparing', icon: '⏰' },
-    { key: 'printing', label: 'Printing', icon: '📖' },
-    { key: 'shipped', label: 'Shipped', icon: '🚚' },
-    { key: 'delivered', label: 'Delivered', icon: '🎉' },
+    { key: 'confirmed', label: 'Confirmed', icon: 'check' },
+    { key: 'printing', label: 'Printing', icon: 'book_2' },
+    { key: 'shipped', label: 'Shipped', icon: 'local_shipping' },
+    { key: 'delivered', label: 'Delivered', icon: 'celebration' },
 ];
 
 const SIZE_LABELS: Record<string, string> = {
@@ -75,7 +73,6 @@ export default function OrdersPage() {
     const { user, isLoading: authLoading } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [expandedTimelines, setExpandedTimelines] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -162,8 +159,37 @@ export default function OrdersPage() {
         return value.charAt(0).toUpperCase() + value.slice(1);
     };
 
-    const toggleTimeline = (orderId: string) => {
-        setExpandedTimelines(prev => ({ ...prev, [orderId]: !prev[orderId] }));
+    const formatOrderId = (id: string) => {
+        const cleaned = id.replace(/[^a-z0-9]/gi, '').toUpperCase();
+        const suffix = cleaned.slice(-4) || cleaned.slice(0, 4);
+        return `KBC-${suffix || '0000'}`;
+    };
+
+    const getProgressIndex = (step: number) => {
+        if (step >= 6) return 3;
+        if (step >= 5) return 2;
+        if (step >= 3) return 1;
+        return 0;
+    };
+
+    const getStatusTone = (label: string, step: number) => {
+        const value = label.toLowerCase();
+        if (value.includes('fail') || value.includes('cancel') || value.includes('issue')) {
+            return { className: styles.statusError, icon: 'error' };
+        }
+        if (value.includes('ship')) {
+            return { className: styles.statusShipped, icon: 'local_shipping' };
+        }
+        if (value.includes('print')) {
+            return { className: styles.statusPrinting, icon: 'print' };
+        }
+        if (value.includes('deliver')) {
+            return { className: styles.statusDelivered, icon: 'task_alt' };
+        }
+        if (value.includes('process') || value.includes('confirm') || step <= 2) {
+            return { className: styles.statusProcessing, icon: 'task_alt' };
+        }
+        return { className: styles.statusDefault, icon: 'hourglass_top' };
     };
 
     if (authLoading || (isLoading && !orders.length)) {
@@ -174,6 +200,11 @@ export default function OrdersPage() {
         );
     }
 
+    const activeCount = orders.filter(order => {
+        const config = getStatusConfig(order.status, order.fulfillmentStatus);
+        return config.step > 0 && config.step < 6;
+    }).length;
+
     return (
         <>
             <Navbar />
@@ -181,170 +212,192 @@ export default function OrdersPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <h1 className={styles.title}>{t('header.title') || 'My Orders'}</h1>
-                        <p className={styles.subtitle}>{t('header.subtitle') || 'Track your printed books'}</p>
+                        <p className={`${styles.subtitle} ${styles.subtitleDesktop}`}>
+                            {t('header.subtitle') || 'Manage and track your printed book collection'}
+                        </p>
+                        <p className={`${styles.subtitle} ${styles.subtitleMobile}`}>
+                            {`Tracking ${activeCount} active shipments`}
+                        </p>
                     </div>
 
                     {orders.length === 0 ? (
                         <motion.div
-                            className={styles.card}
+                            className={styles.emptyState}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                         >
-                            <div className={styles.emptyState}>
-                                <span className={styles.emptyIcon}>📦</span>
-                                <p className={styles.emptyText}>{t('empty.title') || 'No orders yet'}</p>
-                                <p className={styles.emptySubtext}>
-                                    {t('empty.subtitle') || 'Create your first custom book and order a printed copy!'}
-                                </p>
-                                <button
-                                    className={styles.emptyButton}
-                                    onClick={() => router.push('/create')}
-                                >
-                                    {t('empty.button') || 'Create a Book'}
-                                </button>
-                            </div>
+                            <span className={styles.emptyIcon}>📦</span>
+                            <p className={styles.emptyText}>{t('empty.title') || 'No orders yet'}</p>
+                            <p className={styles.emptySubtext}>
+                                {t('empty.subtitle') || 'Create your first custom book and order a printed copy!'}
+                            </p>
+                            <button
+                                className={styles.emptyButton}
+                                onClick={() => router.push('/create')}
+                            >
+                                {t('empty.button') || 'Create a Book'}
+                            </button>
                         </motion.div>
                     ) : (
-                        <div className={styles.orderGrid}>
-                            {orders.map((order, index) => {
-                                const config = getStatusConfig(order.status, order.fulfillmentStatus);
-                                const isError = config.step === 0;
+                        <>
+                            <div className={styles.orderGrid}>
+                                {orders.map((order, index) => {
+                                    const config = getStatusConfig(order.status, order.fulfillmentStatus);
+                                    const progressIndex = getProgressIndex(config.step);
+                                    const progressPercent = (progressIndex / (PROGRESS_STEPS.length - 1)) * 100;
+                                    const statusTone = getStatusTone(config.label, config.step);
+                                    const deliveryRange = formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax);
+                                    const deliveryDisplay = deliveryRange
+                                        ? deliveryRange
+                                            .replace(/^arrives\\s*/i, '')
+                                            .replace(/^delivered\\s*/i, '')
+                                            .trim()
+                                        : null;
+                                    const isDelivered = config.step >= 6;
+                                    const isError = config.step === 0;
+                                    const mobileStatusLabel = isError
+                                        ? config.label
+                                        : isDelivered
+                                            ? 'Delivered'
+                                            : config.step >= 5
+                                                ? 'In Transit'
+                                                : config.step >= 3
+                                                    ? 'Printing'
+                                                    : 'Processing';
+                                    const deliveryLabel = isDelivered ? 'Delivered on' : 'Est. Delivery';
+                                    const deliveryValue = deliveryDisplay || formatDate(order.createdAt);
+                                    const canTrack = Boolean(order.trackingUrl || order.trackingNumber);
 
-                                return (
-                                    <motion.div
-                                        key={order.id}
-                                        className={styles.orderCard}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, amount: 0.2 }}
-                                    >
-                                        <div className={styles.orderHeader}>
-                                            <div className={styles.orderId}>ORDER #{order.id.slice(0, 8).toUpperCase()}</div>
-                                            <div className={styles.orderDate}>{formatDate(order.createdAt)}</div>
-                                        </div>
-
-                                        <div className={styles.orderContent}>
-                                            {order.bookThumbnail ? (
-                                                <img
-                                                    src={order.bookThumbnail}
-                                                    alt={order.bookTitle}
-                                                    className={styles.bookCoverImage}
-                                                />
-                                            ) : (
-                                                <div
-                                                    className={styles.bookCover}
-                                                    style={{ backgroundColor: getThemeColor(order.bookTheme) }}
-                                                >
-                                                    📚
+                                    return (
+                                        <motion.div
+                                            key={order.id}
+                                            className={styles.orderCard}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true, amount: 0.2 }}
+                                        >
+                                            <div className={styles.orderTop}>
+                                                <div className={styles.orderMeta}>
+                                                    <span className={styles.orderId}>{`ORDER #${formatOrderId(order.id)}`}</span>
+                                                    <span className={styles.metaDot}></span>
+                                                    <span className={styles.orderDate}>
+                                                        <span className="material-symbols-outlined">calendar_today</span>
+                                                        {formatDate(order.createdAt)}
+                                                    </span>
                                                 </div>
-                                            )}
-                                            <div className={styles.orderDetails}>
-                                                <div className={styles.titleRow}>
+                                                <span className={`${styles.statusPill} ${statusTone.className}`}>
+                                                    <span className="material-symbols-outlined">{statusTone.icon}</span>
+                                                    {config.label}
+                                                </span>
+                                            </div>
+
+                                            <div className={styles.orderBody}>
+                                                <div className={styles.bookThumbContainer}>
+                                                    <div
+                                                        className={styles.bookThumb}
+                                                        style={{
+                                                            backgroundImage: order.bookThumbnail ? `url(${order.bookThumbnail})` : undefined,
+                                                            backgroundColor: order.bookThumbnail ? undefined : getThemeColor(order.bookTheme),
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                                <div className={styles.orderDetails}>
                                                     <h3 className={styles.bookTitle}>{order.bookTitle}</h3>
-                                                    <span
-                                                        className={styles.orderStatus}
-                                                        style={{ backgroundColor: `${config.color}20`, color: config.color }}
-                                                    >
-                                                        {config.icon} {config.label}
-                                                    </span>
-                                                </div>
-                                                {order.childName && (
-                                                    <div className={styles.bookMeta}>For {order.childName}</div>
-                                                )}
-                                                <div className={styles.orderSummaryRow}>
-                                                    <span className={styles.summaryStatus}>
-                                                        <span className={styles.summaryDot} style={{ backgroundColor: config.color }}></span>
-                                                        {config.label}
-                                                    </span>
-                                                    {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax) && (
-                                                        <span className={styles.summaryDelivery}>
-                                                            {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax)}
-                                                        </span>
+                                                    {order.childName && (
+                                                        <p className={styles.childName}>For {order.childName}</p>
                                                     )}
-                                                </div>
-                                                <div className={styles.metaRow}>
-                                                    <span className={styles.metaPill}>{formatLabel(order.format)}</span>
-                                                    <span className={styles.metaPill}>{SIZE_LABELS[order.size] || order.size}</span>
-                                                    <span className={styles.metaPill}>Qty {order.quantity}</span>
-                                                </div>
-                                                <div className={styles.statusRow}>
-                                                    {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax) && (
-                                                        <span className={styles.deliveryBadge}>
-                                                            <span className={styles.deliveryIcon}>📦</span>
-                                                            {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax)}
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                {!isError && (
-                                                    <>
-                                                        <button
-                                                            className={styles.timelineToggle}
-                                                            onClick={() => toggleTimeline(order.id)}
-                                                        >
-                                                            {expandedTimelines[order.id] ? 'Hide progress' : 'Show progress'}
-                                                        </button>
-                                                        <div
-                                                            className={`${styles.progressTimeline} ${expandedTimelines[order.id] ? styles.timelineExpanded : styles.timelineCollapsed}`}
-                                                        >
+                                                    <div className={styles.formatRow}>
+                                                        <span className={styles.formatPill}>{formatLabel(order.format) || 'Hardcover'}</span>
+                                                        <span className={styles.formatPill}>{SIZE_LABELS[order.size] || order.size}</span>
+                                                        <span className={styles.formatPill}>Qty {order.quantity}</span>
+                                                    </div>
+                                                    <div className={styles.progressWrap}>
+                                                        <div className={styles.progressMeta}>
+                                                            <span className={styles.progressStatus}>{mobileStatusLabel}</span>
+                                                        </div>
+                                                        <div className={styles.progressTrack}></div>
+                                                        <div className={styles.progressFill} style={{ width: `${progressPercent}%` }}></div>
+                                                        <div className={styles.progressSteps}>
                                                             {PROGRESS_STEPS.map((step, i) => {
-                                                                const isCompleted = config.step > i + 1;
-                                                                const isCurrent = config.step === i + 1;
+                                                                const isCompleted = i < progressIndex;
+                                                                const isCurrent = i === progressIndex;
                                                                 return (
                                                                     <div
                                                                         key={step.key}
-                                                                        className={`${styles.progressStep} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
+                                                                        className={`${styles.progressStep} ${isCompleted ? styles.stepCompleted : ''} ${isCurrent ? styles.stepCurrent : ''}`}
                                                                     >
-                                                                        <div className={styles.progressDot}>
-                                                                            {isCompleted ? '✓' : isCurrent ? step.icon : (i + 1)}
+                                                                        <div className={styles.progressIcon}>
+                                                                            <span className="material-symbols-outlined">{step.icon}</span>
                                                                         </div>
                                                                         <span className={styles.progressLabel}>{step.label}</span>
                                                                     </div>
                                                                 );
                                                             })}
                                                         </div>
-                                                    </>
-                                                )}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div className={styles.orderFooter}>
-                                            <div className={styles.orderTotal}>
-                                                ${order.total.toFixed(2)}
-                                                <span className={styles.totalLabel}>Paid</span>
+                                            <div className={styles.orderFooter}>
+                                                <div className={styles.footerLeft}>
+                                                    <div className={styles.paidInfo}>
+                                                        <span className={styles.paidAmount}>${order.total.toFixed(2)}</span>
+                                                        <span className={styles.paidLabel}>Paid</span>
+                                                    </div>
+                                                    <div className={styles.orderActions}>
+                                                        {isError ? (
+                                                            <a
+                                                                className={styles.supportButton}
+                                                                href="mailto:support@kidbook-creator.com"
+                                                            >
+                                                                Contact Support
+                                                            </a>
+                                                        ) : canTrack ? (
+                                                            <a
+                                                                className={styles.primaryButton}
+                                                                href={order.trackingUrl || order.trackingNumber}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <span className={styles.buttonLabelDesktop}>Track Order</span>
+                                                                <span className={styles.buttonLabelMobile}>Track</span>
+                                                            </a>
+                                                        ) : (
+                                                            <button className={`${styles.secondaryButton} ${styles.disabledButton}`} disabled>
+                                                                <span className={styles.buttonLabelDesktop}>Track Order</span>
+                                                                <span className={styles.buttonLabelMobile}>Track</span>
+                                                            </button>
+                                                        )}
+                                                        {order.bookId && (
+                                                            <Link href={`/book/${order.bookId}`} className={styles.secondaryButton}>
+                                                                <span className={styles.buttonLabelDesktop}>View Book</span>
+                                                                <span className={styles.buttonLabelMobile}>Details</span>
+                                                            </Link>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className={styles.estDelivery}>
+                                                    <div className={styles.estLabel}>{deliveryLabel}</div>
+                                                    <div className={styles.estValue}>{deliveryValue}</div>
+                                                </div>
                                             </div>
-                                            <div className={styles.orderActions}>
-                                                {(order.trackingUrl || order.trackingNumber) && (
-                                                    <a
-                                                        href={order.trackingUrl || order.trackingNumber}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={styles.trackButton}
-                                                    >
-                                                        {order.carrierName ? `Track ${order.carrierName}` : 'Track Package'}
-                                                    </a>
-                                                )}
-                                                {order.bookId && (
-                                                    <Link href={`/book/${order.bookId}`} className={styles.viewBookBtn}>
-                                                        View Book
-                                                    </Link>
-                                                )}
-                                                {isError && (
-                                                    <a
-                                                        href="mailto:support@kidbook-creator.com"
-                                                        className={styles.supportButton}
-                                                    >
-                                                        Contact Support
-                                                    </a>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
-                        </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+                            <div className={styles.supportRow}>
+                                Have a question about an order? <a href="mailto:support@kidbook-creator.com">Contact Support</a>
+                            </div>
+                            <div className={styles.mobileExtras}>
+                                <p>Showing recent orders from the last 6 months</p>
+                                <button className={styles.loadMore}>Load More Orders</button>
+                                <div className={styles.supportBox}>
+                                    Need help with a specific order? <a href="mailto:support@kidbook-creator.com">Contact Support</a>
+                                </div>
+                            </div>
+                        </>
                     )}
                 </div>
             </main>

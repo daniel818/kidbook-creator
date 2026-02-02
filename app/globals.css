@@ -1,5 +1,8 @@
 /* Import Google Fonts - Must be at top of file */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
 
 /* ============================================
    KIDBOOK CREATOR - Global Design System
@@ -116,88 +119,90 @@
   --z-toast: 500;
 }
 
-/* ============================================
-   Reset & Base Styles
-   ============================================ */
+@layer base {
+  /* ============================================
+     Reset & Base Styles
+     ============================================ */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-}
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
 
-body {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
-  color: var(--color-gray-900);
-  background: var(--color-gray-50);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+  body {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--color-gray-900);
+    background: var(--color-gray-50);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* ============================================
-   Typography
-   ============================================ */
+  /* ============================================
+     Typography
+     ============================================ */
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-family-display);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-  color: var(--color-gray-900);
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-family-display);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    color: var(--color-gray-900);
+  }
 
-h1 {
-  font-size: var(--font-size-5xl);
-}
+  h1 {
+    font-size: var(--font-size-5xl);
+  }
 
-h2 {
-  font-size: var(--font-size-4xl);
-}
+  h2 {
+    font-size: var(--font-size-4xl);
+  }
 
-h3 {
-  font-size: var(--font-size-3xl);
-}
+  h3 {
+    font-size: var(--font-size-3xl);
+  }
 
-h4 {
-  font-size: var(--font-size-2xl);
-}
+  h4 {
+    font-size: var(--font-size-2xl);
+  }
 
-h5 {
-  font-size: var(--font-size-xl);
-}
+  h5 {
+    font-size: var(--font-size-xl);
+  }
 
-h6 {
-  font-size: var(--font-size-lg);
-}
+  h6 {
+    font-size: var(--font-size-lg);
+  }
 
-p {
-  color: var(--color-gray-600);
-  line-height: var(--line-height-relaxed);
-}
+  p {
+    color: var(--color-gray-600);
+    line-height: var(--line-height-relaxed);
+  }
 
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
 
-a:hover {
-  color: var(--color-primary-dark);
+  a:hover {
+    color: var(--color-primary-dark);
+  }
 }
 
 /* ============================================
@@ -631,4 +636,29 @@ a:hover {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ============================================
+   Stitch Landing Page Styles
+   ============================================ */
+
+#stitch-landing-page .glass-nav {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#stitch-landing-page {
+  --font-family-display: 'Plus Jakarta Sans', sans-serif;
+  --font-family-body: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-family-body);
+  color: #1c0d14;
+  background: #f8f5f7;
+}
+
+#stitch-landing-page .blob {
+  position: absolute;
+  z-index: -1;
+  filter: blur(60px);
+  opacity: 0.4;
 }

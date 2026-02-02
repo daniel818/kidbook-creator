@@ -16,7 +16,6 @@ export default function PricingPage() {
   const { t } = useTranslation('pricing');
   const router = useRouter();
   const [currency, setCurrency] = useState<'USD' | 'EUR' | 'ILS'>('USD');
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const savedCurrency = localStorage.getItem('currency') as 'USD' | 'EUR' | 'ILS' | null;
@@ -33,118 +32,146 @@ export default function PricingPage() {
   const handleCreateBook = () => router.push('/create');
   const pricing = PRICING[currency];
 
-  const faqItems = [
-    { question: t('faq.q1'), answer: t('faq.a1') },
-    { question: t('faq.q2'), answer: t('faq.a2') },
-    { question: t('faq.q3'), answer: t('faq.a3') },
-    { question: t('faq.q4'), answer: t('faq.a4') },
-    { question: t('faq.q5'), answer: t('faq.a5') },
-  ];
-
   return (
     <>
       <Navbar />
       <main className={styles.page}>
-        {/* Hero Section */}
-        <section className={styles.hero}>
+        <header className={styles.hero}>
+          <div className={styles.heroBackground}>
+            <div className={`${styles.blob} ${styles.blobLeft}`}></div>
+            <div className={`${styles.blob} ${styles.blobRight}`}></div>
+          </div>
           <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>{t('subtitle')}</h1>
-            <p className={styles.heroDescription}>{t('hero.description')}</p>
-            <button className={styles.ctaPrimary} onClick={handleCreateBook}>
-              <span className={styles.ctaIcon}>✨</span>
-              {t('cta.primary')}
-              <span className={styles.ctaArrow}>→</span>
-            </button>
+            <span className={styles.heroBadge}>{t('hero.badge', 'Pricing Plans')}</span>
+            <h1 className={styles.heroTitle}>
+              {t('subtitle') || 'Choose the perfect package for your magical story'}
+            </h1>
+            <p className={styles.heroDescription}>
+              {t('hero.tagline', 'From digital downloads to heirloom quality hardcover books.')}
+            </p>
           </div>
-        </section>
+        </header>
 
-        {/* Pricing Section */}
-        <section className={styles.pricingSection}>
-          <div className={styles.pricingHeader}>
-            <h2 className={styles.pricingTitle}>{t('title')}</h2>
-            <p className={styles.pricingSubtitle}>{t('subtitle')}</p>
-          </div>
+        <section className={styles.gridSection}>
+          <div className={styles.grid}>
+            <div className={`${styles.card} ${styles.cardMagic}`}>
+              <div className={styles.iconBadge}>
+                <span className="material-symbols-outlined">magic_button</span>
+              </div>
+              <h3 className={styles.cardTitle}>Magic Wand AI</h3>
+              <p className={styles.cardCopy}>
+                Every package includes our AI storytelling engine that turns your child's favorite things into a personalized adventure.
+              </p>
+            </div>
 
-          <div className={styles.pricingGrid}>
-            {/* Digital Book Card */}
-            <div className={styles.pricingCard}>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>{t('matrix.digital')}</h3>
-                <p className={styles.cardSubtitle}>PDF Download</p>
+            <div className={`${styles.card} ${styles.cardPopular}`}>
+              <div className={styles.popularBadge}>MOST POPULAR</div>
+              <div className={styles.popularContent}>
+                <div className={styles.popularHeader}>
+                  <h3 className={styles.popularTitle}>{t('matrix.printed') || 'Printed'}</h3>
+                  <p className={styles.popularSubtitle}>Premium Hardcover Book</p>
+                </div>
+                <div className={styles.priceRow}>
+                  <span className={styles.priceAmount}>{pricing.symbol}{pricing.printed}</span>
+                  <span className={styles.priceUnit}>/book</span>
+                </div>
+                <ul className={styles.featureList}>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature1') || 'Professional printing'}
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature2') || 'Premium paper quality'}
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature4') || 'Includes digital copy'}
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature3') || 'Heirloom quality finish'}
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature5') || 'Shipping to your door'}
+                  </li>
+                </ul>
+                <button className={styles.heroButton} onClick={handleCreateBook}>
+                  {t('cta.primary') || 'Start Creating'}
+                </button>
               </div>
-              <div className={styles.cardPricing}>
-                <span className={styles.priceAmount}>{pricing.symbol}{pricing.digital}</span>
-                <span className={styles.priceLabel}>{t('matrix.perBook')}</span>
+            </div>
+
+            <div className={`${styles.card} ${styles.cardDigital}`}>
+              <h3 className={styles.cardTitle}>{t('matrix.digital') || 'Digital'}</h3>
+              <p className={styles.cardSubtitle}>PDF Download</p>
+              <div className={styles.digitalPrice}>
+                <span className={styles.digitalAmount}>{pricing.symbol}{pricing.digital}</span>
+                <span className={styles.digitalUnit}>/book</span>
               </div>
-              <ul className={styles.featureList}>
-                <li>{t('features.digitalFeature1')}</li>
-                <li>{t('features.digitalFeature2')}</li>
-                <li>{t('features.digitalFeature3')}</li>
+              <ul className={styles.featureListSmall}>
+                <li>
+                  <span className="material-symbols-outlined">check</span>
+                  {t('features.digitalFeature1') || 'Instant download'}
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check</span>
+                  {t('features.digitalFeature2') || 'PDF format'}
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check</span>
+                  {t('features.digitalFeature3') || 'Print at home'}
+                </li>
               </ul>
-              <button className={styles.cardButton} onClick={handleCreateBook}>
-                {t('cta.primary')}
+              <button className={styles.secondaryButton} onClick={handleCreateBook}>
+                Choose Digital
               </button>
             </div>
 
-            {/* Printed Book Card */}
-            <div className={`${styles.pricingCard} ${styles.featured}`}>
-              <div className={styles.featuredBadge}>Most Popular</div>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>{t('matrix.printed')}</h3>
-                <p className={styles.cardSubtitle}>Hardcover Book</p>
+            <div className={`${styles.card} ${styles.cardFeatures}`}>
+              <div className={styles.featureItem}>
+                <span className="material-symbols-outlined">verified_user</span>
+                <span>Secure Payment</span>
               </div>
-              <div className={styles.cardPricing}>
-                <span className={styles.priceAmount}>{pricing.symbol}{pricing.printed}</span>
-                <span className={styles.priceLabel}>{t('matrix.perBook')}</span>
+              <div className={styles.featureDivider}></div>
+              <div className={styles.featureItem}>
+                <span className="material-symbols-outlined">local_shipping</span>
+                <span>Fast Delivery</span>
               </div>
-              <ul className={styles.featureList}>
-                <li>{t('features.printedFeature1')}</li>
-                <li>{t('features.printedFeature2')}</li>
-                <li>{t('features.printedFeature3')}</li>
-              </ul>
-              <button className={`${styles.cardButton} ${styles.primaryButton}`} onClick={handleCreateBook}>
-                {t('cta.primary')}
-              </button>
+              <div className={styles.featureDivider}></div>
+              <div className={styles.featureItem}>
+                <span className="material-symbols-outlined">heart_check</span>
+                <span>Kid Safe AI</span>
+              </div>
+            </div>
+
+            <div className={`${styles.card} ${styles.cardRating}`}>
+              <div className={styles.ratingHeader}>
+                <span className="material-symbols-outlined">star</span>
+                <span>4.9/5 Rating</span>
+              </div>
+              <p>Join 10,000+ parents creating magic every month.</p>
             </div>
           </div>
 
-          <div className={styles.disclaimers}>
-            <p>* {t('disclaimers.shipping')}</p>
-            <p>* {t('disclaimers.tax')}</p>
+          <div className={styles.disclaimer}>
+            * Shipping and taxes calculated at checkout based on your location.
           </div>
         </section>
 
-        {/* CTA Section */}
         <section className={styles.ctaSection}>
           <div className={styles.ctaContent}>
-            <span className={styles.ctaEmoji}>🎉</span>
-            <h2 className={styles.ctaTitle}>{t('cta.title')}</h2>
-            <p className={styles.ctaSubtitle}>{t('cta.subtitle')}</p>
+            <div className={styles.ctaEmojiWrap}>
+              <span className={styles.ctaEmoji}>🎉</span>
+              <span className={styles.ctaPing}></span>
+            </div>
+            <h2>{t('cta.title') || 'Ready to create your magical story?'}</h2>
+            <p>{t('cta.subtitle') || "Start bringing your child's imagination to life today with our easy-to-use editor."}</p>
             <button className={styles.ctaButton} onClick={handleCreateBook}>
-              <span className={styles.ctaButtonIcon}>📖</span>
-              {t('cta.primary')}
+              <span className="material-symbols-outlined">auto_stories</span>
+              {t('cta.primary') || 'Start Creating Now'}
             </button>
-          </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className={styles.faqSection}>
-          <h2 className={styles.faqTitle}>{t('faq.title')}</h2>
-          <div className={styles.faqItems}>
-            {faqItems.map((item, index) => (
-              <div key={index} className={styles.faqItem}>
-                <button
-                  className={`${styles.faqQuestion} ${openFaqIndex === index ? styles.open : ''}`}
-                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
-                >
-                  <span>{item.question}</span>
-                  <span className={styles.faqIcon}>{openFaqIndex === index ? '−' : '+'}</span>
-                </button>
-                <div className={`${styles.faqAnswer} ${openFaqIndex === index ? styles.visible : ''}`}>
-                  <p>{item.answer}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </section>
       </main>

@@ -425,7 +425,7 @@
     "matrix": {
       "package": "Package",
       "digital": "Digital",
-      "printed": "Printed",
+      "printed": "Printed + Digital",
       "single": "Single Book",
       "book": "book",
       "perBook": "per book",
@@ -439,7 +439,9 @@
       "printedIncludes": "Printed includes:",
       "printedFeature1": "Professional printing",
       "printedFeature2": "Premium paper quality",
-      "printedFeature3": "Shipping to your door"
+      "printedFeature3": "Heirloom quality finish",
+      "printedFeature4": "Includes digital copy",
+      "printedFeature5": "Shipping to your door"
     },
     "hero": {
       "description": "Create magical personalized books for your little ones. Choose the perfect package for your story!"

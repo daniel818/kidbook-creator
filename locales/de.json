@@ -424,7 +424,7 @@
     "matrix": {
       "package": "Paket",
       "digital": "Digital",
-      "printed": "Gedruckt",
+      "printed": "Gedruckt + Digital",
       "single": "Einzelnes Buch",
       "book": "Buch",
       "perBook": "pro Buch",
@@ -438,7 +438,9 @@
       "printedIncludes": "Gedruckt beinhaltet:",
       "printedFeature1": "Professioneller Druck",
       "printedFeature2": "Premium-Papierqualität",
-      "printedFeature3": "Versand nach Hause"
+      "printedFeature3": "Hochwertiges Erbstück-Finish",
+      "printedFeature4": "Digitale Kopie enthalten",
+      "printedFeature5": "Lieferung bis zur Haustür"
     },
     "hero": {
       "description": "Erstellen Sie magische personalisierte Bücher für Ihre Kleinen. Wählen Sie das perfekte Paket für Ihre Geschichte!"

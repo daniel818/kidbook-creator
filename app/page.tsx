@@ -7,18 +7,15 @@ import { Book } from '@/lib/types';
 import { getBooks, deleteBook as deleteLocalBook } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
-import { AuthModal } from '@/components/AuthModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import styles from './page.module.css';
 
 export default function Home() {
   const router = useRouter();
-  const { user, isLoading: authLoading, signOut } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { t } = useTranslation('home');
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
   // Delete Modal State
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -109,16 +106,6 @@ export default function Home() {
     setBookToDelete(null);
   };
 
-  const handleAuthClick = (mode: 'login' | 'signup') => {
-    setAuthMode(mode);
-    setShowAuthModal(true);
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    loadBooks(); // Reload with local books
-  };
-
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
@@ -129,177 +116,186 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-      <main className={styles.main}>
-        {/* Hero Section */}
-        <section className={styles.hero}>
-          <div className={styles.heroBackground}>
-            <div className={styles.floatingShape1}></div>
-            <div className={styles.floatingShape2}></div>
-            <div className={styles.floatingShape3}></div>
-          </div>
+      <div
+        id="stitch-landing-page"
+        className="min-h-screen bg-[#f8f5f7] dark:bg-[#221019] font-display text-[#1c0d14] dark:text-white transition-colors duration-300 overflow-x-hidden"
+      >
+        <Navbar />
 
-          <div className={styles.heroContent}>
-            <div className={styles.badge}>
-              <span className={styles.badgeIcon}>✨</span>
-              <span>{t('hero.badge')}</span>
+        {/* Main Content */}
+        <main className="relative pt-32 overflow-hidden">
+        {/* Background Blobs */}
+          <div className="blob absolute w-[500px] h-[500px] bg-indigo-400 -top-20 -left-20 rounded-full blur-[60px] opacity-40 -z-10"></div>
+          <div className="blob absolute w-[400px] h-[400px] bg-[#f4258c] -bottom-20 -right-20 rounded-full blur-[60px] opacity-40 -z-10"></div>
+
+        {/* Hero Section */}
+        <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
+          <div className="flex flex-col gap-8">
+            <div className="inline-flex items-center px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 rounded-full text-sm font-bold w-fit">
+              The #1 Book Creator for Kids
+            </div>
+            <h1 className="text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight text-[#1c0d14] dark:text-white">
+              Make Your <br /><span className="text-[#f4258c] italic">Child</span> the Hero
+            </h1>
+            <p className="text-lg text-[#9c4973] dark:text-pink-100/70 max-w-lg leading-relaxed">
+              Create personalized stories that spark imagination and build lasting memories. Turn bedtime into a magical adventure every night.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => router.push('/create')}
+                className="bg-[#f4258c] text-white px-10 py-5 rounded-full text-lg font-bold shadow-2xl shadow-[#f4258c]/40 hover:scale-105 transition-transform"
+              >
+                Create a Book
+              </button>
             </div>
 
-            <h1 className={styles.heroTitle}>
-              {t('hero.title')}{' '}
-              <span className={styles.gradientText}>{t('hero.titleHighlight')}</span>
-              <br />
-              {t('hero.titleEnd')}
-            </h1>
-
-            <p className={styles.heroSubtitle}>
-              {t('hero.subtitle')}
-            </p>
-
-            <div className={styles.heroActions}>
-              <button onClick={handleCreateNew} className={styles.ctaButton}>
-                <span className={styles.ctaIcon}>📖</span>
-                {t('hero.ctaButton')}
-                <span className={styles.ctaArrow}>→</span>
-              </button>
-
-              <div className={styles.ctaFeatures}>
-                <span className={styles.feature}>
-                  <span className={styles.featureIcon}>🎨</span>
-                  {t('hero.features.easyToUse')}
-                </span>
-                <span className={styles.feature}>
-                  <span className={styles.featureIcon}>📦</span>
-                  {t('hero.features.printShip')}
-                </span>
-                <span className={styles.feature}>
-                  <span className={styles.featureIcon}>💝</span>
-                  {t('hero.features.perfectGift')}
-                </span>
+            {/* Hero Features Row */}
+            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-indigo-100 dark:border-white/10">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#f4258c]">auto_fix_high</span>
+                <span className="text-xs font-bold uppercase tracking-wider opacity-70">Easy to Use</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#f4258c]">local_shipping</span>
+                <span className="text-xs font-bold uppercase tracking-wider opacity-70">Print & Ship</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#f4258c]">featured_seasonal_and_gifts</span>
+                <span className="text-xs font-bold uppercase tracking-wider opacity-70">Perfect Gift</span>
               </div>
             </div>
           </div>
 
-          <div className={styles.heroVisual}>
-            <div className={styles.bookPreview}>
-              <div className={styles.bookCover}>
-                <div className={styles.bookSpine}></div>
-                <div className={styles.bookFront} style={{
-                  background: 'url(/images/default-cover.png) center/cover'
-                }}>
-                  {/* <span className={styles.bookEmoji}>📚</span> */}
-                  {/* <span className={styles.bookTitle}>My Story</span> */}
+          {/* Floating 3D Book */}
+          <div className="relative flex justify-center lg:justify-end">
+            <div className="w-full max-w-[500px] aspect-[4/5] bg-gradient-to-br from-indigo-500 to-[#f4258c] rounded-xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] transform rotate-6 hover:rotate-2 transition-transform duration-700 flex flex-col items-center justify-center p-8 relative animate-[blobFloat_10s_ease-in-out_infinite_alternate]">
+              <div className="absolute inset-4 border-4 border-white/30 rounded-lg pointer-events-none"></div>
+              <div className="bg-white/90 w-full h-full rounded shadow-inner flex flex-col items-center justify-center gap-6 p-8 overflow-hidden text-center">
+                <span className="material-symbols-outlined text-8xl text-[#f4258c]">rocket_launch</span>
+                <h3 className="text-3xl font-black text-[#1c0d14]">Leo's Space Adventure</h3>
+                <div className="w-20 h-1 bg-[#f4258c]/20 rounded-full"></div>
+                <p className="text-sm font-medium opacity-60 italic">A Personalized Storybook</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section className="max-w-7xl mx-auto px-6 py-32">
+          <h2 className="text-4xl font-black text-center mb-16 dark:text-white">How it works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            {/* Step 1 */}
+            <div className="flex flex-col items-center text-center gap-6 group">
+              <div className="w-20 h-20 bg-white dark:bg-white/10 rounded-3xl shadow-xl flex items-center justify-center text-[#f4258c] group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-4xl">child_care</span>
+              </div>
+              <div>
+                <h4 className="text-xl font-bold mb-2">1. Create</h4>
+                <p className="text-[#9c4973] dark:text-pink-100/60">Choose your story and add your child's name.</p>
+              </div>
+            </div>
+            {/* Step 2 */}
+            <div className="flex flex-col items-center text-center gap-6 group">
+              <div className="w-20 h-20 bg-white dark:bg-white/10 rounded-3xl shadow-xl flex items-center justify-center text-[#f4258c] group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-4xl">photo_frame</span>
+              </div>
+              <div>
+                <h4 className="text-xl font-bold mb-2">2. Personalize</h4>
+                <p className="text-[#9c4973] dark:text-pink-100/60">Add magic details and personal photos.</p>
+              </div>
+            </div>
+            {/* Step 3 */}
+            <div className="flex flex-col items-center text-center gap-6 group">
+              <div className="w-20 h-20 bg-white dark:bg-white/10 rounded-3xl shadow-xl flex items-center justify-center text-[#f4258c] group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-4xl">markunread_mailbox</span>
+              </div>
+              <div>
+                <h4 className="text-xl font-bold mb-2">3. Order</h4>
+                <p className="text-[#9c4973] dark:text-pink-100/60">We print and deliver to your doorstep.</p>
+              </div>
+            </div>
+            {/* Connecting Arrows */}
+            <div className="hidden md:block absolute top-10 left-[30%] right-[30%] pointer-events-none opacity-20">
+              <div className="flex justify-between">
+                <span className="material-symbols-outlined text-4xl">arrow_forward</span>
+                <span className="material-symbols-outlined text-4xl">arrow_forward</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Book Types Grid */}
+        <section className="max-w-7xl mx-auto px-6 pb-32">
+          <div className="flex items-end justify-between mb-12">
+            <h2 className="text-4xl font-black dark:text-white">Choose your format</h2>
+            <a className="text-[#f4258c] font-bold flex items-center gap-2 hover:underline" href="#">View all sizes <span className="material-symbols-outlined">east</span></a>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Board Book */}
+            <div className="group cursor-pointer bg-white dark:bg-white/5 p-6 rounded-lg border border-transparent hover:border-emerald-200 dark:hover:border-emerald-900 transition-all shadow-sm hover:shadow-xl">
+              <div className="aspect-square bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+                <div className="bg-emerald-400 w-24 h-32 rounded shadow-lg transform group-hover:rotate-12 transition-transform"></div>
+              </div>
+              <h3 className="text-xl font-bold mb-1">Board Book</h3>
+              <p className="text-sm text-[#9c4973] dark:text-pink-100/60">Perfect for tiny hands (Ages 0-3)</p>
+            </div>
+            {/* Picture Book */}
+            <div className="group cursor-pointer bg-white dark:bg-white/5 p-6 rounded-lg border border-transparent hover:border-indigo-200 dark:hover:border-indigo-900 transition-all shadow-sm hover:shadow-xl">
+              <div className="aspect-square bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+                <div className="bg-indigo-500 w-32 h-24 rounded shadow-lg transform group-hover:-rotate-6 transition-transform"></div>
+              </div>
+              <h3 className="text-xl font-bold mb-1">Picture Book</h3>
+              <p className="text-sm text-[#9c4973] dark:text-pink-100/60">Standard storybook (Ages 3-7)</p>
+            </div>
+            {/* Story Book */}
+            <div className="group cursor-pointer bg-white dark:bg-white/5 p-6 rounded-lg border border-transparent hover:border-pink-200 dark:hover:border-pink-900 transition-all shadow-sm hover:shadow-xl">
+              <div className="aspect-square bg-pink-50 dark:bg-pink-900/30 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+                <div className="bg-[#f4258c] w-28 h-36 rounded shadow-lg transform group-hover:scale-110 transition-transform"></div>
+              </div>
+              <h3 className="text-xl font-bold mb-1">Story Book</h3>
+              <p className="text-sm text-[#9c4973] dark:text-pink-100/60">Chapter stories (Ages 7-10)</p>
+            </div>
+            {/* Alphabet Book */}
+            <div className="group cursor-pointer bg-white dark:bg-white/5 p-6 rounded-lg border border-transparent hover:border-amber-200 dark:hover:border-amber-900 transition-all shadow-sm hover:shadow-xl">
+              <div className="aspect-square bg-amber-50 dark:bg-amber-900/30 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+                <div className="bg-amber-400 w-32 h-32 rounded-full shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <span className="text-white text-4xl font-black">ABC</span>
                 </div>
               </div>
-              <div className={styles.bookShadow}></div>
+              <h3 className="text-xl font-bold mb-1">Alphabet Book</h3>
+              <p className="text-sm text-[#9c4973] dark:text-pink-100/60">Learning made fun (Ages 2-5)</p>
             </div>
           </div>
         </section>
-
-        {/* My Books Section Removed */}
-
-        {/* Features Section */}
-        <section className={styles.features}>
-          <h2 className={styles.featuresTitle}>{t('howItWorks.title')}</h2>
-
-          <div className={styles.stepsContainer}>
-            <div className={styles.stepCard}>
-              <div className={styles.stepNumber}>1</div>
-              <div className={styles.stepIcon}>👶</div>
-              <h3 className={styles.stepTitle}>{t('howItWorks.step1.title')}</h3>
-              <p className={styles.stepDesc}>
-                {t('howItWorks.step1.description')}
-              </p>
+        <footer className="bg-white dark:bg-[#221019]/50 border-t border-indigo-100 dark:border-white/10 py-12 px-6">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex items-center gap-3">
+              <div className="bg-[#f4258c]/20 p-1.5 rounded-lg flex items-center justify-center">
+                <span className="material-symbols-outlined text-[#f4258c] text-xl font-bold">auto_stories</span>
+              </div>
+              <span className="text-lg font-extrabold tracking-tight text-[#1c0d14] dark:text-white">KidBook Creator</span>
             </div>
-
-            <div className={styles.stepConnector}>
-              <span>→</span>
+            <div className="flex gap-8 text-sm font-medium opacity-60 dark:text-white">
+              <a className="hover:text-[#f4258c]" href="/about">About Us</a>
+              <a className="hover:text-[#f4258c]" href="/faq">Support</a>
+              <a className="hover:text-[#f4258c]" href="/privacy">Privacy</a>
+              <a className="hover:text-[#f4258c]" href="/terms">Terms</a>
             </div>
-
-            <div className={styles.stepCard}>
-              <div className={styles.stepNumber}>2</div>
-              <div className={styles.stepIcon}>🖼️</div>
-              <h3 className={styles.stepTitle}>{t('howItWorks.step2.title')}</h3>
-              <p className={styles.stepDesc}>
-                {t('howItWorks.step2.description')}
-              </p>
-            </div>
-
-            <div className={styles.stepConnector}>
-              <span>→</span>
-            </div>
-
-            <div className={styles.stepCard}>
-              <div className={styles.stepNumber}>3</div>
-              <div className={styles.stepIcon}>📬</div>
-              <h3 className={styles.stepTitle}>{t('howItWorks.step3.title')}</h3>
-              <p className={styles.stepDesc}>
-                {t('howItWorks.step3.description')}
-              </p>
-            </div>
+            <p className="text-sm opacity-40 dark:text-white">© {new Date().getFullYear()} KidBook Creator V2. All rights reserved.</p>
           </div>
-        </section>
+        </footer>
+        </main>
+      </div>
 
-        {/* Book Types Section */}
-        <section className={styles.bookTypes}>
-          <h2 className={styles.typesTitle}>{t('bookTypes.title')}</h2>
-
-          <div className={styles.typesGrid}>
-            <div className={styles.typeCard} style={{ '--type-color': '#10b981' } as React.CSSProperties}>
-              <span className={styles.typeEmoji}>📘</span>
-              <h3>{t('bookTypes.board.title')}</h3>
-              <p>{t('bookTypes.board.description')}</p>
-              <span className={styles.typeAge}>{t('bookTypes.board.age')}</span>
-            </div>
-
-            <div className={styles.typeCard} style={{ '--type-color': '#6366f1' } as React.CSSProperties}>
-              <span className={styles.typeEmoji}>🎨</span>
-              <h3>{t('bookTypes.picture.title')}</h3>
-              <p>{t('bookTypes.picture.description')}</p>
-              <span className={styles.typeAge}>{t('bookTypes.picture.age')}</span>
-            </div>
-
-            <div className={styles.typeCard} style={{ '--type-color': '#ec4899' } as React.CSSProperties}>
-              <span className={styles.typeEmoji}>📖</span>
-              <h3>{t('bookTypes.story.title')}</h3>
-              <p>{t('bookTypes.story.description')}</p>
-              <span className={styles.typeAge}>{t('bookTypes.story.age')}</span>
-            </div>
-
-            <div className={styles.typeCard} style={{ '--type-color': '#f59e0b' } as React.CSSProperties}>
-              <span className={styles.typeEmoji}>🔤</span>
-              <h3>{t('bookTypes.alphabet.title')}</h3>
-              <p>{t('bookTypes.alphabet.description')}</p>
-              <span className={styles.typeAge}>{t('bookTypes.alphabet.age')}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Loading overlay */}
-        {isLoading && (
-          <div className={styles.loadingOverlay}>
-            <div className={styles.spinner}></div>
-          </div>
-        )}
-
-        {/* Auth Modal */}
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-          initialMode={authMode}
-        />
-
-        {/* Delete Confirmation Modal */}
+      {bookToDelete && (
         <ConfirmModal
-          isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
+          isOpen={!!bookToDelete}
+          onClose={() => setBookToDelete(null)}
           onConfirm={confirmDeleteBook}
-          title={t('deleteModal.title')}
-          message={t('deleteModal.message')}
-          confirmText={t('deleteModal.confirmText')}
-          isLoading={isDeleting}
+          title="Delete Book"
+          message="Are you sure you want to delete this book? This action cannot be undone."
         />
-      </main>
+      )}
     </>
   );
 }

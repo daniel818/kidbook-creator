@@ -1,394 +1,524 @@
 .page {
   min-height: 100vh;
-  background: #ffffff;
+  background: #fcfaff;
+  color: #0f172a;
 }
 
-/* Hero Section */
 .hero {
-  padding: 100px 24px 60px;
+  position: relative;
+  overflow: hidden;
+  padding: 42px 24px 120px;
   text-align: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.heroBackground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+}
+
+.blobLeft {
+  top: -40px;
+  left: 10%;
+  background: rgba(99, 102, 241, 0.35);
+}
+
+.blobRight {
+  top: 10px;
+  right: 15%;
+  background: rgba(236, 72, 153, 0.28);
 }
 
 .heroContent {
-  max-width: 800px;
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
   margin: 0 auto;
+}
+
+.heroBadge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 .heroTitle {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin: 0 0 16px 0;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 18px;
+  line-height: 1.15;
 }
 
 .heroDescription {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 32px 0;
-  line-height: 1.6;
-}
-
-.ctaPrimary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 32px;
-  background: #ffffff;
-  color: #667eea;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.ctaPrimary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.ctaIcon { font-size: 1.25rem; }
-.ctaArrow { font-size: 1rem; }
-
-/* Pricing Section */
-.pricingSection {
-  padding: 80px 24px;
-  max-width: 900px;
+  font-size: 18px;
+  color: #64748b;
   margin: 0 auto;
+  max-width: 520px;
 }
 
-.pricingHeader {
-  text-align: center;
-  margin-bottom: 48px;
+.gridSection {
+  max-width: 1200px;
+  margin: -56px auto 0;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 3;
 }
 
-.pricingTitle {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 12px 0;
-}
-
-.pricingSubtitle {
-  font-size: 1.125rem;
-  color: #6b7280;
-  margin: 0;
-}
-
-.pricingGrid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 24px;
-  margin-bottom: 32px;
 }
 
-.pricingCard {
+.card {
   background: #ffffff;
-  border: 2px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 32px 24px;
-  text-align: center;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  position: relative;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.05), 0 10px 10px -5px rgba(15, 23, 42, 0.02);
+  padding: 32px;
 }
 
-.pricingCard:hover {
-  border-color: #667eea;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-}
-
-.pricingCard.featured {
-  border-color: #667eea;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
-}
-
-.featuredBadge {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.cardHeader {
-  margin-bottom: 24px;
-}
-
-.cardTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 4px 0;
-}
-
-.cardSubtitle {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin: 0;
-}
-
-.cardPricing {
-  margin-bottom: 24px;
-  padding: 16px 0;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.priceAmount {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #667eea;
-}
-
-.priceLabel {
-  display: block;
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 4px;
-}
-
-.featureList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px 0;
-  text-align: left;
-}
-
-.featureList li {
-  padding: 8px 0 8px 28px;
-  position: relative;
-  font-size: 0.9375rem;
-  color: #374151;
-}
-
-.featureList li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: #10b981;
-  font-weight: 700;
-}
-
-.cardButton {
-  width: 100%;
-  padding: 14px 24px;
-  background: #f3f4f6;
-  color: #374151;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.cardButton:hover {
-  background: #e5e7eb;
-}
-
-.cardButton.primaryButton {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-}
-
-.cardButton.primaryButton:hover {
-  opacity: 0.9;
-}
-
-.disclaimers {
-  text-align: center;
-  padding: 16px;
-  background: #fef3c7;
-  border-radius: 8px;
-  border: 1px solid #fcd34d;
-}
-
-.disclaimers p {
-  font-size: 0.875rem;
-  color: #92400e;
-  margin: 4px 0;
-}
-
-/* CTA Section */
-.ctaSection {
-  padding: 80px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  text-align: center;
-}
-
-.ctaContent {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.ctaEmoji {
-  font-size: 48px;
-  display: block;
-  margin-bottom: 16px;
-}
-
-.ctaTitle {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 12px 0;
-}
-
-.ctaSubtitle {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 32px 0;
-}
-
-.ctaButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 32px;
-  background: #ffffff;
-  color: #667eea;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.ctaButton:hover {
-  transform: translateY(-2px);
-}
-
-.ctaButtonIcon { font-size: 1.25rem; }
-
-/* FAQ Section */
-.faqSection {
-  padding: 80px 24px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.faqTitle {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #111827;
-  text-align: center;
-  margin: 0 0 48px 0;
-}
-
-.faqItems {
+.cardMagic {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.faqItem {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.faqQuestion {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: #ffffff;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-  transition: background 0.2s;
-}
-
-.faqQuestion:hover {
-  background: #f9fafb;
-}
-
-.faqQuestion.open {
-  background: #f3f4f6;
-}
-
-.faqIcon {
-  font-size: 1.25rem;
-  color: #667eea;
-  width: 28px;
-  height: 28px;
+.iconBadge {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(251, 191, 36, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eff6ff;
-  border-radius: 6px;
+  color: #b45309;
+  font-size: 28px;
 }
 
-.faqAnswer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.faqAnswer.visible {
-  max-height: 300px;
-}
-
-.faqAnswer p {
-  padding: 0 20px 20px;
+.cardTitle {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
   margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: #374151;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+.cardCopy {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cardPopular {
+  border: 4px solid #6366f1;
+  box-shadow: 0 24px 40px -12px rgba(99, 102, 241, 0.25);
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.popularBadge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #6366f1;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.12em;
+}
+
+.popularContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.popularHeader {
+  margin-bottom: 24px;
+}
+
+.popularTitle {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 30px;
+  margin: 0 0 8px;
+}
+
+.popularSubtitle {
+  color: #64748b;
+  margin: 0;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.priceAmount {
+  font-size: 48px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.priceUnit {
+  color: #94a3b8;
+}
+
+.featureList,
+.featureListSmall {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: grid;
+  gap: 12px;
+}
+
+.featureList li,
+.featureListSmall li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.featureList li :global(.material-symbols-outlined) {
+  color: #22c55e;
+}
+
+.featureListSmall li :global(.material-symbols-outlined) {
+  color: #6366f1;
+}
+
+.heroButton {
+  margin-top: auto;
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 18px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  box-shadow: 0 14px 24px rgba(99, 102, 241, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.heroButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 28px rgba(99, 102, 241, 0.3);
+}
+
+.cardDigital {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardSubtitle {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.digitalPrice {
+  margin: 12px 0 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.digitalAmount {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.digitalUnit {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.secondaryButton {
+  margin-top: auto;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: none;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+.cardFeatures {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.featureItem {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1e1b4b;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.featureItem :global(.material-symbols-outlined) {
+  font-size: 28px;
+  color: #6366f1;
+}
+
+.featureDivider {
+  width: 1px;
+  height: 32px;
+  background: rgba(99, 102, 241, 0.2);
+}
+
+.cardRating {
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cardRating p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.ratingHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-weight: 700;
+}
+
+.ratingHeader :global(.material-symbols-outlined) {
+  color: #ec4899;
+}
+
+.disclaimer {
+  margin-top: 36px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.ctaSection {
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  padding: 96px 24px;
+}
+
+.ctaContent {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ctaEmojiWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.ctaEmoji {
+  font-size: 48px;
+}
+
+.ctaPing {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #ec4899;
+  top: -2px;
+  right: -6px;
+  animation: ping 1.5s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+
+  70% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.ctaContent h2 {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 36px;
+  margin: 0 0 16px;
+}
+
+.ctaContent p {
+  margin: 0 auto 28px;
+  font-size: 18px;
+  color: #64748b;
+  max-width: 520px;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  border-radius: 18px;
+  border: none;
+  background: #6366f1;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 18px 30px rgba(99, 102, 241, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 34px rgba(99, 102, 241, 0.3);
+}
+
+@media (min-width: 960px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .cardMagic {
+    grid-column: span 4;
+  }
+
+  .cardPopular {
+    grid-column: span 5;
+    grid-row: span 2;
+  }
+
+  .cardDigital {
+    grid-column: span 3;
+  }
+
+  .cardFeatures {
+    grid-column: span 4;
+  }
+
+  .cardRating {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 960px) {
+  .heroTitle {
+    font-size: 32px;
+  }
+
+  .gridSection {
+    margin-top: -40px;
+  }
+
+  .cardPopular {
+    order: 2;
+  }
+
+  .cardDigital {
+    order: 3;
+  }
+
+  .cardFeatures {
+    order: 4;
+  }
+
+  .cardRating {
+    order: 5;
+  }
+}
+
+@media (max-width: 640px) {
   .hero {
-    padding: 80px 20px 48px;
+    padding: 80px 20px 120px;
   }
 
   .heroTitle {
-    font-size: 2rem;
+    font-size: 28px;
   }
 
-  .pricingSection {
-    padding: 60px 20px;
+  .gridSection {
+    padding: 0 16px 64px;
   }
 
-  .pricingGrid {
-    grid-template-columns: 1fr;
+  .card {
+    padding: 24px;
+  }
+
+  .cardFeatures {
+    flex-direction: column;
+  }
+
+  .featureDivider {
+    width: 60%;
+    height: 1px;
   }
 
   .ctaSection {
-    padding: 60px 20px;
+    padding: 72px 20px;
   }
 
-  .faqSection {
-    padding: 60px 20px;
+  .ctaContent h2 {
+    font-size: 28px;
   }
-}
 
-/* RTL Support */
-[dir="rtl"] .featureList li {
-  padding-left: 0;
-  padding-right: 28px;
-  text-align: right;
-}
-
-[dir="rtl"] .featureList li::before {
-  left: auto;
-  right: 0;
-}
-
-[dir="rtl"] .faqQuestion {
-  text-align: right;
+  .ctaContent p {
+    font-size: 16px;
+  }
 }

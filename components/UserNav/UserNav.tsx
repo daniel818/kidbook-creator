@@ -82,22 +82,7 @@ export function UserNav() {
         aria-expanded={isOpen}
       >
         <span className={styles.initials}>{initials}</span>
-        <svg
-          className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3 4.5L6 7.5L9 4.5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <span className={`material-symbols-outlined ${styles.chevron}`}>expand_more</span>
       </button>
 
       {isOpen && (
@@ -121,16 +106,20 @@ export function UserNav() {
               className={styles.menuItem}
               onClick={() => handleNavigation('/mybooks')}
             >
-              <span className={styles.menuIcon}>📚</span>
-              <span>{t('myBooks')}</span>
+              <span className={`${styles.iconContainer} ${styles.iconIndigo}`}>
+                <span className="material-symbols-outlined">library_books</span>
+              </span>
+              <span className={styles.menuLabel}>{t('myBooks')}</span>
             </button>
 
             <button
               className={styles.menuItem}
               onClick={() => handleNavigation('/orders')}
             >
-              <span className={styles.menuIcon}>📦</span>
-              <span>{t('orders')}</span>
+              <span className={`${styles.iconContainer} ${styles.iconAmber}`}>
+                <span className="material-symbols-outlined">inventory_2</span>
+              </span>
+              <span className={styles.menuLabel}>{t('orders')}</span>
             </button>
           </nav>
 
@@ -140,8 +129,10 @@ export function UserNav() {
             className={`${styles.menuItem} ${styles.signOutItem}`}
             onClick={handleSignOut}
           >
-            <span className={styles.menuIcon}>🚪</span>
-            <span>{t('signOut')}</span>
+            <span className={`${styles.iconContainer} ${styles.iconRed}`}>
+              <span className="material-symbols-outlined">logout</span>
+            </span>
+            <span className={styles.menuLabel}>{t('signOut')}</span>
           </button>
         </div>
       )}
