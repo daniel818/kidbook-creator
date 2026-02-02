@@ -5,31 +5,68 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { Navbar } from '@/components/Navbar';
 import Link from 'next/link';
-import styles from './page.module.css';
+import styles from './orders.module.css';
 
 interface Order {
     id: string;
     bookId: string;
     bookTitle: string;
+    bookThumbnail?: string;
+    bookTheme?: string;
     childName: string;
     format: string;
     size: string;
     quantity: number;
     total: number;
     status: string;
-    trackingNumber: string | null;
+    fulfillmentStatus?: string;
+    luluStatus?: string;
     createdAt: string;
+    trackingNumber?: string;
+    trackingUrl?: string;
+    carrierName?: string;
+    estimatedDeliveryMin?: string;
+    estimatedDeliveryMax?: string;
 }
 
-const STATUS_CONFIG: Record<string, { color: string; icon: string }> = {
-    pending: { color: '#f59e0b', icon: '⏳' },
-    paid: { color: '#6366f1', icon: '✓' },
-    processing: { color: '#8b5cf6', icon: '⚙️' },
-    printed: { color: '#06b6d4', icon: '📖' },
-    shipped: { color: '#10b981', icon: '📦' },
-    delivered: { color: '#22c55e', icon: '✅' },
-    cancelled: { color: '#ef4444', icon: '✕' },
+// Map internal status to user-friendly display
+const STATUS_CONFIG: Record<string, { label: string; icon: string; color: string; step: number }> = {
+    // Payment statuses
+    'pending': { label: 'Order Placed', icon: '⏳', color: '#f59e0b', step: 1 },
+    'paid': { label: 'Payment Confirmed', icon: '✓', color: '#6366f1', step: 2 },
+    // Fulfillment statuses
+    'processing': { label: 'Processing', icon: '⚙️', color: '#8b5cf6', step: 2 },
+    'preparing': { label: 'Preparing to Print', icon: '⏰', color: '#8b5cf6', step: 3 },
+    'printing': { label: 'Printing Your Book', icon: '📖', color: '#06b6d4', step: 4 },
+    'shipped': { label: 'Shipped', icon: '🚚', color: '#10b981', step: 5 },
+    'delivered': { label: 'Delivered', icon: '🎉', color: '#22c55e', step: 6 },
+    'cancelled': { label: 'Cancelled', icon: '❌', color: '#ef4444', step: 0 },
+    'failed': { label: 'Issue Detected', icon: '⚠️', color: '#ef4444', step: 0 },
+    // Legacy/internal statuses
+    'SUCCESS': { label: 'Processing', icon: '⚙️', color: '#8b5cf6', step: 2 },
+    'CREATING_JOB': { label: 'Creating Order', icon: '⏳', color: '#8b5cf6', step: 2 },
+    'UPLOADING': { label: 'Uploading Files', icon: '📤', color: '#8b5cf6', step: 2 },
+    'GENERATING_PDFS': { label: 'Generating Book', icon: '📝', color: '#8b5cf6', step: 2 },
+    'PENDING': { label: 'Pending', icon: '⏳', color: '#f59e0b', step: 1 },
+    'FAILED': { label: 'Failed', icon: '❌', color: '#ef4444', step: 0 },
+};
+
+// Progress steps for the timeline
+const PROGRESS_STEPS = [
+    { key: 'ordered', label: 'Ordered', icon: '📝' },
+    { key: 'confirmed', label: 'Confirmed', icon: '✓' },
+    { key: 'preparing', label: 'Preparing', icon: '⏰' },
+    { key: 'printing', label: 'Printing', icon: '📖' },
+    { key: 'shipped', label: 'Shipped', icon: '🚚' },
+    { key: 'delivered', label: 'Delivered', icon: '🎉' },
+];
+
+const SIZE_LABELS: Record<string, string> = {
+    '7.5x7.5': '7.5" × 7.5"',
+    '8x8': '8.5" × 8.5"',
+    '8x10': '8.5" × 11"',
 };
 
 export default function OrdersPage() {
@@ -38,6 +75,7 @@ export default function OrdersPage() {
     const { user, isLoading: authLoading } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [expandedTimelines, setExpandedTimelines] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -52,16 +90,21 @@ export default function OrdersPage() {
 
     const fetchOrders = async () => {
         try {
-            const response = await fetch('/api/orders');
-            if (response.ok) {
-                const data = await response.json();
+            const res = await fetch('/api/orders');
+            if (res.ok) {
+                const data = await res.json();
                 setOrders(data);
             }
         } catch (error) {
-            console.error('Failed to fetch orders:', error);
+            console.error('Failed to load orders:', error);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const getStatusConfig = (status: string, fulfillment?: string) => {
+        const displayStatus = fulfillment || status;
+        return STATUS_CONFIG[displayStatus] || { label: displayStatus, icon: '', color: '#6b7280', step: 0 };
     };
 
     const formatDate = (dateString: string) => {
@@ -72,131 +115,239 @@ export default function OrdersPage() {
         });
     };
 
-    if (authLoading || isLoading) {
+    const formatDeliveryRange = (minDate?: string, maxDate?: string) => {
+        if (!minDate && !maxDate) return null;
+        const min = minDate ? new Date(minDate) : null;
+        const max = maxDate ? new Date(maxDate) : null;
+        if ((min && Number.isNaN(min.getTime())) || (max && Number.isNaN(max.getTime()))) {
+            return null;
+        }
+
+        const formatMonthDay = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const formatMonthDayYear = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        if (min && max) {
+            const sameDay = min.toDateString() === max.toDateString();
+            if (sameDay) {
+                return `Arrives ${formatMonthDayYear(min)}`;
+            }
+            const sameYear = min.getFullYear() === max.getFullYear();
+            const sameMonth = sameYear && min.getMonth() === max.getMonth();
+            if (sameMonth) {
+                return `Arrives ${formatMonthDay(min)}–${max.getDate()}, ${min.getFullYear()}`;
+            }
+            if (sameYear) {
+                return `Arrives ${formatMonthDay(min)}–${formatMonthDay(max)}, ${min.getFullYear()}`;
+            }
+            return `Arrives ${formatMonthDayYear(min)}–${formatMonthDayYear(max)}`;
+        }
+
+        const single = min || max;
+        return single ? `Arrives ${formatMonthDayYear(single)}` : null;
+    };
+
+    const getThemeColor = (theme?: string) => {
+        const colors: Record<string, string> = {
+            'adventure': '#f97316',
+            'fantasy': '#ec4899',
+            'animals': '#84cc16',
+            'space': '#6366f1',
+            'default': '#cbd5e1'
+        };
+        return colors[theme || 'default'] || colors['default'];
+    };
+
+    const formatLabel = (value?: string) => {
+        if (!value) return '';
+        return value.charAt(0).toUpperCase() + value.slice(1);
+    };
+
+    const toggleTimeline = (orderId: string) => {
+        setExpandedTimelines(prev => ({ ...prev, [orderId]: !prev[orderId] }));
+    };
+
+    if (authLoading || (isLoading && !orders.length)) {
         return (
             <div className={styles.loading}>
                 <div className={styles.spinner}></div>
-                <p>{t('loading')}</p>
             </div>
         );
     }
 
     return (
-        <main className={styles.main}>
-            {/* Header */}
-            <header className={styles.header}>
-                <Link href="/" className={styles.backButton}>
-                    {t('header.backButton')}
-                </Link>
-                <h1 className={styles.headerTitle}>{t('header.title')}</h1>
-                <div className={styles.placeholder}></div>
-            </header>
-
-            <div className={styles.container}>
-                {orders.length === 0 ? (
-                    <motion.div
-                        className={styles.emptyState}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
-                        <span className={styles.emptyIcon}>📦</span>
-                        <h2>{t('empty.title')}</h2>
-                        <p>{t('empty.subtitle')}</p>
-                        <Link href="/create" className={styles.createBtn}>
-                            {t('empty.button')}
-                        </Link>
-                    </motion.div>
-                ) : (
-                    <div className={styles.ordersList}>
-                        {orders.map((order, index) => {
-                            const status = STATUS_CONFIG[order.status] || STATUS_CONFIG.pending;
-
-                            return (
-                                <motion.div
-                                    key={order.id}
-                                    className={styles.orderCard}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                >
-                                    <div className={styles.orderHeader}>
-                                        <div className={styles.orderInfo}>
-                                            <span className={styles.orderId}>{t('orderCard.orderId', { id: order.id.slice(0, 8) })}</span>
-                                            <span className={styles.orderDate}>{formatDate(order.createdAt)}</span>
-                                        </div>
-                                        <span
-                                            className={styles.statusBadge}
-                                            style={{ backgroundColor: `${status.color}20`, color: status.color }}
-                                        >
-                                            {status.icon} {t(`status.${order.status}`)}
-                                        </span>
-                                    </div>
-
-                                    <div className={styles.orderContent}>
-                                        <div className={styles.bookInfo}>
-                                            <span className={styles.bookIcon}>📚</span>
-                                            <div>
-                                                <h3>{order.bookTitle}</h3>
-                                                <p>{t('orderCard.for', { childName: order.childName })}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className={styles.orderDetails}>
-                                            <div className={styles.detail}>
-                                                <span className={styles.detailLabel}>{t('orderCard.format')}</span>
-                                                <span className={styles.detailValue}>
-                                                    {order.format} - {order.size}
-                                                </span>
-                                            </div>
-                                            <div className={styles.detail}>
-                                                <span className={styles.detailLabel}>{t('orderCard.quantity')}</span>
-                                                <span className={styles.detailValue}>×{order.quantity}</span>
-                                            </div>
-                                            <div className={styles.detail}>
-                                                <span className={styles.detailLabel}>{t('orderCard.total')}</span>
-                                                <span className={styles.detailValue}>${order.total.toFixed(2)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {order.trackingNumber && (
-                                        <div className={styles.trackingSection}>
-                                            <span className={styles.trackingIcon}>🚚</span>
-                                            <div>
-                                                <span className={styles.trackingLabel}>{t('orderCard.trackingLabel')}</span>
-                                                <a
-                                                    href={`https://www.ups.com/track?tracknum=${order.trackingNumber}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className={styles.trackingNumber}
-                                                >
-                                                    {order.trackingNumber}
-                                                </a>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className={styles.orderActions}>
-                                        {order.bookId && (
-                                            <Link
-                                                href={`/book/${order.bookId}`}
-                                                className={styles.viewBookBtn}
-                                            >
-                                                {t('orderCard.viewBookButton')}
-                                            </Link>
-                                        )}
-                                        {order.status === 'delivered' && (
-                                            <button className={styles.reorderBtn}>
-                                                {t('orderCard.reorderButton')}
-                                            </button>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
+        <>
+            <Navbar />
+            <main className={styles.main}>
+                <div className={styles.container}>
+                    <div className={styles.header}>
+                        <h1 className={styles.title}>{t('header.title') || 'My Orders'}</h1>
+                        <p className={styles.subtitle}>{t('header.subtitle') || 'Track your printed books'}</p>
                     </div>
-                )}
-            </div>
-        </main>
+
+                    {orders.length === 0 ? (
+                        <motion.div
+                            className={styles.card}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                        >
+                            <div className={styles.emptyState}>
+                                <span className={styles.emptyIcon}>📦</span>
+                                <p className={styles.emptyText}>{t('empty.title') || 'No orders yet'}</p>
+                                <p className={styles.emptySubtext}>
+                                    {t('empty.subtitle') || 'Create your first custom book and order a printed copy!'}
+                                </p>
+                                <button
+                                    className={styles.emptyButton}
+                                    onClick={() => router.push('/create')}
+                                >
+                                    {t('empty.button') || 'Create a Book'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <div className={styles.orderGrid}>
+                            {orders.map((order, index) => {
+                                const config = getStatusConfig(order.status, order.fulfillmentStatus);
+                                const isError = config.step === 0;
+
+                                return (
+                                    <motion.div
+                                        key={order.id}
+                                        className={styles.orderCard}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, amount: 0.2 }}
+                                    >
+                                        <div className={styles.orderHeader}>
+                                            <div className={styles.orderId}>ORDER #{order.id.slice(0, 8).toUpperCase()}</div>
+                                            <div className={styles.orderDate}>{formatDate(order.createdAt)}</div>
+                                        </div>
+
+                                        <div className={styles.orderContent}>
+                                            {order.bookThumbnail ? (
+                                                <img
+                                                    src={order.bookThumbnail}
+                                                    alt={order.bookTitle}
+                                                    className={styles.bookCoverImage}
+                                                />
+                                            ) : (
+                                                <div
+                                                    className={styles.bookCover}
+                                                    style={{ backgroundColor: getThemeColor(order.bookTheme) }}
+                                                >
+                                                    📚
+                                                </div>
+                                            )}
+                                            <div className={styles.orderDetails}>
+                                                <div className={styles.titleRow}>
+                                                    <h3 className={styles.bookTitle}>{order.bookTitle}</h3>
+                                                    <span
+                                                        className={styles.orderStatus}
+                                                        style={{ backgroundColor: `${config.color}20`, color: config.color }}
+                                                    >
+                                                        {config.icon} {config.label}
+                                                    </span>
+                                                </div>
+                                                {order.childName && (
+                                                    <div className={styles.bookMeta}>For {order.childName}</div>
+                                                )}
+                                                <div className={styles.orderSummaryRow}>
+                                                    <span className={styles.summaryStatus}>
+                                                        <span className={styles.summaryDot} style={{ backgroundColor: config.color }}></span>
+                                                        {config.label}
+                                                    </span>
+                                                    {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax) && (
+                                                        <span className={styles.summaryDelivery}>
+                                                            {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax)}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className={styles.metaRow}>
+                                                    <span className={styles.metaPill}>{formatLabel(order.format)}</span>
+                                                    <span className={styles.metaPill}>{SIZE_LABELS[order.size] || order.size}</span>
+                                                    <span className={styles.metaPill}>Qty {order.quantity}</span>
+                                                </div>
+                                                <div className={styles.statusRow}>
+                                                    {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax) && (
+                                                        <span className={styles.deliveryBadge}>
+                                                            <span className={styles.deliveryIcon}>📦</span>
+                                                            {formatDeliveryRange(order.estimatedDeliveryMin, order.estimatedDeliveryMax)}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {!isError && (
+                                                    <>
+                                                        <button
+                                                            className={styles.timelineToggle}
+                                                            onClick={() => toggleTimeline(order.id)}
+                                                        >
+                                                            {expandedTimelines[order.id] ? 'Hide progress' : 'Show progress'}
+                                                        </button>
+                                                        <div
+                                                            className={`${styles.progressTimeline} ${expandedTimelines[order.id] ? styles.timelineExpanded : styles.timelineCollapsed}`}
+                                                        >
+                                                            {PROGRESS_STEPS.map((step, i) => {
+                                                                const isCompleted = config.step > i + 1;
+                                                                const isCurrent = config.step === i + 1;
+                                                                return (
+                                                                    <div
+                                                                        key={step.key}
+                                                                        className={`${styles.progressStep} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
+                                                                    >
+                                                                        <div className={styles.progressDot}>
+                                                                            {isCompleted ? '✓' : isCurrent ? step.icon : (i + 1)}
+                                                                        </div>
+                                                                        <span className={styles.progressLabel}>{step.label}</span>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.orderFooter}>
+                                            <div className={styles.orderTotal}>
+                                                ${order.total.toFixed(2)}
+                                                <span className={styles.totalLabel}>Paid</span>
+                                            </div>
+                                            <div className={styles.orderActions}>
+                                                {(order.trackingUrl || order.trackingNumber) && (
+                                                    <a
+                                                        href={order.trackingUrl || order.trackingNumber}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={styles.trackButton}
+                                                    >
+                                                        {order.carrierName ? `Track ${order.carrierName}` : 'Track Package'}
+                                                    </a>
+                                                )}
+                                                {order.bookId && (
+                                                    <Link href={`/book/${order.bookId}`} className={styles.viewBookBtn}>
+                                                        View Book
+                                                    </Link>
+                                                )}
+                                                {isError && (
+                                                    <a
+                                                        href="mailto:support@kidbook-creator.com"
+                                                        className={styles.supportButton}
+                                                    >
+                                                        Contact Support
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            </main>
+        </>
     );
 }

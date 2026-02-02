@@ -43,7 +43,7 @@ export async function GET(
             size: order.size,
             quantity: order.quantity,
             total: `$${order.total.toFixed(2)}`,
-            status: order.status,
+            status: order.payment_status,
             fulfillmentStatus: order.fulfillment_status,
             estimatedDelivery: getEstimatedDelivery(),
         });

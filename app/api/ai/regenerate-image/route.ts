@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
+import { createClient } from '@/lib/supabase/server';
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -21,6 +22,25 @@ function log(msg: string, data?: any) {
 export async function POST(req: NextRequest) {
     log('Request received');
     try {
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+            log('Unauthorized regenerate attempt');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', user.id)
+            .single();
+
+        if (profileError || !profile?.is_admin) {
+            log('Forbidden regenerate attempt', { userId: user.id });
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
         const body = await req.json();
         const { bookId, pageNumber, prompt, currentImageContext, style, quality } = body;
         log('Parsed body', { bookId, pageNumber, hasPrompt: !!prompt });

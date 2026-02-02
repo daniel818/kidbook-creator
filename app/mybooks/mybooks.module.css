@@ -13,32 +13,11 @@
   margin-bottom: 48px;
 }
 
-.titleRow {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.iconWrapper {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%);
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
-}
-
-.headerIcon {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
 .title {
   font-size: 36px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 4px 0;
+  margin: 0 0 8px 0;
   letter-spacing: -0.02em;
 }
 
@@ -46,7 +25,6 @@
   font-size: 16px;
   color: #6B7280;
   margin: 0;
-  font-weight: 500;
 }
 
 .emptyState {
@@ -144,16 +122,6 @@
 @media (max-width: 768px) {
   .main {
     padding: 32px 16px 64px;
-  }
-
-  .titleRow {
-    gap: 16px;
-  }
-
-  .iconWrapper {
-    width: 56px;
-    height: 56px;
-    padding: 10px;
   }
 
   .title {

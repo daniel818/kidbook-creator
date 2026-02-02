@@ -16,19 +16,19 @@ export function UserNav() {
   // Get user initials from email or name
   const getInitials = () => {
     if (!user) return '';
-    
+
     // Try to get from user metadata if available
     const firstName = user.user_metadata?.first_name || '';
     const lastName = user.user_metadata?.last_name || '';
-    
+
     if (firstName && lastName) {
       return `${firstName[0]}${lastName[0]}`.toUpperCase();
     }
-    
+
     if (firstName) {
       return firstName.substring(0, 2).toUpperCase();
     }
-    
+
     // Fallback to email
     if (user.email) {
       const emailParts = user.email.split('@')[0].split('.');
@@ -37,7 +37,7 @@ export function UserNav() {
       }
       return user.email.substring(0, 2).toUpperCase();
     }
-    
+
     return 'U';
   };
 
@@ -127,18 +127,10 @@ export function UserNav() {
 
             <button
               className={styles.menuItem}
-              onClick={() => handleNavigation('/purchases')}
+              onClick={() => handleNavigation('/orders')}
             >
               <span className={styles.menuIcon}>📦</span>
-              <span>{t('purchases')}</span>
-            </button>
-
-            <button
-              className={styles.menuItem}
-              onClick={() => handleNavigation('/profile')}
-            >
-              <span className={styles.menuIcon}>👤</span>
-              <span>{t('profile')}</span>
+              <span>{t('orders')}</span>
             </button>
           </nav>
 

@@ -58,6 +58,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Book not found or unauthorized' }, { status: 404 });
         }
 
+        const isPreview = book.is_preview || book.status === 'preview';
+        if (isPreview && !book.digital_unlock_paid) {
+            return NextResponse.json({ error: 'Unlock required before ordering' }, { status: 402 });
+        }
+
         // Validate quantity
         if (!Number.isInteger(quantity) || quantity < 1) {
             return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
@@ -95,7 +100,7 @@ export async function POST(request: NextRequest) {
                 shipping_country: shipping.country,
                 shipping_phone: shipping.phone,
                 shipping_level: shippingLevel,
-                status: 'pending', // No session ID yet
+                payment_status: 'pending', // No session ID yet
                 // CRITICAL: Save the generated file paths!
                 pdf_url: pdfUrl,
                 cover_pdf_url: coverUrl,

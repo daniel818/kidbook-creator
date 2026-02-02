@@ -50,6 +50,10 @@ export async function GET() {
             status: string;
             thumbnail_url: string | null;
             language?: string;
+            is_preview?: boolean;
+            preview_page_count?: number;
+            total_page_count?: number;
+            digital_unlock_paid?: boolean;
             created_at: string;
             updated_at: string;
             pages: DbPage[];
@@ -106,9 +110,26 @@ export async function GET() {
             thumbnailUrl: book.thumbnail_url,
             createdAt: new Date(book.created_at),
             updatedAt: new Date(book.updated_at),
+            isPreview: (book as { is_preview?: boolean }).is_preview ?? book.status === 'preview',
+            previewPageCount: (book as { preview_page_count?: number }).preview_page_count ?? 0,
+            totalPageCount: (book as { total_page_count?: number }).total_page_count ?? 0,
+            digitalUnlockPaid: (book as { digital_unlock_paid?: boolean }).digital_unlock_paid ?? false,
         }));
 
-        return NextResponse.json(transformedBooks);
+        const sanitized = transformedBooks.map((book) => {
+            if (!book.isPreview || !book.previewPageCount || book.digitalUnlockPaid) return book;
+            return {
+                ...book,
+                pages: book.pages.map((page) => {
+                    if (page.pageNumber > (book.previewPageCount || 0)) {
+                        return { ...page, textElements: [], imageElements: [] };
+                    }
+                    return page;
+                })
+            };
+        });
+
+        return NextResponse.json(sanitized);
     } catch (error) {
         console.error('Unexpected error:', error);
         return NextResponse.json(

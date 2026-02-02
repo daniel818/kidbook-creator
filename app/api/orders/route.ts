@@ -19,17 +19,21 @@ export async function GET() {
         const { data: orders, error } = await supabase
             .from('orders')
             .select(`
-        *,
-        books (
-          id,
-          title,
-          child_name,
-          book_type,
-          book_theme,
-          thumbnail_url
-        )
-        )
-      `)
+                *,
+                books (
+                    id,
+                    title,
+                    child_name,
+                    book_type,
+                    book_theme,
+                    thumbnail_url,
+                    pages (
+                        page_type,
+                        image_elements,
+                        background_image
+                    )
+                )
+            `)
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
 
@@ -51,12 +55,17 @@ export async function GET() {
             subtotal: number;
             shipping_cost: number;
             total: number;
-            status: string;
-            fulfillment_status: string; // Added
+            payment_status: string;             // Renamed from status
+            fulfillment_status: string;
             tracking_number: string | null;
+            tracking_url: string | null;        // Direct tracking URL from Lulu
+            carrier_name: string | null;        // Carrier name (UPS, FedEx, etc.)
             lulu_order_id: string | null;
-            lulu_status: string | null; // Added
-            lulu_print_job_id: string | null; // Added
+            lulu_status: string | null;
+            lulu_print_job_id: string | null;
+            estimated_delivery_min: string | null;  // Earliest delivery date
+            estimated_delivery_max: string | null;  // Latest delivery date
+            shipped_at: string | null;          // When order was shipped
             shipping_full_name: string;
             shipping_address_line1: string;
             shipping_address_line2: string | null;
@@ -73,15 +82,26 @@ export async function GET() {
                 book_type: string;
                 book_theme: string;
                 thumbnail_url: string | null;
+                pages?: Array<{
+                    page_type: string;
+                    image_elements: Array<{ src?: string }> | null;
+                    background_image: string | null;
+                }>;
             } | null;
         }
+
+        const getCoverThumbnail = (book: DbOrder['books']): string | null => {
+            const coverPage = book?.pages?.find((page) => page.page_type === 'cover');
+            const imageElements = Array.isArray(coverPage?.image_elements) ? coverPage?.image_elements : [];
+            return imageElements?.[0]?.src || coverPage?.background_image || book?.thumbnail_url || null;
+        };
 
         // Transform orders for frontend
         const transformedOrders = (orders as DbOrder[]).map((order: DbOrder) => ({
             id: order.id,
             bookId: order.book_id,
             bookTitle: order.books?.title || 'Personalized Book',
-            bookThumbnail: order.books?.thumbnail_url,
+            bookThumbnail: getCoverThumbnail(order.books),
             childName: order.books?.child_name,
             format: order.format,
             size: order.size,
@@ -89,12 +109,17 @@ export async function GET() {
             subtotal: order.subtotal,
             shipping: order.shipping_cost,
             total: order.total,
-            status: order.status,
+            status: order.payment_status,      // Now uses payment_status column
             trackingNumber: order.tracking_number,
+            trackingUrl: order.tracking_url,         // Direct tracking URL from Lulu
+            carrierName: order.carrier_name,         // Carrier name (UPS, FedEx, etc.)
             luluOrderId: order.lulu_order_id,
-            luluStatus: order.lulu_status, // Add Lulu Status
-            fulfillmentStatus: order.fulfillment_status, // Add Fulfillment Status
-            printJobId: order.lulu_print_job_id, // Add Print Job ID for debugging
+            luluStatus: order.lulu_status,
+            fulfillmentStatus: order.fulfillment_status,
+            printJobId: order.lulu_print_job_id,
+            estimatedDeliveryMin: order.estimated_delivery_min,
+            estimatedDeliveryMax: order.estimated_delivery_max,
+            shippedAt: order.shipped_at,
             shippingAddress: {
                 fullName: order.shipping_full_name,
                 addressLine1: order.shipping_address_line1,

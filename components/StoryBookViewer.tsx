@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
-import { generateInteriorPDF, downloadPDF as downloadLuluPDF } from '@/lib/lulu/pdf-generator';
-import { generateCoverPDF } from '@/lib/lulu/cover-generator';
 import PrintGenerator from './PrintGenerator';
 import styles from './StoryBookViewer.module.css';
 
@@ -93,21 +91,40 @@ const IllustrationPage = forwardRef<HTMLDivElement, {
     isEditing?: boolean;
     onRegenerate?: () => void;
     isRegenerating?: boolean;
+    isGenerating?: boolean;
+    isLocked?: boolean;
 }>((props, ref) => {
-    const { imageUrl, pageNumber, themeColors, isEditing, onRegenerate, isRegenerating } = props;
+    const { imageUrl, pageNumber, themeColors, isEditing, onRegenerate, isRegenerating, isGenerating, isLocked } = props;
+    const [isLoaded, setIsLoaded] = useState(false);
+    const imageRef = useRef<HTMLImageElement | null>(null);
+
+    useEffect(() => {
+        if (!imageUrl) return;
+        setIsLoaded(false);
+    }, [imageUrl]);
+
+    useEffect(() => {
+        if (!imageUrl) return;
+        if (imageRef.current?.complete) {
+            setIsLoaded(true);
+        }
+    }, [imageUrl]);
 
     return (
         <div className={styles.illustrationPage} ref={ref}>
             <div className={styles.illustrationPageWrapper}>
                 {imageUrl ? (
                     <img
+                        ref={imageRef}
                         src={imageUrl}
                         alt={`Illustration ${pageNumber || ''}`}
-                        className={styles.fullBleedImage}
+                        className={`${styles.fullBleedImage} ${!isLoaded ? styles.fullBleedImageLoading : ''}`}
+                        onLoad={() => setIsLoaded(true)}
+                        loading="lazy"
                     />
                 ) : (
                     <div
-                        className={styles.illustrationPlaceholder}
+                        className={`${styles.illustrationPlaceholder} ${isGenerating ? styles.illustrationPlaceholderGenerating : ''}`}
                         style={{
                             background: `linear-gradient(135deg, ${themeColors[0]}40 0%, ${themeColors[1]}40 100%)`
                         }}
@@ -117,7 +134,7 @@ const IllustrationPage = forwardRef<HTMLDivElement, {
                 )}
 
                 {/* Editor Overlay */}
-                {isEditing && (
+                {isEditing && !isLocked && (
                     <StopPropagationWrapper className={styles.imageOverlay}>
                         <button
                             className={styles.overlayButton}
@@ -127,6 +144,26 @@ const IllustrationPage = forwardRef<HTMLDivElement, {
                             {isRegenerating ? '✨ Regenerating...' : '✨ Regenerate Image'}
                         </button>
                     </StopPropagationWrapper>
+                )}
+                {isGenerating && !imageUrl && !isLocked && (
+                    <div className={styles.generatingOverlay}>
+                        <div className={styles.generatingGlow}></div>
+                        <div className={styles.generatingShimmer}></div>
+                        <div className={styles.generatingContent}>
+                            <div className={styles.generatingDots}>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span>Painting this page...</span>
+                        </div>
+                    </div>
+                )}
+                {isLocked && (
+                    <div className={styles.lockedOverlay}>
+                        <div className={styles.lockedBadge}>🔒 Locked</div>
+                        <p className={styles.lockedText}>Unlock the full book to generate this page.</p>
+                    </div>
                 )}
             </div>
             {pageNumber !== undefined && (
@@ -146,27 +183,35 @@ const TextPage = forwardRef<HTMLDivElement, {
     pageNumber: number;
     isEditing?: boolean;
     onTextChange?: (idx: number, val: string) => void;
+    isLocked?: boolean;
 }>((props, ref) => {
-    const { textElements, pageNumber, isEditing, onTextChange } = props;
+    const { textElements, pageNumber, isEditing, onTextChange, isLocked } = props;
 
     return (
         <div className={styles.textPage} ref={ref}>
             <div className={styles.textPageContent}>
-                {textElements.map((text, idx) => (
-                    isEditing ? (
-                        <StopPropagationWrapper key={text.id || idx}>
-                            <textarea
-                                className={styles.editableText}
-                                value={text.content}
-                                onChange={(e) => onTextChange?.(idx, e.target.value)}
-                            />
-                        </StopPropagationWrapper>
-                    ) : (
-                        <p key={text.id || idx} className={styles.storyParagraph}>
-                            {text.content}
-                        </p>
-                    )
-                ))}
+                {isLocked ? (
+                    <div className={styles.lockedCopy}>
+                        <div className={styles.lockedBadge}>🔒 Locked</div>
+                        <p>Unlock the full book to read this page.</p>
+                    </div>
+                ) : (
+                    textElements.map((text, idx) => (
+                        isEditing ? (
+                            <StopPropagationWrapper key={text.id || idx}>
+                                <textarea
+                                    className={styles.editableText}
+                                    value={text.content}
+                                    onChange={(e) => onTextChange?.(idx, e.target.value)}
+                                />
+                            </StopPropagationWrapper>
+                        ) : (
+                            <p key={text.id || idx} className={styles.storyParagraph}>
+                                {text.content}
+                            </p>
+                        )
+                    ))
+                )}
             </div>
             <span className={styles.textPageNumber}>{pageNumber}</span>
         </div>
@@ -183,26 +228,91 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const flipBookRef = useRef<any>(null);
     const bookRef = useRef<any>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
-    const isRTL = (book.language || book.settings.language) === 'he';
+    const [liveBook, setLiveBook] = useState(book);
+    const isRTL = (liveBook.language || liveBook.settings.language) === 'he';
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isGeneratingPrint, setIsGeneratingPrint] = useState(false);
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+    const [hudVisible, setHudVisible] = useState(true);
+    const hudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [pageSize, setPageSize] = useState({ width: 550, height: 733 });
 
     // Editor State
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [regeneratingPage, setRegeneratingPage] = useState<number | null>(null);
     const [edits, setEdits] = useState<Record<number, { text?: string; image?: string }>>({});
+    const [isUnlocking, setIsUnlocking] = useState(false);
+    const [unlockError, setUnlockError] = useState<string | null>(null);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [unlockState, setUnlockState] = useState<'idle' | 'waiting' | 'generating'>('idle');
+    const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+    const unlockStartedRef = useRef(false);
+    const checkoutWindowRef = useRef<Window | null>(null);
+    const checkoutChannelRef = useRef<BroadcastChannel | null>(null);
 
-    const themeColors = book.settings.bookTheme
-        ? BookThemeInfo[book.settings.bookTheme]?.colors || ['#6366f1', '#ec4899']
+    useEffect(() => {
+        setLiveBook(book);
+    }, [book]);
+
+    const themeColors = liveBook.settings.bookTheme
+        ? BookThemeInfo[liveBook.settings.bookTheme]?.colors || ['#6366f1', '#ec4899']
         : ['#6366f1', '#ec4899'];
+    const canRegenerateImages = false;
+    const isPreview = liveBook.isPreview || liveBook.status === 'preview';
+    const previewPageCount = liveBook.previewPageCount || 0;
+    const isPaidAccess = !isPreview || !!liveBook.digitalUnlockPaid;
+    const isSquare = liveBook.settings.printFormat === 'square';
 
     // Get total page count for progress indicator
     // Cover + (inner pages * 2 for spreads) + Back cover
-    const innerPages = book.pages.filter(p => p.type === 'inside');
+    const innerPages = liveBook.pages.filter(p => p.type === 'inside');
     const totalFlipPages = 2 + (innerPages.length * 2); // Front cover, spreads, back cover
+    const totalPageCount = liveBook.totalPageCount || totalFlipPages;
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const handleChange = () => {
+            const minDimension = Math.min(window.innerWidth, window.innerHeight);
+            setIsMobile(minDimension <= 600);
+        };
+        handleChange();
+        window.addEventListener('resize', handleChange);
+        return () => {
+            window.removeEventListener('resize', handleChange);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const updateSize = () => {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const horizontalPadding = isMobile ? 28 : 160;
+            const verticalPadding = isMobile ? 220 : (isSquare ? 280 : 220);
+            const baseWidth = 550;
+            const maxWidth = Math.max(240, viewportWidth - horizontalPadding);
+            let width = Math.min(baseWidth, maxWidth);
+            const maxHeight = Math.max(320, viewportHeight - verticalPadding);
+            if (isSquare) {
+                width = Math.min(width, maxHeight);
+            }
+            let height = isSquare ? width : Math.round(width * 4 / 3);
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = isSquare ? height : Math.round(height * 3 / 4);
+            }
+            setPageSize({
+                width: Math.max(240, Math.round(width)),
+                height: Math.max(320, Math.round(height))
+            });
+        };
+        updateSize();
+        window.addEventListener('resize', updateSize);
+        return () => window.removeEventListener('resize', updateSize);
+    }, [isMobile, isSquare]);
 
     // ============================================
     // Fullscreen Handling
@@ -224,6 +334,156 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         }
     }, []);
 
+    const handleUnlock = useCallback(async () => {
+        if (isUnlocking) return;
+        setIsUnlocking(true);
+        setUnlockError(null);
+        try {
+            if (liveBook.digitalUnlockPaid) {
+                const response = await fetch(`/api/books/${book.id}/unlock`, { method: 'POST' });
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data?.error || 'Failed to unlock');
+                }
+                window.location.reload();
+                return;
+            }
+
+            const response = await fetch('/api/checkout/digital', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookId: book.id }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data?.error || 'Failed to start checkout');
+            }
+            if (data.url) {
+                setCheckoutUrl(data.url);
+                setUnlockState('waiting');
+                checkoutWindowRef.current = window.open(
+                    data.url,
+                    'kidbookCheckout',
+                    'popup,width=520,height=720,menubar=0,toolbar=0,location=1,status=0'
+                );
+            }
+        } catch (error) {
+            console.error('Unlock error:', error);
+            setUnlockError(error instanceof Error ? error.message : 'Failed to unlock');
+        } finally {
+            setIsUnlocking(false);
+        }
+    }, [isUnlocking, liveBook.digitalUnlockPaid, book.id]);
+
+    const pollBook = useCallback(async () => {
+        try {
+            const response = await fetch(`/api/books/${book.id}`);
+            if (!response.ok) return;
+            const data = await response.json();
+            setLiveBook(data);
+            if (unlockState === 'waiting' && data.digitalUnlockPaid) {
+                checkoutWindowRef.current?.close();
+                checkoutWindowRef.current = null;
+                setShowPaywall(false);
+                setUnlockState('generating');
+            }
+            if (unlockState === 'generating' && data.status !== 'preview' && !data.isPreview) {
+                setUnlockState('idle');
+                setShowPaywall(false);
+                unlockStartedRef.current = false;
+                checkoutWindowRef.current?.close();
+                checkoutWindowRef.current = null;
+            }
+        } catch (error) {
+            console.error('Polling error:', error);
+        }
+    }, [book.id, unlockState]);
+
+    const pollBookRef = useRef(pollBook);
+
+    useEffect(() => {
+        pollBookRef.current = pollBook;
+    }, [pollBook]);
+
+    useEffect(() => {
+        if (unlockState === 'idle') return;
+        const interval = setInterval(pollBook, 2000);
+        pollBook();
+        return () => clearInterval(interval);
+    }, [pollBook, unlockState]);
+
+    useEffect(() => {
+        if (unlockState !== 'generating' || unlockStartedRef.current) return;
+        unlockStartedRef.current = true;
+        fetch(`/api/books/${book.id}/unlock`, { method: 'POST' })
+            .catch((err) => console.error('Unlock request failed', err));
+    }, [book.id, unlockState]);
+
+    useEffect(() => {
+        if (!isPreview) return;
+        if (unlockState !== 'idle') return;
+        if (!liveBook.digitalUnlockPaid) return;
+        setUnlockState('generating');
+    }, [isPreview, liveBook.digitalUnlockPaid, unlockState]);
+
+    useEffect(() => {
+        if (!isPaidAccess && isEditing) {
+            setIsEditing(false);
+        }
+    }, [isPaidAccess, isEditing]);
+
+    const handleCheckoutComplete = useCallback((payload?: { bookId?: string }) => {
+        if (payload?.bookId && payload.bookId !== book.id) return;
+        checkoutWindowRef.current?.close();
+        checkoutWindowRef.current = null;
+        setShowPaywall(false);
+        setUnlockState('waiting');
+        pollBookRef.current();
+    }, [book.id]);
+
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== window.location.origin) return;
+            if (!event.data || typeof event.data !== 'object') return;
+            const payload = event.data as { type?: string; bookId?: string };
+            if (payload.type === 'kidbook:checkout-complete') {
+                handleCheckoutComplete(payload);
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, [handleCheckoutComplete]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
+        const channel = new BroadcastChannel('kidbook-checkout');
+        checkoutChannelRef.current = channel;
+        channel.onmessage = (event) => {
+            if (!event?.data || typeof event.data !== 'object') return;
+            const payload = event.data as { type?: string; bookId?: string };
+            if (payload.type === 'kidbook:checkout-complete') {
+                handleCheckoutComplete(payload);
+            }
+        };
+
+        return () => {
+            channel.close();
+            checkoutChannelRef.current = null;
+        };
+    }, [handleCheckoutComplete]);
+
+    useEffect(() => {
+        const handleStorage = (event: StorageEvent) => {
+            if (!event.key) return;
+            if (event.key !== `kidbook:checkout:${book.id}`) return;
+            handleCheckoutComplete({ bookId: book.id });
+        };
+
+        window.addEventListener('storage', handleStorage);
+        return () => window.removeEventListener('storage', handleStorage);
+    }, [book.id, handleCheckoutComplete]);
+
     // Listen for fullscreen changes (user might exit with Esc)
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -238,31 +498,17 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     // Event Handlers
     // ============================================
 
-    const handleDownload = async (e: React.MouseEvent) => {
+    const handleDownload = async () => {
         if (isDownloading) return;
+        if (!isPaidAccess) {
+            setShowPaywall(true);
+            return;
+        }
 
         try {
             setIsDownloading(true);
-
-            // Secret developer mode: Alt/Option + Click = Download Lulu Print Files
-            if (e.altKey) {
-                // Defaults to book format (square -> 8x8, portrait -> 8x10)
-                const size = book.settings.printFormat === 'square' ? '8x8' : '8x10';
-                const format: 'softcover' | 'hardcover' = 'softcover';
-
-                // 1. Generate Interior
-                const interiorBlob = await generateInteriorPDF(book, format, size);
-                downloadLuluPDF(interiorBlob, `${book.settings.title || 'book'}_interior_${size}.pdf`);
-
-                // 2. Generate Cover
-                const coverBlob = await generateCoverPDF(book, format, size);
-                downloadLuluPDF(coverBlob, `${book.settings.title || 'book'}_cover_${size}.pdf`);
-
-                return;
-            }
-
-            const blob = await generateBookPDF(book);
-            const filename = `${book.settings.title || 'story-book'}.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const blob = await generateBookPDF(liveBook);
+            const filename = `${liveBook.settings.title || 'story-book'}_digital.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             downloadPDF(blob, filename);
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -275,7 +521,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const handlePrintComplete = (blob: Blob) => {
         setIsGeneratingPrint(false);
         if (blob) {
-            const filename = `${book.settings.title || 'story-book'}_print.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const filename = `${liveBook.settings.title || 'story-book'}_print.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             downloadPDF(blob, filename);
         }
     };
@@ -289,9 +535,67 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         return page.backgroundImage || (page as unknown as { background_image?: string }).background_image || null;
     };
 
+    const readyTextPages = innerPages.filter(page => {
+        const content = page.textElements?.[0]?.content || '';
+        return content.trim().length > 0;
+    }).length;
+    const readyImagePages = innerPages.filter(page => !!getPageImage(page)).length;
+    const backCoverPageForProgress = liveBook.pages.find(p => p.type === 'back');
+    const backCoverReady = backCoverPageForProgress
+        ? !!getPageImage(backCoverPageForProgress) || !!(backCoverPageForProgress.textElements?.[0]?.content || '').trim()
+        : false;
+    const readyPhysicalPages = Math.min(
+        totalFlipPages,
+        1 + readyTextPages + readyImagePages + (backCoverReady ? 1 : 0)
+    );
+    const generationPercent = totalFlipPages
+        ? Math.round((readyPhysicalPages / totalFlipPages) * 100)
+        : 0;
+
+    const scheduleHudHide = useCallback(() => {
+        if (!isMobile) return;
+        if (showPaywall || isEditing || unlockState !== 'idle') return;
+        if (hudTimerRef.current) {
+            window.clearTimeout(hudTimerRef.current);
+        }
+        hudTimerRef.current = window.setTimeout(() => {
+            setHudVisible(false);
+        }, 2600);
+    }, [isMobile, showPaywall, isEditing, unlockState]);
+
+    const showHud = useCallback(() => {
+        if (!isMobile) return;
+        setHudVisible(true);
+        scheduleHudHide();
+    }, [isMobile, scheduleHudHide]);
+
+    useEffect(() => {
+        if (!isMobile) {
+            setHudVisible(true);
+            return;
+        }
+        showHud();
+        return () => {
+            if (hudTimerRef.current) {
+                window.clearTimeout(hudTimerRef.current);
+            }
+        };
+    }, [isMobile, showHud]);
+
+    useEffect(() => {
+        if (!isMobile) return;
+        if (showPaywall || unlockState !== 'idle' || isEditing) {
+            setHudVisible(true);
+            if (hudTimerRef.current) {
+                window.clearTimeout(hudTimerRef.current);
+            }
+        }
+    }, [isMobile, showPaywall, unlockState, isEditing]);
+
     const onFlip = useCallback((e: { data: number }) => {
         setCurrentPageIndex(e.data);
-    }, []);
+        showHud();
+    }, [showHud]);
 
     const flipPrev = useCallback(() => {
         bookRef.current?.pageFlip().flipPrev();
@@ -457,17 +761,21 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const renderSpreads = () => {
         const spreads: React.ReactNode[] = [];
         // Get inner pages (skip cover page at index 0)
-        const innerPages = book.pages.filter(p => p.type === 'inside');
-        const isRTL = (book.language || book.settings.language) === 'he';
+        const innerPages = liveBook.pages.filter(p => p.type === 'inside');
+        const isRTL = (liveBook.language || liveBook.settings.language) === 'he';
+        const unlockedInnerCount = Math.max(0, previewPageCount - 1);
 
         innerPages.forEach((page, index) => {
             const pageNum = index + 1; // 1-based
             const edit = edits[pageNum] || {};
-
             // Resolve content (edit > original)
             const displayImage = edit.image || getPageImage(page);
             const displayText = edit.text || (page.textElements[0]?.content || '');
-            const textElements = [{ ...page.textElements[0], content: displayText }];
+            const textElements = page.textElements.length > 0
+                ? [{ ...page.textElements[0], content: displayText }]
+                : [{ content: displayText }];
+            const isLocked = isPreview && !liveBook.digitalUnlockPaid && index >= unlockedInnerCount;
+            const isGenerating = unlockState === 'generating' && !displayImage && !isLocked;
 
             // For RTL books, flip the page numbering
             // Right page should be lower number in RTL
@@ -481,8 +789,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         <TextPage
                             textElements={textElements}
                             pageNumber={leftPageNum}
-                            isEditing={isEditing}
+                            isEditing={isEditing && !isLocked}
                             onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                            isLocked={isLocked}
                         />
                     </Page>
                 );
@@ -493,9 +802,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             imageUrl={displayImage || undefined}
                             pageNumber={rightPageNum}
                             themeColors={themeColors}
-                            isEditing={isEditing}
+                            isEditing={isEditing && canRegenerateImages && !isLocked}
                             isRegenerating={regeneratingPage === pageNum}
                             onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
+                            isLocked={isLocked}
+                            isGenerating={isGenerating}
                         />
                     </Page>
                 );
@@ -507,9 +818,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             imageUrl={displayImage || undefined}
                             pageNumber={leftPageNum}
                             themeColors={themeColors}
-                            isEditing={isEditing}
+                            isEditing={isEditing && canRegenerateImages && !isLocked}
                             isRegenerating={regeneratingPage === pageNum}
                             onRegenerate={() => handleRegenerateImage(index, displayImage || '', displayText)}
+                            isLocked={isLocked}
+                            isGenerating={isGenerating}
                         />
                     </Page>
                 );
@@ -519,8 +832,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         <TextPage
                             textElements={textElements}
                             pageNumber={rightPageNum}
-                            isEditing={isEditing}
+                            isEditing={isEditing && !isLocked}
                             onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                            isLocked={isLocked}
                         />
                     </Page>
                 );
@@ -533,51 +847,39 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
 
     // Calculate dimensions based on format
-    const isSquare = book.settings.printFormat === 'square';
-    const displayTitle = book.settings.title;
-
-    const bookWidth = 550;
-    const bookHeight = isSquare ? 550 : 733; // 1:1 vs 3:4
+    const displayTitle = liveBook.settings.title || 'Untitled story';
+    const bookSubtitle = [
+        liveBook.settings.childName,
+        liveBook.settings.childAge ? `Age ${liveBook.settings.childAge}` : ''
+    ]
+        .filter(Boolean)
+        .join(' · ');
 
     // Find custom back cover if it exists
-    const backCoverPage = book.pages.find(p => p.type === 'back');
+    const backCoverPage = liveBook.pages.find(p => p.type === 'back');
     const backCoverImage = backCoverPage ? getPageImage(backCoverPage) : null;
-    const backCoverText = backCoverPage?.textElements?.[0]?.content || "Create your own book at KidBook Creator";
+    const backCoverText = isPreview && !liveBook.digitalUnlockPaid
+        ? 'Unlock the full book to generate the back cover.'
+        : (backCoverPage?.textElements?.[0]?.content || "Create your own book at KidBook Creator");
 
     return (
         <div
             ref={viewerRef}
-            className={`${styles.viewer} ${isFullScreen || isFullscreen ? styles.fullScreen : ''}`}
+            className={`${styles.viewer} ${isFullScreen || isFullscreen ? styles.fullScreen : ''} ${isMobile ? styles.mobile : ''} ${isMobile && !hudVisible ? styles.hudHidden : ''}`}
+            onClickCapture={() => showHud()}
         >
             {/* Header Controls */}
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
-                    <div className={styles.editToolbar}>
-                        {isEditing ? (
-                            <>
-                                <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
-                                    {isSaving ? 'Saving...' : '💾 Save'}
-                                </button>
-                                <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
-                                    Cancel
-                                </button>
-                            </>
-                        ) : (
-                            <button className={styles.editToggle} onClick={() => setIsEditing(true)}>
-                                ✎ Edit
-                            </button>
-                        )}
-                        <span style={{ marginInline: '10px', height: '20px', width: '1px', background: 'rgba(0,0,0,0.1)' }}></span>
-                        {onClose && (
-                            <button className={styles.closeBtn} onClick={onClose}>
-                                ← Back
-                            </button>
-                        )}
-
-                        {book.estimatedCost !== undefined && (
-                            <span className={styles.costBadge} title="Estimated AI Generation Cost">
-                                💸 ${book.estimatedCost.toFixed(3)}
-                            </span>
+                    {onClose && (
+                        <button className={styles.closeBtn} onClick={onClose}>
+                            ← Back
+                        </button>
+                    )}
+                    <div className={styles.bookMeta}>
+                        <span className={styles.bookTitle}>{displayTitle}</span>
+                        {bookSubtitle && (
+                            <span className={styles.bookSubtitle}>{bookSubtitle}</span>
                         )}
                     </div>
                 </div>
@@ -603,11 +905,32 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 </div>
 
                 <div className={styles.headerRight}>
+                    <div className={styles.editToolbar}>
+                        {isEditing ? (
+                            <>
+                                <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
+                                    {isSaving ? 'Saving...' : '💾 Save'}
+                                </button>
+                                <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
+                                    Cancel
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                className={styles.editToggle}
+                                onClick={() => (isPaidAccess ? setIsEditing(true) : setShowPaywall(true))}
+                                title={isPaidAccess ? undefined : 'Unlock to edit'}
+                            >
+                                ✎ Edit
+                            </button>
+                        )}
+                    </div>
+                    <span className={styles.headerDivider}></span>
                     <button
                         className={styles.orderButton}
-                        onClick={() => router.push(`/create/${book.id}/order`)}
+                        onClick={isPreview ? () => setShowPaywall(true) : () => router.push(`/create/${book.id}/order`)}
                     >
-                        🛒 Order Print
+                        {isPreview ? '🔓 Unlock Full Book' : '🛒 Order Print'}
                     </button>
                     <button
                         className={styles.actionBtn}
@@ -625,8 +948,45 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                     >
                         {isDownloading ? '⏳' : '⬇️'}
                     </button>
+                    {liveBook.estimatedCost !== undefined && (
+                        <span className={styles.costBadge} title="Estimated AI Generation Cost">
+                            💸 ${liveBook.estimatedCost.toFixed(3)}
+                        </span>
+                    )}
                 </div>
             </header>
+
+            {isPreview && (
+                <div className={styles.previewBanner}>
+                    <div className={styles.previewCopy}>
+                        <strong>Preview Mode</strong>
+                        <span>Includes {previewPageCount} pages. Unlock to generate all {totalPageCount} pages.</span>
+                        {unlockError && <em className={styles.previewError}>{unlockError}</em>}
+                    </div>
+                    <button
+                        className={styles.previewCta}
+                        onClick={() => setShowPaywall(true)}
+                    >
+                        Unlock Options
+                    </button>
+                </div>
+            )}
+
+            {unlockState === 'generating' && (
+                <div className={styles.generationBanner}>
+                    <div className={styles.generationMeta}>
+                        <span className={styles.generationLabel}>Pages ready</span>
+                        <span className={styles.generationCount}>{readyPhysicalPages}/{totalFlipPages}</span>
+                    </div>
+                    <div className={styles.generationBar}>
+                        <div
+                            className={styles.generationFill}
+                            style={{ width: `${generationPercent}%` }}
+                        />
+                    </div>
+                    <p className={styles.generationHint}>Text is ready. We&apos;re painting the remaining illustrations.</p>
+                </div>
+            )}
 
             {/* Progress Bar */}
             <div className={styles.progressContainer}>
@@ -641,28 +1001,28 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 <div className={styles.centeringWrapper}>
                     {/* @ts-ignore - Library types are tricky */}
                     <HTMLFlipBook
-                        width={bookWidth}
-                        height={bookHeight}
+                        width={pageSize.width}
+                        height={pageSize.height}
                         size="fixed"
-                        minWidth={315}
+                        minWidth={240}
                         maxWidth={1000}
-                        minHeight={400}
+                        minHeight={320}
                         maxHeight={1533}
-                        maxShadowOpacity={0.5}
+                        maxShadowOpacity={isMobile ? 0.3 : 0.5}
                         showCover={true}
-                        mobileScrollSupport={true}
+                        mobileScrollSupport={isMobile}
                         onFlip={onFlip}
                         ref={bookRef}
                         className={styles.flipBook}
                         flippingTime={600}
-                        usePortrait={false}
+                        usePortrait={isMobile}
                         startPage={0}
                         drawShadow={true}
                         autoSize={true}
                         clickEventForward={true}
-                        useMouseEvents={true}
+                        useMouseEvents={!isEditing}
                         swipeDistance={30}
-                        showPageCorners={true}
+                        showPageCorners={!isMobile}
                         disableFlipByClick={isEditing}
                     >
                         {/* Front Cover */}
@@ -670,8 +1030,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             <div
                                 className={styles.coverInner}
                                 style={{
-                                    background: book.pages[0] && getPageImage(book.pages[0])
-                                        ? `url(${getPageImage(book.pages[0])}) center/cover`
+                                    background: liveBook.pages[0] && getPageImage(liveBook.pages[0])
+                                        ? `url(${getPageImage(liveBook.pages[0])}) center/cover`
                                         : `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
                                 }}
                             >
@@ -680,9 +1040,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                 <div className={styles.coverOverlay}>
                                     <h1 className={styles.coverTitle}>{displayTitle}</h1>
                                     <p className={styles.coverSubtitle}>
-                                        {(book.language || book.settings.language) === 'he' ? `${book.settings.childName}, גיל ${book.settings.childAge}` :
-                                            (book.language || book.settings.language) === 'de' ? `Für ${book.settings.childName}, ${book.settings.childAge} Jahre alt` :
-                                                `For ${book.settings.childName}, age ${book.settings.childAge}`}
+                                        {(liveBook.language || liveBook.settings.language) === 'he' ? `${liveBook.settings.childName}, גיל ${liveBook.settings.childAge}` :
+                                            (liveBook.language || liveBook.settings.language) === 'de' ? `Für ${liveBook.settings.childName}, ${liveBook.settings.childAge} Jahre alt` :
+                                                `For ${liveBook.settings.childName}, age ${liveBook.settings.childAge}`}
                                     </p>
                                 </div>
                             </div>
@@ -703,12 +1063,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                 }}
                             >
                                 <div className={styles.coverOverlay}>
-                                    <h2 className={styles.coverTitle}>
-                                        {(book.language || book.settings.language) === 'he' ? 'סוף' :
-                                            (book.language || book.settings.language) === 'de' ? 'Ende' :
+                                    <h2 className={`${styles.coverTitle} ${styles.backCoverText}`}>
+                                        {(liveBook.language || liveBook.settings.language) === 'he' ? 'סוף' :
+                                            (liveBook.language || liveBook.settings.language) === 'de' ? 'Ende' :
                                                 'The End'}
                                     </h2>
-                                    <p className={styles.coverSubtitle} style={{ maxWidth: '80%' }}>
+                                    <p className={`${styles.coverSubtitle} ${styles.backCoverText}`} style={{ maxWidth: '80%' }}>
                                         {backCoverText}
                                     </p>
                                 </div>
@@ -728,11 +1088,81 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                     <h2>Generating High-Res Print PDF... Please Wait</h2>
                     <PrintGenerator
-                        book={book}
+                        book={liveBook}
                         onComplete={handlePrintComplete}
                     />
                 </div>
             )}
+
+            <div className={`${styles.drawer} ${showPaywall ? styles.drawerOpen : ''}`}>
+                <div className={styles.drawerHeader}>
+                    <div>
+                        <h2>Unlock your full book</h2>
+                        <p>Stay in the story while we finish the rest.</p>
+                    </div>
+                    <button className={styles.drawerClose} onClick={() => setShowPaywall(false)}>×</button>
+                </div>
+
+                <div className={styles.drawerContent}>
+                    {unlockState === 'waiting' && (
+                        <div className={styles.drawerStatus}>
+                            <strong>Waiting for payment</strong>
+                            <p>Complete checkout in the new tab. We&apos;ll unlock your book automatically.</p>
+                            {checkoutUrl && (
+                                <button className={styles.drawerLink} onClick={() => window.open(checkoutUrl, '_blank', 'noopener,noreferrer')}>
+                                    Open checkout
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {unlockState === 'generating' && (
+                        <div className={styles.drawerStatus}>
+                            <strong>Generating your pages</strong>
+                            <p>New pages appear as they finish.</p>
+                            <div className={styles.drawerProgress}>
+                                {liveBook.pages.filter(p => p.type === 'inside' && p.imageElements?.[0]?.src).length}
+                                {' / '}
+                                {liveBook.pages.filter(p => p.type === 'inside').length} pages ready
+                            </div>
+                        </div>
+                    )}
+
+                    {unlockState === 'idle' && (
+                        <div className={styles.drawerOptions}>
+                            <button
+                                className={styles.drawerCard}
+                                onClick={handleUnlock}
+                                disabled={isUnlocking}
+                            >
+                                <div>
+                                    <span className={styles.paywallTitle}>Digital Unlock</span>
+                                    <span className={styles.paywallPrice}>$15</span>
+                                    <p>Instant access to all pages + high‑res PDF download.</p>
+                                </div>
+                                <span className={styles.paywallAction}>
+                                    {isUnlocking ? 'Opening checkout…' : 'Unlock Now'}
+                                </span>
+                            </button>
+                            <button
+                                className={styles.drawerCardAlt}
+                                onClick={() => router.push(`/create/${book.id}/order`)}
+                            >
+                                <div>
+                                    <span className={styles.paywallTitle}>Printed Book</span>
+                                    <span className={styles.paywallPrice}>From $45</span>
+                                    <p>Premium print + digital included.</p>
+                                </div>
+                                <span className={styles.paywallAction}>Order Print</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {unlockError && <div className={styles.paywallError}>{unlockError}</div>}
+                </div>
+            </div>
+
+            {showPaywall && <div className={styles.drawerOverlay} onClick={() => setShowPaywall(false)}></div>}
         </div>
     );
 }

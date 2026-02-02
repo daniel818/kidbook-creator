@@ -5,8 +5,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client';
+import { uploadReferenceImage } from '@/lib/supabase/upload';
 import * as fs from 'fs';
 import * as path from 'path';
+
+const safeStringify = (value: unknown) => {
+    try {
+        return JSON.stringify(value, null, 2);
+    } catch {
+        return String(value);
+    }
+};
 
 // Helper function for logging with timestamps
 const log = (message: string, data?: unknown) => {
@@ -17,14 +26,14 @@ const log = (message: string, data?: unknown) => {
     // Also write to file for deeper debugging
     try {
         const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
+        const dataStr = data !== undefined ? (typeof data === 'string' ? data : safeStringify(data)) : '';
         fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
     } catch (e) {
         // ignore write error
     }
 
     if (data !== undefined) {
-        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 500));
+        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : safeStringify(data).slice(0, 500));
     }
 };
 
@@ -40,6 +49,21 @@ const PRICING = {
     'gemini-2.5-flash-image': {
         image: 0.039 // ~$30/1M output tokens (approx 1290 tokens/img)
     }
+};
+
+const parseDataUrl = (value: unknown): { contentType: string; base64: string } | null => {
+    if (typeof value !== 'string') return null;
+    if (!value.startsWith('data:')) return null;
+    const commaIndex = value.indexOf(',');
+    if (commaIndex === -1) return null;
+    const header = value.slice(5, commaIndex);
+    const base64 = value.slice(commaIndex + 1);
+    if (!base64) return null;
+    const [contentType] = header.split(';');
+    return {
+        contentType: contentType || 'image/jpeg',
+        base64
+    };
 };
 
 function calculateCost(log: any): number {
@@ -76,8 +100,8 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language } = body;
-        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language });
+        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = body;
+        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
 
         if (!childName || !bookTheme || !bookType) {
             log('ERROR: Missing required fields');
@@ -125,7 +149,21 @@ export async function POST(request: NextRequest) {
         // Generate the complete book (story + illustrations)
         log('Step 3: Starting book generation...');
         const genStartTime = Date.now();
-        const result = await generateCompleteBook(input);
+        const isPreview = preview === true;
+        const defaultPreviewCount = 3;
+        const maxPreviewCount = 4;
+        const effectivePreviewCount = Math.min(
+            maxPreviewCount,
+            Math.max(1, Number(previewPageCount || defaultPreviewCount))
+        );
+        const result = await generateCompleteBook(
+            input,
+            undefined,
+            {
+                illustrationLimit: isPreview ? effectivePreviewCount : undefined,
+                includeBackCover: !isPreview
+            }
+        );
 
         // Calculate Costs from Logs
         let totalCost = 0;
@@ -143,6 +181,24 @@ export async function POST(request: NextRequest) {
         const userId = user.id;
         const bookId = crypto.randomUUID();
         log(`Created bookId: ${bookId}`);
+        let referenceImageUrl: string | null = null;
+        if (childPhoto) {
+            const parsed = parseDataUrl(childPhoto);
+            if (parsed) {
+                const buffer = Buffer.from(parsed.base64, 'base64');
+                try {
+                    referenceImageUrl = await uploadReferenceImage(userId, bookId, buffer, parsed.contentType);
+                } catch (err) {
+                    log('Reference image upload failed', err);
+                }
+            } else {
+                log('Reference image skipped: invalid data URL');
+            }
+        }
+        const previewCountClamped = isPreview
+            ? Math.min(effectivePreviewCount, result.story.pages.length)
+            : result.story.pages.length;
+        const totalPageCount = result.story.pages.length + (result.story.backCoverBlurb ? 1 : 0);
 
         // ---------------------------------------------------------
         // IMAGE UPLOAD LOGIC
@@ -155,25 +211,23 @@ export async function POST(request: NextRequest) {
         const uploadBase64 = async (base64Str: string, filename: string) => {
             if (!base64Str || base64Str.length < 100) return null;
             try {
-                const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-                if (matches && matches.length === 3) {
-                    const contentType = matches[1];
-                    const buffer = Buffer.from(matches[2], 'base64');
-                    // log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
+                const parsed = parseDataUrl(base64Str);
+                if (!parsed) return null;
+                const buffer = Buffer.from(parsed.base64, 'base64');
+                // log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
 
-                    const { error: uploadError } = await supabase.storage
-                        .from('book-images')
-                        .upload(filename, buffer, { contentType, upsert: true });
+                const { error: uploadError } = await supabase.storage
+                    .from('book-images')
+                    .upload(filename, buffer, { contentType: parsed.contentType, upsert: true });
 
-                    if (uploadError) {
-                        log(`Upload FAILED for ${filename}`, uploadError.message);
-                        return null;
-                    }
-                    const { data: { publicUrl } } = supabase.storage
-                        .from('book-images')
-                        .getPublicUrl(filename);
-                    return publicUrl;
+                if (uploadError) {
+                    log(`Upload FAILED for ${filename}`, uploadError.message);
+                    return null;
                 }
+                const { data: { publicUrl } } = supabase.storage
+                    .from('book-images')
+                    .getPublicUrl(filename);
+                return publicUrl;
             } catch (e) {
                 log(`Processing ERROR for ${filename}`, e);
             }
@@ -219,9 +273,17 @@ export async function POST(request: NextRequest) {
             book_theme: bookTheme,
             book_type: bookType,
             print_format: aspectRatio === '1:1' ? 'square' : 'portrait',
-            status: 'draft',
+            status: isPreview ? 'preview' : 'draft',
             estimated_cost: totalCost, // Save aggregated cost
-            language: language || 'en' // Save book language
+            language: language || 'en', // Save book language
+            is_preview: isPreview,
+            preview_page_count: previewCountClamped,
+            total_page_count: totalPageCount,
+            character_description: result.story.characterDescription || characterDescription || null,
+            art_style: artStyle || input.artStyle || null,
+            image_quality: imageQuality || input.imageQuality || null,
+            story_description: storyDescription || null,
+            reference_image_url: referenceImageUrl
         });
 
         if (dbError) {
@@ -250,6 +312,7 @@ export async function POST(request: NextRequest) {
             page_number: page.pageNumber,
             page_type: page.pageNumber === 1 ? 'cover' : 'inside',
             background_color: '#ffffff',
+            image_prompt: page.imagePrompt,
             text_elements: page.text ? [{
                 id: crypto.randomUUID(),
                 content: page.text,
@@ -271,6 +334,7 @@ export async function POST(request: NextRequest) {
                 page_number: pagesData.length + 1,
                 page_type: 'back',
                 background_color: '#ffffff',
+                image_prompt: '', // Back cover doesn't have a specific image prompt
                 text_elements: result.story.backCoverBlurb ? [{
                     id: crypto.randomUUID(),
                     content: result.story.backCoverBlurb,

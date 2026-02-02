@@ -49,3 +49,38 @@ export async function uploadImageToStorage(bookId: string, pageNumber: number, i
     // Let's check which bucket usage is correct.
     return publicUrl;
 }
+
+export async function uploadReferenceImage(
+    userId: string,
+    bookId: string,
+    imageBuffer: Buffer,
+    contentType: string
+): Promise<string> {
+    if (!supabaseServiceKey) {
+        throw new Error('Server misconfiguration: Missing SUPABASE_SERVICE_ROLE_KEY');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const safeType = contentType || 'image/jpeg';
+    const ext = safeType.includes('png') ? 'png'
+        : safeType.includes('webp') ? 'webp'
+            : safeType.includes('gif') ? 'gif'
+                : 'jpg';
+    const fileName = `${userId}/${bookId}/reference.${ext}`;
+    log(`Uploading reference image ${fileName}, size: ${imageBuffer.length}`);
+
+    const { error } = await supabase.storage
+        .from('book-images')
+        .upload(fileName, imageBuffer, {
+            contentType: safeType,
+            upsert: true
+        });
+
+    if (error) {
+        log(`Reference upload error: ${JSON.stringify(error)}`);
+        throw error;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('book-images').getPublicUrl(fileName);
+    return publicUrl;
+}

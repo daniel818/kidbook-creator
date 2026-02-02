@@ -1799,47 +1799,142 @@ Gib NUR ein gültiges JSON-Objekt mit der folgenden Struktur zurück:
 [API generate-book 2026-01-24T14:58:24.948Z] ======================================== 
 [API generate-book 2026-01-24T14:58:24.948Z] === GENERATE-BOOK API REQUEST COMPLETE in 140912ms === 
 [API generate-book 2026-01-24T14:58:24.948Z] ======================================== 
-[GEMINI 2026-01-24T16:28:49.905Z] Initializing Gemini Unified client (@google/genai)... 
-[GEMINI 2026-01-24T16:28:49.912Z] Gemini client initialized 
-[GEMINI 2026-01-24T16:29:06.644Z] Initializing Gemini Unified client (@google/genai)... 
-[GEMINI 2026-01-24T16:29:06.648Z] Gemini client initialized 
-[API generate-book 2026-01-24T16:29:06.656Z] ======================================== 
-[API generate-book 2026-01-24T16:29:06.657Z] === GENERATE-BOOK API REQUEST STARTED === 
-[API generate-book 2026-01-24T16:29:06.657Z] ======================================== 
-[API generate-book 2026-01-24T16:29:06.657Z] Step 1: Parsing request body... 
-[API generate-book 2026-01-24T16:29:06.668Z] Request body parsed {
-  "childName": "Daniel",
-  "childAge": 3,
-  "bookTheme": "learning",
-  "bookType": "picture",
-  "artStyle": "watercolor",
+[GEMINI 2026-01-30T20:37:06.199Z] Initializing Gemini Unified client (@google/genai)... 
+[GEMINI 2026-01-30T20:37:06.201Z] Gemini client initialized 
+[API generate-book 2026-01-30T20:37:06.207Z] ======================================== 
+[API generate-book 2026-01-30T20:37:06.207Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-30T20:37:06.207Z] ======================================== 
+[API generate-book 2026-01-30T20:37:06.207Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-30T20:37:06.208Z] Request body parsed {
+  "childName": "Ilay",
+  "childAge": 1,
+  "bookTheme": "adventure",
+  "bookType": "story",
+  "artStyle": "storybook_classic",
+  "imageQuality": "fast",
+  "hasPhoto": false,
+  "printFormat": "square",
+  "language": "en"
+}
+[API generate-book 2026-01-30T20:37:06.209Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-30T20:37:06.227Z] Authentication completed in 18ms 
+[API generate-book 2026-01-30T20:37:06.227Z] ERROR: Unauthorized {
+  "__isAuthError": true,
+  "name": "AuthApiError",
+  "status": 403,
+  "code": "user_not_found"
+}
+[API generate-book 2026-01-30T20:37:12.227Z] ======================================== 
+[API generate-book 2026-01-30T20:37:12.228Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-30T20:37:12.228Z] ======================================== 
+[API generate-book 2026-01-30T20:37:12.229Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-30T20:37:12.230Z] Request body parsed {
+  "childName": "Ilay",
+  "childAge": 1,
+  "bookTheme": "adventure",
+  "bookType": "story",
+  "artStyle": "storybook_classic",
+  "imageQuality": "fast",
+  "hasPhoto": false,
+  "printFormat": "square",
+  "language": "en"
+}
+[API generate-book 2026-01-30T20:37:12.231Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-30T20:37:12.250Z] Authentication completed in 19ms 
+[API generate-book 2026-01-30T20:37:12.251Z] ERROR: Unauthorized {
+  "__isAuthError": true,
+  "name": "AuthApiError",
+  "status": 403,
+  "code": "user_not_found"
+}
+[API generate-book 2026-01-30T20:37:18.797Z] ======================================== 
+[API generate-book 2026-01-30T20:37:18.798Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-30T20:37:18.799Z] ======================================== 
+[API generate-book 2026-01-30T20:37:18.799Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-30T20:37:18.800Z] Request body parsed {
+  "childName": "Ilay",
+  "childAge": 1,
+  "bookTheme": "adventure",
+  "bookType": "story",
+  "artStyle": "storybook_classic",
+  "imageQuality": "fast",
+  "hasPhoto": false,
+  "printFormat": "square",
+  "language": "en"
+}
+[API generate-book 2026-01-30T20:37:18.801Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-30T20:37:18.819Z] Authentication completed in 17ms 
+[API generate-book 2026-01-30T20:37:18.820Z] ERROR: Unauthorized {
+  "__isAuthError": true,
+  "name": "AuthApiError",
+  "status": 403,
+  "code": "user_not_found"
+}
+[API generate-book 2026-01-30T20:39:00.510Z] ======================================== 
+[API generate-book 2026-01-30T20:39:00.511Z] === GENERATE-BOOK API REQUEST STARTED === 
+[API generate-book 2026-01-30T20:39:00.511Z] ======================================== 
+[API generate-book 2026-01-30T20:39:00.511Z] Step 1: Parsing request body... 
+[API generate-book 2026-01-30T20:39:00.522Z] Request body parsed {
+  "childName": "Ilay",
+  "childAge": 1,
+  "bookTheme": "adventure",
+  "bookType": "story",
+  "artStyle": "storybook_classic",
   "imageQuality": "fast",
   "hasPhoto": true,
-  "printFormat": "square"
+  "printFormat": "square",
+  "language": "en"
 }
-[API generate-book 2026-01-24T16:29:06.669Z] Step 2: Authenticating user... 
-[API generate-book 2026-01-24T16:29:06.724Z] Authentication completed in 55ms 
-[API generate-book 2026-01-24T16:29:06.724Z] User authenticated: 690f9b94-63d7-4d80-9719-342654dbdd42 
-[API generate-book 2026-01-24T16:29:06.724Z] Selected Aspect Ratio: 1:1 (Format: square) 
-[API generate-book 2026-01-24T16:29:06.724Z] Step 3: Starting book generation... 
-[GEMINI 2026-01-24T16:29:06.725Z] === COMPLETE BOOK GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:06.725Z] === STORY GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:06.725Z] Using model: gemini-3-flash-preview, language: en 
-[GEMINI 2026-01-24T16:29:06.725Z] --- STORY PROMPT SENT TO MODEL --- 
+[API generate-book 2026-01-30T20:39:00.523Z] Step 2: Authenticating user... 
+[API generate-book 2026-01-30T20:39:00.562Z] Authentication completed in 39ms 
+[API generate-book 2026-01-30T20:39:00.562Z] User authenticated: f058843c-b14e-4c5d-ad48-6db3b4d0694e 
+[API generate-book 2026-01-30T20:39:00.563Z] Selected Aspect Ratio: 1:1 (Format: square) 
+[API generate-book 2026-01-30T20:39:00.563Z] Step 3: Starting book generation... 
+[GEMINI 2026-01-30T20:39:00.563Z] === COMPLETE BOOK GENERATION STARTED === 
+[GEMINI 2026-01-30T20:39:00.563Z] === STORY GENERATION STARTED === 
+[GEMINI 2026-01-30T20:39:00.564Z] Using model: gemini-3-flash-preview, language: en 
+[GEMINI 2026-01-30T20:39:00.564Z] --- STORY PROMPT SENT TO MODEL --- 
 Create a children's book story based on the following details:
-- Child's Name: Daniel
-- Age: 3
-- Theme: learning
-- Type: picture
+- Child's Name: Ilay
+- Age: 1
+- Theme: adventure
+- Type: story
 - Page Count: 12
-- Character Description: ### Character Reference Description
+- Character Description: This image features two subjects: a young woman and an infant. Below are detailed character reference descriptions for both, designed for high-quality, consistent AI image generation.
 
-*   **Physical Features:** Oval face with light olive skin. Almond-shaped brown eyes with thin, dark brows. Straight nose and a wide, toothy smile.
-*   **Hair:** Short, textured dark brown hair, voluminous on top with tapered sides. Matching dense, well-groomed stubble beard.
-*   **Age Appearance:** Late 20s to early 30s.
-*   **Distinctive Features:** High forehead, prominent ears, and visible smile lines (crow's feet) around the eyes.
-*   **Clothing Style:** Casual olive-drab or earth-toned crew-neck t-shirt.
-- Specific Story Request: I would like Daniel to learn how to cook
+### **Character 1: The Infant Boy**
+
+*   **Age Appearance:** Approximately 8 to 12 months old.
+*   **Face Shape:** A classic, cherubic round face with prominent, soft, chubby cheeks.
+*   **Eyes:** Very large, expressive, and soulful dark brown eyes. The eyelashes are remarkably long, thick, and dark.
+*   **Nose:** A tiny, delicate button nose with a soft bridge.
+*   **Mouth:** A small, well-defined mouth with soft pink, "cupid’s bow" lips.
+*   **Skin Tone:** Fair to light olive complexion with a natural, healthy rosiness and slight red patches on the cheeks.
+*   **Hair:** Fine, wispy hair in a medium-brown shade. The texture is soft and thin, styled naturally with a slight forward-combed fringe.
+*   **Clothing Style:** Casual and sporty. He wears a grey and white varsity-style bomber jacket featuring a snap-button front and striped ribbed cuffs. Underneath, he has dark olive-green or charcoal grey cotton joggers.
+
+### **Character 2: The Young Woman**
+
+*   **Age Appearance:** Early to mid-20s.
+*   **Face Shape:** Elegant oval face shape with soft, feminine contours.
+*   **Eyes & Brows:** Features long, dark, curled eyelashes that create a dramatic look. Her eyebrows are well-defined, thick, and dark brown, following a natural arch.
+*   **Nose:** A straight, slender nose with a slightly rounded tip.
+*   **Mouth:** Full, shapely lips finished with a subtle, moist pink or light berry-toned lip gloss.
+*   **Skin Tone:** Smooth, luminous fair-to-light olive skin with a warm undertone.
+*   **Hair:** Deep espresso-brown to black hair. It is long, exceptionally thick, and voluminous, falling in heavy, luxurious waves and soft curls.
+*   **Distinctive Features:** A small, simple silver or diamond stud earring in her earlobe.
+*   **Clothing Style:** Classic and cozy. She wears an off-white or cream-colored fine-knit ribbed turtleneck sweater.
+
+---
+
+### **Prompt-Ready Summary for AI Generation:**
+
+> **Subject Reference:** A young woman in her mid-20s with long, voluminous, wavy dark espresso hair and thick dark eyebrows. She has an oval face, long dramatic eyelashes, and full lips with a pink gloss. She is wearing a cream-colored ribbed turtleneck sweater. 
+> 
+> **Subject Reference:** An 8-12 month old baby boy with a round face, chubby rosy cheeks, and large, soulful dark brown eyes with long lashes. He has fine, wispy medium-brown hair. He is dressed in a grey and white varsity bomber jacket with striped cuffs and dark green joggers. 
+> 
+> **Setting & Lighting:** Bright, soft, natural outdoor daylight under a slightly overcast sky, creating a gentle, high-key atmosphere with soft shadows. Clear, sharp focus on the subjects with a shallow depth of field.
+
 
 The story should be engaging, age-appropriate, and magical.
 
@@ -1865,78 +1960,94 @@ Return ONLY a valid JSON object with the following structure:
     ]
 }
 
-[GEMINI 2026-01-24T16:29:06.725Z] Sending request to Gemini API... 
-[GEMINI 2026-01-24T16:29:27.312Z] === STORY GENERATION COMPLETED in 20587ms === 
-[GEMINI 2026-01-24T16:29:27.315Z] Usage: 2415 tokens 
-[GEMINI 2026-01-24T16:29:27.316Z] Starting batch 1: Pages 1 to 3 
-[GEMINI 2026-01-24T16:29:27.317Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:27.318Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:29:27.319Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:29:27.321Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:27.322Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:29:27.322Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:29:27.322Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:27.322Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:29:27.323Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:29:42.940Z] === GEMINI IMAGE GENERATION COMPLETED in 15623ms === 
-[GEMINI 2026-01-24T16:29:44.373Z] === GEMINI IMAGE GENERATION COMPLETED in 17052ms === 
-[GEMINI 2026-01-24T16:29:45.077Z] === GEMINI IMAGE GENERATION COMPLETED in 17755ms === 
-[GEMINI 2026-01-24T16:29:45.079Z] Batch complete. Waiting 2000ms safely... 
-[GEMINI 2026-01-24T16:29:47.080Z] Starting batch 2: Pages 4 to 6 
-[GEMINI 2026-01-24T16:29:47.082Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:47.082Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:29:47.083Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:29:47.083Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:47.084Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:29:47.085Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:29:47.086Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:29:47.086Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:29:47.087Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:30:02.364Z] === GEMINI IMAGE GENERATION COMPLETED in 15281ms === 
-[GEMINI 2026-01-24T16:30:03.856Z] === GEMINI IMAGE GENERATION COMPLETED in 16770ms === 
-[GEMINI 2026-01-24T16:30:04.749Z] === GEMINI IMAGE GENERATION COMPLETED in 17667ms === 
-[GEMINI 2026-01-24T16:30:04.750Z] Batch complete. Waiting 2000ms safely... 
-[GEMINI 2026-01-24T16:30:06.751Z] Starting batch 3: Pages 7 to 9 
-[GEMINI 2026-01-24T16:30:06.752Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:30:06.753Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:30:06.753Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:30:06.754Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:30:06.754Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:30:06.755Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:30:06.757Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:30:06.758Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:30:06.759Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:30:23.429Z] === GEMINI IMAGE GENERATION COMPLETED in 16672ms === 
-[GEMINI 2026-01-24T16:30:24.086Z] === GEMINI IMAGE GENERATION COMPLETED in 17334ms === 
-[GEMINI 2026-01-24T16:30:24.372Z] === GEMINI IMAGE GENERATION COMPLETED in 17618ms === 
-[GEMINI 2026-01-24T16:30:24.373Z] Batch complete. Waiting 2000ms safely... 
-[GEMINI 2026-01-24T16:30:26.375Z] Starting batch 4: Pages 10 to 12 
-[GEMINI 2026-01-24T16:30:26.377Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:30:26.377Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:30:26.377Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:30:26.377Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:30:26.377Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:30:26.378Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:30:26.378Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:30:26.378Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:30:26.378Z] Including Reference Image in prompt... 
-[GEMINI 2026-01-24T16:30:44.241Z] === GEMINI IMAGE GENERATION COMPLETED in 17863ms === 
-[GEMINI 2026-01-24T16:30:44.328Z] === GEMINI IMAGE GENERATION COMPLETED in 17951ms === 
-[GEMINI 2026-01-24T16:30:44.412Z] === GEMINI IMAGE GENERATION COMPLETED in 18035ms === 
-[GEMINI 2026-01-24T16:30:44.413Z] === IMAGE GENERATION STARTED === 
-[GEMINI 2026-01-24T16:30:44.413Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
-[GEMINI 2026-01-24T16:30:58.630Z] === GEMINI IMAGE GENERATION COMPLETED in 14217ms === 
-[GEMINI 2026-01-24T16:30:58.631Z] === FINISHED === 
-[API generate-book 2026-01-24T16:30:58.632Z] Book generation completed in 111907ms 
-[API generate-book 2026-01-24T16:30:58.632Z] Generated: 12 pages, 12 images 
-[API generate-book 2026-01-24T16:30:58.632Z] Total Estimated Cost: $0.5205 
-[API generate-book 2026-01-24T16:30:58.633Z] Created bookId: 35c84654-4284-403c-8f17-76349bc8901a 
-[API generate-book 2026-01-24T16:30:58.633Z] Step 4: Processing and uploading images... 
-[API generate-book 2026-01-24T16:30:59.539Z] Image upload complete: 12 images + back cover in 906ms 
-[API generate-book 2026-01-24T16:30:59.540Z] Step 5: Saving to database... 
-[API generate-book 2026-01-24T16:30:59.585Z] Book record & logs saved in 44ms 
-[API generate-book 2026-01-24T16:30:59.588Z] Saving 13 pages to database... 
-[API generate-book 2026-01-24T16:30:59.600Z] Pages saved in 12ms 
-[API generate-book 2026-01-24T16:30:59.601Z] ======================================== 
-[API generate-book 2026-01-24T16:30:59.601Z] === GENERATE-BOOK API REQUEST COMPLETE in 112945ms === 
-[API generate-book 2026-01-24T16:30:59.601Z] ======================================== 
+[GEMINI 2026-01-30T20:39:00.564Z] Sending request to Gemini API... 
+[GEMINI 2026-01-30T20:39:17.736Z] === STORY GENERATION COMPLETED in 17173ms === 
+[GEMINI 2026-01-30T20:39:17.737Z] Usage: 3515 tokens 
+[GEMINI 2026-01-30T20:39:17.738Z] Starting batch 1: Pages 1 to 1 
+[GEMINI 2026-01-30T20:39:17.740Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:39:17.741Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:39:17.742Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:39:35.161Z] === GEMINI IMAGE GENERATION COMPLETED in 17421ms === 
+[GEMINI 2026-01-30T20:39:35.162Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:39:37.163Z] Starting batch 2: Pages 2 to 2 
+[GEMINI 2026-01-30T20:39:37.164Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:39:37.165Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:39:37.165Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:39:53.280Z] === GEMINI IMAGE GENERATION COMPLETED in 16116ms === 
+[GEMINI 2026-01-30T20:39:53.281Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:39:55.282Z] Starting batch 3: Pages 3 to 3 
+[GEMINI 2026-01-30T20:39:55.283Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:39:55.284Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:39:55.285Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:40:12.457Z] === GEMINI IMAGE GENERATION COMPLETED in 17174ms === 
+[GEMINI 2026-01-30T20:40:12.457Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:40:14.458Z] Starting batch 4: Pages 4 to 4 
+[GEMINI 2026-01-30T20:40:14.460Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:40:14.461Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:40:14.462Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:40:30.774Z] === GEMINI IMAGE GENERATION COMPLETED in 16314ms === 
+[GEMINI 2026-01-30T20:40:30.774Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:40:32.776Z] Starting batch 5: Pages 5 to 5 
+[GEMINI 2026-01-30T20:40:32.778Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:40:32.779Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:40:32.780Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:40:48.615Z] === GEMINI IMAGE GENERATION COMPLETED in 15837ms === 
+[GEMINI 2026-01-30T20:40:48.616Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:40:50.617Z] Starting batch 6: Pages 6 to 6 
+[GEMINI 2026-01-30T20:40:50.619Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:40:50.620Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:40:50.621Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:41:09.089Z] === GEMINI IMAGE GENERATION COMPLETED in 18470ms === 
+[GEMINI 2026-01-30T20:41:09.090Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:41:11.091Z] Starting batch 7: Pages 7 to 7 
+[GEMINI 2026-01-30T20:41:11.094Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:41:11.095Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:41:11.096Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:41:28.056Z] === GEMINI IMAGE GENERATION COMPLETED in 16962ms === 
+[GEMINI 2026-01-30T20:41:28.057Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:41:30.059Z] Starting batch 8: Pages 8 to 8 
+[GEMINI 2026-01-30T20:41:30.062Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:41:30.063Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:41:30.063Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:41:46.972Z] === GEMINI IMAGE GENERATION COMPLETED in 16910ms === 
+[GEMINI 2026-01-30T20:41:46.973Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:41:48.974Z] Starting batch 9: Pages 9 to 9 
+[GEMINI 2026-01-30T20:41:48.978Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:41:48.979Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:41:48.980Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:42:04.977Z] === GEMINI IMAGE GENERATION COMPLETED in 15999ms === 
+[GEMINI 2026-01-30T20:42:04.978Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:42:06.980Z] Starting batch 10: Pages 10 to 10 
+[GEMINI 2026-01-30T20:42:06.982Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:42:06.984Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:42:06.986Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:42:24.543Z] === GEMINI IMAGE GENERATION COMPLETED in 17561ms === 
+[GEMINI 2026-01-30T20:42:24.543Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:42:26.544Z] Starting batch 11: Pages 11 to 11 
+[GEMINI 2026-01-30T20:42:26.546Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:42:26.547Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:42:26.548Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:42:42.191Z] === GEMINI IMAGE GENERATION COMPLETED in 15645ms === 
+[GEMINI 2026-01-30T20:42:42.192Z] Batch complete. Waiting 2000ms safely... 
+[GEMINI 2026-01-30T20:42:44.193Z] Starting batch 12: Pages 12 to 12 
+[GEMINI 2026-01-30T20:42:44.194Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:42:44.195Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:42:44.196Z] Including Reference Image in prompt... 
+[GEMINI 2026-01-30T20:43:01.000Z] === GEMINI IMAGE GENERATION COMPLETED in 16806ms === 
+[GEMINI 2026-01-30T20:43:01.001Z] === IMAGE GENERATION STARTED === 
+[GEMINI 2026-01-30T20:43:01.001Z] Using Gemini Image Mode with model: gemini-3-pro-image-preview 
+[GEMINI 2026-01-30T20:43:14.787Z] === GEMINI IMAGE GENERATION COMPLETED in 13786ms === 
+[GEMINI 2026-01-30T20:43:14.788Z] === FINISHED === 
+[API generate-book 2026-01-30T20:43:14.788Z] Book generation completed in 254225ms 
+[API generate-book 2026-01-30T20:43:14.788Z] Generated: 12 pages, 12 images 
+[API generate-book 2026-01-30T20:43:14.788Z] Total Estimated Cost: $0.5206 
+[API generate-book 2026-01-30T20:43:14.788Z] Created bookId: 80b7b172-63b4-4eb7-954b-e0610fb84788 
+[API generate-book 2026-01-30T20:43:14.789Z] Step 4: Processing and uploading images... 
+[API generate-book 2026-01-30T20:43:15.277Z] Image upload complete: 12 images + back cover in 488ms 
+[API generate-book 2026-01-30T20:43:15.278Z] Step 5: Saving to database... 
+[API generate-book 2026-01-30T20:43:15.303Z] Book record & logs saved in 25ms 
+[API generate-book 2026-01-30T20:43:15.305Z] Saving 13 pages to database... 
+[API generate-book 2026-01-30T20:43:15.313Z] Pages saved in 8ms 
+[API generate-book 2026-01-30T20:43:15.314Z] ======================================== 
+[API generate-book 2026-01-30T20:43:15.314Z] === GENERATE-BOOK API REQUEST COMPLETE in 254804ms === 
+[API generate-book 2026-01-30T20:43:15.315Z] ======================================== 

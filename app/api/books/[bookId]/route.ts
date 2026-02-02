@@ -65,6 +65,48 @@ export async function GET(
 
         log('Step 4: Transforming response...');
         const transformStartTime = Date.now();
+        const isPreview = !!book.is_preview || book.status === 'preview';
+        const previewPageCount = Number(book.preview_page_count || 0);
+        const totalPageCount = Number(book.total_page_count || 0);
+        const digitalUnlockPaid = !!book.digital_unlock_paid;
+
+        const responsePages = book.pages
+            .sort((a: { page_number: number }, b: { page_number: number }) => a.page_number - b.page_number)
+            .map((page: {
+                id: string;
+                page_number: number;
+                page_type: string;
+                background_color: string;
+                background_image?: string;
+                text_elements: unknown[];
+                image_elements: unknown[];
+                created_at: string;
+                updated_at: string;
+            }) => ({
+                id: page.id,
+                pageNumber: page.page_number,
+                type: page.page_type,
+                backgroundColor: page.background_color,
+                backgroundImage: page.background_image,
+                textElements: page.text_elements,
+                imageElements: page.image_elements,
+                createdAt: new Date(page.created_at),
+                updatedAt: new Date(page.updated_at),
+            }));
+
+        const maskedPages = isPreview && !digitalUnlockPaid && previewPageCount > 0
+            ? responsePages.map((page) => {
+                if (page.pageNumber > previewPageCount) {
+                    return {
+                        ...page,
+                        textElements: [],
+                        imageElements: [],
+                    };
+                }
+                return page;
+            })
+            : responsePages;
+
         const response = {
             id: book.id,
             settings: {
@@ -76,34 +118,16 @@ export async function GET(
                 bookTheme: book.book_theme,
                 printFormat: book.print_format,
             },
-            pages: book.pages
-                .sort((a: { page_number: number }, b: { page_number: number }) => a.page_number - b.page_number)
-                .map((page: {
-                    id: string;
-                    page_number: number;
-                    page_type: string;
-                    background_color: string;
-                    background_image?: string;
-                    text_elements: unknown[];
-                    image_elements: unknown[];
-                    created_at: string;
-                    updated_at: string;
-                }) => ({
-                    id: page.id,
-                    pageNumber: page.page_number,
-                    type: page.page_type,
-                    backgroundColor: page.background_color,
-                    backgroundImage: page.background_image,
-                    textElements: page.text_elements,
-                    imageElements: page.image_elements,
-                    createdAt: new Date(page.created_at),
-                    updatedAt: new Date(page.updated_at),
-                })),
+            pages: maskedPages,
             status: book.status,
             thumbnailUrl: book.thumbnail_url,
             createdAt: new Date(book.created_at),
             updatedAt: new Date(book.updated_at),
             estimatedCost: book.estimated_cost,
+            isPreview,
+            previewPageCount,
+            totalPageCount,
+            digitalUnlockPaid,
         };
         log(`Transform completed in ${Date.now() - transformStartTime}ms`);
 
@@ -132,6 +156,23 @@ export async function PUT(
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { data: bookAccess, error: accessError } = await supabase
+            .from('books')
+            .select('id, is_preview, status, digital_unlock_paid, user_id')
+            .eq('id', bookId)
+            .eq('user_id', user.id)
+            .single();
+
+        if (accessError || !bookAccess) {
+            return NextResponse.json({ error: 'Book not found' }, { status: 404 });
+        }
+
+        const isPreview = !!bookAccess.is_preview || bookAccess.status === 'preview';
+        const hasPaidAccess = !isPreview || !!bookAccess.digital_unlock_paid;
+        if (!hasPaidAccess) {
+            return NextResponse.json({ error: 'Unlock required' }, { status: 402 });
         }
 
         const body = await request.json();

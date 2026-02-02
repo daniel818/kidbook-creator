@@ -1,0 +1,27 @@
+{
+  "header": {
+    "title": "My Books",
+    "subtitle": "Your personalized book collection",
+    "booksCount": "{{count}} book created",
+    "booksCount_other": "{{count}} books created"
+  },
+  "empty": {
+    "title": "No books yet",
+    "subtitle": "Create your first personalized children's book and watch the magic happen",
+    "button": "✨ Create Your First Book"
+  },
+  "deleteModal": {
+    "title": "Delete Book",
+    "message": "Are you sure you want to delete this book? This action cannot be undone.",
+    "confirmText": "Delete"
+  },
+  "bookCard": {
+    "pages": "{{count}} pgs",
+    "forChild": "For {{childName}}, age {{age}}",
+    "status": {
+      "draft": "Draft",
+      "complete": "Complete",
+      "published": "Published"
+    }
+  }
+}

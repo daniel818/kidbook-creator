@@ -1,0 +1,35 @@
+{
+  "header": {
+    "backButton": "← Back to Home",
+    "title": "My Orders",
+    "subtitle": "Track your printed books and order status"
+  },
+  "loading": "Loading orders...",
+  "empty": {
+    "title": "No Orders Yet",
+    "subtitle": "When you order a printed book, it will appear here.",
+    "button": "Create Your First Book →"
+  },
+  "orderCard": {
+    "orderId": "Order #{{id}}",
+    "for": "For {{childName}}",
+    "format": "Format",
+    "quantity": "Quantity",
+    "total": "Total",
+    "trackingLabel": "Tracking Number",
+    "viewBookButton": "View Book",
+    "reorderButton": "Order Again"
+  },
+  "status": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "processing": "Processing",
+    "preparing": "Preparing to Print",
+    "printing": "Printing Your Book",
+    "printed": "Printed",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "failed": "Issue Detected"
+  }
+}

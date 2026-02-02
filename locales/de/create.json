@@ -1,0 +1,128 @@
+{
+  "wizard": {
+    "back": "← Zurück",
+    "next": "Weiter →",
+    "creating": "Dein Buch wird erstellt..."
+  },
+  "steps": {
+    "child": {
+      "title": "Für wen ist dieses Buch?",
+      "subtitle": "Erzähle uns von dem besonderen Kind, das dieses Buch genießen wird",
+      "nameLabel": "Name des Kindes",
+      "namePlaceholder": "Name eingeben...",
+      "ageLabel": "Alter:",
+      "ageYears": "Jahre",
+      "photoLabel": "📷 Foto hochladen (optional)",
+      "photoHint": "Lade ein Foto des Kindes hoch, um die Illustrationen zu personalisieren. Die KI wird dies verwenden, damit die Hauptfigur wie das Kind aussieht!",
+      "photoButton": "Foto auswählen",
+      "photoSelected": "Foto ausgewählt",
+      "photoChange": "Foto ändern"
+    },
+    "type": {
+      "title": "Wähle einen Buchtyp",
+      "subtitle": "Wähle das perfekte Format für {{childName}}",
+      "subtitleDefault": "Wähle das perfekte Format für dein Kind"
+    },
+    "format": {
+      "title": "Wähle ein Format",
+      "subtitle": "Bereite dein Buch für den professionellen Druck vor"
+    },
+    "theme": {
+      "title": "Wähle ein Thema",
+      "subtitle": "Was für eine Geschichte soll es werden?",
+      "storyLabel": "Erzähle uns mehr über die Geschichte (optional)",
+      "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt."
+    },
+    "style": {
+      "title": "Wähle einen Kunststil",
+      "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?"
+    },
+    "title": {
+      "title": "Benenne dein Buch",
+      "subtitle": "Gib deiner Geschichte einen tollen Titel",
+      "titleLabel": "Buchtitel",
+      "titlePlaceholder": "{{childName}}s Tolles Abenteuer",
+      "titlePlaceholderDefault": "Mein Tolles Abenteuer"
+    }
+  },
+  "bookTypes": {
+    "board": {
+      "label": "Pappbilderbuch",
+      "description": "Robuste Seiten perfekt für kleine Hände",
+      "ageRange": "0-3 Jahre"
+    },
+    "picture": {
+      "label": "Bilderbuch",
+      "description": "Schöne Illustrationen mit kurzem Text",
+      "ageRange": "3-6 Jahre"
+    },
+    "story": {
+      "label": "Geschichtenbuch",
+      "description": "Fesselnde Geschichten für wachsende Leser",
+      "ageRange": "5-10 Jahre"
+    },
+    "alphabet": {
+      "label": "Alphabet-Buch",
+      "description": "Buchstaben auf spielerische Weise lernen",
+      "ageRange": "2-5 Jahre"
+    }
+  },
+  "formats": {
+    "square": {
+      "label": "Quadratisches Hardcover",
+      "description": "21,6 x 21,6 cm Premium. Der Goldstandard für Kinderbücher.",
+      "pages": "Min. 24 Seiten (Auto-Set)"
+    },
+    "portrait": {
+      "label": "Hochformat / Digital",
+      "description": "15,2 x 22,9 cm Standard. Ideal für Softcover oder Handys.",
+      "pages": "Flexible Seitenzahl"
+    }
+  },
+  "themes": {
+    "adventure": "Abenteuer",
+    "bedtime": "Schlafenszeit",
+    "learning": "Lernen",
+    "fantasy": "Fantasy",
+    "animals": "Tiere",
+    "custom": "Individuell"
+  },
+  "artStyles": {
+    "storybook_classic": "Klassisches Märchenbuch",
+    "watercolor": "Aquarell",
+    "digital_art": "Digitale Kunst",
+    "cartoon": "Cartoon",
+    "pixel_art": "Pixel-Art",
+    "coloring_book": "Malbuch"
+  },
+  "imageQuality": {
+    "label": "✨ Bildqualität",
+    "fast": "⚡ Schnell (Standard)",
+    "pro": "💎 Pro (Imagen 4 Ultra)",
+    "fastDescription": "Der Standardmodus erzeugt schnell schöne Bilder mit Imagen 4.",
+    "proDescription": "Der Pro-Modus verwendet Imagen 4 Ultra für atemberaubende, hochauflösende Illustrationen. Dauert etwas länger."
+  },
+  "preview": {
+    "forChild": "Für {{childName}}, {{age}} Jahre",
+    "defaultTitle": "{{childName}}s Tolles Abenteuer"
+  },
+  "buttons": {
+    "back": "← Zurück",
+    "continue": "Weiter →",
+    "generateBook": "✨ Buch mit KI erstellen 🪄",
+    "createBook": "Mein Buch erstellen ✨",
+    "signInToCreate": "Anmelden zum Erstellen"
+  },
+  "errors": {
+    "createFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
+    "photoUploadFailed": "Foto-Upload fehlgeschlagen. Bitte versuche es erneut.",
+    "invalidSettings": "Bitte fülle alle erforderlichen Felder aus.",
+    "emptyTitleHint": "Leer lassen, um den Standardtitel zu verwenden"
+  },
+  "status": {
+    "extractingCharacter": "Foto wird analysiert...",
+    "generatingPreview": "Vorschau wird erstellt...",
+    "generatingStory": "Deine Geschichte wird erstellt...",
+    "openingBook": "Dein Buch wird geöffnet..."
+  }
+}

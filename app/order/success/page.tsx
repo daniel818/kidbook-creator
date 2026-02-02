@@ -28,6 +28,7 @@ function OrderSuccessContent() {
     const [order, setOrder] = useState<OrderDetails | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [confetti, setConfetti] = useState(true);
+    const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
 
     useEffect(() => {
         if (!sessionId) {
@@ -57,6 +58,32 @@ function OrderSuccessContent() {
         const timer = setTimeout(() => setConfetti(false), 5000);
         return () => clearTimeout(timer);
     }, [sessionId, router]);
+
+    useEffect(() => {
+        if (!order?.bookId) return;
+        let attempts = 0;
+        const maxAttempts = 4;
+
+        const tryUnlock = async () => {
+            attempts += 1;
+            try {
+                const response = await fetch(`/api/books/${order.bookId}/unlock`, { method: 'POST' });
+                if (response.ok) {
+                    setUnlockMessage('Your full book is ready in the viewer.');
+                    return;
+                }
+                if (response.status === 402 && attempts < maxAttempts) {
+                    setUnlockMessage('Payment confirmed. Generating your full book...');
+                    setTimeout(tryUnlock, 1500);
+                    return;
+                }
+            } catch {
+                // ignore
+            }
+        };
+
+        tryUnlock();
+    }, [order?.bookId]);
 
     if (isLoading) {
         return (
@@ -104,6 +131,11 @@ function OrderSuccessContent() {
                 <p className={styles.subtitle}>
                     Thank you for your order. We are preparing your personalized book!
                 </p>
+                {unlockMessage && (
+                    <p className={styles.subtitle} style={{ marginTop: '0.5rem' }}>
+                        {unlockMessage}
+                    </p>
+                )}
 
 
 

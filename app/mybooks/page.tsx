@@ -101,17 +101,8 @@ export default function MyBooksPage() {
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <div className={styles.titleRow}>
-              <div className={styles.iconWrapper}>
-                <img src="/media/logo.png" alt="Books" className={styles.headerIcon} />
-              </div>
-              <div>
-                <h1 className={styles.title}>{t('header.title')}</h1>
-                <p className={styles.subtitle}>
-                  {t('header.booksCount', { count: books.length })}
-                </p>
-              </div>
-            </div>
+            <h1 className={styles.title}>{t('header.title')}</h1>
+            <p className={styles.subtitle}>{t('header.subtitle')}</p>
           </div>
 
           {books.length === 0 ? (
@@ -131,8 +122,8 @@ export default function MyBooksPage() {
               </button>
             </div>
           ) : (
-            <BookGrid 
-              books={books} 
+            <BookGrid
+              books={books}
               onDeleteBook={handleDeleteBook}
               showAddNew={true}
             />

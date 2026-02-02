@@ -52,9 +52,21 @@ CREATE TABLE IF NOT EXISTS books (
   age_group TEXT NOT NULL,
   book_type TEXT NOT NULL CHECK (book_type IN ('board', 'picture', 'story', 'alphabet')),
   book_theme TEXT NOT NULL CHECK (book_theme IN ('adventure', 'bedtime', 'learning', 'fantasy', 'animals', 'custom')),
+  print_format TEXT NOT NULL DEFAULT 'portrait' CHECK (print_format IN ('square', 'portrait')),
+  character_description TEXT,
+  art_style TEXT,
+  image_quality TEXT,
+  story_description TEXT,
+  reference_image_url TEXT,
+  digital_unlock_paid BOOLEAN DEFAULT FALSE,
+  digital_unlock_session_id TEXT,
+  digital_unlock_email_sent BOOLEAN DEFAULT FALSE,
   
   -- Status
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'completed', 'ordered')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('preview', 'draft', 'completed', 'ordered')),
+  is_preview BOOLEAN DEFAULT FALSE,
+  preview_page_count INTEGER DEFAULT 0,
+  total_page_count INTEGER DEFAULT 0,
   
   -- Thumbnail
   thumbnail_url TEXT,
@@ -78,6 +90,7 @@ CREATE TABLE IF NOT EXISTS pages (
   -- Content
   background_color TEXT DEFAULT '#ffffff',
   background_image TEXT,
+  image_prompt TEXT,
   text_elements JSONB DEFAULT '[]'::jsonb,
   image_elements JSONB DEFAULT '[]'::jsonb,
   
@@ -118,8 +131,8 @@ CREATE TABLE IF NOT EXISTS orders (
   shipping_phone TEXT NOT NULL,
   shipping_level TEXT,
   
-  -- Status
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'payment_failed', 'processing', 'printed', 'shipped', 'delivered', 'cancelled')),
+  -- Payment Status (renamed from status for clarity)
+  payment_status TEXT NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'payment_failed', 'refunded', 'cancelled')),
   
   -- Stripe integration
   stripe_payment_intent_id TEXT,
@@ -130,14 +143,35 @@ CREATE TABLE IF NOT EXISTS orders (
   lulu_order_id TEXT,
   lulu_print_job_id TEXT,
   lulu_status TEXT,
-  fulfillment_status TEXT DEFAULT 'pending' CHECK (fulfillment_status IN ('pending', 'PENDING', 'GENERATING_PDFS', 'UPLOADING', 'CREATING_JOB', 'SUCCESS', 'FAILED')),
+  fulfillment_status TEXT DEFAULT 'pending' CHECK (fulfillment_status IN ('pending', 'PENDING', 'GENERATING_PDFS', 'UPLOADING', 'CREATING_JOB', 'processing', 'preparing', 'printing', 'shipped', 'delivered', 'cancelled', 'failed', 'SUCCESS', 'FAILED')),
   fulfillment_error TEXT,
   tracking_number TEXT,
+  tracking_url TEXT,
+  carrier_name TEXT,
   pdf_url TEXT,
+  
+  -- Delivery Estimates
+  estimated_delivery_min DATE,
+  estimated_delivery_max DATE,
+  shipped_at TIMESTAMPTZ,
   
   -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ============================================
+-- Order Status History Table (Audit Trail)
+-- ============================================
+CREATE TABLE IF NOT EXISTS order_status_history (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  order_id UUID REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
+  status_type TEXT NOT NULL CHECK (status_type IN ('payment', 'fulfillment', 'lulu')),
+  old_status TEXT,
+  new_status TEXT NOT NULL,
+  changed_by TEXT NOT NULL DEFAULT 'system',
+  change_reason TEXT,
+  changed_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ============================================
