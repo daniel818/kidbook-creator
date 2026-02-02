@@ -14,6 +14,19 @@ const localeRoutes = ['/pricing', '/faq', '/about', '/terms', '/privacy'];
 
 export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
+
+    const getLocaleFromHeader = (headerValue: string | null) => {
+        if (!headerValue) return null;
+        const parts = headerValue.split(',').map((part) => part.trim());
+        for (const part of parts) {
+            const langTag = part.split(';')[0];
+            const baseLang = langTag.split('-')[0].toLowerCase();
+            if (locales.includes(baseLang)) {
+                return baseLang;
+            }
+        }
+        return null;
+    };
     
     // Check if the pathname already has a locale
     const pathnameHasLocale = locales.some(
@@ -27,12 +40,20 @@ export async function middleware(request: NextRequest) {
         if (shouldUseLocale) {
             // Try to get locale from cookie or browser, validate against allowed locales
             const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-            const locale = locales.includes(cookieLocale || '') ? cookieLocale : defaultLocale;
-            
-            // Redirect to the same path with locale prefix
-            return NextResponse.redirect(
-                new URL(`/${locale}${pathname}`, request.url)
-            );
+            const headerLocale = getLocaleFromHeader(request.headers.get('accept-language'));
+            const resolvedLocale = locales.includes(cookieLocale || '')
+                ? cookieLocale
+                : (headerLocale || defaultLocale);
+
+            // Redirect to the same path with locale prefix, preserving query string
+            const redirectUrl = request.nextUrl.clone();
+            redirectUrl.pathname = `/${resolvedLocale}${pathname}`;
+            const response = NextResponse.redirect(redirectUrl);
+            response.cookies.set('NEXT_LOCALE', resolvedLocale, {
+                path: '/',
+                maxAge: 60 * 60 * 24 * 365,
+            });
+            return response;
         }
     }
 

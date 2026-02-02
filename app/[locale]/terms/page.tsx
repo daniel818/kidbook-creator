@@ -57,12 +57,30 @@ export default function TermsPage() {
           </header>
 
           <div className={styles.content}>
-            {data.sections.map((section, index) => (
-              <section key={index} className={styles.section}>
-                <h2 className={styles.sectionTitle}>{section.title}</h2>
-                <p className={styles.sectionContent}>{section.content}</p>
-              </section>
-            ))}
+            {data.sections.map((section, index) => {
+              const title = section.title.toLowerCase();
+              const isCancellationSection = title.includes('cancellation')
+                || title.includes('storn')
+                || title.includes('refund')
+                || title.includes('bittul')
+                || title.includes('ביטול');
+              const sectionId = isCancellationSection && data.sections.findIndex((candidate) => {
+                const candidateTitle = candidate.title.toLowerCase();
+                return candidateTitle.includes('cancellation')
+                  || candidateTitle.includes('storn')
+                  || candidateTitle.includes('refund')
+                  || candidateTitle.includes('bittul')
+                  || candidateTitle.includes('ביטול');
+              }) === index
+                ? 'cancellation'
+                : undefined;
+              return (
+                <section key={index} id={sectionId} className={styles.section}>
+                  <h2 className={styles.sectionTitle}>{section.title}</h2>
+                  <p className={styles.sectionContent}>{section.content}</p>
+                </section>
+              );
+            })}
           </div>
 
           <footer className={styles.footer}>

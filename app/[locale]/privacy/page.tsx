@@ -57,12 +57,18 @@ export default function PrivacyPage() {
           </header>
 
           <div className={styles.content}>
-            {data.sections.map((section, index) => (
-              <section key={index} className={styles.section}>
+            {data.sections.map((section, index) => {
+              const title = section.title.toLowerCase();
+              const sectionId = title.includes('cookie') || title.includes('עוג')
+                ? 'cookies'
+                : undefined;
+              return (
+                <section key={index} id={sectionId} className={styles.section}>
                 <h2 className={styles.sectionTitle}>{section.title}</h2>
                 <p className={styles.sectionContent}>{section.content}</p>
               </section>
-            ))}
+              );
+            })}
           </div>
 
           <footer className={styles.footer}>
