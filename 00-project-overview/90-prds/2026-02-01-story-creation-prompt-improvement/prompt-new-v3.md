@@ -363,6 +363,15 @@ Each page's imagePrompt must be a RICH, DETAILED scene description that enables 
    - Mood indicators: "joyful/peaceful/exciting/magical"
    - Special effects (if appropriate): "glowing/sparkling/shimmering/floating"
 
+**CRITICAL RESTRICTIONS:**
+
+✗ **DO NOT include visual text in image prompts:**
+   - NO words, letters, numbers, or text visible in the illustration
+   - NO signs, labels, book titles, or written content
+   - NO speech bubbles or text overlays
+   - The illustration should be purely visual without any readable text
+   - Example: Instead of "a sign that says 'Welcome'", use "a decorative welcome sign with symbols"
+
 **QUALITY STANDARDS:**
 
 ✓ **GOOD:** "Sofia with curly blonde hair and bright blue eyes, wearing a soft blue sweater, sitting on a colorful classroom rug next to Leo, a boy with messy brown hair. She is pointing at three bright red blocks they are stacking together. The classroom is filled with toys and books in the background. Morning sunlight streams through the windows. Both children look happy and engaged."
