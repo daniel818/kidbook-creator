@@ -1016,48 +1016,108 @@ The helper character feature should be **OPTIONAL** and **theme-appropriate**, n
 
 ### High Priority Recommendations
 
-#### 1. Refine Helper Character Guidelines
+#### 1. Refine Helper Character Guidelines - Context-Appropriate Approach
 
-**Current Issue:** Helper characters are added to themes where they're inappropriate (courage, realistic life events).
+**Current Issue:** Helper characters are added inconsistently without considering story setting and context.
 
-**Recommendation:** Update `prompt-new-v2.md` to specify:
+**Refined Philosophy:** Helper characters should be **context-appropriate** - matching the story's setting, theme, and age group. The setting determines the helper type, not just the theme.
 
-```
-HELPER CHARACTER GUIDELINES (UPDATED):
-
-INCLUDE helper characters for:
-✓ Fantasy themes (dragons, magic, quests)
-✓ Adventure themes (jungle, space, exploration)
-✓ STEM themes (robots, science, invention)
-✓ Mystery themes (detective stories)
-
-DO NOT include helper characters for:
-✗ Courage/Fear themes (keep realistic parent support)
-✗ Realistic life events (first day of school, potty training, new sibling)
-✗ Emotional themes (feelings, sharing, friendship)
-✗ Stories where an inanimate object IS the magical element (clock, book)
-
-PRESERVE realistic family support:
-- Mommy/Daddy should remain the primary support for courage themes
-- Don't replace parent comfort with fantasy creatures
-- Family bonds are more relatable than fantasy helpers for emotional themes
-```
-
-#### 2. Add "Magical Element vs Helper Character" Distinction
-
-**Recommendation:** Add to prompt:
+**Recommendation:** Update prompt with context-driven helper selection:
 
 ```
-MAGICAL ELEMENTS vs HELPER CHARACTERS:
+HELPER CHARACTER GUIDELINES (UPDATED - CONTEXT-DRIVEN):
 
-If the story already has a MAGICAL ELEMENT (clock, book, wand, etc.):
-- Let that element be the source of magic
-- Do NOT add a separate helper character
-- The magical element can "speak" or guide if needed
+CORE PRINCIPLE: Helpers should naturally fit the story's SETTING and enhance the narrative.
 
-Example:
-- T17 (Time Travel): The CLOCK is the magical element - no owl needed
-- T30 (Fantasy Book): The BOOK is the magical element - owl is redundant
+HELPER SELECTION BY SETTING:
+
+FANTASY/MAGICAL SETTINGS:
+✓ Fantasy helpers (fireflies, fairies, talking animals, magical creatures)
+✓ Example: Magical garden → friendly garden sprite or talking flower
+
+REALISTIC SETTINGS:
+✓ Realistic helpers (parents, siblings, friends, teachers, neighbors)
+✓ Example: Learning to cook → parent or grandparent
+✓ Example: First day of school → teacher or friendly classmate
+✓ Note: Ages 0-4 can have imaginative helpers even in realistic settings
+
+NATURE/ANIMAL THEMES:
+✓ Animal helpers or nature elements (wise owl, friendly bunny, talking tree)
+✓ Example: Forest adventure → woodland creature guide
+
+STEM/TECHNOLOGY THEMES:
+✓ Robot or tech helpers (friendly robot, AI companion, talking gadget)
+✓ Example: Space exploration → robot companion
+
+SOCIAL/EMOTIONAL LEARNING:
+✓ Real people (friends, family, teachers) OR relatable animals
+✓ Example: Learning to share → sibling or classmate
+✓ Example: Managing emotions → family pet or stuffed animal
+
+ADVENTURE/EXPLORATION:
+✓ Setting-appropriate guides (jungle parrot, ocean dolphin, mountain goat)
+✓ Example: Jungle safari → colorful parrot guide
+
+AGE-SPECIFIC CONSIDERATIONS:
+- Ages 0-4: More imaginative helpers acceptable (even in realistic settings)
+- Ages 5-8: Balance realistic and fantasy based on setting
+- Ages 9-12: Prefer realistic helpers unless clearly fantasy setting
+
+WHEN TO USE MAGICAL OBJECTS AS HELPERS:
+✓ If story has a magical object (clock, book, wand), it CAN be the helper
+✓ The object can "speak," guide, or have personality
+✓ Don't add a separate character if the object is already magical
+✓ Example: Time-travel clock that whispers directions
+
+WHEN NO HELPER IS NEEDED:
+✓ Child solving problems independently (builds confidence)
+✓ Parent/family already present as primary support
+✓ Story is about solo discovery or self-reliance
+
+CRITICAL RULES:
+- Never replace realistic parent support with fantasy helpers in courage/fear themes
+- Helper should SUPPORT, not solve problems for the protagonist
+- Helper should feel natural to the setting, not forced
+- Consider: "Would this helper exist in this world naturally?"
+```
+
+#### 2. Add Helper Character Decision Tree
+
+**Recommendation:** Add decision-making framework to prompt:
+
+```
+HELPER CHARACTER DECISION TREE:
+
+Step 1: What is the SETTING?
+- Fantasy/Magical world → Fantasy helper
+- Realistic world → Realistic helper (or imaginative for ages 0-4)
+- Nature/Outdoors → Animal or nature helper
+- Technology/Space → Tech helper
+
+Step 2: What is the THEME?
+- Courage/Fear → Keep parent support primary, helper can assist
+- Social/Emotional → Real people or relatable animals
+- Adventure → Setting-appropriate guide
+- Learning/Skills → Realistic mentor (parent, teacher, friend)
+
+Step 3: What is the AGE?
+- 0-4 years → More imaginative helpers acceptable
+- 5-8 years → Balance based on setting
+- 9-12 years → Prefer realistic unless fantasy setting
+
+Step 4: Is there already a MAGICAL ELEMENT?
+- Yes → That element can be the helper (no additional character needed)
+- No → Consider adding appropriate helper
+
+Step 5: Does the child need to solve this ALONE?
+- Yes (building independence) → No helper
+- No (needs support) → Add appropriate helper
+
+EXAMPLE APPLICATIONS:
+- T16 (Courage/Dark, Age 6, Realistic bedroom) → Parent primary, maybe nightlight "friend" for age
+- T17 (Time Travel, Age 7.5, Magical clock) → Clock IS the helper, no owl needed
+- T12 (Space, Age 4, Space setting) → Robot companion appropriate
+- T05 (Potty Training, Age 3, Realistic home) → Parent helper, maybe stuffed animal for comfort
 ```
 
 ### Medium Priority Recommendations
