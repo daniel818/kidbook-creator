@@ -9,6 +9,8 @@ import Stripe from 'stripe';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendOrderConfirmation, sendDigitalUnlockEmail, OrderEmailData, DigitalUnlockEmailData } from '@/lib/email/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2025-02-24.acacia',
@@ -16,13 +18,34 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
+const logWebhook = (message: string, data?: unknown) => {
+    const timestamp = new Date().toISOString();
+    const logMsg = `[Webhook ${timestamp}] ${message}`;
+    try {
+        const logPath = path.join(process.cwd(), 'api_debug.log');
+        fs.appendFileSync(logPath, `${logMsg} ${data ? JSON.stringify(data) : ''}\n`);
+    } catch {
+        // ignore
+    }
+    if (data !== undefined) {
+        console.log(logMsg, data);
+    } else {
+        console.log(logMsg);
+    }
+};
+
 export async function POST(request: NextRequest) {
     const body = await request.text();
     const headersList = await headers();
     const signature = headersList.get('stripe-signature');
+    logWebhook('Webhook env', {
+        hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    });
 
     if (!signature) {
         console.error('[Webhook] Missing stripe-signature header');
+        logWebhook('Missing stripe-signature header');
         return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
     }
 
@@ -32,6 +55,7 @@ export async function POST(request: NextRequest) {
         event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
         console.error('[Webhook] Signature verification failed:', err);
+        logWebhook('Signature verification failed');
         return NextResponse.json(
             { error: 'Webhook signature verification failed' },
             { status: 400 }
@@ -39,14 +63,17 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[Webhook] Received event: ${event.type}`);
+    logWebhook('Received event', { type: event.type, id: event.id });
 
     try {
         switch (event.type) {
             case 'checkout.session.completed': {
                 const session = event.data.object as Stripe.Checkout.Session;
                 if (session.metadata?.unlockType === 'digital') {
+                    logWebhook('Handling digital unlock', { sessionId: session.id, bookId: session.metadata?.bookId });
                     await handleDigitalUnlock(session);
                 } else {
+                    logWebhook('Handling print checkout', { sessionId: session.id, orderId: session.metadata?.orderId });
                     await handleCheckoutComplete(session);
                 }
                 break;
@@ -55,6 +82,7 @@ export async function POST(request: NextRequest) {
             case 'payment_intent.succeeded': {
                 // Backup handler in case checkout.session.completed is missed
                 console.log('[Webhook] Payment succeeded:', event.data.object.id);
+                logWebhook('payment_intent.succeeded', { id: event.data.object.id });
                 break;
             }
 
@@ -71,6 +99,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true });
     } catch (error) {
         console.error('[Webhook] Handler error:', error);
+        logWebhook('Handler error');
         return NextResponse.json(
             { error: 'Webhook handler failed' },
             { status: 500 }
@@ -206,6 +235,7 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
     const bookId = session.metadata?.bookId;
     if (!bookId) {
         console.error('[Webhook] Digital unlock missing bookId');
+        logWebhook('Digital unlock missing bookId');
         return;
     }
 
@@ -221,8 +251,11 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
 
     if (error || !book) {
         console.error('[Webhook] Failed to mark digital unlock paid', error);
+        logWebhook('Failed to mark digital unlock paid', { error, bookId, sessionId: session.id });
         return;
     }
+
+    logWebhook('Digital unlock marked paid', { bookId, sessionId: session.id });
 
     if (book.digital_unlock_email_sent) {
         return;

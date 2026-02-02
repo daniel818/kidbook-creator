@@ -244,6 +244,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const [isSaving, setIsSaving] = useState(false);
     const [regeneratingPage, setRegeneratingPage] = useState<number | null>(null);
     const [edits, setEdits] = useState<Record<number, { text?: string; image?: string }>>({});
+    const [titleDraft, setTitleDraft] = useState(liveBook.settings.title || '');
     const [isUnlocking, setIsUnlocking] = useState(false);
     const [unlockError, setUnlockError] = useState<string | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
@@ -252,10 +253,16 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const unlockStartedRef = useRef(false);
     const checkoutWindowRef = useRef<Window | null>(null);
     const checkoutChannelRef = useRef<BroadcastChannel | null>(null);
+    const checkoutSessionIdRef = useRef<string | null>(null);
 
     useEffect(() => {
         setLiveBook(book);
     }, [book]);
+
+    useEffect(() => {
+        if (isEditing) return;
+        setTitleDraft(liveBook.settings.title || '');
+    }, [liveBook.settings.title, isEditing]);
 
     const themeColors = liveBook.settings.bookTheme
         ? BookThemeInfo[liveBook.settings.bookTheme]?.colors || ['#6366f1', '#ec4899']
@@ -358,6 +365,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             if (!response.ok) {
                 throw new Error(data?.error || 'Failed to start checkout');
             }
+            if (data.sessionId) {
+                checkoutSessionIdRef.current = data.sessionId;
+            }
             if (data.url) {
                 setCheckoutUrl(data.url);
                 setUnlockState('waiting');
@@ -415,7 +425,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     useEffect(() => {
         if (unlockState !== 'generating' || unlockStartedRef.current) return;
         unlockStartedRef.current = true;
-        fetch(`/api/books/${book.id}/unlock`, { method: 'POST' })
+        const sessionParam = checkoutSessionIdRef.current ? `?session_id=${checkoutSessionIdRef.current}` : '';
+        fetch(`/api/books/${book.id}/unlock${sessionParam}`, { method: 'POST' })
             .catch((err) => console.error('Unlock request failed', err));
     }, [book.id, unlockState]);
 
@@ -432,8 +443,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         }
     }, [isPaidAccess, isEditing]);
 
-    const handleCheckoutComplete = useCallback((payload?: { bookId?: string }) => {
+    const handleCheckoutComplete = useCallback((payload?: { bookId?: string; sessionId?: string }) => {
         if (payload?.bookId && payload.bookId !== book.id) return;
+        if (payload?.sessionId) {
+            checkoutSessionIdRef.current = payload.sessionId;
+        }
         checkoutWindowRef.current?.close();
         checkoutWindowRef.current = null;
         setShowPaywall(false);
@@ -445,7 +459,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         const handleMessage = (event: MessageEvent) => {
             if (event.origin !== window.location.origin) return;
             if (!event.data || typeof event.data !== 'object') return;
-            const payload = event.data as { type?: string; bookId?: string };
+            const payload = event.data as { type?: string; bookId?: string; sessionId?: string };
             if (payload.type === 'kidbook:checkout-complete') {
                 handleCheckoutComplete(payload);
             }
@@ -461,7 +475,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         checkoutChannelRef.current = channel;
         channel.onmessage = (event) => {
             if (!event?.data || typeof event.data !== 'object') return;
-            const payload = event.data as { type?: string; bookId?: string };
+            const payload = event.data as { type?: string; bookId?: string; sessionId?: string };
             if (payload.type === 'kidbook:checkout-complete') {
                 handleCheckoutComplete(payload);
             }
@@ -477,7 +491,16 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         const handleStorage = (event: StorageEvent) => {
             if (!event.key) return;
             if (event.key !== `kidbook:checkout:${book.id}`) return;
-            handleCheckoutComplete({ bookId: book.id });
+            if (typeof event.newValue === 'string') {
+                try {
+                    const parsed = JSON.parse(event.newValue);
+                    handleCheckoutComplete({ bookId: book.id, sessionId: parsed?.sessionId });
+                } catch {
+                    handleCheckoutComplete({ bookId: book.id });
+                }
+            } else {
+                handleCheckoutComplete({ bookId: book.id });
+            }
         };
 
         window.addEventListener('storage', handleStorage);
@@ -685,13 +708,26 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             const response = await fetch(`/api/books/${book.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pages: newBookPages })
+                body: JSON.stringify({
+                    pages: newBookPages,
+                    settings: {
+                        ...liveBook.settings,
+                        title: titleDraft
+                    }
+                })
             });
 
             if (!response.ok) throw new Error('Save failed');
 
             setIsEditing(false);
             setEdits({});
+            setLiveBook(prev => ({
+                ...prev,
+                settings: {
+                    ...prev.settings,
+                    title: titleDraft
+                }
+            }));
             router.refresh();
         } catch (e) {
             console.error(e);
@@ -705,6 +741,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         if (Object.keys(edits).length > 0 && !confirm('Discard changes?')) return;
         setIsEditing(false);
         setEdits({});
+        setTitleDraft(liveBook.settings.title || '');
     };
 
 
@@ -725,7 +762,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             // If editing text, do NOT handle arrow keys!
-            if (isEditing && (e.target as HTMLElement).tagName === 'TEXTAREA') return;
+            if (isEditing) {
+                const tagName = (e.target as HTMLElement).tagName;
+                if (tagName === 'TEXTAREA' || tagName === 'INPUT') return;
+            }
 
             switch (e.key) {
                 case 'ArrowLeft':
@@ -847,7 +887,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
 
     // Calculate dimensions based on format
-    const displayTitle = liveBook.settings.title || 'Untitled story';
+    const displayTitle = (isEditing ? titleDraft : liveBook.settings.title) || 'Untitled story';
     const bookSubtitle = [
         liveBook.settings.childName,
         liveBook.settings.childAge ? `Age ${liveBook.settings.childAge}` : ''
@@ -1038,7 +1078,19 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                 <div className={styles.bookTexture}></div>
                                 <div className={styles.spineOverlay}></div>
                                 <div className={styles.coverOverlay}>
-                                    <h1 className={styles.coverTitle}>{displayTitle}</h1>
+                                    {isEditing ? (
+                                        <StopPropagationWrapper className={styles.coverTitleInputWrapper}>
+                                            <input
+                                                className={styles.coverTitleInput}
+                                                value={titleDraft}
+                                                onChange={(e) => setTitleDraft(e.target.value)}
+                                                placeholder="Untitled story"
+                                                maxLength={80}
+                                            />
+                                        </StopPropagationWrapper>
+                                    ) : (
+                                        <h1 className={styles.coverTitle}>{displayTitle}</h1>
+                                    )}
                                     <p className={styles.coverSubtitle}>
                                         {(liveBook.language || liveBook.settings.language) === 'he' ? `${liveBook.settings.childName}, גיל ${liveBook.settings.childAge}` :
                                             (liveBook.language || liveBook.settings.language) === 'de' ? `Für ${liveBook.settings.childName}, ${liveBook.settings.childAge} Jahre alt` :

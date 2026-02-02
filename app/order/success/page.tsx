@@ -67,7 +67,10 @@ function OrderSuccessContent() {
         const tryUnlock = async () => {
             attempts += 1;
             try {
-                const response = await fetch(`/api/books/${order.bookId}/unlock`, { method: 'POST' });
+                const unlockUrl = sessionId
+                    ? `/api/books/${order.bookId}/unlock?session_id=${sessionId}`
+                    : `/api/books/${order.bookId}/unlock`;
+                const response = await fetch(unlockUrl, { method: 'POST' });
                 if (response.ok) {
                     setUnlockMessage('Your full book is ready in the viewer.');
                     return;

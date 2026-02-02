@@ -25,7 +25,8 @@
     },
     "format": {
       "title": "Wähle ein Format",
-      "subtitle": "Bereite dein Buch für den professionellen Druck vor"
+      "subtitle": "Bereite dein Buch für den professionellen Druck vor",
+      "note": "Das Format bestimmt den Bildausschnitt für den Druck."
     },
     "theme": {
       "title": "Wähle ein Thema",
@@ -35,7 +36,8 @@
     },
     "style": {
       "title": "Wähle einen Kunststil",
-      "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?"
+      "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?",
+      "advancedLabel": "Erweitert"
     },
     "title": {
       "title": "Benenne dein Buch",

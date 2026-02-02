@@ -7,6 +7,7 @@ function UnlockSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const bookId = searchParams.get('bookId');
+    const sessionId = searchParams.get('session_id');
     const notifiedRef = useRef(false);
 
     const [status, setStatus] = useState<'pending' | 'success' | 'error'>('pending');
@@ -24,7 +25,10 @@ function UnlockSuccessContent() {
         const tryUnlock = async () => {
             attempts += 1;
             try {
-                const response = await fetch(`/api/books/${bookId}/unlock`, { method: 'POST' });
+                const url = sessionId
+                    ? `/api/books/${bookId}/unlock?session_id=${sessionId}`
+                    : `/api/books/${bookId}/unlock`;
+                const response = await fetch(url, { method: 'POST' });
                 if (response.ok) {
                     setStatus('success');
                     setMessage('Your full book is ready.');
@@ -53,7 +57,7 @@ function UnlockSuccessContent() {
         if (!bookId) return;
         if (notifiedRef.current) return;
         if (typeof window === 'undefined') return;
-        const payload = { type: 'kidbook:checkout-complete', bookId };
+        const payload = { type: 'kidbook:checkout-complete', bookId, sessionId };
         notifiedRef.current = true;
 
         if (window.opener && !window.opener.closed) {
@@ -68,7 +72,8 @@ function UnlockSuccessContent() {
         }
 
         try {
-            localStorage.setItem(`kidbook:checkout:${bookId}`, String(Date.now()));
+            const payloadValue = JSON.stringify({ ts: Date.now(), sessionId });
+            localStorage.setItem(`kidbook:checkout:${bookId}`, payloadValue);
         } catch {
             // ignore storage failures
         }

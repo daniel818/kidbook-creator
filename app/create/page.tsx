@@ -10,9 +10,7 @@ import {
     BookTheme,
     BookTypeInfo,
     BookThemeInfo,
-    getAgeGroup,
 } from '@/lib/types';
-import { saveBook } from '@/lib/storage';
 import { ART_STYLES, ArtStyle } from '@/lib/art-styles';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
@@ -20,7 +18,7 @@ import { AuthModal } from '@/components/AuthModal';
 import { AlertModal } from '@/components/AlertModal';
 import styles from './page.module.css';
 
-type WizardStep = 'child' | 'type' | 'format' | 'theme' | 'style' | 'title';
+type WizardStep = 'child' | 'format' | 'theme' | 'preview';
 
 export default function CreateBookPage() {
     const router = useRouter();
@@ -51,7 +49,7 @@ export default function CreateBookPage() {
 
     // Track unsaved changes
     useEffect(() => {
-        const hasChanges = !!(settings.childName || settings.childAge !== 3 || settings.bookType || settings.bookTheme || settings.storyDescription || childPhoto);
+        const hasChanges = !!(settings.childName || settings.childAge !== 3 || settings.bookTheme || settings.storyDescription || childPhoto);
         setHasUnsavedChanges(hasChanges);
     }, [settings, childPhoto]);
 
@@ -90,8 +88,18 @@ export default function CreateBookPage() {
         };
     }, [photoPreview]);
 
-    const steps: WizardStep[] = ['child', 'type', 'format', 'theme', 'style', 'title'];
+    const steps: WizardStep[] = ['child', 'format', 'theme', 'preview'];
     const currentStepIndex = steps.indexOf(currentStep);
+    const effectiveBookType = (settings.bookType || 'story') as BookType;
+
+    useEffect(() => {
+        if (settings.printFormat) return;
+        setSettings(prev => {
+            if (prev.printFormat) return prev;
+            const preferredFormat = (prev.childAge || 3) <= 5 ? 'square' : 'portrait';
+            return { ...prev, printFormat: preferredFormat };
+        });
+    }, [settings.childAge, settings.printFormat]);
 
     // Warn before leaving if there are unsaved changes
     useEffect(() => {
@@ -125,15 +133,11 @@ export default function CreateBookPage() {
         switch (currentStep) {
             case 'child':
                 return settings.childName && settings.childName.trim().length > 0;
-            case 'type':
-                return settings.bookType !== undefined;
             case 'format':
                 return settings.printFormat !== undefined;
             case 'theme':
                 return settings.bookTheme !== undefined;
-            case 'style':
-                return settings.artStyle !== undefined;
-            case 'title':
+            case 'preview':
                 return true; // Title is optional
             default:
                 return false;
@@ -235,9 +239,9 @@ export default function CreateBookPage() {
                 childName: settings.childName || 'My Child',
                 childAge: settings.childAge || 3,
                 bookTheme: settings.bookTheme || 'adventure',
-                bookType: settings.bookType || 'picture',
+                bookType: effectiveBookType,
                 printFormat: settings.printFormat || 'portrait',
-                pageCount: (settings.printFormat === 'square' || settings.bookType === 'story') ? 12 : 10, // 12 Story Beats = 24 Physical Pages (Image + Text)
+                pageCount: (settings.printFormat === 'square' || effectiveBookType === 'story') ? 12 : 10, // 12 Story Beats = 24 Physical Pages (Image + Text)
                 characterDescription,
                 storyDescription: settings.storyDescription,
                 artStyle: settings.artStyle || 'storybook_classic',
@@ -418,45 +422,6 @@ export default function CreateBookPage() {
                             </motion.div>
                         )}
 
-                        {currentStep === 'type' && (
-                            <motion.div
-                                key="type"
-                                className={styles.stepContent}
-                                initial={{ opacity: 0, x: 50 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -50 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <div className={styles.stepIcon}>📚</div>
-                                <h1 className={styles.stepTitle}>{t('steps.type.title')}</h1>
-                                <p className={styles.stepSubtitle}>
-                                    {settings.childName ? t('steps.type.subtitle', { childName: settings.childName }) : t('steps.type.subtitleDefault')}
-                                </p>
-
-                                <div className={styles.optionsGrid}>
-                                    {(Object.keys(BookTypeInfo) as BookType[]).map((type) => {
-                                        const info = BookTypeInfo[type];
-                                        return (
-                                            <button
-                                                key={type}
-                                                className={`${styles.optionCard} ${settings.bookType === type ? styles.selected : ''}`}
-                                                onClick={() => updateSettings('bookType', type)}
-                                                style={{ '--option-color': info.color } as React.CSSProperties}
-                                            >
-                                                <span className={styles.optionEmoji}>{info.icon}</span>
-                                                <h3 className={styles.optionTitle}>{t(`bookTypes.${type}.label`)}</h3>
-                                                <p className={styles.optionDesc}>{t(`bookTypes.${type}.description`)}</p>
-                                                <span className={styles.optionAge}>{t(`bookTypes.${type}.ageRange`)}</span>
-                                                {settings.bookType === type && (
-                                                    <span className={styles.checkmark}>✓</span>
-                                                )}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </motion.div>
-                        )}
-
                         {currentStep === 'format' && (
                             <motion.div
                                 key="format"
@@ -471,6 +436,9 @@ export default function CreateBookPage() {
                                 <p className={styles.stepSubtitle}>
                                     {t('steps.format.subtitle')}
                                 </p>
+                                <p className={styles.formatNote}>
+                                    {t('steps.format.note', 'Format controls image framing for print.')}
+                                </p>
 
                                 <div className={styles.optionsGrid}>
                                     <button
@@ -482,6 +450,10 @@ export default function CreateBookPage() {
                                         <h3 className={styles.optionTitle}>{t('formats.square.label')}</h3>
                                         <p className={styles.optionDesc}>{t('formats.square.description')}</p>
                                         <span className={styles.optionAge}>{t('formats.square.pages')}</span>
+                                        <div className={styles.formatPreview}>
+                                            <span className={`${styles.formatShape} ${styles.formatSquare}`}></span>
+                                            <span className={styles.formatRatio}>1:1</span>
+                                        </div>
                                         {settings.printFormat === 'square' && (
                                             <span className={styles.checkmark}>✓</span>
                                         )}
@@ -496,6 +468,10 @@ export default function CreateBookPage() {
                                         <h3 className={styles.optionTitle}>{t('formats.portrait.label')}</h3>
                                         <p className={styles.optionDesc}>{t('formats.portrait.description')}</p>
                                         <span className={styles.optionAge}>{t('formats.portrait.pages')}</span>
+                                        <div className={styles.formatPreview}>
+                                            <span className={`${styles.formatShape} ${styles.formatPortrait}`}></span>
+                                            <span className={styles.formatRatio}>3:4</span>
+                                        </div>
                                         {settings.printFormat === 'portrait' && (
                                             <span className={styles.checkmark}>✓</span>
                                         )}
@@ -557,69 +533,58 @@ export default function CreateBookPage() {
                                         />
                                     </div>
                                 </div>
-                            </motion.div>
-                        )}
 
-                        {currentStep === 'style' && (
-                            <motion.div
-                                key="style"
-                                className={styles.stepContent}
-                                initial={{ opacity: 0, x: 50 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -50 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <div className={styles.stepIcon}>🎨</div>
-                                <h1 className={styles.stepTitle}>{t('steps.style.title')}</h1>
-                                <p className={styles.stepSubtitle}>
-                                    {t('steps.style.subtitle')}
-                                </p>
-
-                                <div className={styles.themeGrid}>
-                                    {(Object.keys(ART_STYLES) as ArtStyle[]).map((style) => {
-                                        const info = ART_STYLES[style];
-                                        const emojis: Record<string, string> = {
-                                            storybook_classic: '📚',
-                                            watercolor: '🖼️',
-                                            digital_art: '💻',
-                                            cartoon: '🎬',
-                                            pixel_art: '👾',
-                                            coloring_book: '✏️'
-                                        };
-                                        return (
-                                            <button
-                                                key={style}
-                                                className={`${styles.themeCard} ${settings.artStyle === style ? styles.selected : ''}`}
-                                                onClick={() => setSettings(prev => ({ ...prev, artStyle: style }))}
-                                                style={{
-                                                    '--theme-color-1': style === 'storybook_classic' ? '#8b5cf6' :
-                                                        style === 'watercolor' ? '#06b6d4' :
-                                                            style === 'digital_art' ? '#3b82f6' :
-                                                                style === 'cartoon' ? '#f59e0b' :
-                                                                    style === 'pixel_art' ? '#10b981' : '#6b7280',
-                                                    '--theme-color-2': style === 'storybook_classic' ? '#ec4899' :
-                                                        style === 'watercolor' ? '#a855f7' :
-                                                            style === 'digital_art' ? '#8b5cf6' :
-                                                                style === 'cartoon' ? '#ef4444' :
-                                                                    style === 'pixel_art' ? '#22d3ee' : '#9ca3af'
-                                                } as React.CSSProperties}
-                                            >
-                                                <span className={styles.themeEmoji}>{emojis[style]}</span>
-                                                <span className={styles.themeName}>{t(`artStyles.${style}`)}</span>
-                                                {settings.artStyle === style && (
-                                                    <span className={styles.checkmark}>✓</span>
-                                                )}
-                                            </button>
-                                        );
-                                    })}
+                                <div className={styles.styleSection}>
+                                    <div className={styles.styleHeader}>
+                                        <h3 className={styles.styleTitle}>{t('steps.style.title')}</h3>
+                                        <p className={styles.styleSubtitle}>{t('steps.style.subtitle')}</p>
+                                    </div>
+                                    <div className={styles.themeGrid}>
+                                        {(Object.keys(ART_STYLES) as ArtStyle[]).map((style) => {
+                                            const emojis: Record<string, string> = {
+                                                storybook_classic: '📚',
+                                                watercolor: '🖼️',
+                                                digital_art: '💻',
+                                                cartoon: '🎬',
+                                                pixel_art: '👾',
+                                                coloring_book: '✏️'
+                                            };
+                                            const isDefault = style === 'storybook_classic';
+                                            return (
+                                                <button
+                                                    key={style}
+                                                    className={`${styles.themeCard} ${settings.artStyle === style ? styles.selected : ''}`}
+                                                    onClick={() => setSettings(prev => ({ ...prev, artStyle: style }))}
+                                                    style={{
+                                                        '--theme-color-1': style === 'storybook_classic' ? '#8b5cf6' :
+                                                            style === 'watercolor' ? '#06b6d4' :
+                                                                style === 'digital_art' ? '#3b82f6' :
+                                                                    style === 'cartoon' ? '#f59e0b' :
+                                                                        style === 'pixel_art' ? '#10b981' : '#6b7280',
+                                                        '--theme-color-2': style === 'storybook_classic' ? '#ec4899' :
+                                                            style === 'watercolor' ? '#a855f7' :
+                                                                style === 'digital_art' ? '#8b5cf6' :
+                                                                    style === 'cartoon' ? '#ef4444' :
+                                                                        style === 'pixel_art' ? '#22d3ee' : '#9ca3af'
+                                                    } as React.CSSProperties}
+                                                >
+                                                    <span className={styles.themeEmoji}>{emojis[style]}</span>
+                                                    <span className={styles.themeName}>{t(`artStyles.${style}`)}</span>
+                                                    {isDefault && <span className={styles.recommendedBadge}>Recommended</span>}
+                                                    {settings.artStyle === style && (
+                                                        <span className={styles.checkmark}>✓</span>
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-
                             </motion.div>
                         )}
 
-                        {currentStep === 'title' && (
+                        {currentStep === 'preview' && (
                             <motion.div
-                                key="title"
+                                key="preview"
                                 className={styles.stepContent}
                                 initial={{ opacity: 0, x: 50 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -628,9 +593,7 @@ export default function CreateBookPage() {
                             >
                                 <div className={styles.stepIcon}>✨</div>
                                 <h1 className={styles.stepTitle}>{t('steps.title.title')}</h1>
-                                <p className={styles.stepSubtitle}>
-                                    {t('steps.title.subtitle')}
-                                </p>
+                                <p className={styles.stepSubtitle}>{t('steps.title.subtitle')}</p>
 
                                 <div className={styles.formFields}>
                                     <div className={styles.formGroup}>
@@ -659,7 +622,7 @@ export default function CreateBookPage() {
                                             }}
                                         >
                                             <span className={styles.previewEmoji}>
-                                                {settings.bookType ? BookTypeInfo[settings.bookType].icon : '📚'}
+                                                {BookTypeInfo[effectiveBookType].icon}
                                             </span>
                                             <span className={styles.previewTitle}>
                                                 {settings.title || (settings.childName ? t('preview.defaultTitle', { childName: settings.childName }) : t('steps.title.titlePlaceholderDefault'))}
@@ -667,7 +630,7 @@ export default function CreateBookPage() {
                                         </div>
                                         <div className={styles.previewInfo}>
                                             <p>{t('preview.forChild', { childName: settings.childName, age: settings.childAge })}</p>
-                                            <p>{settings.bookType && t(`bookTypes.${settings.bookType}.label`)}</p>
+                                            <p>{t(`bookTypes.${effectiveBookType}.label`)}</p>
                                         </div>
                                     </div>
                                 </div>

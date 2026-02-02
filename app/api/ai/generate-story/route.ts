@@ -17,10 +17,11 @@ export async function POST(request: NextRequest) {
 
         const body = await request.json();
         const { childName, childAge, bookTheme, bookType, pageCount, characterDescription } = body;
+        const resolvedBookType = bookType || 'story';
 
-        if (!childName || !bookTheme || !bookType) {
+        if (!childName || !bookTheme) {
             return NextResponse.json(
-                { error: 'Missing required fields: childName, bookTheme, bookType' },
+                { error: 'Missing required fields: childName, bookTheme' },
                 { status: 400 }
             );
         }
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
             childName,
             childAge: childAge || 5,
             bookTheme,
-            bookType,
+            bookType: resolvedBookType,
             pageCount: pageCount || 10,
             characterDescription,
         };

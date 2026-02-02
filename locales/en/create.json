@@ -25,7 +25,8 @@
     },
     "format": {
       "title": "Choose a Format",
-      "subtitle": "Prepare your book for professional printing"
+      "subtitle": "Prepare your book for professional printing",
+      "note": "Format controls image framing for print."
     },
     "theme": {
       "title": "Pick a theme",
@@ -35,7 +36,8 @@
     },
     "style": {
       "title": "Choose an art style",
-      "subtitle": "How should your book's illustrations look?"
+      "subtitle": "How should your book's illustrations look?",
+      "advancedLabel": "Advanced"
     },
     "title": {
       "title": "Name your book",

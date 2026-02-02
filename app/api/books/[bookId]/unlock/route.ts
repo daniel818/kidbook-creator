@@ -5,6 +5,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
+import * as fs from 'fs';
+import * as path from 'path';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 
@@ -12,35 +14,97 @@ interface RouteContext {
     params: Promise<{ bookId: string }>;
 }
 
-export async function POST(_request: NextRequest, context: RouteContext) {
+const logUnlock = (message: string, data?: unknown) => {
+    const timestamp = new Date().toISOString();
+    const logMsg = `[API unlock-book ${timestamp}] ${message}`;
+    try {
+        const logPath = path.join(process.cwd(), 'api_debug.log');
+        fs.appendFileSync(logPath, `${logMsg} ${data ? JSON.stringify(data) : ''}\n`);
+    } catch {
+        // ignore
+    }
+    if (data !== undefined) {
+        console.log(logMsg, data);
+    } else {
+        console.log(logMsg);
+    }
+};
+
+export async function POST(request: NextRequest, context: RouteContext) {
     try {
         const { bookId } = await context.params;
         const supabase = await createClient();
         const adminDb = await createAdminClient();
+        const sessionIdFromQuery = new URL(request.url).searchParams.get('session_id');
+        logUnlock('Unlock request received', { bookId, hasSessionId: !!sessionIdFromQuery });
 
         const { data: { user }, error: authError } = await supabase.auth.getUser();
-        if (authError || !user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        const hasUser = !authError && !!user;
+        const db = hasUser ? supabase : adminDb;
+        logUnlock('Auth status', { hasUser, userId: user?.id || null });
 
-        const { data: book, error: bookError } = await supabase
+        const bookQuery = db
             .from('books')
             .select('*, pages (*)')
-            .eq('id', bookId)
-            .eq('user_id', user.id)
-            .single();
+            .eq('id', bookId);
+        if (hasUser && user) {
+            bookQuery.eq('user_id', user.id);
+        }
+
+        const { data: book, error: bookError } = await bookQuery.single();
 
         if (bookError || !book) {
+            logUnlock('Book not found', { bookError });
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
 
+        if (!hasUser && !sessionIdFromQuery) {
+            logUnlock('Unauthorized: no user and no session id');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const isPreview = book.is_preview || book.status === 'preview';
+        logUnlock('Book state', {
+            isPreview,
+            status: book.status,
+            digitalUnlockPaid: book.digital_unlock_paid,
+            previewPageCount: book.preview_page_count,
+        });
         if (!isPreview) {
             return NextResponse.json({ error: 'Book is already unlocked' }, { status: 400 });
         }
         if (!book.digital_unlock_paid) {
+            if (sessionIdFromQuery) {
+                try {
+                    const session = await stripe.checkout.sessions.retrieve(sessionIdFromQuery);
+                    const isPaid = session.payment_status === 'paid' || session.status === 'complete';
+                    const sessionBookId = session.metadata?.bookId;
+                    const sessionUserId = session.metadata?.userId;
+                    const bookUserId = (book.user_id as string | null) || null;
+                    const userMatches = sessionUserId ? sessionUserId === bookUserId : true;
+                    logUnlock('Stripe session verified', {
+                        sessionId: session.id,
+                        isPaid,
+                        sessionBookId,
+                        sessionUserId,
+                        bookUserId,
+                        userMatches,
+                    });
+                    if (isPaid && sessionBookId === bookId && userMatches) {
+                        await adminDb
+                            .from('books')
+                            .update({ digital_unlock_paid: true, digital_unlock_session_id: session.id })
+                            .eq('id', bookId);
+                        logUnlock('Marked digital unlock paid via session');
+                    }
+                } catch (err) {
+                    console.error('[unlock-book] Stripe session query failed', err);
+                    logUnlock('Stripe session query failed');
+                }
+            }
+
             // 1) If a paid print order exists, allow unlock
-            const { data: paidOrders } = await supabase
+            const { data: paidOrders } = await db
                 .from('orders')
                 .select('id')
                 .eq('book_id', bookId)
@@ -69,7 +133,7 @@ export async function POST(_request: NextRequest, context: RouteContext) {
                     }
                 } else {
                     // 3) Check latest print session if any (fallback)
-                    const { data: latestOrder } = await supabase
+                    const { data: latestOrder } = await db
                         .from('orders')
                         .select('stripe_checkout_session_id')
                         .eq('book_id', bookId)
@@ -93,13 +157,14 @@ export async function POST(_request: NextRequest, context: RouteContext) {
                     }
                 }
 
-                const { data: refreshed } = await supabase
+                const { data: refreshed } = await db
                     .from('books')
                     .select('digital_unlock_paid')
                     .eq('id', bookId)
                     .single();
 
                 if (!refreshed?.digital_unlock_paid) {
+                    logUnlock('Payment not confirmed; returning 402');
                     return NextResponse.json({ error: 'Payment not confirmed' }, { status: 402 });
                 }
             }
@@ -162,7 +227,7 @@ export async function POST(_request: NextRequest, context: RouteContext) {
 
             const storedUrl = await uploadImageToStorage(bookId, page.page_number, imageBuffer);
 
-            await supabase
+            await db
                 .from('pages')
                 .update({
                     image_elements: [{
@@ -196,14 +261,14 @@ export async function POST(_request: NextRequest, context: RouteContext) {
                 );
 
                 const matches = imageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-                if (matches && matches.length === 3) {
-                    const imageBuffer = Buffer.from(matches[2], 'base64');
-                    const storedUrl = await uploadImageToStorage(bookId, backCover.page_number, imageBuffer);
-                    await supabase
-                        .from('pages')
-                        .update({
-                            image_elements: [{
-                                id: crypto.randomUUID(),
+            if (matches && matches.length === 3) {
+                const imageBuffer = Buffer.from(matches[2], 'base64');
+                const storedUrl = await uploadImageToStorage(bookId, backCover.page_number, imageBuffer);
+                await db
+                    .from('pages')
+                    .update({
+                        image_elements: [{
+                            id: crypto.randomUUID(),
                                 src: storedUrl,
                                 x: 0,
                                 y: 0,
@@ -219,7 +284,7 @@ export async function POST(_request: NextRequest, context: RouteContext) {
 
         const nextStatus = book.status === 'ordered' ? 'ordered' : 'draft';
 
-        await supabase
+        await db
             .from('books')
             .update({
                 status: nextStatus,

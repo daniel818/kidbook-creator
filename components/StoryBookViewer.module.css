@@ -1149,6 +1149,31 @@
     line-height: 1.2;
 }
 
+.coverTitleInputWrapper {
+    width: 100%;
+}
+
+.coverTitleInput {
+    width: 100%;
+    border: none;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1d23;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-align: center;
+    outline: none;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}
+
+.coverTitleInput::placeholder {
+    color: rgba(26, 29, 35, 0.4);
+}
+
 .coverSubtitle {
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;

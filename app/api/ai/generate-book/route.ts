@@ -101,12 +101,13 @@ export async function POST(request: NextRequest) {
         log('Step 1: Parsing request body...');
         const body = await request.json();
         const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = body;
-        log('Request body parsed', { childName, childAge, bookTheme, bookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
+        const resolvedBookType = bookType || 'story';
+        log('Request body parsed', { childName, childAge, bookTheme, bookType: resolvedBookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
 
-        if (!childName || !bookTheme || !bookType) {
+        if (!childName || !bookTheme) {
             log('ERROR: Missing required fields');
             return NextResponse.json(
-                { error: 'Missing required fields: childName, bookTheme, bookType' },
+                { error: 'Missing required fields: childName, bookTheme' },
                 { status: 400 }
             );
         }
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
             childName,
             childAge: childAge || 5,
             bookTheme,
-            bookType,
+            bookType: resolvedBookType,
             pageCount: pageCount || 10,
             characterDescription,
             storyDescription,
@@ -271,7 +272,7 @@ export async function POST(request: NextRequest) {
             child_age: childAge,
             age_group: getAgeGroup(childAge || 5),
             book_theme: bookTheme,
-            book_type: bookType,
+            book_type: resolvedBookType,
             print_format: aspectRatio === '1:1' ? 'square' : 'portrait',
             status: isPreview ? 'preview' : 'draft',
             estimated_cost: totalCost, // Save aggregated cost
