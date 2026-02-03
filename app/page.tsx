@@ -124,9 +124,12 @@ export default function Home() {
 
         {/* Main Content */}
         <main className="relative pt-32 overflow-hidden">
-        {/* Background Blobs */}
-          <div className="blob absolute w-[500px] h-[500px] bg-indigo-400 -top-20 -left-20 rounded-full blur-[60px] opacity-40 -z-10"></div>
-          <div className="blob absolute w-[400px] h-[400px] bg-[#f4258c] -bottom-20 -right-20 rounded-full blur-[60px] opacity-40 -z-10"></div>
+        {/* Background Shapes (legacy) */}
+        <div className={styles.heroBackground} aria-hidden="true">
+          <div className={styles.floatingShape1}></div>
+          <div className={styles.floatingShape2}></div>
+          <div className={styles.floatingShape3}></div>
+        </div>
 
         {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
@@ -166,16 +169,15 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Floating 3D Book */}
+          {/* Right Frame (legacy image) */}
           <div className="relative flex justify-center lg:justify-end">
-            <div className="w-full max-w-[500px] aspect-[4/5] bg-gradient-to-br from-indigo-500 to-[#f4258c] rounded-xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] transform rotate-6 hover:rotate-2 transition-transform duration-700 flex flex-col items-center justify-center p-8 relative animate-[blobFloat_10s_ease-in-out_infinite_alternate]">
-              <div className="absolute inset-4 border-4 border-white/30 rounded-lg pointer-events-none"></div>
-              <div className="bg-white/90 w-full h-full rounded shadow-inner flex flex-col items-center justify-center gap-6 p-8 overflow-hidden text-center">
-                <span className="material-symbols-outlined text-8xl text-[#f4258c]">rocket_launch</span>
-                <h3 className="text-3xl font-black text-[#1c0d14]">Leo's Space Adventure</h3>
-                <div className="w-20 h-1 bg-[#f4258c]/20 rounded-full"></div>
-                <p className="text-sm font-medium opacity-60 italic">A Personalized Storybook</p>
-              </div>
+            <div className="w-full max-w-[350px] lg:max-w-[350px] aspect-[4/5] transform rotate-6 hover:rotate-2 transition-transform duration-700">
+              <img
+                src="/images/default-cover.png"
+                alt="Personalized storybook cover"
+                className="w-full h-full object-cover rounded-[28px] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)]"
+                loading="eager"
+              />
             </div>
           </div>
         </section>

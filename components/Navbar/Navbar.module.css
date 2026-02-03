@@ -187,25 +187,33 @@
    MOBILE BOTTOM NAVIGATION
    ============================================ */
 
-.mobileBar {
+/* Stitch bottom nav + floating create */
+:global(#stitch-mobile-ui) {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #111827;
+}
+
+:global(#stitch-mobile-ui) .stitchMobileBar,
+:global(#stitch-mobile-ui) .mobileBar {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 16px;
+  right: 16px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
   display: none;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
-  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  background: #ffffff !important;
+  border-radius: 22px !important;
+  padding: 10px 12px;
   z-index: 210;
-  box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 12px 24px rgba(15, 23, 42, 0.08),
+    0 2px 6px rgba(15, 23, 42, 0.06) !important;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   align-items: center;
 }
 
-.mobileTab {
+:global(#stitch-mobile-ui) .stitchMobileTab,
+:global(#stitch-mobile-ui) .mobileTab {
   flex: 1;
   border: none;
   background: transparent;
@@ -214,55 +222,51 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 8px 4px;
+  padding: 6px 4px;
   font-size: 11px;
-  font-weight: 600;
-  color: #94a3b8;
+  font-weight: 700;
+  color: #9aa4b2;
   cursor: pointer;
-  border-radius: 12px;
-  transition: all 0.2s ease;
+  border-radius: 14px;
+  transition: transform 0.2s ease, color 0.2s ease;
   position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.mobileTab:active {
-  transform: scale(0.95);
+:global(#stitch-mobile-ui) .stitchMobileTab:active,
+:global(#stitch-mobile-ui) .mobileTab:active {
+  transform: scale(0.96);
 }
 
-.mobileIcon {
-  width: 24px;
-  height: 24px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: transform 0.2s ease;
+:global(#stitch-mobile-ui) .stitchMobileIcon,
+:global(#stitch-mobile-ui) .mobileIcon {
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+  line-height: 1;
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
 
-.mobileLabel {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+:global(#stitch-mobile-ui) .stitchMobileLabel,
+:global(#stitch-mobile-ui) .mobileLabel {
+  font-size: 9px;
+  font-weight: 700;
 }
 
-.mobileActive {
-  color: #6366f1;
+:global(#stitch-mobile-ui) .stitchMobileActive,
+:global(#stitch-mobile-ui) .mobileActive {
+  color: #6d5dfc;
 }
 
-.mobileActive .mobileIcon {
+:global(#stitch-mobile-ui) .stitchMobileActive .stitchMobileIcon,
+:global(#stitch-mobile-ui) .mobileActive .mobileIcon {
   stroke-width: 2.2;
 }
 
-.mobileDot {
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: dotPulse 2s ease-in-out infinite;
+:global(#stitch-mobile-ui) .stitchMobileDot,
+:global(#stitch-mobile-ui) .mobileDot {
+  display: none;
 }
 
 @keyframes dotPulse {
@@ -281,46 +285,63 @@
    FLOATING CREATE FAB
    ============================================ */
 
-.floatingFab {
+:global(#stitch-mobile-ui) .stitchFloatingFab,
+:global(#stitch-mobile-ui) .floatingFab {
   display: none;
   position: fixed;
-  bottom: calc(80px + env(safe-area-inset-bottom));
-  right: 20px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  right: 22px;
   z-index: 220;
-  padding: 14px 20px;
+  padding: 12px 18px 12px 14px;
   border: none;
   border-radius: 999px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  background: linear-gradient(135deg, #6d5dfc 0%, #b24bf2 100%) !important;
   color: white;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   box-shadow:
-    0 8px 24px rgba(99, 102, 241, 0.4),
-    0 4px 12px rgba(236, 72, 153, 0.2);
+    0 16px 28px rgba(109, 93, 252, 0.35),
+    0 6px 12px rgba(178, 75, 242, 0.25);
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   animation: fabEntrance 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.floatingFab:hover {
-  transform: scale(1.05);
+:global(#stitch-mobile-ui) .stitchFloatingFab:hover,
+:global(#stitch-mobile-ui) .floatingFab:hover {
+  transform: translateY(-1px);
   box-shadow:
-    0 12px 32px rgba(99, 102, 241, 0.5),
-    0 6px 16px rgba(236, 72, 153, 0.3);
+    0 20px 32px rgba(109, 93, 252, 0.4),
+    0 10px 18px rgba(178, 75, 242, 0.3);
 }
 
-.floatingFab:active {
+:global(#stitch-mobile-ui) .stitchFloatingFab:active,
+:global(#stitch-mobile-ui) .floatingFab:active {
   transform: scale(0.98);
 }
 
-.fabIcon {
-  font-size: 18px;
+:global(#stitch-mobile-ui) .stitchFabIcon,
+:global(#stitch-mobile-ui) .fabIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  line-height: 1;
 }
 
-.fabLabel {
+:global(#stitch-mobile-ui) .stitchFabLabel,
+:global(#stitch-mobile-ui) .fabLabel {
   font-weight: 700;
+}
+
+:global(#stitch-mobile-ui) .stitchFabIcon :global(.material-symbols-outlined) {
+  font-size: 18px;
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
 }
 
 @keyframes fabEntrance {
@@ -357,18 +378,18 @@
    BOTTOM SHEET MENU
    ============================================ */
 
-.bottomSheetOverlay {
+:global(#stitch-mobile-ui) .stitchSheetOverlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 300;
-  animation: overlayFadeIn 0.2s ease;
+  animation: stitchOverlayFadeIn 0.2s ease;
 }
 
-@keyframes overlayFadeIn {
+@keyframes stitchOverlayFadeIn {
   from {
     opacity: 0;
   }
@@ -378,20 +399,21 @@
   }
 }
 
-.bottomSheet {
+:global(#stitch-mobile-ui) .stitchSheet {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
-  border-radius: 24px 24px 0 0;
-  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
-  max-height: 70vh;
+  background: #f2f3f7;
+  border-radius: 28px 28px 0 0;
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+  max-height: 78vh;
   overflow-y: auto;
-  animation: sheetSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: stitchSheetSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.2);
 }
 
-@keyframes sheetSlideUp {
+@keyframes stitchSheetSlideUp {
   from {
     opacity: 0;
     transform: translateY(100%);
@@ -403,53 +425,64 @@
   }
 }
 
-.bottomSheetHandle {
-  width: 40px;
-  height: 4px;
-  background: #e2e8f0;
+:global(#stitch-mobile-ui) .stitchSheetHandle {
+  width: 52px;
+  height: 5px;
+  background: #cbd5e1;
   border-radius: 999px;
-  margin: 0 auto 16px;
+  margin: 6px auto 18px;
 }
 
-.bottomSheetUser {
+:global(#stitch-mobile-ui) .stitchUserCard {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px;
-  background: linear-gradient(135deg, #f8f9ff 0%, #f0f1ff 100%);
-  border-radius: 16px;
-  margin-bottom: 16px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+  margin-bottom: 18px;
+  border: none;
+  text-align: left;
 }
 
-.bottomSheetAvatar {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  border-radius: 50%;
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
+:global(#stitch-mobile-ui) .stitchUserCardButton {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+:global(#stitch-mobile-ui) .stitchUserCardButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+}
+
+:global(#stitch-mobile-ui) .stitchUserAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #7c84ff 0%, #5b5fe8 55%, #a855f7 100%);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 24px;
+  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.3);
   flex-shrink: 0;
 }
 
-.bottomSheetUserInfo {
-  flex: 1;
+:global(#stitch-mobile-ui) .stitchUserInfo {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.bottomSheetUserName {
-  display: block;
+:global(#stitch-mobile-ui) .stitchUserName {
   font-size: 16px;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 2px;
+  font-weight: 700;
+  color: #111827;
 }
 
-.bottomSheetUserEmail {
-  display: block;
+:global(#stitch-mobile-ui) .stitchUserEmail {
   font-size: 13px;
   color: #64748b;
   overflow: hidden;
@@ -457,68 +490,130 @@
   white-space: nowrap;
 }
 
-.bottomSheetNav {
+:global(#stitch-mobile-ui) .stitchMenu {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
-.bottomSheetItem {
+:global(#stitch-mobile-ui) .stitchMenuItem {
   display: flex;
   align-items: center;
   gap: 14px;
   width: 100%;
-  padding: 14px 16px;
-  background: none;
+  padding: 10px 6px;
+  background: transparent;
   border: none;
-  border-radius: 14px;
+  border-radius: 18px;
   font-size: 15px;
-  font-weight: 500;
-  color: #334155;
+  font-weight: 600;
+  color: #1f2937;
   cursor: pointer;
-  transition: all 0.15s ease;
   text-align: left;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.bottomSheetItem:hover,
-.bottomSheetItem:active {
-  background: #f1f5f9;
+:global(#stitch-mobile-ui) .stitchMenuItem:hover {
+  background: rgba(255, 255, 255, 0.7);
 }
 
-.bottomSheetItemActive {
-  background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
+:global(#stitch-mobile-ui) .stitchMenuItem:active {
+  transform: scale(0.98);
 }
 
-.bottomSheetIcon {
-  width: 22px;
-  height: 22px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+:global(#stitch-mobile-ui) .stitchMenuIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
   flex-shrink: 0;
 }
 
-.bottomSheetLanguage {
-  margin-left: auto;
+:global(#stitch-mobile-ui) .stitchMenuIcon span {
+  font-size: 20px;
 }
 
-.bottomSheetDivider {
-  height: 1px;
-  background: #e2e8f0;
-  margin: 8px 0;
+:global(#stitch-mobile-ui) .stitchMenuIconBooks {
+  background: #eef2ff;
+  color: #4f46e5;
 }
 
-.bottomSheetSignOut {
+:global(#stitch-mobile-ui) .stitchMenuIconOrders {
+  background: #fde7f3;
+  color: #e11d48;
+}
+
+:global(#stitch-mobile-ui) .stitchMenuIconHelp {
+  background: #fff4e5;
+  color: #f97316;
+}
+
+:global(#stitch-mobile-ui) .stitchMenuLabel {
+  flex: 1;
+}
+
+:global(#stitch-mobile-ui) .stitchMenuChevron {
+  color: #cbd5e1;
+  font-size: 22px;
+}
+
+:global(#stitch-mobile-ui) .stitchLanguageWrap {
+  margin-bottom: 18px;
+}
+
+:global(#stitch-mobile-ui) .stitchLanguagePill {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  background: #f8fafc;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
+  flex-wrap: wrap;
+}
+
+:global(#stitch-mobile-ui) .stitchLanguageOption {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+:global(#stitch-mobile-ui) .stitchLanguageActive {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+}
+
+:global(#stitch-mobile-ui) .stitchSignOut {
+  width: 100%;
+  border: none;
+  background: #fdecee;
   color: #ef4444;
+  padding: 14px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.bottomSheetSignOut:hover,
-.bottomSheetSignOut:active {
-  background: #fef2f2;
-  color: #dc2626;
+:global(#stitch-mobile-ui) .stitchSignOut:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 20px rgba(239, 68, 68, 0.2);
 }
 
 /* ============================================
@@ -554,52 +649,76 @@
     display: none;
   }
 
-  .mobileBar {
+  :global(#stitch-mobile-ui) .stitchMobileBar,
+  :global(#stitch-mobile-ui) .mobileBar {
     display: grid;
   }
 
-  .floatingFab {
+  :global(#stitch-mobile-ui) .stitchFloatingFab,
+  :global(#stitch-mobile-ui) .floatingFab {
     display: flex;
     animation: fabEntrance 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  .bottomSheetOverlay {
+  :global(#stitch-mobile-ui) .stitchSheetOverlay {
     display: block;
   }
 
   :global(body) {
-    padding-bottom: 80px;
+    padding-bottom: 112px;
+  }
+}
+
+/* Touch devices (fallback when viewport is in desktop mode) */
+@media (hover: none) and (pointer: coarse) {
+  :global(#stitch-mobile-ui) .stitchMobileBar,
+  :global(#stitch-mobile-ui) .mobileBar {
+    display: grid;
+  }
+
+  :global(#stitch-mobile-ui) .stitchFloatingFab,
+  :global(#stitch-mobile-ui) .floatingFab {
+    display: flex;
+    animation: fabEntrance 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  :global(body) {
+    padding-bottom: 112px;
   }
 }
 
 /* Small phones */
 @media (max-width: 375px) {
-  .floatingFab {
+  :global(#stitch-mobile-ui) .stitchFloatingFab,
+  :global(#stitch-mobile-ui) .floatingFab {
     padding: 12px 16px;
     font-size: 14px;
     right: 16px;
   }
 
-  .fabIcon {
-    font-size: 16px;
+  :global(#stitch-mobile-ui) .stitchFabIcon,
+  :global(#stitch-mobile-ui) .fabIcon {
+    font-size: 14px;
   }
 
-  .mobileTab {
+  :global(#stitch-mobile-ui) .stitchMobileTab,
+  :global(#stitch-mobile-ui) .mobileTab {
     padding: 6px 2px;
   }
 
-  .mobileLabel {
-    font-size: 10px;
+  :global(#stitch-mobile-ui) .stitchMobileLabel,
+  :global(#stitch-mobile-ui) .mobileLabel {
+    font-size: 8px;
   }
 }
 
 /* RTL Support */
-[dir="rtl"] .floatingFab {
+:global([dir="rtl"]) :global(#stitch-mobile-ui) .stitchFloatingFab,
+:global([dir="rtl"]) :global(#stitch-mobile-ui) .floatingFab {
   right: auto;
   left: 20px;
 }
 
-[dir="rtl"] .bottomSheetLanguage {
-  margin-left: 0;
-  margin-right: auto;
+:global([dir="rtl"]) :global(#stitch-mobile-ui) .stitchMenuChevron {
+  transform: rotate(180deg);
 }
