@@ -314,15 +314,29 @@ export const getCharacterExtractionPrompt = (targetLanguage: Language = 'en') =>
     const languageName = LANGUAGE_NAMES[targetLanguage] || targetLanguage.toUpperCase();
 
     return `
-Analyze this image and create a highly detailed character reference description for an AI image generator.
-Focus on:
-- Physical features (face shape, eyes, nose, mouth, skin tone)
-- Hair (color, style, length, texture)
-- Age appearance
-- Distinctive features
-- Clothing style (if visible)
+Analyze this image and create a detailed character reference description (80-120 words) for consistent AI illustration generation.
 
-Be specific and detailed. This description will be used to generate consistent character illustrations.
+EXTRACT THESE LAYERS:
+
+1. PHYSICAL IDENTITY (anchors):
+   • Age/life stage (e.g., "toddler ~2-3 years old")
+   • Hair: color with nuances, texture, length, quirks
+   • Eyes: exact color, shape, expression quality
+   • Face: shape, distinctive features (dimples, teeth visibility, beauty marks)
+
+2. EMOTIONAL BASELINE:
+   • Default expression and energy (joyful, calm, curious, mischievous)
+   • How they carry themselves (warm, energetic, serene)
+
+3. PROPORTIONS:
+   • Age-appropriate body proportions
+   • Physical presence (soft, bouncy, grounded)
+
+4. SIGNATURE STYLING:
+   • Core clothing colors and style
+   • Texture cues (denim, cotton, knits)
+
+OUTPUT: Write a flowing paragraph capturing this character's "visual DNA" - a portable identity recognizable across any scene.
 
 IMPORTANT: Write your response in ${languageName}.
 `;
