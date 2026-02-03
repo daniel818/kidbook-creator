@@ -1,0 +1,67 @@
+{
+    "title": "Blondy's First Birthday",
+    "backCoverBlurb": "Blondy's turning 1! A celebration story with cake, balloons, and family. Join Blondy on her most special day yet.",
+    "characterDescription": "A young girl with curly, light blonde hair and bright blue eyes. She has a wide, happy smile. She is wearing a bright red t-shirt under blue denim overalls.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Today is a very special day. It is Blondy's first birthday!",
+            "imagePrompt": "Blondy with curly blonde hair and blue eyes smiling happily in her red shirt and denim overalls."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Look at all the bright balloons! Red, blue, and yellow.",
+            "imagePrompt": "A bunch of colorful balloons tied to a chair in a sunny room."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Blondy's family is here to celebrate. Happy Birthday! they sing.",
+            "imagePrompt": "Blondy's family clapping and smiling around her."
+        },
+        {
+            "pageNumber": 4,
+            "text": "There is a big, yummy cake with one little candle.",
+            "imagePrompt": "A delicious birthday cake with a single candle on top."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Blondy looks at the cake. She wants a little taste!",
+            "imagePrompt": "Blondy looking curiously at the birthday cake."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Yay! Cake is so sweet and delicious.",
+            "imagePrompt": "Blondy with a bit of frosting on her nose, laughing."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Blondy opens a present. It's a soft, new teddy bear!",
+            "imagePrompt": "Blondy holding a new brown teddy bear."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Everyone is playing and having so much fun.",
+            "imagePrompt": "Children playing with toys on a colorful rug."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Blondy loves her birthday party very much.",
+            "imagePrompt": "Blondy sitting among wrapping paper, looking happy."
+        },
+        {
+            "pageNumber": 10,
+            "text": "The sun is setting. It was a wonderful day.",
+            "imagePrompt": "Warm sunlight coming through the window at the end of the party."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Blondy is a big girl now. She is one year old!",
+            "imagePrompt": "Blondy looking proud with a '1' on her shirt."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Goodnight, birthday girl. Sleep tight.",
+            "imagePrompt": "Blondy sleeping peacefully in her crib."
+        }
+    ]
+}

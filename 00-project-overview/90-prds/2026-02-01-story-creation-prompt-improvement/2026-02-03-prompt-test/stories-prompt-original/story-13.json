@@ -1,0 +1,67 @@
+{
+    "title": "Jasmins erster Tag in der Schule",
+    "backCoverBlurb": "Jasmin kommt in die Schule! Sie ist aufgeregt, aber auch ein wenig ängstlich. Begleite Jasmin bei ihrem großen Abenteuer und lerne, wie man mutig ist.",
+    "characterDescription": "Eine Frau mit langen, glatten blonden Haaren mit leicht bräunlichen Nuancen. Sie hat auffallend hellblaue Augen und ein freundliches, warmes Lächeln. Ihre Haut ist hell. Sie trägt eine dunkelblaue Strickjacke über einem dunklen Oberteil.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Heute war ein ganz großer Tag. Jasmin kam in die Schule!",
+            "imagePrompt": "Jasmin mit blonden Haaren und blauen Augen trägt einen Schulranzen."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Ihr Ranzen war bunt und sie hielt Mamas Hand ganz fest.",
+            "imagePrompt": "Jasmin hält Mamas Hand und schaut zum Schulgebäude."
+        },
+        {
+            "pageNumber": 3,
+            "text": "In der Schule gab es so viele neue Kinder und Stimmen.",
+            "imagePrompt": "Viele Kinder mit Schultüten auf dem Pausenhof."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Jasmin fühlte sich ein kleines bisschen schüchtern.",
+            "imagePrompt": "Jasmin schaut etwas verunsichert mit großen Augen."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Doch dann kam ihre Lehrerin und lächelte sie freundlich an.",
+            "imagePrompt": "Eine freundliche Lehrerin begrüßt Jasmin in der Klasse."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Willkommen in unserer Klasse, liebe Jasmin! sagte sie.",
+            "imagePrompt": "Das Klassenzimmer ist bunt mit Bildern an den Wänden."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Jasmin fand einen Platz neben einem netten Mädchen.",
+            "imagePrompt": "Jasmin sitzt an einem kleinen Tisch und lächelt."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Sie lernten die ersten Buchstaben und malten schöne Bilder.",
+            "imagePrompt": "Ein Blatt Papier mit bunten Buchstaben und Zeichnungen."
+        },
+        {
+            "pageNumber": 9,
+            "text": "In der Pause spielten alle zusammen auf dem Hof.",
+            "imagePrompt": "Jasmin läuft und lacht mit anderen Kindern."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Jasmin merkte, dass Schule eigentlich sehr viel Spaß macht.",
+            "imagePrompt": "Jasmin strahlt über das ganze Gesicht."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Sie war stolz, dass sie so mutig gewesen war.",
+            "imagePrompt": "Jasmin steht stolz vor der Tafel."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Am Ende des Tages freute sie sich schon auf morgen.",
+            "imagePrompt": "Jasmin verlässt die Schule mit einem fröhlichen Winken."
+        }
+    ]
+}

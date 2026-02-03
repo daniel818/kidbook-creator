@@ -1,0 +1,67 @@
+{
+    "title": "May the Brave Firefighter",
+    "backCoverBlurb": "May wants to be a firefighter when he grows up! He loves fire trucks and helping people. Join Firefighter May as he saves the day.",
+    "characterDescription": "A young toddler boy with dark blonde, curly hair and big blue eyes. He often looks surprised or excited. He is wearing a yellow firefighter jacket and a red helmet.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "May put on his shiny red helmet. I am Firefighter May! he said.",
+            "imagePrompt": "May with curly blonde hair and blue eyes wearing a large red firefighter helmet."
+        },
+        {
+            "pageNumber": 2,
+            "text": "He jumped into his big, bright red fire truck. Wee-woo!",
+            "imagePrompt": "May sitting inside a toy-like red fire truck with flashing lights."
+        },
+        {
+            "pageNumber": 3,
+            "text": "The fire truck zoomed down the street to help people.",
+            "imagePrompt": "A red fire truck driving fast on a sunny road."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Oh no! A little puppy was stuck on a high roof.",
+            "imagePrompt": "A small brown puppy sitting nervously on a rooftop."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Firefighter May is here! Don't be scared, puppy.",
+            "imagePrompt": "May looking up at the puppy with a determined face."
+        },
+        {
+            "pageNumber": 6,
+            "text": "He climbed up the long, silver ladder very carefully.",
+            "imagePrompt": "May climbing a ladder, looking brave and focused."
+        },
+        {
+            "pageNumber": 7,
+            "text": "He grabbed the puppy and held it close to his chest.",
+            "imagePrompt": "May hugging the puppy while sitting on the ladder."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Everyone on the street cheered for Firefighter May. Yay!",
+            "imagePrompt": "A group of people clapping and smiling below."
+        },
+        {
+            "pageNumber": 9,
+            "text": "May felt very proud to be a helper in his town.",
+            "imagePrompt": "May with a big, joyful smile and bright blue eyes."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Being a firefighter is a big and important job.",
+            "imagePrompt": "May standing next to his fire truck, looking strong."
+        },
+        {
+            "pageNumber": 11,
+            "text": "It was time to go back to the station for a rest.",
+            "imagePrompt": "The fire station with large red doors in the evening."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Goodnight, Firefighter May. You are a real hero!",
+            "imagePrompt": "May sleeping in his bed with his red helmet nearby."
+        }
+    ]
+}

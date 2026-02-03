@@ -1,0 +1,67 @@
+{
+    "title": "May the Brave Firefighter",
+    "backCoverBlurb": "May is a real hero! Join him as he puts on his red helmet and drives his big fire truck to help those in need in this exciting and brave adventure.",
+    "characterDescription": "A young toddler boy with dark blonde, curly hair and big blue eyes. He often looks surprised or excited with his mouth in an 'O' shape. He is wearing a yellow firefighter jacket.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "May put on his large red helmet. I am Firefighter May! he said. Can you salute like a hero?",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is wearing a large red firefighter helmet and a yellow jacket, looking very brave and focused."
+        },
+        {
+            "pageNumber": 2,
+            "text": "He jumped into his bright red fire truck. Wee-woo! Wee-woo! went the loud siren.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is sitting in a toy fire truck with red and blue lights flashing on top."
+        },
+        {
+            "pageNumber": 3,
+            "text": "The fire truck zoomed down the street. Whoosh! The wind felt fast on May's face.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is steering the fire truck with a determined and excited expression on his face."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Oh no! A little puppy was stuck on a high rooftop. It looked very scared. Poor puppy!",
+            "imagePrompt": "A small brown puppy is sitting on the edge of a rooftop, looking down sadly at the ground far below."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Don't worry, I am here to help! May said. He felt very strong and confident.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is looking up at the rooftop with a supportive and brave smile."
+        },
+        {
+            "pageNumber": 6,
+            "text": "May climbed up the long, silver ladder. Climb, climb, climb! It was very high.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is carefully climbing a silver ladder, looking very focused on his rescue mission."
+        },
+        {
+            "pageNumber": 7,
+            "text": "He reached the puppy and gave it a soft cuddle. The puppy was warm and fuzzy.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is holding the small puppy in his arms on the rooftop, looking very glad."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Everyone below cheered for Firefighter May. Yay! Hurray! they all shouted together.",
+            "imagePrompt": "A group of happy people standing on the sidewalk, clapping and waving to Firefighter May above."
+        },
+        {
+            "pageNumber": 9,
+            "text": "May felt very proud and happy to be a helper. Helping others is a super job!",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is standing by his fire truck, looking empowered and joyful."
+        },
+        {
+            "pageNumber": 10,
+            "text": "The fire truck made a low hum. Vroom! It was time to go back to the station.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is back in his fire truck, waving to the people as he drives away."
+        },
+        {
+            "pageNumber": 11,
+            "text": "May felt very content and safe. He was the bravest firefighter in the whole world.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is sitting quietly with a happy smile, feeling very good about his day."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Goodnight, Firefighter May. Sleep tight with your hero helmet nearby. You did great!",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. A peaceful image of May sleeping soundly in his bed after his big rescue."
+        }
+    ]
+}

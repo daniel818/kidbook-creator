@@ -1,0 +1,67 @@
+{
+    "title": "Super May and the Red Cape",
+    "backCoverBlurb": "May is a real superhero! With his bright red cape and big blue eyes, he's ready to fly and help everyone in his neighborhood in this exciting adventure.",
+    "characterDescription": "A young toddler boy with dark blonde, curly hair and big blue eyes. He often looks surprised or excited with his mouth in an 'O' shape. He is wearing a bright red cape over a blue and white striped shirt.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "May put on his bright red cape. Snap! it went around his neck. Now I am a hero! Can you stand tall?",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is wearing a bright red cape and standing very straight and tall on a green lawn, looking brave."
+        },
+        {
+            "pageNumber": 2,
+            "text": "He zoomed across the garden. Whoosh! The wind felt cool on his face. He felt so fast.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is running fast with his red cape fluttering behind him like a flag in the sunny garden."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Super May heard a tiny cry. Meow! A little kitty was stuck high up in a tree.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is looking up at a tall tree with his mouth in an 'O' shape, looking surprised and focused."
+        },
+        {
+            "pageNumber": 4,
+            "text": "I will help you, kitty! May reached up with his strong arms. Stretch, stretch!",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is reaching high towards a branch, showing his back as his red cape spreads out."
+        },
+        {
+            "pageNumber": 5,
+            "text": "The kitty jumped into May's soft arms. Purr! Super May saved the day.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is holding a small grey kitten and smiling happily, looking very empowered."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Then he saw Grandpa. His heavy bags made a loud thud! on the ground.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is looking at a man standing with two big brown grocery bags by a garden gate."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Super May used his super strength to help carry a bag. He felt so strong and useful.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is trying to lift a bag with a determined and focused expression on his face."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Thank you, May! said Grandpa with a big smile and a warm hug. You are my hero.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. Grandpa is patting May's head, and May is smiling widely with pride."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Being a hero is about helping and being kind. Super May felt very, very happy.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is standing with his hands on his hips, looking content and powerful in the garden."
+        },
+        {
+            "pageNumber": 10,
+            "text": "It was time for a superhero snack. Crunch! May ate a yummy red apple. Can you pretend to eat an apple?",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is sitting at a wooden table, taking a big bite out of a red apple, looking delighted."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Even heroes get sleepy. May took off his cape and folded it carefully. Shhh...",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is holding his folded red cape and walking towards his bed with a tired expression."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Goodnight, Super May. You did a great job today. Sleep tight with a happy heart.",
+            "imagePrompt": "A young toddler boy with dark blonde, curly hair and big blue eyes. May is sleeping soundly, looking very calm and safe under a warm blanket."
+        }
+    ]
+}

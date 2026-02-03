@@ -1,0 +1,67 @@
+{
+    "title": "Jasmins Garten-Geburtstagsparty",
+    "backCoverBlurb": "Jasmin wird 4 Jahre alt! Sie wünscht sich eine Gartenparty mit Schmetterlingen und Blumen. Begleite Jasmin bei ihrer zauberhaften Feier.",
+    "characterDescription": "Eine Frau mit langen, glatten blonden Haaren mit leicht bräunlichen Nuancen. Sie hat auffallend hellblaue Augen und ein freundliches, warmes Lächeln. Ihre Haut ist hell. Sie trägt eine dunkelblaue Strickjacke über einem dunklen Oberteil.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Heute war Jasmins Geburtstag. Sie wurde endlich vier Jahre alt!",
+            "imagePrompt": "Jasmin mit blonden Haaren und blauen Augen lächelt glücklich."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Im Garten gab es viele bunte Blumen und Dekorationen.",
+            "imagePrompt": "Ein Garten voller Blumen und bunter Girlanden in der Sonne."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Überall flogen wunderschöne Schmetterlinge durch die Luft.",
+            "imagePrompt": "Bunte Schmetterlinge tanzen über den Blüten im Garten."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Schau mal, wie sie tanzen! rief Jasmin begeistert.",
+            "imagePrompt": "Jasmin zeigt auf die Schmetterlinge und freut sich."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Alle ihre Freunde kamen zur großen Feier in den Garten.",
+            "imagePrompt": "Eine Gruppe fröhlicher Kinder läuft in den Garten."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Es gab Spiele, Musik und ganz viel Lachen überall.",
+            "imagePrompt": "Die Kinder spielen fangen auf dem grünen Rasen."
+        },
+        {
+            "pageNumber": 7,
+            "text": "In der Mitte stand ein Tisch mit einer großen Torte.",
+            "imagePrompt": "Eine festlich geschmückte Geburtstagstorte auf einem Tisch."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Jasmin durfte die vier Kerzen auf einmal auspusten.",
+            "imagePrompt": "Jasmin holt tief Luft, um die Kerzen auszupusten."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Alle sangen Happy Birthday für das Geburtstagskind.",
+            "imagePrompt": "Die Gäste singen und klatschen für Jasmin."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Jasmin bekam viele schöne Geschenke von ihren Freunden.",
+            "imagePrompt": "Jasmin sitzt vor einem Haufen bunter Geschenke."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Der Tag im Garten war einfach nur traumhaft schön.",
+            "imagePrompt": "Die Abendsonne beleuchtet den friedlichen Garten."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Müde und glücklich schlief Jasmin am Abend ein.",
+            "imagePrompt": "Jasmin schläft mit einem Lächeln in ihrem Bett."
+        }
+    ]
+}

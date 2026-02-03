@@ -1,0 +1,67 @@
+{
+    "title": "Schlaf gut, liebe Jasmin",
+    "backCoverBlurb": "Jasmin beobachtet gerne den Mond und die fernen Sterne. Begleite sie in dieser sanften Einschlafgeschichte auf ihrem Weg ins Traumland.",
+    "characterDescription": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie trägt eine weiche dunkelblaue Strickjacke.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Es war Zeit für das Bett. Draußen wurde es schon dunkel. Kannst du den Mond sehen?",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie schaut lächelnd aus dem Fenster in den dunkelblauen Nachthimmel. Sanftes Mondlicht fällt auf ihr Gesicht."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Der große, silberne Mond leuchtete hell am Himmel. Blink, blink, machten die kleinen Sterne.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie zeigt mit dem Finger auf einen großen, runden Mond und funkelnde Sterne am klaren Himmel."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Jasmin winkte dem Mond zu. Winke, winke! Der Mond leuchtete warm zurück.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie steht am Fenster und winkt fröhlich dem Mond zu, der freundlich zurückzustrahlen scheint."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Die Sterne sahen aus wie kleine, helle Lichterketten. Alles war ganz ruhig und fein.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie betrachtet staunend die vielen kleinen Sterne, die wie Diamanten am Himmel funkeln."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Jasmin kuschelte sich in ihre warme, weiche Decke. Sie war so flauschig und gemütlich.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie liegt im Bett und zieht sich eine hellblaue, flauschige Decke bis zur Nase hoch."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Ihr Kopf lag auf dem weichen Kissen. Pffft, machte Jasmin und gähnte ganz laut.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie liegt entspannt auf einem weißen Kissen und hat den Mund weit zum Gähnen geöffnet."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Ihre Augen wurden langsam schwer. Alles war friedlich in Jasmins hellem Zimmer.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Ihre Augenlider sind halb geschlossen, und sie sieht sehr schläfrig aus. Eine kleine Sterne-Lampe leuchtet."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Gute Nacht, kleine Jasmin. Der Mond passt heute gut auf dich auf.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie schläft friedlich in ihrem Bett, während der Mond sanft durch das Fenster scheint."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Sie träumte von einer weichen Wolke, die sie sanft durch die Nacht trug. Huiii!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Im Traum schwebt sie auf einer großen, weißen Wolke über einer stillen Stadt unter dem Sternenhimmel."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Die Sterne flüsterten leise: Träum süß, kleine Jasmin, bis die Sonne wieder lacht.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie lächelt im Schlaf, umgeben von kleinen, glitzernden Sternen im Traumland."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Ein sanfter Wind wehte durch die Bäume. Alles schlief nun tief und fest.",
+            "imagePrompt": "Eine nächtliche Szene mit Bäumen, die sich leicht im Wind bewegen, unter einem tiefblauen Himmel mit Mond und Sternen."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Schlaf gut und werde morgen mit einem Lächeln wieder wach. Gute Nacht!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Eine Nahaufnahme von Jasmins Gesicht, wie sie glücklich und tief schläft."
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "title": "Jasmins Reise zu den Pyramiden",
+    "backCoverBlurb": "Jasmin entdeckt eine magische Uhr und reist weit zurück in der Zeit. Erlebe mit ihr ein spannendes Abenteuer im alten Ägypten, mit heißem Sand und goldenen Schätzen.",
+    "characterDescription": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Sie trägt eine dunkelblaue Strickjacke.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Jasmin fand eine alte, schwere Uhr auf dem Dachboden. Sie glänzte ganz golden. Kannst du auch so glänzen?",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin hält eine funkelnde goldene Taschenuhr in der Hand und schaut sie staunend an."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Als sie an der Uhr drehte, machte es: Klick-klack! Plötzlich begann alles um sie herum zu wirbeln. Huiii!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Ein heller Zeitstrudel aus blauem und goldenem Licht umgibt die überraschte Jasmin."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Plötzlich stand Jasmin im warmen, gelben Sand. Vor ihr waren riesige Pyramiden. Point to the biggest one!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin steht in einer weiten Wüste vor den gewaltigen Pyramiden unter einer heißen Sonne."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Es war das alte Ägypten! Alles war so bunt und neu. Jasmin fühlte sich wie eine echte Entdeckerin.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin schaut mit begeistertem Blick auf eine belebte ägyptische Stadt am Nil."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Der Sand fühlte sich körnig und heiß an. Reibe mal deine Hände, als hättest du Sand darauf!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin hockt im Sand und lässt ihn durch ihre Finger rieseln, sie sieht sehr interessiert aus."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Jasmin sah Kamele mit großen Höckern. Sie machten: Mampf, mampf! während sie fraßen.",
+            "imagePrompt": "Zwei große, braune Kamele stehen im Schatten einer Palme und kauen gemütlich auf Blättern."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Sie entdeckte geheimnisvolle Zeichen an den Wänden. Sie waren glatt und kühl. Was bedeuten sie wohl?",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin fährt mit dem Finger über Hieroglyphen an einer alten Steinwand."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Ein kleiner Junge schenkte ihr eine blaue Kette. Sie war so glatt wie Glas. Danke! sagte Jasmin.",
+            "imagePrompt": "Ein ägyptischer Junge reicht Jasmin eine Kette mit blauen Perlen, und Jasmin lächelt ihm dankbar zu."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Jasmin war stolz, so viel über die alte Zeit zu lernen. Geschichte ist wie ein großes Puzzle!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin steht vor einer Sphinx-Statue und sieht sehr klug und empowered aus."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Die goldene Uhr begann wieder hell zu leuchten. Blink, blink! Es war Zeit, nach Hause zu gehen.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Die Taschenuhr in Jasmins Hand strahlt ein magisches Licht aus, das sie einhüllt."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Mit einem leisen: Wusch! war Jasmin wieder zurück auf ihrem Dachboden. Was für ein tolles Abenteuer!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin steht wieder zwischen alten Kisten und hält die Uhr fest, mit einem glücklichen Lächeln."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Müde und voller neuer Bilder im Kopf legte sie sich schlafen. Gute Nacht, mutige Entdeckerin!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und wunderschöne hellblaue Augen. Jasmin schläft tief und fest, während die blaue Kette auf ihrem Nachttisch liegt."
+        }
+    ]
+}

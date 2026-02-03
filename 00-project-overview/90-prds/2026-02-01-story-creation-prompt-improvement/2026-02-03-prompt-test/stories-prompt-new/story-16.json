@@ -1,0 +1,67 @@
+{
+    "title": "Blondy Is Braver Than the Dark",
+    "backCoverBlurb": "Blondy is a brave explorer, even when the lights go out! Join her as she discovers that the dark night is full of quiet magic and peaceful dreams.",
+    "characterDescription": "A young girl with curly, light blonde hair and bright blue eyes. She has a wide, happy and energetic smile. She is wearing red pajamas with little white stars.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "When the sun went down, Blondy saw shadows on the wall. They looked big and strange. Can you show me a brave face?",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is standing in her room at twilight, looking at the wall with a determined and brave expression."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Everything felt quiet and a little bit chilly. Shhh... can you hear the night? It was as soft as a whisper.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is sitting on her bed, tilting her head and listening to the quiet sounds of the evening."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Blondy hugged her teddy bear. He was warm and fuzzy. I am a brave girl! she said. Point to your heart.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is hugging a soft brown bear tightly and touching her chest with her hand, looking proud."
+        },
+        {
+            "pageNumber": 4,
+            "text": "She clicked her little nightlight on. Click! It glowed like a soft, golden star in her room.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is pressing a button on a small star-shaped lamp that is emitting a warm, golden glow."
+        },
+        {
+            "pageNumber": 5,
+            "text": "The scary shadows were just her toys! The big monster was only her wooden horse. Phew!",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is looking at a toy horse and smiling, looking very relieved and happy."
+        },
+        {
+            "pageNumber": 6,
+            "text": "The night was actually very calm and beautiful. The moon was a smooth, white circle in the sky.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is looking out the window at a bright, full moon that shines into her room."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Blondy felt very strong and safe. She knew that the dark was just a time for resting.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is standing tall in her room, looking very empowered and confident."
+        },
+        {
+            "pageNumber": 8,
+            "text": "She tucked herself into her soft blankets. They felt like a warm, cozy hug for her whole body.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is lying in bed, pulling up a thick, colorful blanket and looking very comfortable."
+        },
+        {
+            "pageNumber": 9,
+            "text": "The stars outside twinkled. Blink, blink! They were like tiny night-lights just for her.",
+            "imagePrompt": "A clear night sky with millions of tiny, twinkling stars seen through Blondy's bedroom window."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Blondy was the bravest explorer of the night. She was ready for the land of dreams.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is smiling peacefully in her bed, with a little dreamy look on her face."
+        },
+        {
+            "pageNumber": 11,
+            "text": "It is good to be brave and confident. You did a great job today! Wave goodnight to the moon.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. Blondy is waving her hand at the moon outside with a sweet and tired smile."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Goodnight, brave Blondy. Sleep tight and have the most magical, star-filled dreams ever.",
+            "imagePrompt": "A young girl with curly, light blonde hair and bright blue eyes. A peaceful close-up of Blondy sleeping soundly, looking very calm and safe."
+        }
+    ]
+}

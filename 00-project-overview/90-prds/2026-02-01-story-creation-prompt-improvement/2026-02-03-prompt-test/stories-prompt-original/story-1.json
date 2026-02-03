@@ -1,0 +1,67 @@
+{
+    "title": "Gute Nacht, Jasmin",
+    "backCoverBlurb": "Eine süße Einschlafgeschichte für die kleine Jasmin. Sie beobachtet gerne den Mond und die Sterne, bevor sie ins Traumland reist.",
+    "characterDescription": "Eine Frau mit langen, glatten blonden Haaren mit leicht bräunlichen Nuancen. Sie hat auffallend hellblaue Augen und ein freundliches, warmes Lächeln. Ihre Haut ist hell. Sie trägt eine dunkelblaue Strickjacke über einem dunklen Oberteil.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Es war Schlafenszeit für Jasmin. Sie schaute aus dem Fenster.",
+            "imagePrompt": "Jasmin mit langen blonden Haaren und blauen Augen schaut lächelnd aus dem Fenster. Der Himmel ist dunkelblau."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Draußen leuchtete der große, silberne Mond am Himmel.",
+            "imagePrompt": "Ein großer, heller Mond am Nachthimmel über einem ruhigen Garten."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Jasmin sah viele kleine Sterne, die wie Diamanten funkelten.",
+            "imagePrompt": "Viele kleine, funkelnde Sterne am klaren Nachthimmel."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Gute Nacht, Mond, sagte Jasmin leise.",
+            "imagePrompt": "Jasmin winkt dem Mond zu. Sie sieht müde und glücklich aus."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Gute Nacht, kleine Sterne, flüsterte sie dazu.",
+            "imagePrompt": "Jasmin liegt in ihrem Bett und schaut zu den Sternen."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Jasmin kuschelte sich in ihre warme, weiche Decke.",
+            "imagePrompt": "Jasmin liegt gemütlich unter einer blauen Decke in ihrem Zimmer."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Ihre Augen wurden langsam schwer und sie gähnte.",
+            "imagePrompt": "Jasmin hat die Augen halb geschlossen und gähnt."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Bald war Jasmin tief und fest eingeschlafen.",
+            "imagePrompt": "Jasmin schläft friedlich in ihrem Bett."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Sie träumte von einer Reise zu den fernen Sternen.",
+            "imagePrompt": "Jasmin schwebt im Traum durch ein Meer aus Sternen."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Der Mond passte die ganze Nacht auf sie auf.",
+            "imagePrompt": "Der Mond scheint sanft durch das Fenster auf die schlafende Jasmin."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Alles war ruhig und friedlich in der magischen Nacht.",
+            "imagePrompt": "Eine ruhige Nachtlandschaft unter dem Sternenhimmel."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Träum süß, kleine Jasmin, bis die Sonne wieder aufgeht.",
+            "imagePrompt": "Nahaufnahme der lächelnden, schlafenden Jasmin."
+        }
+    ]
+}

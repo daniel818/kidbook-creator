@@ -250,33 +250,43 @@ Write ENTIRELY in ${languageName}. NO other languages.
 
 --- IMAGE PROMPTS (CRITICAL) ---
 
-Each imagePrompt: 40-100 words, RICH scene description.
+Each imagePrompt MUST be 60-100 words of PURE SCENE DESCRIPTION.
+DO NOT include the character description in the imagePrompt - it is already provided separately in characterDescription.
 
 MANDATORY STRUCTURE:
-Start each imagePrompt with: "${input.characterDescription || input.childName}" followed by action and setting.
+"[Character Action]. [Setting with specific details]. [Atmosphere and mood]. [Composition notes]."
 
-Example: "${input.characterDescription}. [Action: what they're doing]. [Setting: location, time of day, atmosphere, colors, mood]."
+EXAMPLE (Good - 75 words):
+"Standing in the center of a cheerful playroom bathed in warm afternoon sunlight streaming through a large window. A soft cream-colored rug beneath her feet, wooden shelves behind her hold colorful stacking toys and plush animals. A big red balloon floats near the ceiling. Walls painted soft mint green, golden dust particles dance in the sunbeams. She claps her hands with pure joy, eyes sparkling. Medium shot, slightly low angle."
 
-MANDATORY ELEMENTS:
-1. Character from characterDescription (appearance, expression, pose)
-2. Setting: location, time of day, atmosphere
-3. Action: what's happening, dynamic elements
-4. Visuals: colors, textures, specific objects
-5. Composition: focal point, spatial relationships
+FIVE MANDATORY ELEMENTS:
+1. ACTION: What the character is doing (dynamic verb, expression, pose)
+2. SETTING: Specific location (not just "room" - describe it: "cozy wooden nursery with star-patterned curtains")
+3. LIGHTING/TIME: Natural light source, time of day, shadows ("warm morning sun through sheer curtains")
+4. BACKGROUND DETAILS: 3-5 specific objects or environmental features with colors
+5. COMPOSITION: Camera angle, focal point, spatial relationships
+
+QUALITY CHECKLIST:
+✓ 60-100 words minimum (scene only, not including character)
+✓ At least 3 specific colors mentioned
+✓ Lighting source specified
+✓ 3+ background objects/details
+✓ Clear action verb
 
 RESTRICTIONS:
 ✗ NO text/words/letters in illustrations
 ✗ NO signs, labels, speech bubbles
+✗ NO character description in imagePrompt (already provided separately)
 
 ATMOSPHERE:
 - **Realistic stories:** Natural lighting, authentic expressions, warm tones, emotional connections
 - **Fantasy stories:** Magical glows, sparkles, vibrant mystical colors - ALL WELCOME!
 
 AGE-SPECIFIC IMAGERY:
-- Ages 0-2: Simple focal points, primary colors
-- Ages 3-4: 2-3 focal points, vibrant colors
-- Ages 5-6: Multiple elements, action scenes
-- Ages 7-12: Complex scenes, nuanced expressions
+- Ages 0-2: Simple focal points, primary colors, high contrast
+- Ages 3-4: 2-3 focal points, vibrant colors, playful compositions
+- Ages 5-6: Multiple elements, action scenes, dynamic angles
+- Ages 7-12: Complex scenes, nuanced expressions, environmental storytelling
 
 --- OUTPUT FORMAT ---
 

@@ -1,0 +1,67 @@
+{
+    "title": "Blondy's Dinosaur Discovery",
+    "backCoverBlurb": "Blondy knows all the dinosaur names! She wants to meet a friendly T-Rex and Triceratops. Join her on an epic prehistoric adventure.",
+    "characterDescription": "A young girl with curly, light blonde hair and bright blue eyes. She has a wide, happy smile. She is wearing a bright red t-shirt under blue denim overalls.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Blondy was reading her big book about dinosaurs.",
+            "imagePrompt": "Blondy with curly blonde hair and blue eyes reading a large book."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Suddenly, her book started to glow and sparkle!",
+            "imagePrompt": "The book in Blondy's hands is emitting a bright, magical light."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Blondy stepped inside and was in a forest of giant ferns.",
+            "imagePrompt": "Blondy standing among huge green plants and tall trees."
+        },
+        {
+            "pageNumber": 4,
+            "text": "RAWR! A friendly T-Rex came to say hello to her.",
+            "imagePrompt": "A large, green but smiling T-Rex looking down at Blondy."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Blondy wasn't scared. Hello, Mr. T-Rex! she said.",
+            "imagePrompt": "Blondy waving her hand and smiling at the dinosaur."
+        },
+        {
+            "pageNumber": 6,
+            "text": "The T-Rex gave Blondy a ride on his big, strong back.",
+            "imagePrompt": "Blondy sitting on the back of the T-Rex, looking excited."
+        },
+        {
+            "pageNumber": 7,
+            "text": "They met a Triceratops named Toby near a blue lake.",
+            "imagePrompt": "A Triceratops with three horns standing by a clear lake."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Toby shared some delicious green leaves with Blondy.",
+            "imagePrompt": "The Triceratops offering a bunch of leaves to Blondy."
+        },
+        {
+            "pageNumber": 9,
+            "text": "The land of dinosaurs was full of amazing sights.",
+            "imagePrompt": "Vibrant landscape with mountains and prehistoric creatures."
+        },
+        {
+            "pageNumber": 10,
+            "text": "It was time for Blondy to go back home to her room.",
+            "imagePrompt": "The magical light appearing again around Blondy."
+        },
+        {
+            "pageNumber": 11,
+            "text": "She waved goodbye to all her new dinosaur friends.",
+            "imagePrompt": "Blondy waving as she departs the prehistoric world."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Blondy closed her book and smiled. What an adventure!",
+            "imagePrompt": "Blondy sitting in her room, holding the closed book."
+        }
+    ]
+}

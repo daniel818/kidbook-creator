@@ -1,0 +1,67 @@
+{
+    "title": "May Loves Hugs",
+    "backCoverBlurb": "A story about hugs and cuddles. May loves hugging his teddy bear and mommy. Join him in this heartwarming tale of affection.",
+    "characterDescription": "A young toddler boy with dark blonde, curly hair and big blue eyes. He often has an expression of surprise or wonder. He is wearing a blue and white striped shirt and a light blue bib.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "It was a sunny morning. May was ready for a hug!",
+            "imagePrompt": "May with curly blonde hair and blue eyes looks excited in his high chair."
+        },
+        {
+            "pageNumber": 2,
+            "text": "He saw his favorite teddy bear. Hug! said May.",
+            "imagePrompt": "May holding a fluffy brown teddy bear tightly."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Soft and warm, the teddy felt so good.",
+            "imagePrompt": "Close up of May smiling while hugging his teddy bear."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Then Mommy walked into the room. Hug! May cried.",
+            "imagePrompt": "May reaching out his arms towards his mommy."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Mommy gave him a big, sweet squeeze.",
+            "imagePrompt": "May being hugged by his mommy, looking very happy."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Hugs are the best! thought little May.",
+            "imagePrompt": "May with a wide smile and bright blue eyes."
+        },
+        {
+            "pageNumber": 7,
+            "text": "He gave his kitty a gentle hug too. Purr, purr.",
+            "imagePrompt": "May gently patting a soft kitten."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Even his pillow got a sleepy hug at nap time.",
+            "imagePrompt": "May lying down with his head on a soft white pillow."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Hugs make everyone feel happy and safe.",
+            "imagePrompt": "May looking content and peaceful."
+        },
+        {
+            "pageNumber": 10,
+            "text": "May loved to share his hugs all day long.",
+            "imagePrompt": "May waving his hands with a joyful expression."
+        },
+        {
+            "pageNumber": 11,
+            "text": "One more big hug for Mommy before bed.",
+            "imagePrompt": "May hugging his mommy again in the evening light."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Sweet dreams, May. Hugs for you tonight.",
+            "imagePrompt": "May sleeping soundly with his teddy bear."
+        }
+    ]
+}

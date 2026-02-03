@@ -1,0 +1,67 @@
+{
+    "title": "Jasmins mutiger erster Schultag",
+    "backCoverBlurb": "Jasmin kommt in die Schule! Begleite sie bei diesem großen Schritt, entdecke ihr buntes Klassenzimmer und lerne, wie man neue Freunde findet.",
+    "characterDescription": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Sie trägt einen bunten Schulranzen über ihrer dunkelblauen Strickjacke.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Heute war ein ganz großer Tag für Jasmin. Sie ging zum ersten Mal in die Schule! Bist du auch schon mal wo zum ersten Mal hingegangen?",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin steht vor ihrem Haus mit einem bunten Schulranzen und lächelt stolz."
+        },
+        {
+            "pageNumber": 2,
+            "text": "Ihr Ranzen war ein bisschen schwer, aber Jasmin fühlte sich ganz wichtig. Er machte: Ratsch, ratsch! beim Schließen.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin zieht an den Riemen ihres Ranzens und sieht sehr entschlossen aus."
+        },
+        {
+            "pageNumber": 3,
+            "text": "Auf dem Schulweg hielt sie Mamas Hand ganz fest. Die Hand war warm und weich. Drück mal ganz fest zu!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin hält die Hand ihrer Mama und geht einen hellen Weg entlang zum Schulgebäude."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Vor der Schule waren viele Kinder. Es war ein lautes Gewusel. Hallo, hallo! riefen alle durcheinander.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin steht auf dem belebten Schulhof und schaut sich mit großen Augen um."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Jasmin fühlte sich erst ein bisschen schüchtern. Sie versteckte sich kurz hinter Mama. Kannst du dich auch verstecken?",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin schaut ein wenig zaghaft hinter dem Rücken ihrer Mama hervor."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Doch dann kam Herr Müller, ihr neuer Lehrer. Er hatte ein freundliches Lächeln und eine tiefe, warme Stimme.",
+            "imagePrompt": "Ein freundlicher Mann mit Brille begrüßt Jasmin und ihre Mama vor dem Klassenzimmer. Jasmin schaut ihn neugierig an."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Im Klassenzimmer hingen viele bunte Bilder an den Wänden. Es roch nach frischem Papier und Holzstiften.",
+            "imagePrompt": "Das Innere eines hellen, farbenfrohen Klassenzimmers mit kleinen Tischen, Stühlen und vielen Zeichnungen an der Wand."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Jasmin fand einen Platz neben einem Mädchen mit lustigen Zöpfen. Hallo, ich bin Jasmin, sagte sie ganz mutig.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin sitzt an einem Tisch und schenkt ihrer Nachbarin ein strahlendes Lächeln."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Zusammen malten sie ein großes Haus mit vielen Fenstern. Kratz, kratz! machten die Stifte auf dem Papier.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin hält einen blauen Stift in der Hand und malt konzentriert auf ein weißes Blatt."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Die Zeit verging wie im Flug. Jasmin merkte: Schule macht ja richtig viel Spaß! Sie fühlte sich stark und klug.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin steht auf dem Schulhof und lacht fröhlich mit anderen Kindern."
+        },
+        {
+            "pageNumber": 11,
+            "text": "Am Ende des Tages wartete Mama schon. Wie war es? fragte sie. Es war einfach spitze! rief Jasmin.",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Jasmin läuft mit ausgebreiteten Armen auf ihre Mama zu und strahlt."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Müde und stolz schlief Jasmin am Abend ein. Sie freute sich schon riesig auf morgen. Gute Nacht, Schulkind!",
+            "imagePrompt": "Jasmin hat lange, glatte blonde Haare mit leicht bräunlichen Nuancen und strahlend hellblaue Augen. Eine Nahaufnahme von Jasmin, die friedlich in ihrem Bett schläft, mit ihrem Ranzen daneben."
+        }
+    ]
+}

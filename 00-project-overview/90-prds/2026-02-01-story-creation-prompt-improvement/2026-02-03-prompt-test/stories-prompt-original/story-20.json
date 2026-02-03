@@ -1,0 +1,67 @@
+{
+    "title": "Blondy the Young Inventor",
+    "backCoverBlurb": "Blondy loves building things and science experiments. She wants to invent something that helps people—maybe a robot! Join her in her workshop.",
+    "characterDescription": "A young girl with curly, light blonde hair and bright blue eyes. She has a wide, happy smile. She is wearing blue denim overalls and has a pencil tucked behind her ear.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Blondy's room was full of boxes, gears, and lots of tape.",
+            "imagePrompt": "Blondy with curly blonde hair surrounded by craft supplies."
+        },
+        {
+            "pageNumber": 2,
+            "text": "I want to build a robot friend! Blondy said with a smile.",
+            "imagePrompt": "Blondy looking enthusiastically at a drawing of a robot."
+        },
+        {
+            "pageNumber": 3,
+            "text": "She found a silver box and some old, shiny bicycle lights.",
+            "imagePrompt": "Blondy holding a metallic box and looking through a junk drawer."
+        },
+        {
+            "pageNumber": 4,
+            "text": "Blondy worked all afternoon, building and fixing and taping.",
+            "imagePrompt": "Blondy working hard with a small screwdriver and colorful wire."
+        },
+        {
+            "pageNumber": 5,
+            "text": "Finally, the robot was ready. Its eyes glowed bright red.",
+            "imagePrompt": "A small robot made of boxes with glowing red eye lights."
+        },
+        {
+            "pageNumber": 6,
+            "text": "Hello, Blondy! said the robot. My name is Sparky.",
+            "imagePrompt": "The robot standing in front of Blondy, looking friendly."
+        },
+        {
+            "pageNumber": 7,
+            "text": "Sparky helpfully tidied up all the blocks on the floor.",
+            "imagePrompt": "The robot picking up colorful wooden blocks and putting them away."
+        },
+        {
+            "pageNumber": 8,
+            "text": "Wow! My invention really works! Blondy cried with joy.",
+            "imagePrompt": "Blondy clapping her hands and looking amazed."
+        },
+        {
+            "pageNumber": 9,
+            "text": "Being an inventor means you can solve any problem.",
+            "imagePrompt": "Blondy with a confident and proud expression, blue eyes sparkling."
+        },
+        {
+            "pageNumber": 10,
+            "text": "Blondy was already thinking about her next great idea.",
+            "imagePrompt": "Blondy tapping her chin, looking thoughtful."
+        },
+        {
+            "pageNumber": 11,
+            "text": "The workshop was a place where anything was possible.",
+            "imagePrompt": "A sunny view of Blondy's organized craft area."
+        },
+        {
+            "pageNumber": 12,
+            "text": "Goodnight, Blondy. Tomorrow you will build something new!",
+            "imagePrompt": "Blondy sleeping with Sparky the robot standing guard."
+        }
+    ]
+}
