@@ -1,5 +1,5 @@
-// Prompt Templates - Unified Template Approach
-// Uses English instructions with language variables to generate content in any target language
+// Prompt Templates - v4 Research Learnings Applied
+// Incorporates findings from 00-project-overview/90-prds/2026-02-01-story-creation-prompt-improvement
 
 // Language display names for better UX in prompts
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -9,6 +9,124 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 export type Language = 'en' | 'de' | 'he';
+
+// ============================================
+// Helper Functions for Dynamic Prompt Sections
+// ============================================
+
+/**
+ * Returns age-specific guidelines based on research findings
+ */
+function getAgeGuidelines(age: number): string {
+    if (age >= 0 && age <= 2) {
+        return `
+AGES 0-2 (Board Book): 0-10 words/page, 1-5 words/sentence
+
+MANDATORY:
+- 1+ onomatopoeia per page (Moo, Splash, Beep)
+- 3+ participation moments ("Wave bye-bye!", "Can you point?")
+- 5+ sensory words (soft, warm, bumpy, fluffy)
+
+DO: Use rhythm, anchor words, sing-song cadences
+DON'T: Use pronouns without clear reference, metaphors, or multiple ideas per page`;
+    }
+
+    if (age >= 3 && age <= 4) {
+        return `
+AGES 3-4 (Picture Book): 10-50 words/page, 5-10 words/sentence
+
+MANDATORY:
+- 3+ participation moments throughout story
+- 8+ vivid descriptive words (sparkling, enormous, cozy, glistening)
+- 1-2 onomatopoeia per spread
+- Concrete, specific details (not abstract)
+
+DO: Use refrains, rich descriptions, linear timeline
+DON'T: Create walls of text, preachy lessons, or confusing time jumps`;
+    }
+
+    if (age >= 5 && age <= 6) {
+        return `
+AGES 5-6 (Early Reader): 5-40 words/page, 2-8 words/sentence
+
+MANDATORY:
+- 6+ vivid action words (zoomed, tumbled, soared, grabbed)
+- Concrete details (specific goals, not abstract ideas)
+- Coping strategy if challenging theme
+
+DO: Use sight words, short punchy sentences, phonics-friendly words
+DON'T: Use slang, multi-syllabic words, or break sentences across pages`;
+    }
+
+    if (age >= 7 && age <= 8) {
+        return `
+AGES 7-8 (Chapter Book): 50-150 words/page, 7-12 words/sentence
+
+MANDATORY:
+- 10+ varied descriptive words
+- 2+ humor moments
+- Protagonist solves problem themselves (not rescued)
+- Concrete goals and actions
+
+DO: Use action-reaction sequences, humor, protagonist agency, varied sentence length
+DON'T: Use dense internal monologue, passive characters, or introduce too many characters`;
+    }
+
+    if (age >= 9 && age <= 12) {
+        return `
+AGES 9-12 (Middle Grade): 150-250 words/page, 10-20 words/sentence
+
+MANDATORY:
+- 10+ descriptive words (show don't tell)
+- Authentic kid voice (not adult-sounding)
+- Emotional depth
+- Realistic coping for challenging themes
+
+DO: Tackle real issues, use literary devices, create complexity, show emotional depth
+DON'T: Use graphic content, patronizing tone, or sacrifice character for world-building`;
+    }
+
+    return ''; // Fallback
+}
+
+/**
+ * Returns theme-specific structure and guidance
+ */
+function getThemeStructure(theme: string): string {
+    const themeKey = theme.toLowerCase();
+
+    const structures: Record<string, string> = {
+        adventure: `
+ADVENTURE: Discovery, obstacles, courage, return home wiser.
+TONE: Exciting, empowering, wonder-filled`,
+
+        bedtime: `
+BEDTIME: Calming progression to rest, gentle transitions, peaceful resolution.
+NO excitement or scary moments - everything trends toward calm.
+TONE: Soothing, calm, reassuring`,
+
+        learning: `
+LEARNING: Clear objective, repetition with variation, interactive elements.
+Weave lessons naturally into story (no preaching), build confidence through mastery.
+TONE: Encouraging, playful, confidence-building`,
+
+        fantasy: `
+FANTASY: Magical world with clear rules, discovery, wonder.
+Magic has limits - child uses courage/kindness, not just magic.
+TONE: Whimsical, wonder-filled, imaginative`,
+
+        animals: `
+ANIMALS: Accurate behaviors, natural habitats, respect for nature.
+Animals have personality but behave naturally (no supernatural powers).
+TONE: Respectful, educational, warm`,
+
+        custom: `
+CUSTOM: Follow story request while maintaining safety, age-appropriateness, and narrative arc.
+For challenging themes: acknowledge emotion, include coping strategy, end empowered.`
+    };
+
+    return structures[themeKey] || structures.custom;
+}
 
 // ============================================
 // Core Prompt Template Functions
@@ -27,42 +145,158 @@ export const getStoryPrompt = (
     targetLanguage: Language = 'en'
 ) => {
     const languageName = LANGUAGE_NAMES[targetLanguage] || targetLanguage.toUpperCase();
+    const ageGuidelines = getAgeGuidelines(input.childAge);
+    const themeStructure = getThemeStructure(input.bookTheme);
 
     return `
-Create a children's book story based on the following details:
-- Child's Name: ${input.childName}
-- Age: ${input.childAge}
-- Theme: ${input.bookTheme}
-- Type: ${input.bookType}
-- Page Count: ${input.pageCount}
-${input.characterDescription ? `- Character Description: ${input.characterDescription}` : ''}
-${input.storyDescription ? `- Specific Story Request: ${input.storyDescription}` : ''}
+You are an expert children's book author creating FUN, ENGAGING, MEMORABLE stories that are safe and age-appropriate.
 
-The story should be engaging, age-appropriate, and magical.
+--- STORY PARAMETERS ---
 
-CRITICALLY IMPORTANT:
-- Write the ENTIRE story exclusively in ${languageName}
-- NO other languages - all words must be ${languageName}
-- Title, text, and imagePrompt must be completely in ${languageName}
-- Use only ${languageName} words and grammar
+Child's Name: ${input.childName}
+Age: ${input.childAge} years old
+Book Type: ${input.bookType}
+Theme: ${input.bookTheme}
+Page Count: ${input.pageCount} (MUST be exactly this number)
+${input.characterDescription ? `Character Description: ${input.characterDescription}` : ''}
+${input.storyDescription ? `Story Request: ${input.storyDescription}` : ''}
 
-OUTPUT FORMAT:
-Return ONLY a valid JSON object with the following structure:
+--- AGE-SPECIFIC GUIDELINES ---
+
+${ageGuidelines}
+
+--- THEME STRUCTURE ---
+
+${themeStructure}
+
+--- CONTENT SAFETY (MANDATORY) ---
+
+EXCLUDE: Violence, weapons, scary content, death, injury, illness, abandonment, stereotypes, body shaming, bullying, brands, religious/political content, celebrities, social media.
+
+INCLUDE: Kindness, empathy, friendship, curiosity, creativity, family love, self-confidence, respect for nature, diversity, positive emotions.
+
+--- EMOTIONAL TONE ---
+
+Create JOYFUL experiences for children AND parents.
+
+EVOKE: Fun, wonder, excitement, delight, connection.
+TONE: Playful, engaging, heartwarming, empowering.
+AVOID: Boring, preachy, heavy, anxiety-inducing, sad endings.
+
+ARC: Warm opening → Building excitement → Empowering climax → Satisfying resolution → Positive ending.
+
+--- ENGAGEMENT REQUIREMENTS ---
+
+ONOMATOPOEIA:
+- Ages 0-2: 1+ per page (Splash, Pop, Whoosh, Moo, Woof)
+- Ages 3-4: 1-2 per spread (every 2 pages)
+- Ages 5+: Sparingly for emphasis
+
+PARTICIPATION (Ages 0-4 MANDATORY - 3+ moments):
+- Counting, sounds, actions, finding objects, repeating phrases
+
+SENSORY VOCABULARY (MANDATORY):
+- Ages 0-2: 5+ texture/sound words
+- Ages 3-4: 8+ vivid words (sparkling, enormous, cozy)
+- Ages 5-6: 6+ vivid action words
+- Ages 7+: 10+ varied descriptive words
+
+CONCRETE DETAILS: Use specific goals, not abstract concepts.
+- BAD: "${input.childName} wanted to help people"
+- GOOD: "${input.childName} wanted to help Mrs. Garcia carry her grocery bags"
+
+--- CHALLENGING THEMES (if applicable) ---
+
+For fear, nervousness, anger, sadness, jealousy:
+
+COPING STRATEGY (MANDATORY): Include ONE technique:
+- "Superhero breath" - breathe in deep, out slow
+- "Count to three" - pause before reacting
+- "Hug your teddy" - comfort object
+- "Ask for help" - it's okay to need support
+
+Acknowledge feeling → Show authentic emotion → Demonstrate coping → End empowered.
+
+--- HELPER CHARACTERS (if applicable) ---
+
+If including a helper character:
+- **Realistic themes** (school, sports, daily life): Family, friends, teachers, coaches, pets that behave naturally
+- **Fantasy themes** (magic, adventure): Magical creatures welcome - can glow, sparkle, have abilities
+- **${input.childName} is the HERO** - helper supports but child solves the problem
+- Give helpers memorable names and keep their appearance consistent throughout the story
+
+--- STORY STRUCTURE ---
+
+Create a satisfying narrative arc across exactly ${input.pageCount} pages:
+- **Beginning**: Introduce ${input.childName} and their world
+- **Middle**: Build to challenge, adventure, or discovery  
+- **Climax**: Main challenge or exciting moment
+- **Resolution**: Problem solved, goal achieved
+- **Ending**: Warm, positive conclusion
+
+${input.childName} is active protagonist who shows emotions, solves problems, and demonstrates growth.
+
+--- TITLE & BACK COVER ---
+
+TITLE: Creative, captures essence.
+- GOOD: "Emma's Super Potty Power"
+- BAD: "Emma's Potty Story"
+
+BLURB: 2-3 sentences introducing ${input.childName} with positive trait, hinting at adventure.
+
+--- LANGUAGE ---
+
+Write ENTIRELY in ${languageName}. NO other languages.
+
+--- IMAGE PROMPTS (CRITICAL) ---
+
+Each imagePrompt: 40-100 words, RICH scene description.
+
+MANDATORY STRUCTURE:
+Start each imagePrompt with: "${input.characterDescription || input.childName}" followed by action and setting.
+
+Example: "${input.characterDescription}. [Action: what they're doing]. [Setting: location, time of day, atmosphere, colors, mood]."
+
+MANDATORY ELEMENTS:
+1. Character from characterDescription (appearance, expression, pose)
+2. Setting: location, time of day, atmosphere
+3. Action: what's happening, dynamic elements
+4. Visuals: colors, textures, specific objects
+5. Composition: focal point, spatial relationships
+
+RESTRICTIONS:
+✗ NO text/words/letters in illustrations
+✗ NO signs, labels, speech bubbles
+
+ATMOSPHERE:
+- **Realistic stories:** Natural lighting, authentic expressions, warm tones, emotional connections
+- **Fantasy stories:** Magical glows, sparkles, vibrant mystical colors - ALL WELCOME!
+
+AGE-SPECIFIC IMAGERY:
+- Ages 0-2: Simple focal points, primary colors
+- Ages 3-4: 2-3 focal points, vibrant colors
+- Ages 5-6: Multiple elements, action scenes
+- Ages 7-12: Complex scenes, nuanced expressions
+
+--- OUTPUT FORMAT ---
+
+Return ONLY valid JSON in ${languageName}:
+
 {
-    "title": "Title of the book (in ${languageName})",
-    "backCoverBlurb": "A short, engaging summary of the story for the back cover (2-3 sentences max, in ${languageName})",
-    "characterDescription": "A detailed physical description of the main character (if not provided, in ${languageName})",
+    "title": "Engaging title (in ${languageName})",
+    "backCoverBlurb": "2-3 sentence summary (in ${languageName})",
+    "characterDescription": "Physical description of ${input.childName} (in ${languageName})",
     "pages": [
         {
             "pageNumber": 1,
-            "text": "Story text for this page (keep it short for children, in ${languageName})",
-            "imagePrompt": "A detailed description of the illustration for this page, describing the scene and action ONLY (in ${languageName}). Do NOT describe the art style (e.g. 'cartoon', 'watercolor') as this is handled separately."
-        },
-        ...
+            "text": "Story text (age-appropriate length, in ${languageName})",
+            "imagePrompt": "RICH scene description 40-100 words (in ${languageName})"
+        }
+        // ... exactly ${input.pageCount} pages
     ]
 }
 
-REMINDER: Use EXCLUSIVELY ${languageName} language in ALL fields. NO English or other languages!
+CRITICAL: Exactly ${input.pageCount} pages. Consistent character appearance. All content in ${languageName}.
 `;
 };
 
