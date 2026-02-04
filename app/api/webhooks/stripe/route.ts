@@ -239,6 +239,22 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
         return;
     }
 
+    // Idempotency: if we've already processed this exact session for this book, don't do it again.
+    // This also protects against duplicate emails when Stripe retries the webhook.
+    const { data: existingBook } = await supabase
+        .from('books')
+        .select('digital_unlock_paid, digital_unlock_session_id')
+        .eq('id', bookId)
+        .maybeSingle();
+
+    if (
+        existingBook?.digital_unlock_paid &&
+        existingBook.digital_unlock_session_id === session.id
+    ) {
+        logWebhook('Digital unlock already processed', { bookId, sessionId: session.id });
+        return;
+    }
+
     const { data: book, error } = await supabase
         .from('books')
         .update({
@@ -246,20 +262,19 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
             digital_unlock_session_id: session.id,
         })
         .eq('id', bookId)
-        .select('id, user_id, title, child_name, digital_unlock_email_sent')
+        // NOTE: Do not select optional columns that may not exist in all environments.
+        // Selecting a missing column will cause the UPDATE to fail, preventing unlock.
+        .select('id, user_id, title, child_name')
         .single();
 
     if (error || !book) {
         console.error('[Webhook] Failed to mark digital unlock paid', error);
         logWebhook('Failed to mark digital unlock paid', { error, bookId, sessionId: session.id });
-        return;
+        // Return 500 so Stripe retries the webhook (idempotency guard above prevents duplicates).
+        throw new Error(`Failed to mark digital unlock paid for book ${bookId}`);
     }
 
     logWebhook('Digital unlock marked paid', { bookId, sessionId: session.id });
-
-    if (book.digital_unlock_email_sent) {
-        return;
-    }
 
     const customerEmail = session.customer_email || session.customer_details?.email;
     let recipientEmail = customerEmail || '';
@@ -290,10 +305,14 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
         };
         const emailResult = await sendDigitalUnlockEmail(emailData);
         if (emailResult.success) {
-            await supabase
+            // Best-effort: some environments may not have this column yet.
+            const { error: emailSentError } = await supabase
                 .from('books')
                 .update({ digital_unlock_email_sent: true })
                 .eq('id', book.id);
+            if (emailSentError) {
+                logWebhook('Failed to mark digital unlock email sent (non-fatal)', { error: emailSentError, bookId: book.id });
+            }
         }
     } catch (emailError) {
         console.error('[Webhook] Digital unlock email error:', emailError);
