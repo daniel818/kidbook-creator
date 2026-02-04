@@ -831,7 +831,7 @@ export default function CreateBookPage() {
                                         </div>
                                         <div className={styles.stitchFinalCardLabel}>Format</div>
                                         <div className={styles.stitchFinalCardValue}>
-                                            {settings.printFormat === 'portrait' ? 'Hardcover' : 'Square'}
+                                            {settings.printFormat === 'portrait' ? 'Portrait' : 'Square'}
                                         </div>
                                         <div className={styles.stitchFinalCardMeta}>
                                             {settings.printFormat === 'portrait' ? 'Premium 8 x 10' : 'Premium 8.5 x 8.5'}
@@ -921,11 +921,11 @@ export default function CreateBookPage() {
                                     {creatingStatus || t('status.generatingStory')}
                                 </>
                             ) : currentStepIndex === steps.length - 1 ? (
-                                t('buttons.generateBook')
+                                t('buttons.generateBook', 'Generate Book')
                             ) : (
                                 continueButtonLabel
                             )}
-                            {!isCreating && (
+                            {!isCreating && currentStepIndex !== steps.length - 1 && (
                                 <span className={`material-symbols-outlined ${styles.stitchContinueIcon}`} aria-hidden="true">auto_fix_normal</span>
                             )}
                         </button>
