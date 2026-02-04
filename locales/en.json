@@ -259,7 +259,7 @@
     "buttons": {
       "back": "← Back",
       "continue": "Continue →",
-      "generateBook": "✨ Generate Magic",
+      "generateBook": "Generate Book",
       "createBook": "Create My Book ✨",
       "signInToCreate": "Sign In to Create"
     },
