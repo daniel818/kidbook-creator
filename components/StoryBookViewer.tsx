@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
+import { formatTextIntoParagraphs } from '@/lib/utils/text-formatting';
 import PrintGenerator from './PrintGenerator';
 import styles from './StoryBookViewer.module.css';
 
@@ -556,9 +557,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         if (!isMobile) return;
         if (showPaywall || isEditing || unlockState !== 'idle') return;
         if (hudTimerRef.current) {
-            window.clearTimeout(hudTimerRef.current);
+            clearTimeout(hudTimerRef.current);
         }
-        hudTimerRef.current = window.setTimeout(() => {
+        hudTimerRef.current = setTimeout(() => {
             setHudVisible(false);
         }, 2600);
     }, [isMobile, showPaywall, isEditing, unlockState]);
@@ -577,7 +578,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         showHud();
         return () => {
             if (hudTimerRef.current) {
-                window.clearTimeout(hudTimerRef.current);
+                clearTimeout(hudTimerRef.current);
             }
         };
     }, [isMobile, showHud]);
@@ -587,7 +588,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         if (showPaywall || unlockState !== 'idle' || isEditing) {
             setHudVisible(true);
             if (hudTimerRef.current) {
-                window.clearTimeout(hudTimerRef.current);
+                clearTimeout(hudTimerRef.current);
             }
         }
     }, [isMobile, showPaywall, unlockState, isEditing]);
@@ -771,9 +772,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             // Resolve content (edit > original)
             const displayImage = edit.image || getPageImage(page);
             const displayText = edit.text || (page.textElements[0]?.content || '');
-            const textElements = page.textElements.length > 0
-                ? [{ ...page.textElements[0], content: displayText }]
-                : [{ content: displayText }];
+            // Split text into paragraphs for better readability
+            const paragraphs = formatTextIntoParagraphs(displayText);
+            const textElements = paragraphs.map((content, i) => ({
+                id: `${page.id || index}-p-${i}`,
+                content
+            }));
             const isLocked = isPreview && !liveBook.digitalUnlockPaid && index >= unlockedInnerCount;
             const isGenerating = unlockState === 'generating' && !displayImage && !isLocked;
 

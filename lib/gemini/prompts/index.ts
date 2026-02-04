@@ -20,7 +20,7 @@ export type Language = 'en' | 'de' | 'he';
 function getAgeGuidelines(age: number): string {
     if (age >= 0 && age <= 2) {
         return `
-AGES 0-2 (Board Book): 0-10 words/page, 1-5 words/sentence
+AGES 0-2 (Board Book): 20-40 words/page, 1 paragraph (2-3 short sentences)
 
 MANDATORY:
 - 1+ onomatopoeia per page (Moo, Splash, Beep)
@@ -74,7 +74,7 @@ DON'T: Use dense internal monologue, passive characters, or introduce too many c
 
     if (age >= 9 && age <= 12) {
         return `
-AGES 9-12 (Middle Grade): 150-250 words/page, 10-20 words/sentence
+AGES 9-12 (Middle Grade): 60-90 words/page, 2-3 paragraphs (max 30-40 words each)
 
 MANDATORY:
 - 10+ descriptive words (show don't tell)
@@ -82,8 +82,8 @@ MANDATORY:
 - Emotional depth
 - Realistic coping for challenging themes
 
-DO: Tackle real issues, use literary devices, create complexity, show emotional depth
-DON'T: Use graphic content, patronizing tone, or sacrifice character for world-building`;
+DO: Tackle real issues, use literary devices, be concise yet impactful
+DON'T: Use graphic content, patronizing tone, sacrifice character for world-building, or walls of text`;
     }
 
     return ''; // Fallback
@@ -161,6 +161,26 @@ Page Count: ${input.pageCount} (MUST be exactly this number)
 ${input.characterDescription ? `Character Description: ${input.characterDescription}` : ''}
 ${input.storyDescription ? `Story Request: ${input.storyDescription}` : ''}
 
+--- STORY ESSENCE (EVERY STORY, EVERY AGE) ---
+
+Every story MUST feel MAGICAL. "Magical" means:
+- WONDER - something feels special or extraordinary
+- EMOTIONAL RESONANCE - moments that touch the heart
+- SURPRISE - at least one delightful unexpected moment
+- POSITIVITY - warmth, hope, joy woven throughout
+- That "larger than life" quality where ordinary moments become extraordinary
+
+This applies to ALL themes, even realistic ones. A story about washing hands can feel magical when bubbles shimmer like tiny rainbows.
+
+--- TEXT FORMATTING ---
+
+Structure text as 1-3 paragraphs per page:
+- Ages 0-4: 1 paragraph (2-3 sentences)
+- Ages 5-8: 1-2 paragraphs (3-5 sentences total)
+- Ages 9-12: 2-3 paragraphs (30-40 words each, max 90 words total)
+
+The text as written IS the final exported text - size cannot be adjusted.
+
 --- AGE-SPECIFIC GUIDELINES ---
 
 ${ageGuidelines}
@@ -175,31 +195,14 @@ EXCLUDE: Violence, weapons, scary content, death, injury, illness, abandonment, 
 
 INCLUDE: Kindness, empathy, friendship, curiosity, creativity, family love, self-confidence, respect for nature, diversity, positive emotions.
 
---- EMOTIONAL TONE ---
-
-Create JOYFUL experiences for children AND parents.
-
-EVOKE: Fun, wonder, excitement, delight, connection.
-TONE: Playful, engaging, heartwarming, empowering.
-AVOID: Boring, preachy, heavy, anxiety-inducing, sad endings.
+--- STORY ARC ---
 
 ARC: Warm opening → Building excitement → Empowering climax → Satisfying resolution → Positive ending.
+AVOID: Boring, preachy, heavy, anxiety-inducing, sad endings.
 
---- ENGAGEMENT REQUIREMENTS ---
+--- ENGAGEMENT ---
 
-ONOMATOPOEIA:
-- Ages 0-2: 1+ per page (Splash, Pop, Whoosh, Moo, Woof)
-- Ages 3-4: 1-2 per spread (every 2 pages)
-- Ages 5+: Sparingly for emphasis
-
-PARTICIPATION (Ages 0-4 MANDATORY - 3+ moments):
-- Counting, sounds, actions, finding objects, repeating phrases
-
-SENSORY VOCABULARY (MANDATORY):
-- Ages 0-2: 5+ texture/sound words
-- Ages 3-4: 8+ vivid words (sparkling, enormous, cozy)
-- Ages 5-6: 6+ vivid action words
-- Ages 7+: 10+ varied descriptive words
+PARTICIPATION (Ages 0-4 MANDATORY): 3+ moments of counting, sounds, actions, or repeating phrases.
 
 CONCRETE DETAILS: Use specific goals, not abstract concepts.
 - BAD: "${input.childName} wanted to help people"
