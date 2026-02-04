@@ -11,6 +11,7 @@ export type AgeGroup = '0-2' | '3-5' | '6-8' | '9-12';
 export interface BookSettings {
   childName: string;
   childAge: number;
+  childGender?: 'boy' | 'girl' | 'other';
   ageGroup: AgeGroup;
   bookType: BookType;
   bookTheme: BookTheme;

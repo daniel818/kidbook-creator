@@ -50,6 +50,14 @@ export function Navbar() {
     setShowMoreMenu(false);
   }, [pathname]);
 
+  // Only reserve space for the mobile bottom nav when it is actually shown
+  useEffect(() => {
+    document.body.classList.toggle('stitchHasMobileNav', !isCreate);
+    return () => {
+      document.body.classList.remove('stitchHasMobileNav');
+    };
+  }, [isCreate]);
+
   const navigateAuthed = (path: string) => {
     if (!user) {
       setShowAuthModal(true);
@@ -156,6 +164,7 @@ export function Navbar() {
       </nav>
       {!isHome && <div className={styles.navOffset} aria-hidden="true"></div>}
 
+      {!isCreate && (
       <div id="stitch-mobile-ui">
         {/* Mobile Bottom Navigation Bar */}
         <div className={styles.stitchMobileBar} role="navigation" aria-label="Primary">
@@ -310,6 +319,7 @@ export function Navbar() {
           </div>
         )}
       </div>
+      )}
 
       <AuthModal
         isOpen={showAuthModal}
