@@ -37,6 +37,7 @@ logWithTime('Gemini client initialized');
 export interface StoryGenerationInput {
     childName: string;
     childAge: number;
+    childGender?: 'boy' | 'girl' | 'other';
     bookTheme: string;
     bookType: string;
     pageCount?: number;
@@ -92,6 +93,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     const prompt = prompts.getStoryPrompt({
         childName: input.childName,
         childAge: input.childAge,
+        childGender: input.childGender,
         bookTheme: input.bookTheme,
         bookType: input.bookType,
         pageCount: input.pageCount || 10,

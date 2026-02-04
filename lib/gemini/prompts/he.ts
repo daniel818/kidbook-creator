@@ -3,6 +3,7 @@
 export const getStoryPrompt = (input: {
     childName: string;
     childAge: number;
+    childGender?: 'boy' | 'girl' | 'other';
     bookTheme: string;
     bookType: string;
     pageCount: number;
@@ -12,6 +13,7 @@ export const getStoryPrompt = (input: {
 צור סיפור לספר ילדים על סמך הפרטים הבאים:
 - שם הילד: ${input.childName}
 - גיל: ${input.childAge}
+- מגדר: ${input.childGender || 'לא צוין'}
 - נושא: ${input.bookTheme}
 - סוג: ${input.bookType}
 - מספר עמודים: ${input.pageCount}
@@ -25,6 +27,8 @@ ${input.storyDescription ? `- בקשה ספציפית לסיפור: ${input.stor
 - אסור להשתמש באנגלית - כל המילים חייבות להיות בעברית
 - הכותרת, הטקסט וה-imagePrompt חייבים להיות לגמרי בעברית
 - השתמש רק במילים ודקדוק עברי
+- כלל כינויי גוף: אם המגדר הוא boy השתמש בכינויי גוף זכריים (הוא/אותו); אם girl השתמש בכינויי גוף נקביים (היא/אותה); אם other השתמש בכינויי גוף ניטרליים ככל האפשר.
+- אם המגדר הוא other, שמור על תיאורים ניטרליים מגדרית (הימנע מבגדים/תכונות ממוגדרות).
 
 פורמט פלט:
 החזר רק אובייקט JSON תקין עם המבנה הבא.

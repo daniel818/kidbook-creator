@@ -44,6 +44,7 @@ export async function GET() {
             title: string;
             child_name: string;
             child_age: number;
+            child_gender?: string | null;
             age_group: string;
             book_type: string;
             book_theme: string;
@@ -77,6 +78,7 @@ export async function GET() {
                 title: book.title,
                 childName: book.child_name,
                 childAge: book.child_age,
+                childGender: book.child_gender || undefined,
                 ageGroup: book.age_group,
                 bookType: book.book_type,
                 bookTheme: book.book_theme,
@@ -172,6 +174,7 @@ export async function POST(request: NextRequest) {
                 title: settings.title,
                 child_name: settings.childName,
                 child_age: settings.childAge,
+                child_gender: settings.childGender || null,
                 age_group: settings.ageGroup,
                 book_type: settings.bookType,
                 book_theme: settings.bookTheme,
@@ -231,6 +234,7 @@ export async function POST(request: NextRequest) {
                 title: book.title,
                 childName: book.child_name,
                 childAge: book.child_age,
+                childGender: book.child_gender || undefined,
                 ageGroup: book.age_group,
                 bookType: book.book_type,
                 bookTheme: book.book_theme,

@@ -3,6 +3,7 @@
 export const getStoryPrompt = (input: {
     childName: string;
     childAge: number;
+    childGender?: 'boy' | 'girl' | 'other';
     bookTheme: string;
     bookType: string;
     pageCount: number;
@@ -12,6 +13,7 @@ export const getStoryPrompt = (input: {
 Create a children's book story based on the following details:
 - Child's Name: ${input.childName}
 - Age: ${input.childAge}
+- Gender: ${input.childGender || 'unspecified'}
 - Theme: ${input.bookTheme}
 - Type: ${input.bookType}
 - Page Count: ${input.pageCount}
@@ -25,6 +27,8 @@ CRITICALLY IMPORTANT:
 - NO other languages - all words must be English
 - Title, text, and imagePrompt must be completely in English
 - Use only English words and grammar
+- Pronouns rule: if Gender is boy use he/him; if girl use she/her; if other use they/them.
+- If Gender is other, keep descriptions gender-neutral (avoid gendered clothing/traits).
 
 OUTPUT FORMAT:
 Return ONLY a valid JSON object with the following structure:

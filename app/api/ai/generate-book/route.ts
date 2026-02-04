@@ -100,9 +100,9 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = body;
+        const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = body;
         const resolvedBookType = bookType || 'story';
-        log('Request body parsed', { childName, childAge, bookTheme, bookType: resolvedBookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
+        log('Request body parsed', { childName, childAge, childGender, bookTheme, bookType: resolvedBookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
 
         if (!childName || !bookTheme) {
             log('ERROR: Missing required fields');
@@ -135,6 +135,7 @@ export async function POST(request: NextRequest) {
         const input: StoryGenerationInput = {
             childName,
             childAge: childAge || 5,
+            childGender,
             bookTheme,
             bookType: resolvedBookType,
             pageCount: pageCount || 10,
@@ -270,6 +271,7 @@ export async function POST(request: NextRequest) {
             title: result.story.title,
             child_name: childName,
             child_age: childAge,
+            child_gender: childGender || null,
             age_group: getAgeGroup(childAge || 5),
             book_theme: bookTheme,
             book_type: resolvedBookType,

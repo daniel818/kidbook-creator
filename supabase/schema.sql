@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS books (
   title TEXT NOT NULL,
   child_name TEXT NOT NULL,
   child_age INTEGER NOT NULL CHECK (child_age >= 0 AND child_age <= 18),
+  child_gender TEXT CHECK (child_gender IN ('boy', 'girl', 'other')),
   age_group TEXT NOT NULL,
   book_type TEXT NOT NULL CHECK (book_type IN ('board', 'picture', 'story', 'alphabet')),
   book_theme TEXT NOT NULL CHECK (book_theme IN ('adventure', 'bedtime', 'learning', 'fantasy', 'animals', 'custom')),

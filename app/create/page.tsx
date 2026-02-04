@@ -248,6 +248,7 @@ export default function CreateBookPage() {
             const requestBody = {
                 childName: settings.childName || 'My Child',
                 childAge: settings.childAge || 3,
+                childGender: settings.childGender,
                 bookTheme: settings.bookTheme || 'adventure',
                 bookType: effectiveBookType,
                 printFormat: settings.printFormat || 'portrait',
@@ -381,23 +382,25 @@ export default function CreateBookPage() {
                                 transition={{ duration: 0.3 }}
                             >
                                 <div className={styles.stitchChildCard}>
-	                                    <div className={styles.stitchHeroRow}>
-	                                        <div className={styles.stitchHeroVisual} aria-hidden="true">
-	                                            {stitchHeroImgOk ? (
-	                                                <img
-	                                                    className={styles.stitchHeroImage}
-	                                                    src="/images/dragon-hero.png"
-	                                                    alt={t('steps.child.heroImageAlt', 'Dragon hero')}
-	                                                    onError={() => setStitchHeroImgOk(false)}
-	                                                />
-	                                            ) : (
-	                                                <div className={styles.stitchHeroAvatar}>🐉</div>
-	                                            )}
-	                                            <div className={styles.stitchHeroCloud}></div>
-	                                        </div>
-	                                        <div className={styles.stitchHeroBubble}>
-	                                            {t('steps.child.heroPrompt', "Let's create your magical hero!")}
-	                                        </div>
+                                    <div className={styles.stitchHeroRow}>
+                                        <div className={styles.stitchHeroBubble}>
+                                            {t('steps.child.heroPrompt', "Let's create your magical hero!")}
+                                        </div>
+                                    </div>
+                                    <div className={`${styles.stitchHeroVisual} ${styles.stitchHeroVisualUnder}`} aria-hidden="true">
+                                        <div className={styles.stitchHeroImageWrap}>
+                                            {stitchHeroImgOk ? (
+                                                <img
+                                                    className={styles.stitchHeroImage}
+                                                    src="/images/dragon-hero.png"
+                                                    alt={t('steps.child.heroImageAlt', 'Dragon hero')}
+                                                    onError={() => setStitchHeroImgOk(false)}
+                                                />
+                                            ) : (
+                                                <div className={styles.stitchHeroAvatar}>🐉</div>
+                                            )}
+                                        </div>
+                                        <div className={styles.stitchHeroCloud}></div>
                                     </div>
 
                                     <section className={`${styles.stitchSection} ${styles.stitchSectionName}`}>
@@ -778,7 +781,7 @@ export default function CreateBookPage() {
                                     <div className={styles.stitchFinalCover}>
                                         <img
                                             className={styles.stitchFinalCoverImage}
-                                            src="/images/dragon-hero.png"
+                                            src={photoPreview || "/images/dragon-hero.png"}
                                             alt=""
                                         />
                                         <div className={styles.stitchFinalCoverOverlay}>

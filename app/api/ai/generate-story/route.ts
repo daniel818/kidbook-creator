@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { childName, childAge, bookTheme, bookType, pageCount, characterDescription } = body;
+        const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription } = body;
         const resolvedBookType = bookType || 'story';
 
         if (!childName || !bookTheme) {
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
         const input: StoryGenerationInput = {
             childName,
             childAge: childAge || 5,
+            childGender,
             bookTheme,
             bookType: resolvedBookType,
             pageCount: pageCount || 10,

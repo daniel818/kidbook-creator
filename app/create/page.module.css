@@ -697,6 +697,7 @@
     gap: 18px;
     align-items: center;
     padding: 10px 8px 18px;
+    justify-content: center;
 }
 
 .stitchHeroVisual {
@@ -710,6 +711,26 @@
     align-items: center;
     justify-content: center;
     border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.stitchHeroVisualUnder {
+    margin: 0 auto 6px;
+}
+
+.stitchHeroImageWrap {
+    width: 170px;
+    height: 150px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+        0 18px 36px rgba(15, 23, 42, 0.16),
+        inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
 }
 
 .stitchHeroAvatar {
@@ -2298,6 +2319,16 @@
     .stitchHeroVisual {
         width: 100%;
         height: 132px;
+    }
+
+    .stitchHeroVisualUnder {
+        margin: 0 auto 8px;
+    }
+
+    .stitchHeroImageWrap {
+        width: 150px;
+        height: 120px;
+        border-radius: 18px;
     }
 
     .stitchHeroImage {
