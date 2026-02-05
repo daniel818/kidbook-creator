@@ -20,11 +20,11 @@ export type Language = 'en' | 'de' | 'he';
 function getAgeGuidelines(age: number): string {
     if (age >= 0 && age <= 2) {
         return `
-AGES 0-2 (Board Book): 20-40 words/page, 1 paragraph (2-3 short sentences)
+AGES 0-2: 20-40 words/page, 1 paragraph (2-3 short sentences)
 
 MANDATORY:
 - 1+ onomatopoeia per page (Moo, Splash, Beep)
-- 3+ participation moments ("Wave bye-bye!", "Can you point?")
+- 1-3 participation moments ("Wave bye-bye!", "Can you point?")
 - 5+ sensory words (soft, warm, bumpy, fluffy)
 
 DO: Use rhythm, anchor words, sing-song cadences
@@ -33,7 +33,7 @@ DON'T: Use pronouns without clear reference, metaphors, or multiple ideas per pa
 
     if (age >= 3 && age <= 4) {
         return `
-AGES 3-4 (Picture Book): 10-50 words/page, 5-10 words/sentence
+AGES 3-4: 10-50 words/page, 5-10 words/sentence
 
 MANDATORY:
 - 3+ participation moments throughout story
@@ -47,7 +47,7 @@ DON'T: Create walls of text, preachy lessons, or confusing time jumps`;
 
     if (age >= 5 && age <= 6) {
         return `
-AGES 5-6 (Early Reader): 5-40 words/page, 2-8 words/sentence
+AGES 5-6: 5-40 words/page, 2-8 words/sentence
 
 MANDATORY:
 - 6+ vivid action words (zoomed, tumbled, soared, grabbed)
@@ -60,7 +60,7 @@ DON'T: Use slang, multi-syllabic words, or break sentences across pages`;
 
     if (age >= 7 && age <= 8) {
         return `
-AGES 7-8 (Chapter Book): 50-150 words/page, 7-12 words/sentence
+AGES 7-8: 50-150 words/page, 7-12 words/sentence
 
 MANDATORY:
 - 10+ varied descriptive words
@@ -74,7 +74,7 @@ DON'T: Use dense internal monologue, passive characters, or introduce too many c
 
     if (age >= 9 && age <= 12) {
         return `
-AGES 9-12 (Middle Grade): 60-90 words/page, 2-3 paragraphs (max 30-40 words each)
+AGES 9-12: 60-90 words/page, 2-3 paragraphs (max 30-40 words each)
 
 MANDATORY:
 - 10+ descriptive words (show don't tell)
