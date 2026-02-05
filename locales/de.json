@@ -259,7 +259,7 @@
     "buttons": {
       "back": "← Zurück",
       "continue": "Weiter →",
-      "generateBook": "✨ Buch mit KI erstellen 🪄",
+      "generateBook": "Buch erstellen",
       "createBook": "Mein Buch erstellen ✨",
       "signInToCreate": "Anmelden zum Erstellen"
     },

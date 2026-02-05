@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import Link from 'next/link';
-import styles from './orders.module.css';
+import styles from './page.module.css';
 
 interface Order {
     id: string;
