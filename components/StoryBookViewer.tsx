@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
+import { formatTextIntoParagraphs } from '@/lib/utils/text-formatting';
 import PrintGenerator from './PrintGenerator';
 import styles from './StoryBookViewer.module.css';
 
@@ -236,7 +237,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [hudVisible, setHudVisible] = useState(true);
-    const hudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const hudTimerRef = useRef<number | null>(null);
     const [pageSize, setPageSize] = useState({ width: 550, height: 733 });
 
     // Editor State
@@ -811,9 +812,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             // Resolve content (edit > original)
             const displayImage = edit.image || getPageImage(page);
             const displayText = edit.text || (page.textElements[0]?.content || '');
-            const textElements = page.textElements.length > 0
-                ? [{ ...page.textElements[0], content: displayText }]
-                : [{ content: displayText }];
+            // Split text into paragraphs for better readability
+            const paragraphs = formatTextIntoParagraphs(displayText);
+            const textElements = paragraphs.map((content, i) => ({
+                id: `${page.id || index}-p-${i}`,
+                content
+            }));
             const isLocked = isPreview && !liveBook.digitalUnlockPaid && index >= unlockedInnerCount;
             const isGenerating = unlockState === 'generating' && !displayImage && !isLocked;
 
