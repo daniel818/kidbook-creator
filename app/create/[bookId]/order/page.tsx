@@ -641,12 +641,12 @@ export default function OrderPage() {
                             <span className="material-symbols-outlined">lock</span>
                             <span>SSL</span>
                         </div>
-                    ) : (
+                    ) : isPreview && !book.digitalUnlockPaid ? (
                         <div className={styles.stitchPreviewPill}>
                             <span className="material-symbols-outlined">visibility</span>
                             <span>Preview Mode</span>
                         </div>
-                    )}
+                    ) : null}
                     <div className={styles.stitchOrderStepper}>
                         {steps.map((s, i) => (
                             <div key={s} className={styles.stitchOrderStepItem}>
@@ -670,7 +670,7 @@ export default function OrderPage() {
                 </header>
             )}
 
-            {isPreview && !isOptionsStep && !isShippingStep && (
+            {isPreview && !book.digitalUnlockPaid && !isOptionsStep && !isShippingStep && (
                 <div className={styles.previewNotice}>
                     <div>
                         <strong>Preview Mode</strong>

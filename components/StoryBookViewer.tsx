@@ -870,7 +870,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 <div className={styles.headerLeft}>
                     {onClose && (
                         <button className={styles.closeBtn} onClick={onClose}>
-                            ← Back
+                            <span className="material-symbols-outlined">arrow_back</span>
+                            Back
                         </button>
                     )}
                     <div className={styles.bookMeta}>
@@ -887,7 +888,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={flipPrev}
                         aria-label="Previous page"
                     >
-                        ‹
+                        <span className="material-symbols-outlined">chevron_left</span>
                     </button>
                     <span className={styles.pageIndicator}>
                         {currentPageIndex + 1} / {totalFlipPages}
@@ -897,7 +898,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={flipNext}
                         aria-label="Next page"
                     >
-                        ›
+                        <span className="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
 
@@ -906,9 +907,13 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         {isEditing ? (
                             <>
                                 <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
-                                    {isSaving ? 'Saving...' : '💾 Save'}
+                                    <span className="material-symbols-outlined">
+                                        {isSaving ? 'hourglass_top' : 'save'}
+                                    </span>
+                                    {isSaving ? 'Saving...' : 'Save'}
                                 </button>
                                 <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
+                                    <span className="material-symbols-outlined">close</span>
                                     Cancel
                                 </button>
                             </>
@@ -918,7 +923,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                                 onClick={() => (isPaidAccess ? setIsEditing(true) : openPaywall())}
                                 title={isPaidAccess ? undefined : 'Unlock to edit'}
                             >
-                                ✎ Edit
+                                <span className="material-symbols-outlined">edit</span>
+                                Edit
                             </button>
                         )}
                     </div>
@@ -927,7 +933,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         className={styles.orderButton}
                         onClick={isPreview ? () => openPaywall() : () => router.push(`/create/${book.id}/order`)}
                     >
-                        {isPreview ? '🔓 Unlock Full Book' : '🛒 Order Print'}
+                        <span className="material-symbols-outlined">
+                            {isPreview ? 'lock_open' : 'shopping_cart'}
+                        </span>
+                        {isPreview ? 'Unlock Full Book' : 'Order Print'}
                     </button>
                     <button
                         className={styles.actionBtn}
@@ -935,7 +944,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={toggleFullscreen}
                         aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
                     >
-                        {isFullscreen ? '⛶' : '⛶'}
+                        <span className="material-symbols-outlined">
+                            {isFullscreen ? 'fullscreen_exit' : 'fullscreen'}
+                        </span>
                     </button>
                     <button
                         className={styles.actionBtn}
@@ -943,7 +954,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={handleDownload}
                         disabled={isDownloading}
                     >
-                        {isDownloading ? '⏳' : '⬇️'}
+                        <span className="material-symbols-outlined">
+                            {isDownloading ? 'hourglass_top' : 'download'}
+                        </span>
                     </button>
                     {liveBook.estimatedCost !== undefined && (
                         <span className={styles.costBadge} title="Estimated AI Generation Cost">
