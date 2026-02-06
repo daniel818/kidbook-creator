@@ -740,6 +740,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     };
 
     const handleSave = async () => {
+        // Force-sync any active ParagraphEditor before reading edits state
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+        await new Promise(resolve => setTimeout(resolve, 0));
+
         setIsSaving(true);
         try {
             // Build surgical page edits — only send changed fields for changed pages.
@@ -772,15 +778,59 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
             if (!response.ok) throw new Error('Save failed');
 
+            // Apply edits to liveBook BEFORE clearing edits state,
+            // so the UI shows the updated content immediately without needing a refresh.
+            setLiveBook(prev => {
+                const updatedPages = [...prev.pages];
+                const innerPages = updatedPages.filter(p => p.type === 'inside');
+
+                for (const [pageNumStr, edit] of Object.entries(edits)) {
+                    const pageIdx = parseInt(pageNumStr, 10) - 1;
+                    const page = innerPages[pageIdx];
+                    if (!page) continue;
+
+                    // Find the actual index in updatedPages (which includes cover/back pages)
+                    const realIdx = updatedPages.indexOf(page);
+                    if (realIdx === -1) continue;
+
+                    const updatedPage = { ...updatedPages[realIdx] };
+
+                    if (edit.text) {
+                        const normalizedText = normalizeParagraphText(edit.text);
+                        const existingElements = [...(updatedPage.textElements || [])];
+                        if (existingElements.length > 0) {
+                            existingElements[0] = { ...existingElements[0], content: normalizedText };
+                        } else {
+                            existingElements.push({ id: `te-${Date.now()}`, content: normalizedText } as typeof existingElements[0]);
+                        }
+                        updatedPage.textElements = existingElements;
+                    }
+
+                    if (edit.image) {
+                        const existingImages = [...(updatedPage.imageElements || [])];
+                        if (existingImages.length > 0) {
+                            existingImages[0] = { ...existingImages[0], src: edit.image };
+                        } else {
+                            existingImages.push({ id: `ie-${Date.now()}`, src: edit.image } as typeof existingImages[0]);
+                        }
+                        updatedPage.imageElements = existingImages;
+                    }
+
+                    updatedPages[realIdx] = updatedPage;
+                }
+
+                return {
+                    ...prev,
+                    pages: updatedPages,
+                    settings: {
+                        ...prev.settings,
+                        title: titleDraft
+                    }
+                };
+            });
+
             setIsEditing(false);
             setEdits({});
-            setLiveBook(prev => ({
-                ...prev,
-                settings: {
-                    ...prev.settings,
-                    title: titleDraft
-                }
-            }));
             router.refresh();
         } catch (e) {
             console.error(e);
