@@ -1,7 +1,7 @@
 // Prompt Templates - v4 Research Learnings Applied
 // Incorporates findings from 00-project-overview/90-prds/2026-02-01-story-creation-prompt-improvement
 
-import { ART_STYLES, ArtStyle } from '../art-styles';
+import { ART_STYLES, ArtStyle } from '../../art-styles';
 
 // Language display names for better UX in prompts
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -62,7 +62,7 @@ DON'T: Use slang, multi-syllabic words, or break sentences across pages`;
 
     if (age >= 7 && age <= 8) {
         return `
-AGES 7-8: 50-150 words/page, 7-12 words/sentence
+AGES 7-8: 50-150 words/page, 7-12 words/sentence, use \\n\\n to separate paragraphs
 
 MANDATORY:
 - 10+ varied descriptive words
@@ -76,7 +76,7 @@ DON'T: Use dense internal monologue, passive characters, or introduce too many c
 
     if (age >= 9 && age <= 12) {
         return `
-AGES 9-12: 60-90 words/page, 2-3 paragraphs (max 30-40 words each)
+AGES 9-12: 60-90 words/page, 2-3 paragraphs separated by \\n\\n (max 30-40 words each)
 
 MANDATORY:
 - 10+ descriptive words (show don't tell)
@@ -229,6 +229,10 @@ Return ONLY valid JSON. The text as written IS the final exported text — size 
         // ... exactly ${input.pageCount} pages
     ]
 }
+
+PARAGRAPH FORMATTING: When a page has multiple paragraphs, separate them with \\n\\n inside the JSON "text" value. Example:
+"text": "First paragraph of the story.\\n\\nSecond paragraph continues here."
+For young ages (0-6) with short text, a single paragraph per page is fine — no separator needed.
 
 characterDescription REQUIREMENTS: 60-100 words. Include ALL: hair (color, style, length), eyes (color, shape), skin tone, body proportions, default expression, clothing (colors, style). This is the ONLY visual reference for the illustrator — vague descriptions produce inconsistent characters.
 
