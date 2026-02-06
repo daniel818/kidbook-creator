@@ -632,18 +632,10 @@
         "faqs": [
           {
             "id": "pricing-options",
-            "question": "What are your pricing options and discounts?",
-            "answer": "<p>We offer transparent, straightforward pricing with no hidden fees:</p><h4>Single Book Pricing:</h4><ul><li><strong>Digital PDF:</strong> $15 - Instant download after order</li><li><strong>Physical Hardcover:</strong> $45 - Includes digital copy, professional printing, and shipping</li></ul><h4>Payment Methods:</h4><p>We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, and Apple Pay.</p><h4>Currency & Pricing:</h4><p>All prices are displayed in your local currency based on your location. No currency conversion fees. Visit our pricing page to see exact prices in your currency.</p>",
-            "relatedFaqs": [
-              "shipping-delivery"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "pricing-details",
-        "title": "Pricing",
-        "faqs": [
+            "question": "What are your pricing options?",
+            "answer": "<p>We offer transparent, straightforward pricing with no hidden fees:</p><h4>Single Book Pricing:</h4><ul><li><strong>Digital PDF:</strong> $15 - Instant download after order</li><li><strong>Physical Hardcover:</strong> $45 - Includes digital copy, professional printing, and shipping</li></ul><h4>Currency & Pricing:</h4><p>All prices are displayed in your local currency based on your location. No currency conversion fees. Visit our pricing page to see exact prices in your currency.</p>",
+            "relatedFaqs": ["shipping-delivery", "printed-price-includes"]
+          },
           {
             "id": "printed-price-includes",
             "question": "What's included in the printed price?",
