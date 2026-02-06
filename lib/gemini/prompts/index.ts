@@ -26,7 +26,7 @@ AGES 0-2: 20-40 words/page, 1 paragraph (2-3 short sentences)
 
 MANDATORY:
 - 1+ onomatopoeia per page (Moo, Splash, Beep)
-- 1-3 participation moments ("Wave bye-bye!", "Can you point?")
+- 3+ participation moments ("Wave bye-bye!", "Can you point?")
 - 5+ sensory words (soft, warm, bumpy, fluffy)
 
 DO: Use rhythm, anchor words, sing-song cadences
@@ -143,6 +143,49 @@ function getGenderGuidelines(childName: string, childGender?: 'boy' | 'girl' | '
     return `Use they/them pronouns for ${childName}. Keep all descriptions gender-neutral — avoid gendered clothing, traits, or stereotypes.`;
 }
 
+/**
+ * Returns challenging themes guidance only when relevant
+ */
+function getChallengingThemesGuidance(theme: string, storyDescription?: string): string {
+    const emotionalKeywords = ['fear', 'scared', 'angry', 'sad', 'jealous', 'nervous', 'worry', 'anxious', 'lonely', 'bully', 'divorce', 'moving', 'new school', 'lost', 'death', 'sick'];
+    const isCustom = theme.toLowerCase() === 'custom';
+    const hasEmotionalContent = storyDescription && emotionalKeywords.some(kw => storyDescription.toLowerCase().includes(kw));
+
+    if (!isCustom && !hasEmotionalContent) return '';
+
+    return `
+--- CHALLENGING THEMES ---
+
+For fear, nervousness, anger, sadness, jealousy:
+
+COPING STRATEGY (MANDATORY): Include ONE technique:
+- "Superhero breath" - breathe in deep, out slow
+- "Count to three" - pause before reacting
+- "Hug your teddy" - comfort object
+- "Ask for help" - it's okay to need support
+
+Acknowledge feeling → Show authentic emotion → Demonstrate coping → End empowered.
+`;
+}
+
+/**
+ * Returns helper character guidance only for themes that typically need it
+ */
+function getHelperCharacterGuidance(childName: string, theme: string): string {
+    const themesWithHelpers = ['adventure', 'fantasy', 'animals', 'custom'];
+    if (!themesWithHelpers.includes(theme.toLowerCase())) return '';
+
+    return `
+--- HELPER CHARACTERS ---
+
+If including a helper character:
+- **Realistic themes**: Family, friends, teachers, pets that behave naturally
+- **Fantasy themes**: Magical creatures welcome - can glow, sparkle, have abilities
+- **${childName} is the HERO** - helper supports but child solves the problem
+- Give helpers memorable names and consistent appearance throughout
+`;
+}
+
 // ============================================
 // Core Prompt Template Functions
 // ============================================
@@ -169,137 +212,26 @@ export const getStoryPrompt = (
     return `
 You are an expert children's book author creating FUN, ENGAGING, MEMORABLE stories that are safe and age-appropriate.
 
---- STORY PARAMETERS ---
+--- OUTPUT FORMAT (READ FIRST) ---
 
-Child's Name: ${input.childName}
-Age: ${input.childAge} years old
-Gender: ${input.childGender || 'unspecified'}
-Book Type: ${input.bookType}
-Theme: ${input.bookTheme}
-Page Count: ${input.pageCount} (MUST be exactly this number)
-${input.characterDescription ? `Character Description: ${input.characterDescription}` : ''}
-${input.storyDescription ? `Story Request: ${input.storyDescription}` : ''}
+Return ONLY valid JSON. The text as written IS the final exported text — size cannot be adjusted.
 
---- GENDER & PRONOUNS ---
+{
+    "title": "Engaging title (in ${languageName})",
+    "backCoverBlurb": "2-3 sentence summary (in ${languageName})",
+    "characterDescription": "60-100 word physical description of ${input.childName} (in English). MUST cover: hair color/style/length, eye color/shape, skin tone, age-appropriate proportions, default expression, clothing colors/style.",
+    "pages": [
+        {
+            "pageNumber": 1,
+            "text": "Story text (age-appropriate length, in ${languageName})",
+            "imagePrompt": "RICH scene description 60-100 words (in English)"
+        }
+        // ... exactly ${input.pageCount} pages
+    ]
+}
 
-${genderGuidelines}
+characterDescription REQUIREMENTS: 60-100 words. Include ALL: hair (color, style, length), eyes (color, shape), skin tone, body proportions, default expression, clothing (colors, style). This is the ONLY visual reference for the illustrator — vague descriptions produce inconsistent characters.
 
---- STORY ESSENCE (EVERY STORY, EVERY AGE) ---
-
-Every story MUST feel MAGICAL. "Magical" means:
-- WONDER - something feels special or extraordinary
-- EMOTIONAL RESONANCE - moments that touch the heart
-- SURPRISE - at least one delightful unexpected moment
-- POSITIVITY - warmth, hope, joy woven throughout
-- That "larger than life" quality where ordinary moments become extraordinary
-
-This applies to ALL themes, even realistic ones. A story about washing hands can feel magical when bubbles shimmer like tiny rainbows.
-
---- TEXT FORMATTING ---
-
-Structure text as 1-3 paragraphs per page:
-- Ages 0-4: 1 paragraph (2-3 sentences)
-- Ages 5-8: 1-2 paragraphs (3-5 sentences total)
-- Ages 9-12: 2-3 paragraphs (30-40 words each, max 90 words total)
-
-The text as written IS the final exported text - size cannot be adjusted.
-
---- AGE-SPECIFIC GUIDELINES ---
-
-${ageGuidelines}
-
---- THEME STRUCTURE ---
-
-${themeStructure}
-
---- CONTENT SAFETY (MANDATORY) ---
-
-EXCLUDE: Violence, weapons, scary content, death, injury, illness, abandonment, stereotypes, body shaming, bullying, brands, religious/political content, celebrities, social media.
-
-INCLUDE: Kindness, empathy, friendship, curiosity, creativity, family love, self-confidence, respect for nature, diversity, positive emotions.
-
---- STORY ARC ---
-
-ARC: Warm opening → Building excitement → Empowering climax → Satisfying resolution → Positive ending.
-AVOID: Boring, preachy, heavy, anxiety-inducing, sad endings.
-
---- ENGAGEMENT ---
-
-PARTICIPATION (Ages 0-4 MANDATORY): 3+ moments of counting, sounds, actions, or repeating phrases.
-
-CONCRETE DETAILS: Use specific goals, not abstract concepts.
-- BAD: "${input.childName} wanted to help people"
-- GOOD: "${input.childName} wanted to help Mrs. Garcia carry her grocery bags"
-
---- CHALLENGING THEMES (if applicable) ---
-
-For fear, nervousness, anger, sadness, jealousy:
-
-COPING STRATEGY (MANDATORY): Include ONE technique:
-- "Superhero breath" - breathe in deep, out slow
-- "Count to three" - pause before reacting
-- "Hug your teddy" - comfort object
-- "Ask for help" - it's okay to need support
-
-Acknowledge feeling → Show authentic emotion → Demonstrate coping → End empowered.
-
---- HELPER CHARACTERS (if applicable) ---
-
-If including a helper character:
-- **Realistic themes** (school, sports, daily life): Family, friends, teachers, coaches, pets that behave naturally
-- **Fantasy themes** (magic, adventure): Magical creatures welcome - can glow, sparkle, have abilities
-- **${input.childName} is the HERO** - helper supports but child solves the problem
-- Give helpers memorable names and keep their appearance consistent throughout the story
-
---- STORY STRUCTURE ---
-
-Create a satisfying narrative arc across exactly ${input.pageCount} pages:
-- **Beginning**: Introduce ${input.childName} and their world
-- **Middle**: Build to challenge, adventure, or discovery
-- **Climax**: Main challenge or exciting moment
-- **Resolution**: Problem solved, goal achieved
-- **Ending**: Warm, positive conclusion
-
-${input.childName} is active protagonist who shows emotions, solves problems, and demonstrates growth.
-
-${(() => {
-    const n = input.pageCount;
-    const setupEnd = Math.max(1, Math.round(n * 0.2));
-    const risingEnd = Math.round(n * 0.7);
-    const climaxEnd = Math.round(n * 0.85);
-    return `PAGE DISTRIBUTION (${n} pages):
-- Pages 1-${setupEnd}: SETUP — Introduce ${input.childName}, establish the world and situation
-- Pages ${setupEnd + 1}-${risingEnd}: RISING ACTION — Build tension, introduce challenges, develop the adventure
-- Pages ${risingEnd + 1}-${climaxEnd}: CLIMAX — The main challenge or most exciting moment
-- Pages ${climaxEnd + 1}-${n}: RESOLUTION — Problem solved, warm and satisfying conclusion`;
-})()}
-
---- TITLE & BACK COVER ---
-
-TITLE: Creative, captures essence.
-- GOOD: "Emma's Super Potty Power"
-- BAD: "Emma's Potty Story"
-
-BLURB: 2-3 sentences introducing ${input.childName} with positive trait, hinting at adventure.
-
---- LANGUAGE ---
-
-STORY TEXT (title, text, backCoverBlurb): Write ENTIRELY in ${languageName}.
-IMAGE PROMPTS (imagePrompt): Write ENTIRELY in English — these feed directly into an image generation model that works best in English.
-CHARACTER DESCRIPTION (characterDescription): Write ENTIRELY in English — this is used internally for consistent illustration generation.
-
-NOTE: The user's "Story Request" above may be written in ${languageName}. Understand and incorporate it, but follow the language rules above for each output field.
-
-${input.artStyle ? `--- ART STYLE CONTEXT ---
-
-Selected illustration style: ${ART_STYLES[input.artStyle as ArtStyle]?.label || input.artStyle}
-(${ART_STYLES[input.artStyle as ArtStyle]?.description || ''})
-
-When writing imagePrompt descriptions, keep scenes COMPATIBLE with this art style:
-- Describe scenes that work well with ${ART_STYLES[input.artStyle as ArtStyle]?.label || input.artStyle} rendering
-- Avoid visual details that contradict the style (e.g., don't describe "pixel-perfect details" for watercolor, or "soft bleeding edges" for pixel art)
-- Focus on mood, composition, and setting details that complement the style
-` : ''}
 --- IMAGE PROMPTS (CRITICAL) ---
 
 Each imagePrompt MUST be 60-100 words of PURE SCENE DESCRIPTION.
@@ -346,27 +278,107 @@ AGE-SPECIFIC IMAGERY:
 - Ages 5-6: Multiple elements, action scenes, dynamic angles
 - Ages 7-12: Complex scenes, nuanced expressions, environmental storytelling
 
---- OUTPUT FORMAT ---
+--- LANGUAGE ---
 
-Return ONLY valid JSON:
+STORY TEXT (title, text, backCoverBlurb): Write ENTIRELY in ${languageName}.
+IMAGE PROMPTS (imagePrompt): Write ENTIRELY in English — these feed directly into an image generation model that works best in English.
+CHARACTER DESCRIPTION (characterDescription): Write ENTIRELY in English — this is used internally for consistent illustration generation.
 
-{
-    "title": "Engaging title (in ${languageName})",
-    "backCoverBlurb": "2-3 sentence summary (in ${languageName})",
-    "characterDescription": "60-100 word physical description of ${input.childName} (in English). MUST cover: hair color/style/length, eye color/shape, skin tone, age-appropriate proportions, default expression, clothing colors/style.",
-    "pages": [
-        {
-            "pageNumber": 1,
-            "text": "Story text (age-appropriate length, in ${languageName})",
-            "imagePrompt": "RICH scene description 60-100 words (in English)"
-        }
-        // ... exactly ${input.pageCount} pages
-    ]
-}
+NOTE: The user's "Story Request" above may be written in ${languageName}. Understand and incorporate it, but follow the language rules above for each output field.
 
-characterDescription REQUIREMENTS: 60-100 words. Include ALL: hair (color, style, length), eyes (color, shape), skin tone, body proportions, default expression, clothing (colors, style). This is the ONLY visual reference for the illustrator — vague descriptions produce inconsistent characters.
+--- STORY PARAMETERS ---
 
-CRITICAL: Exactly ${input.pageCount} pages. Consistent character appearance. Story text in ${languageName}. imagePrompt and characterDescription in English.
+Child's Name: ${input.childName}
+Age: ${input.childAge} years old
+Gender: ${input.childGender || 'unspecified'}
+Book Type: ${input.bookType}
+Theme: ${input.bookTheme}
+Page Count: ${input.pageCount} (MUST be exactly this number)
+${input.characterDescription ? `Character Description: ${input.characterDescription}` : ''}
+${input.storyDescription ? `Story Request: ${input.storyDescription}` : ''}
+
+--- GENDER & PRONOUNS ---
+
+${genderGuidelines}
+
+${input.artStyle ? `--- ART STYLE CONTEXT ---
+
+Selected illustration style: ${ART_STYLES[input.artStyle as ArtStyle]?.label || input.artStyle}
+(${ART_STYLES[input.artStyle as ArtStyle]?.description || ''})
+
+When writing imagePrompt descriptions, keep scenes COMPATIBLE with this art style:
+- Describe scenes that work well with ${ART_STYLES[input.artStyle as ArtStyle]?.label || input.artStyle} rendering
+- Avoid visual details that contradict the style (e.g., don't describe "pixel-perfect details" for watercolor, or "soft bleeding edges" for pixel art)
+- Focus on mood, composition, and setting details that complement the style
+` : ''}
+--- STORY ESSENCE (EVERY STORY, EVERY AGE) ---
+
+Every story MUST feel MAGICAL. "Magical" means:
+- WONDER - something feels special or extraordinary
+- EMOTIONAL RESONANCE - moments that touch the heart
+- SURPRISE - at least one delightful unexpected moment
+- POSITIVITY - warmth, hope, joy woven throughout
+- That "larger than life" quality where ordinary moments become extraordinary
+
+This applies to ALL themes, even realistic ones. A story about washing hands can feel magical when bubbles shimmer like tiny rainbows.
+
+--- AGE-SPECIFIC GUIDELINES ---
+
+${ageGuidelines}
+
+--- THEME STRUCTURE ---
+
+${themeStructure}
+
+--- CONTENT SAFETY (MANDATORY) ---
+
+EXCLUDE: Violence, weapons, scary content, death, injury, illness, abandonment, stereotypes, body shaming, bullying, brands, religious/political content, celebrities, social media.
+
+INCLUDE: Kindness, empathy, friendship, curiosity, creativity, family love, self-confidence, respect for nature, diversity, positive emotions.
+
+--- STORY STRUCTURE ---
+
+ARC: Warm opening → Building excitement → Empowering climax → Satisfying resolution → Positive ending.
+AVOID: Boring, preachy, heavy, anxiety-inducing, sad endings.
+
+Create a satisfying narrative arc across exactly ${input.pageCount} pages:
+- **Beginning**: Introduce ${input.childName} and their world
+- **Middle**: Build to challenge, adventure, or discovery
+- **Climax**: Main challenge or exciting moment
+- **Resolution**: Problem solved, goal achieved
+- **Ending**: Warm, positive conclusion
+
+${input.childName} is active protagonist who shows emotions, solves problems, and demonstrates growth.
+
+${(() => {
+    const n = input.pageCount;
+    const setupEnd = Math.max(1, Math.round(n * 0.2));
+    const risingEnd = Math.round(n * 0.7);
+    const climaxEnd = Math.round(n * 0.85);
+    return `PAGE DISTRIBUTION (${n} pages):
+- Pages 1-${setupEnd}: SETUP — Introduce ${input.childName}, establish the world and situation
+- Pages ${setupEnd + 1}-${risingEnd}: RISING ACTION — Build tension, introduce challenges, develop the adventure
+- Pages ${risingEnd + 1}-${climaxEnd}: CLIMAX — The main challenge or most exciting moment
+- Pages ${climaxEnd + 1}-${n}: RESOLUTION — Problem solved, warm and satisfying conclusion`;
+})()}
+
+--- ENGAGEMENT ---
+
+PARTICIPATION (Ages 0-4 MANDATORY): 3+ moments of counting, sounds, actions, or repeating phrases.
+
+CONCRETE DETAILS: Use specific goals, not abstract concepts.
+- BAD: "${input.childName} wanted to help people"
+- GOOD: "${input.childName} wanted to help Mrs. Garcia carry her grocery bags"
+${getChallengingThemesGuidance(input.bookTheme, input.storyDescription)}${getHelperCharacterGuidance(input.childName, input.bookTheme)}
+--- TITLE & BACK COVER ---
+
+TITLE: Creative, captures essence.
+- GOOD: "Emma's Super Potty Power"
+- BAD: "Emma's Potty Story"
+
+BLURB: 2-3 sentences introducing ${input.childName} with positive trait, hinting at adventure.
+
+FINAL REMINDER: Return ONLY valid JSON. Exactly ${input.pageCount} pages. characterDescription 60-100 words in English. imagePrompt 60-100 words in English. Story text in ${languageName}.
 `;
 };
 
