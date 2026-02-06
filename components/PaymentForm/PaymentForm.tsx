@@ -92,6 +92,7 @@ export default function PaymentForm({
                 setIsProcessing(false);
             } else if (paymentIntent && paymentIntent.status === 'succeeded') {
                 // Payment succeeded — notify parent
+                setIsProcessing(false);
                 onPaymentSuccess(paymentIntent.id);
             }
             // If paymentIntent.status is 'requires_action', Stripe handles 3D Secure automatically

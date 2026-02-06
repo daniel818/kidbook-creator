@@ -622,14 +622,12 @@ export default function OrderPage() {
     const shippingLevelLabel = displayedShippingLevel ? formatShippingLevel(displayedShippingLevel) : '';
     const isPreview = book.status === 'preview' || book.isPreview;
     const optionBookPrice = FORMAT_PRICES[format];
-    const optionDigitalPrice = isPreview && !book.digitalUnlockPaid ? 15 : 0;
-    const optionTotal = optionBookPrice + optionDigitalPrice;
+    const optionTotal = optionBookPrice;
     const isOptionsStep = step === 'options';
     const isShippingStep = step === 'shipping';
     const isReviewStep = step === 'review';
     const isPaymentStep = step === 'payment';
-    const digitalUnlockCost = isPreview && !book.digitalUnlockPaid ? 15 : 0;
-    const shippingFooterTotal = (hasShippingQuote ? grandTotal : totalPrice) + digitalUnlockCost;
+    const shippingFooterTotal = hasShippingQuote ? grandTotal : totalPrice;
 
     return (
         <main className={`${styles.main} ${isOptionsStep ? styles.stitchOrderMain : ''}`}>
@@ -1171,7 +1169,6 @@ export default function OrderPage() {
                             <div className={styles.stitchShippingFooterMobile}>
                                 <div className={styles.stitchShippingTotals}>
                                     <div><span>Book ({quantity}x)</span><span>{bookPriceValue === 'Unavailable' || bookPriceValue === '—' ? '$0.00' : bookPriceValue}</span></div>
-                                    {digitalUnlockCost > 0 && <div><span>Digital Unlock</span><span>$15.00</span></div>}
                                     <div><span>Shipping</span><span>{hasShippingQuote ? `$${shippingCost.toFixed(2)}` : '$0.00'}</span></div>
                                     <div className={styles.stitchShippingTotalLine}></div>
                                     <div className={styles.stitchShippingTotalRow}><span>Total</span><span>${shippingFooterTotal.toFixed(2)}</span></div>
@@ -1238,12 +1235,6 @@ export default function OrderPage() {
                                 <div className={styles.stitchReviewPriceCard}>
                                     <div><span>Book Price (x{quantity})</span><span>{bookPriceValue === 'Unavailable' || bookPriceValue === '—' ? '$0.00' : bookPriceValue}</span></div>
                                     <div><span>Shipping</span><span>{hasShippingQuote ? `$${shippingCost.toFixed(2)}` : '$0.00'}</span></div>
-                                    {digitalUnlockCost > 0 && (
-                                        <div>
-                                            <span className={styles.stitchReviewDigitalRow}>Digital Unlock <span className="material-symbols-outlined">verified</span></span>
-                                            <span>$15.00</span>
-                                        </div>
-                                    )}
                                     <div className={styles.stitchReviewPriceDivider}></div>
                                     <div className={styles.stitchReviewTotalRow}><span>Total</span><span>${shippingFooterTotal.toFixed(2)}</span></div>
                                 </div>
@@ -1451,15 +1442,9 @@ export default function OrderPage() {
                                         <span>Shipping</span>
                                         <span>{shippingValue}</span>
                                     </div>
-                                    {isPreview && !book.digitalUnlockPaid && (
-                                        <div className={styles.priceRow}>
-                                            <span>Digital Unlock</span>
-                                            <span>$15.00</span>
-                                        </div>
-                                    )}
                                     <div className={`${styles.priceRow} ${styles.total}`}>
                                         <span>Total</span>
-                                        <span>${(grandTotal + (isPreview && !book.digitalUnlockPaid ? 15 : 0)).toFixed(2)}</span>
+                                        <span>${grandTotal.toFixed(2)}</span>
                                     </div>
                                 </>
                             ) : (
@@ -1468,12 +1453,6 @@ export default function OrderPage() {
                                         <span>Shipping</span>
                                         <span>{shippingValue}</span>
                                     </div>
-                                    {isPreview && !book.digitalUnlockPaid && (
-                                        <div className={styles.priceRow}>
-                                            <span>Digital Unlock</span>
-                                            <span>$15.00</span>
-                                        </div>
-                                    )}
                                 </>
                             )}
                             <p className={styles.pricingNote}>

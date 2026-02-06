@@ -126,6 +126,12 @@ export async function POST(request: NextRequest) {
 
         if (updateError) {
             console.error('Failed to link payment intent to order:', updateError);
+            // Cancel the orphaned PaymentIntent so the user isn't charged
+            await stripe.paymentIntents.cancel(paymentIntent.id).catch(() => {});
+            return NextResponse.json(
+                { error: 'Failed to finalize order setup. Please try again.' },
+                { status: 500 }
+            );
         }
 
         return NextResponse.json({
