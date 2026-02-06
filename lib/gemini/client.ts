@@ -112,7 +112,8 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
         bookType: input.bookType,
         pageCount: input.pageCount || 10,
         characterDescription: input.characterDescription,
-        storyDescription: input.storyDescription
+        storyDescription: input.storyDescription,
+        artStyle: input.artStyle,
     });
 
     logWithTime('--- STORY PROMPT SENT TO MODEL ---', prompt);
@@ -321,7 +322,7 @@ export async function generateCompleteBook(
         imageCount: 0
     });
 
-    const characterDescription = story.characterDescription || input.characterDescription || `A cute child named ${input.childName}`;
+    const characterDescription = input.characterDescription || story.characterDescription || `A cute child named ${input.childName}`;
 
     const illustrations: string[] = new Array(story.pages.length).fill('');
     const maxIllustrations = Math.min(options?.illustrationLimit ?? story.pages.length, story.pages.length);

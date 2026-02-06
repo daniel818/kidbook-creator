@@ -1,6 +1,8 @@
 // Prompt Templates - v4 Research Learnings Applied
 // Incorporates findings from 00-project-overview/90-prds/2026-02-01-story-creation-prompt-improvement
 
+import { ART_STYLES, ArtStyle } from '../art-styles';
+
 // Language display names for better UX in prompts
 const LANGUAGE_NAMES: Record<string, string> = {
     en: 'English',
@@ -155,6 +157,7 @@ export const getStoryPrompt = (
         pageCount: number;
         characterDescription?: string;
         storyDescription?: string;
+        artStyle?: string;
     },
     targetLanguage: Language = 'en'
 ) => {
@@ -259,6 +262,18 @@ Create a satisfying narrative arc across exactly ${input.pageCount} pages:
 
 ${input.childName} is active protagonist who shows emotions, solves problems, and demonstrates growth.
 
+${(() => {
+    const n = input.pageCount;
+    const setupEnd = Math.max(1, Math.round(n * 0.2));
+    const risingEnd = Math.round(n * 0.7);
+    const climaxEnd = Math.round(n * 0.85);
+    return `PAGE DISTRIBUTION (${n} pages):
+- Pages 1-${setupEnd}: SETUP — Introduce ${input.childName}, establish the world and situation
+- Pages ${setupEnd + 1}-${risingEnd}: RISING ACTION — Build tension, introduce challenges, develop the adventure
+- Pages ${risingEnd + 1}-${climaxEnd}: CLIMAX — The main challenge or most exciting moment
+- Pages ${climaxEnd + 1}-${n}: RESOLUTION — Problem solved, warm and satisfying conclusion`;
+})()}
+
 --- TITLE & BACK COVER ---
 
 TITLE: Creative, captures essence.
@@ -275,6 +290,16 @@ CHARACTER DESCRIPTION (characterDescription): Write ENTIRELY in English — this
 
 NOTE: The user's "Story Request" above may be written in ${languageName}. Understand and incorporate it, but follow the language rules above for each output field.
 
+${input.artStyle ? `--- ART STYLE CONTEXT ---
+
+Selected illustration style: ${ART_STYLES[input.artStyle as ArtStyle]?.label || input.artStyle}
+(${ART_STYLES[input.artStyle as ArtStyle]?.description || ''})
+
+When writing imagePrompt descriptions, keep scenes COMPATIBLE with this art style:
+- Describe scenes that work well with ${ART_STYLES[input.artStyle as ArtStyle]?.label || input.artStyle} rendering
+- Avoid visual details that contradict the style (e.g., don't describe "pixel-perfect details" for watercolor, or "soft bleeding edges" for pixel art)
+- Focus on mood, composition, and setting details that complement the style
+` : ''}
 --- IMAGE PROMPTS (CRITICAL) ---
 
 Each imagePrompt MUST be 60-100 words of PURE SCENE DESCRIPTION.
@@ -283,8 +308,14 @@ DO NOT include the character description in the imagePrompt - it is already prov
 MANDATORY STRUCTURE:
 "[Character Action]. [Setting with specific details]. [Atmosphere and mood]. [Composition notes]."
 
-EXAMPLE (Good - 75 words):
+EXAMPLE 1 (Good - indoor/playful, 75 words):
 "Standing in the center of a cheerful playroom bathed in warm afternoon sunlight streaming through a large window. A soft cream-colored rug beneath her feet, wooden shelves behind her hold colorful stacking toys and plush animals. A big red balloon floats near the ceiling. Walls painted soft mint green, golden dust particles dance in the sunbeams. She claps her hands with pure joy, eyes sparkling. Medium shot, slightly low angle."
+
+EXAMPLE 2 (Good - outdoor/nature, 70 words):
+"Running along a sun-dappled forest trail carpeted with fallen autumn leaves in rich amber, crimson, and gold. Tall oak trees form a natural archway overhead, filtering warm late-afternoon sunlight into golden shafts. A curious red squirrel perches on a mossy log to the left. Small white wildflowers dot the trail edges. Laughing with arms outstretched, hair flowing behind. Wide shot from slightly ahead on the path."
+
+EXAMPLE 3 (Good - emotional close-up, 65 words):
+"Sitting cross-legged on a cozy window seat, forehead pressed against a rain-streaked windowpane. Outside, a gray-blue sky with soft drizzle over a garden of purple hydrangeas. A well-loved stuffed rabbit tucked under one arm. A half-finished cup of cocoa with tiny marshmallows on the wooden sill. Thoughtful, gentle expression. Close-up shot, shallow depth of field, warm interior light."
 
 FIVE MANDATORY ELEMENTS:
 1. ACTION: What the character is doing (dynamic verb, expression, pose)
@@ -322,7 +353,7 @@ Return ONLY valid JSON:
 {
     "title": "Engaging title (in ${languageName})",
     "backCoverBlurb": "2-3 sentence summary (in ${languageName})",
-    "characterDescription": "Physical description of ${input.childName} (in English)",
+    "characterDescription": "60-100 word physical description of ${input.childName} (in English). MUST cover: hair color/style/length, eye color/shape, skin tone, age-appropriate proportions, default expression, clothing colors/style.",
     "pages": [
         {
             "pageNumber": 1,
@@ -332,6 +363,8 @@ Return ONLY valid JSON:
         // ... exactly ${input.pageCount} pages
     ]
 }
+
+characterDescription REQUIREMENTS: 60-100 words. Include ALL: hair (color, style, length), eyes (color, shape), skin tone, body proportions, default expression, clothing (colors, style). This is the ONLY visual reference for the illustrator — vague descriptions produce inconsistent characters.
 
 CRITICAL: Exactly ${input.pageCount} pages. Consistent character appearance. Story text in ${languageName}. imagePrompt and characterDescription in English.
 `;
@@ -452,6 +485,7 @@ export const getPrompts = (language: Language = 'en') => {
             pageCount: number;
             characterDescription?: string;
             storyDescription?: string;
+            artStyle?: string;
         }) => getStoryPrompt(input, language),
 
         getCharacterExtractionPrompt: () => getCharacterExtractionPrompt(language),
