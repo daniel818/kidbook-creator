@@ -348,7 +348,8 @@
   "orders": {
     "header": {
       "backButton": "← Zurück zur Startseite",
-      "title": "Meine Bestellungen"
+      "title": "Meine Bestellungen",
+      "subtitle": "Verfolge deine gedruckten Bücher und den Bestellstatus"
     },
     "loading": "Bestellungen werden geladen...",
     "empty": {
@@ -390,6 +391,7 @@
   "mybooks": {
     "header": {
       "title": "Meine Bücher",
+      "subtitle": "Deine personalisierte Büchersammlung",
       "booksCount": "{{count}} Buch erstellt",
       "booksCount_other": "{{count}} Bücher erstellt"
     },

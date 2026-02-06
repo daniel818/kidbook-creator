@@ -2,6 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import FAQList from '@/components/FAQ/FAQList';
 import { FAQData } from '@/lib/faq/types';
 
@@ -15,6 +16,7 @@ export default function FAQPage() {
         <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
           <div style={{ textAlign: 'center', padding: '3rem 0' }}>Loading...</div>
         </main>
+        <Footer />
       </>
     );
   }
@@ -28,6 +30,7 @@ export default function FAQPage() {
         <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
           <div style={{ textAlign: 'center', padding: '3rem 0' }}>Error loading FAQ data</div>
         </main>
+        <Footer />
       </>
     );
   }
@@ -59,6 +62,7 @@ export default function FAQPage() {
           <FAQList data={data} />
         </div>
       </main>
+      <Footer />
     </>
   );
 }

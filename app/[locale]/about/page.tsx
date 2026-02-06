@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import styles from './page.module.css';
 
 export default function AboutPage() {
@@ -75,6 +76,7 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
+      <Footer />
     </>
   );
 }

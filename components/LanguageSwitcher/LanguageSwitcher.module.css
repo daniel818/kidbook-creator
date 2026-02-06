@@ -162,3 +162,36 @@
   font-weight: 600;
   color: #f4258c;
 }
+
+/* Footer variant - inline language codes */
+.footerVariant {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footerLangBtn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 6px;
+  transition: color 0.2s ease;
+}
+
+.footerLangBtn:hover {
+  color: #ffffff;
+}
+
+.footerLangActive {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.footerSep {
+  color: #475569;
+  font-size: 13px;
+  user-select: none;
+}

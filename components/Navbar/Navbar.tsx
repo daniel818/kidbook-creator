@@ -114,11 +114,24 @@ export function Navbar() {
             <span className={styles.navName}>KidBook Creator</span>
           </button>
 
+          {/* Center Page Links */}
+          <div className={styles.navCenter}>
+            <span className={styles.navLinkDisabled}>
+              {t('ourBooks', 'Our Books')}
+            </span>
+            <button className={styles.navLink} onClick={() => router.push('/pricing')}>
+              {t('pricing', 'Pricing')}
+            </button>
+            <button className={styles.navLink} onClick={() => router.push('/faq')}>
+              {t('faq', 'FAQ')}
+            </button>
+            <button className={styles.navLink} onClick={() => router.push('/about')}>
+              {t('aboutUs', 'About Us')}
+            </button>
+          </div>
+
           <div className={styles.navActions}>
             <div className={styles.navLinks}>
-              <button className={styles.navLink} onClick={() => router.push('/pricing')}>
-                {t('pricing', 'Pricing')}
-              </button>
               <div className={styles.languageDesktop}>
                 <LanguageSwitcher compact variant="navbar" />
               </div>

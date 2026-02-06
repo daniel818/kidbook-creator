@@ -349,7 +349,8 @@
   "orders": {
     "header": {
       "backButton": "← Back to Home",
-      "title": "My Orders"
+      "title": "My Orders",
+      "subtitle": "Track your printed books and order status"
     },
     "loading": "Loading orders...",
     "empty": {
@@ -391,6 +392,7 @@
   "mybooks": {
     "header": {
       "title": "My Books",
+      "subtitle": "Your personalized book collection",
       "booksCount": "{{count}} book created",
       "booksCount_other": "{{count}} books created"
     },
