@@ -1229,6 +1229,10 @@ export default function OrderPage() {
                                 <div className={styles.stitchReviewPriceCard}>
                                     <div><span>Book Price (x{quantity})</span><span>{bookPriceValue === 'Unavailable' || bookPriceValue === '—' ? '$0.00' : bookPriceValue}</span></div>
                                     <div><span>Shipping</span><span>{hasShippingQuote ? `$${shippingCost.toFixed(2)}` : '$0.00'}</span></div>
+                                    <div>
+                                        <span className={styles.stitchReviewDigitalRow}>Digital Copy <span className="material-symbols-outlined">verified</span></span>
+                                        <span className={styles.stitchReviewFreeLabel}>Free</span>
+                                    </div>
                                     <div className={styles.stitchReviewPriceDivider}></div>
                                     <div className={styles.stitchReviewTotalRow}><span>Total</span><span>${shippingFooterTotal.toFixed(2)}</span></div>
                                 </div>
