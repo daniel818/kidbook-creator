@@ -1,12 +1,12 @@
 // ============================================
-// Get Order by Session ID
+// Get Order by Order ID
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 interface RouteContext {
-    params: Promise<{ sessionId: string }>;
+    params: Promise<{ orderId: string }>;
 }
 
 export async function GET(
@@ -14,29 +14,28 @@ export async function GET(
     context: RouteContext
 ) {
     try {
-        const { sessionId } = await context.params;
+        const { orderId } = await context.params;
         const supabase = await createClient();
 
-        // Get order by Stripe session ID
+        // RLS ensures user can only see their own orders
         const { data: order, error } = await supabase
             .from('orders')
             .select(`
-        *,
-        books (
-          title,
-          child_name,
-          thumbnail_url,
-          pages (id)
-        )
-      `)
-            .eq('stripe_checkout_session_id', sessionId)
+                *,
+                books (
+                    title,
+                    child_name,
+                    thumbnail_url,
+                    pages (id)
+                )
+            `)
+            .eq('id', orderId)
             .single();
 
         if (error || !order) {
             return NextResponse.json({ error: 'Order not found' }, { status: 404 });
         }
 
-        // Format response
         return NextResponse.json({
             id: order.id,
             bookId: order.book_id,
@@ -72,7 +71,7 @@ export async function GET(
 
 function getEstimatedDelivery(): string {
     const date = new Date();
-    date.setDate(date.getDate() + 10); // 10 business days
+    date.setDate(date.getDate() + 10);
     return date.toLocaleDateString('en-US', {
         month: 'long',
         day: 'numeric',

@@ -7,8 +7,24 @@ import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
 import { formatTextIntoParagraphs } from '@/lib/utils/text-formatting';
+import { Elements } from '@stripe/react-stripe-js';
+import { getStripe } from '@/lib/stripe/client';
+import PaymentForm from '@/components/PaymentForm/PaymentForm';
 import PrintGenerator from './PrintGenerator';
 import styles from './StoryBookViewer.module.css';
+
+const stripeAppearance = {
+    theme: 'stripe' as const,
+    variables: {
+        colorPrimary: '#6366f1',
+        colorBackground: '#ffffff',
+        colorText: '#111827',
+        colorDanger: '#ef4444',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        borderRadius: '12px',
+        spacingUnit: '4px',
+    },
+};
 
 interface StoryBookViewerProps {
     book: Book;
@@ -18,7 +34,7 @@ interface StoryBookViewerProps {
 
 // ============================================
 // Helper: Stop Propagation Wrapper
-// Blocks native events (mousedown, click, touch) 
+// Blocks native events (mousedown, click, touch)
 // so react-pageflip listener doesn't trigger.
 // ============================================
 function StopPropagationWrapper({ children, className }: { children: React.ReactNode, className?: string }) {
@@ -249,12 +265,11 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const [isUnlocking, setIsUnlocking] = useState(false);
     const [unlockError, setUnlockError] = useState<string | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
+    const [paywallView, setPaywallView] = useState<'offers' | 'payment'>('offers');
     const [unlockState, setUnlockState] = useState<'idle' | 'waiting' | 'generating'>('idle');
-    const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+    const [unlockClientSecret, setUnlockClientSecret] = useState<string | null>(null);
     const unlockStartedRef = useRef(false);
-    const checkoutWindowRef = useRef<Window | null>(null);
-    const checkoutChannelRef = useRef<BroadcastChannel | null>(null);
-    const checkoutSessionIdRef = useRef<string | null>(null);
+    const unlockPaymentIntentRef = useRef<string | null>(null);
 
     useEffect(() => {
         setLiveBook(book);
@@ -366,17 +381,10 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             if (!response.ok) {
                 throw new Error(data?.error || 'Failed to start checkout');
             }
-            if (data.sessionId) {
-                checkoutSessionIdRef.current = data.sessionId;
-            }
-            if (data.url) {
-                setCheckoutUrl(data.url);
+            if (data.clientSecret) {
+                setUnlockClientSecret(data.clientSecret);
+                unlockPaymentIntentRef.current = data.paymentIntentId || null;
                 setUnlockState('waiting');
-                checkoutWindowRef.current = window.open(
-                    data.url,
-                    'kidbookCheckout',
-                    'popup,width=520,height=720,menubar=0,toolbar=0,location=1,status=0'
-                );
             }
         } catch (error) {
             console.error('Unlock error:', error);
@@ -386,6 +394,16 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         }
     }, [isUnlocking, liveBook.digitalUnlockPaid, book.id]);
 
+    const openPaywall = useCallback(() => {
+        setPaywallView('offers');
+        setShowPaywall(true);
+    }, []);
+
+    const closePaywall = useCallback(() => {
+        setShowPaywall(false);
+        setPaywallView('offers');
+    }, []);
+
     const pollBook = useCallback(async () => {
         try {
             const response = await fetch(`/api/books/${book.id}`);
@@ -393,22 +411,19 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             const data = await response.json();
             setLiveBook(data);
             if (unlockState === 'waiting' && data.digitalUnlockPaid) {
-                checkoutWindowRef.current?.close();
-                checkoutWindowRef.current = null;
                 setShowPaywall(false);
+                setUnlockClientSecret(null);
                 setUnlockState('generating');
             }
             if (unlockState === 'generating' && data.status !== 'preview' && !data.isPreview) {
                 setUnlockState('idle');
-                setShowPaywall(false);
+                closePaywall();
                 unlockStartedRef.current = false;
-                checkoutWindowRef.current?.close();
-                checkoutWindowRef.current = null;
             }
         } catch (error) {
             console.error('Polling error:', error);
         }
-    }, [book.id, unlockState]);
+    }, [book.id, unlockState, closePaywall]);
 
     const pollBookRef = useRef(pollBook);
 
@@ -426,8 +441,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     useEffect(() => {
         if (unlockState !== 'generating' || unlockStartedRef.current) return;
         unlockStartedRef.current = true;
-        const sessionParam = checkoutSessionIdRef.current ? `?session_id=${checkoutSessionIdRef.current}` : '';
-        fetch(`/api/books/${book.id}/unlock${sessionParam}`, { method: 'POST' })
+        const piParam = unlockPaymentIntentRef.current ? `?payment_intent=${unlockPaymentIntentRef.current}` : '';
+        fetch(`/api/books/${book.id}/unlock${piParam}`, { method: 'POST' })
             .catch((err) => console.error('Unlock request failed', err));
     }, [book.id, unlockState]);
 
@@ -444,69 +459,16 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         }
     }, [isPaidAccess, isEditing]);
 
-    const handleCheckoutComplete = useCallback((payload?: { bookId?: string; sessionId?: string }) => {
-        if (payload?.bookId && payload.bookId !== book.id) return;
-        if (payload?.sessionId) {
-            checkoutSessionIdRef.current = payload.sessionId;
-        }
-        checkoutWindowRef.current?.close();
-        checkoutWindowRef.current = null;
+    const handlePaymentSuccess = useCallback((paymentIntentId: string) => {
+        unlockPaymentIntentRef.current = paymentIntentId;
+        setUnlockClientSecret(null);
         setShowPaywall(false);
-        setUnlockState('waiting');
+        setUnlockState('generating');
+        // Trigger unlock immediately
+        fetch(`/api/books/${book.id}/unlock?payment_intent=${paymentIntentId}`, { method: 'POST' })
+            .catch((err) => console.error('Unlock request failed', err));
         pollBookRef.current();
     }, [book.id]);
-
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            if (event.origin !== window.location.origin) return;
-            if (!event.data || typeof event.data !== 'object') return;
-            const payload = event.data as { type?: string; bookId?: string; sessionId?: string };
-            if (payload.type === 'kidbook:checkout-complete') {
-                handleCheckoutComplete(payload);
-            }
-        };
-
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, [handleCheckoutComplete]);
-
-    useEffect(() => {
-        if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
-        const channel = new BroadcastChannel('kidbook-checkout');
-        checkoutChannelRef.current = channel;
-        channel.onmessage = (event) => {
-            if (!event?.data || typeof event.data !== 'object') return;
-            const payload = event.data as { type?: string; bookId?: string; sessionId?: string };
-            if (payload.type === 'kidbook:checkout-complete') {
-                handleCheckoutComplete(payload);
-            }
-        };
-
-        return () => {
-            channel.close();
-            checkoutChannelRef.current = null;
-        };
-    }, [handleCheckoutComplete]);
-
-    useEffect(() => {
-        const handleStorage = (event: StorageEvent) => {
-            if (!event.key) return;
-            if (event.key !== `kidbook:checkout:${book.id}`) return;
-            if (typeof event.newValue === 'string') {
-                try {
-                    const parsed = JSON.parse(event.newValue);
-                    handleCheckoutComplete({ bookId: book.id, sessionId: parsed?.sessionId });
-                } catch {
-                    handleCheckoutComplete({ bookId: book.id });
-                }
-            } else {
-                handleCheckoutComplete({ bookId: book.id });
-            }
-        };
-
-        window.addEventListener('storage', handleStorage);
-        return () => window.removeEventListener('storage', handleStorage);
-    }, [book.id, handleCheckoutComplete]);
 
     // Listen for fullscreen changes (user might exit with Esc)
     useEffect(() => {
@@ -525,7 +487,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const handleDownload = async () => {
         if (isDownloading) return;
         if (!isPaidAccess) {
-            setShowPaywall(true);
+            openPaywall();
             return;
         }
 
@@ -676,11 +638,6 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            const updatedPages = book.pages.map((page, i) => {
-                if (page.type !== 'inside') return page;
-                return page;
-            });
-
             // RE-Logic for Save:
             const newBookPages = [...book.pages];
             let innerIdx = 0;
@@ -917,7 +874,8 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 <div className={styles.headerLeft}>
                     {onClose && (
                         <button className={styles.closeBtn} onClick={onClose}>
-                            ← Back
+                            <span className="material-symbols-outlined">arrow_back</span>
+                            Back
                         </button>
                     )}
                     <div className={styles.bookMeta}>
@@ -934,7 +892,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={flipPrev}
                         aria-label="Previous page"
                     >
-                        ‹
+                        <span className="material-symbols-outlined">chevron_left</span>
                     </button>
                     <span className={styles.pageIndicator}>
                         {currentPageIndex + 1} / {totalFlipPages}
@@ -944,7 +902,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={flipNext}
                         aria-label="Next page"
                     >
-                        ›
+                        <span className="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
 
@@ -953,28 +911,36 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         {isEditing ? (
                             <>
                                 <button className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
-                                    {isSaving ? 'Saving...' : '💾 Save'}
+                                    <span className="material-symbols-outlined">
+                                        {isSaving ? 'hourglass_top' : 'save'}
+                                    </span>
+                                    {isSaving ? 'Saving...' : 'Save'}
                                 </button>
                                 <button className={styles.cancelButton} onClick={handleCancel} disabled={isSaving}>
+                                    <span className="material-symbols-outlined">close</span>
                                     Cancel
                                 </button>
                             </>
                         ) : (
                             <button
                                 className={styles.editToggle}
-                                onClick={() => (isPaidAccess ? setIsEditing(true) : setShowPaywall(true))}
+                                onClick={() => (isPaidAccess ? setIsEditing(true) : openPaywall())}
                                 title={isPaidAccess ? undefined : 'Unlock to edit'}
                             >
-                                ✎ Edit
+                                <span className="material-symbols-outlined">edit</span>
+                                Edit
                             </button>
                         )}
                     </div>
                     <span className={styles.headerDivider}></span>
                     <button
                         className={styles.orderButton}
-                        onClick={isPreview ? () => setShowPaywall(true) : () => router.push(`/create/${book.id}/order`)}
+                        onClick={isPreview ? () => openPaywall() : () => router.push(`/create/${book.id}/order`)}
                     >
-                        {isPreview ? '🔓 Unlock Full Book' : '🛒 Order Print'}
+                        <span className="material-symbols-outlined">
+                            {isPreview ? 'lock_open' : 'shopping_cart'}
+                        </span>
+                        {isPreview ? 'Unlock Full Book' : 'Order Print'}
                     </button>
                     <button
                         className={styles.actionBtn}
@@ -982,7 +948,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={toggleFullscreen}
                         aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
                     >
-                        {isFullscreen ? '⛶' : '⛶'}
+                        <span className="material-symbols-outlined">
+                            {isFullscreen ? 'fullscreen_exit' : 'fullscreen'}
+                        </span>
                     </button>
                     <button
                         className={styles.actionBtn}
@@ -990,7 +958,9 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                         onClick={handleDownload}
                         disabled={isDownloading}
                     >
-                        {isDownloading ? '⏳' : '⬇️'}
+                        <span className="material-symbols-outlined">
+                            {isDownloading ? 'hourglass_top' : 'download'}
+                        </span>
                     </button>
                     {liveBook.estimatedCost !== undefined && (
                         <span className={styles.costBadge} title="Estimated AI Generation Cost">
@@ -1009,7 +979,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                     </div>
                     <button
                         className={styles.previewCta}
-                        onClick={() => setShowPaywall(true)}
+                        onClick={() => openPaywall()}
                     >
                         Unlock Options
                     </button>
@@ -1150,75 +1120,165 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 </div>
             )}
 
-            <div className={`${styles.drawer} ${showPaywall ? styles.drawerOpen : ''}`}>
-                <div className={styles.drawerHeader}>
-                    <div>
-                        <h2>Unlock your full book</h2>
-                        <p>Stay in the story while we finish the rest.</p>
-                    </div>
-                    <button className={styles.drawerClose} onClick={() => setShowPaywall(false)}>×</button>
-                </div>
+            {showPaywall && (
+                <div className={styles.paywallBackdrop} onClick={closePaywall}>
+                    <div className={styles.paywallSheet} onClick={event => event.stopPropagation()}>
+                        <div className={styles.paywallHandleRow}>
+                            <div className={styles.paywallHandle}></div>
+                        </div>
 
-                <div className={styles.drawerContent}>
-                    {unlockState === 'waiting' && (
-                        <div className={styles.drawerStatus}>
-                            <strong>Waiting for payment</strong>
-                            <p>Complete checkout in the new tab. We&apos;ll unlock your book automatically.</p>
-                            {checkoutUrl && (
-                                <button className={styles.drawerLink} onClick={() => window.open(checkoutUrl, '_blank', 'noopener,noreferrer')}>
-                                    Open checkout
+                        <div className={styles.paywallHeader}>
+                            {(unlockState === 'idle' && paywallView === 'payment') || (unlockState === 'waiting' && unlockClientSecret) ? (
+                                <>
+                                    <button
+                                        aria-label="Back to unlock options"
+                                        className={styles.paywallBack}
+                                        onClick={() => {
+                                            setPaywallView('offers');
+                                            setUnlockState('idle');
+                                            setUnlockClientSecret(null);
+                                            setUnlockError(null);
+                                        }}
+                                    >
+                                        <span className="material-symbols-outlined">arrow_back</span>
+                                    </button>
+                                    <h2 className={styles.paywallPaymentTitle}>Complete Payment</h2>
+                                    <div className={styles.paywallSecurePill}>
+                                        <span className="material-symbols-outlined">lock</span>
+                                        <span>SSL Secured</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <button
+                                    aria-label="Close paywall"
+                                    className={styles.paywallClose}
+                                    onClick={closePaywall}
+                                >
+                                    <span className="material-symbols-outlined">close</span>
                                 </button>
                             )}
                         </div>
-                    )}
 
-                    {unlockState === 'generating' && (
-                        <div className={styles.drawerStatus}>
-                            <strong>Generating your pages</strong>
-                            <p>New pages appear as they finish.</p>
-                            <div className={styles.drawerProgress}>
-                                {liveBook.pages.filter(p => p.type === 'inside' && p.imageElements?.[0]?.src).length}
-                                {' / '}
-                                {liveBook.pages.filter(p => p.type === 'inside').length} pages ready
-                            </div>
-                        </div>
-                    )}
-
-                    {unlockState === 'idle' && (
-                        <div className={styles.drawerOptions}>
-                            <button
-                                className={styles.drawerCard}
-                                onClick={handleUnlock}
-                                disabled={isUnlocking}
-                            >
-                                <div>
-                                    <span className={styles.paywallTitle}>Digital Unlock</span>
-                                    <span className={styles.paywallPrice}>$15</span>
-                                    <p>Instant access to all pages + high‑res PDF download.</p>
+                        <div className={`${styles.paywallBody} ${unlockState === 'idle' && paywallView === 'payment' ? styles.paywallBodyPayment : ''}`}>
+                            {unlockState === 'idle' && paywallView === 'offers' && (
+                                <div className={styles.paywallTitleGroup}>
+                                    <h2>Unlock your full book</h2>
+                                    <p>Stay in the story while we finish the rest.</p>
                                 </div>
-                                <span className={styles.paywallAction}>
-                                    {isUnlocking ? 'Opening checkout…' : 'Unlock Now'}
-                                </span>
-                            </button>
-                            <button
-                                className={styles.drawerCardAlt}
-                                onClick={() => router.push(`/create/${book.id}/order`)}
-                            >
-                                <div>
-                                    <span className={styles.paywallTitle}>Printed Book</span>
-                                    <span className={styles.paywallPrice}>From $45</span>
-                                    <p>Premium print + digital included.</p>
-                                </div>
-                                <span className={styles.paywallAction}>Order Print</span>
-                            </button>
-                        </div>
-                    )}
+                            )}
 
-                    {unlockError && <div className={styles.paywallError}>{unlockError}</div>}
+                            {unlockState === 'waiting' && unlockClientSecret && (
+                                <div className={styles.paywallPaymentScreen}>
+                                    <div className={styles.paywallSummaryCard}>
+                                        <span className={styles.paywallSummaryLabel}>Order Summary</span>
+                                        <div className={styles.paywallSummaryRow}>
+                                            <h3>Digital Unlock - {liveBook.settings.title || 'Your Story Book'}</h3>
+                                            <span>$15.00</span>
+                                        </div>
+                                    </div>
+
+                                    <Elements
+                                        stripe={getStripe()}
+                                        options={{
+                                            clientSecret: unlockClientSecret,
+                                            appearance: stripeAppearance,
+                                        }}
+                                    >
+                                        <PaymentForm
+                                            amount={15}
+                                            onConfirmClick={async () => true}
+                                            onPaymentSuccess={handlePaymentSuccess}
+                                            onPaymentError={(err) => setUnlockError(err)}
+                                            isPreparingOrder={false}
+                                            returnUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/book/${book.id}`}
+                                        />
+                                    </Elements>
+
+                                </div>
+                            )}
+
+                            {unlockState === 'generating' && (
+                                <div className={styles.paywallStatus}>
+                                    <strong>Generating your pages</strong>
+                                    <p>New pages appear as they finish.</p>
+                                    <div className={styles.paywallProgress}>
+                                        {liveBook.pages.filter(p => p.type === 'inside' && p.imageElements?.[0]?.src).length}
+                                        {' / '}
+                                        {liveBook.pages.filter(p => p.type === 'inside').length} pages ready
+                                    </div>
+                                </div>
+                            )}
+
+                            {unlockState === 'idle' && paywallView === 'offers' && (
+                                <div className={styles.paywallCards}>
+                                    <div className={styles.paywallCard}>
+                                        <div className={styles.paywallCardInner}>
+                                            <div className={styles.paywallCardHeader}>
+                                                <div>
+                                                    <h3>Digital Unlock</h3>
+                                                    <p>Instant access to all pages <br />+ high-res PDF download.</p>
+                                                </div>
+                                                <span className={styles.paywallPricePrimary}>$15</span>
+                                            </div>
+                                            <button
+                                                className={styles.paywallCardButton}
+                                                onClick={() => {
+                                                    setPaywallView('payment');
+                                                    handleUnlock();
+                                                }}
+                                            >
+                                                Unlock Now
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.paywallCardFeatured}>
+                                        <div className={styles.paywallCardFeaturedInner}>
+                                            <div className={styles.paywallCardHeader}>
+                                                <div>
+                                                    <h3>Hardcover Book</h3>
+                                                    <p>Premium print + digital included.</p>
+                                                </div>
+                                                <span className={styles.paywallPriceHighlight}>
+                                                    <span>From</span>
+                                                    <br />
+                                                    <span>$45</span>
+                                                </span>
+                                            </div>
+                                            <button
+                                                className={styles.paywallFeaturedButton}
+                                                onClick={() => router.push(`/create/${book.id}/order`)}
+                                            >
+                                                <span>Order Print</span>
+                                                <span className="material-symbols-outlined">arrow_forward</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {unlockState === 'idle' && paywallView === 'payment' && !unlockClientSecret && (
+                                <div className={styles.paywallStatus}>
+                                    <strong>{isUnlocking ? 'Preparing payment...' : 'Loading payment form...'}</strong>
+                                </div>
+                            )}
+
+                            {unlockError && <div className={styles.paywallError}>{unlockError}</div>}
+
+                            {paywallView === 'offers' && (
+                                <div className={styles.paywallFooter}>
+                                    <div className={styles.paywallLinks}>
+                                        <a href="#" rel="noreferrer">Terms of Service</a>
+                                        <span></span>
+                                        <a href="#" rel="noreferrer">Privacy Policy</a>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <div className={styles.paywallSafeArea}></div>
+                    </div>
                 </div>
-            </div>
-
-            {showPaywall && <div className={styles.drawerOverlay} onClick={() => setShowPaywall(false)}></div>}
+            )}
         </div>
     );
 }

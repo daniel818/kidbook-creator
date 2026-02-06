@@ -1,6 +1,8 @@
 // ============================================
-// Stripe Checkout for Digital Unlock
+// Stripe PaymentIntent for Digital Unlock
 // ============================================
+// Creates a PaymentIntent (instead of a Checkout Session) so the frontend
+// can render an embedded PaymentElement for the $15 digital unlock fee.
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
@@ -43,41 +45,35 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Already paid' }, { status: 409 });
         }
 
-        const session = await stripe.checkout.sessions.create({
-            mode: 'payment',
-            payment_method_types: ['card'],
-            customer_email: user.email || undefined,
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: `${book.title} - Digital Unlock`,
-                            description: 'Full story, all illustrations, high-res PDF',
-                            images: book.thumbnail_url ? [book.thumbnail_url] : [],
-                        },
-                        unit_amount: 1500,
-                    },
-                    quantity: 1,
-                }
-            ],
+        // Create PaymentIntent instead of Checkout Session
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: 1500, // $15.00
+            currency: 'usd',
+            automatic_payment_methods: {
+                enabled: true,
+            },
             metadata: {
                 unlockType: 'digital',
+                flow: 'embedded_digital',
                 bookId: book.id,
                 userId: user.id,
             },
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL}/unlock/success?session_id={CHECKOUT_SESSION_ID}&bookId=${book.id}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/book/${book.id}`,
+            receipt_email: user.email || undefined,
+            description: `${book.title} - Digital Unlock`,
         });
 
+        // Store the PaymentIntent ID for idempotency checks in the webhook
         await adminDb
             .from('books')
-            .update({ digital_unlock_session_id: session.id })
+            .update({ digital_unlock_session_id: paymentIntent.id })
             .eq('id', book.id);
 
-        return NextResponse.json({ sessionId: session.id, url: session.url });
+        return NextResponse.json({
+            clientSecret: paymentIntent.client_secret,
+            paymentIntentId: paymentIntent.id,
+        });
     } catch (error) {
         console.error('Digital checkout error:', error);
-        return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to create payment intent' }, { status: 500 });
     }
 }

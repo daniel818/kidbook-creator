@@ -1,0 +1,81 @@
+/* ============================================
+   PaymentForm Styles
+   Matches the existing KidBook Creator design system
+   ============================================ */
+
+.paymentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.elementWrapper {
+    padding: 0;
+    background: transparent;
+}
+
+
+.errorMessage {
+    padding: var(--spacing-md);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-lg);
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+}
+
+.submitButton {
+    width: 100%;
+    padding: 1rem;
+    height: 3.5rem;
+    background: linear-gradient(135deg, #2b2bee 0%, #ec4899 100%);
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 24px rgba(43, 43, 238, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.submitButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(43, 43, 238, 0.4);
+}
+
+.submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btnSpinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.securedFooter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
