@@ -50,7 +50,7 @@ export async function GET(
             estimatedDelivery: getEstimatedDelivery(),
             thumbnailUrl: order.books?.thumbnail_url || null,
             childName: order.books?.child_name || null,
-            pageCount: order.books?.pages?.length || null,
+            pageCount: order.books?.pages?.length ?? null,
             shippingAddress: {
                 name: order.shipping_full_name || null,
                 line1: order.shipping_address_line1 || null,

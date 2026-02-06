@@ -40,7 +40,6 @@ interface OrderRow {
     shipping_level?: string;
     pdf_url?: string;
     cover_url?: string;
-    [key: string]: unknown;
 }
 
 /** Supabase book row shape used throughout webhook handlers */
@@ -52,7 +51,6 @@ interface BookRow {
     status?: string;
     digital_unlock_paid?: boolean;
     digital_unlock_email_sent?: boolean;
-    [key: string]: unknown;
 }
 
 const logWebhook = (message: string, data?: unknown) => {
@@ -247,13 +245,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
                 quantity: order.quantity,
                 total: order.total,
                 shippingAddress: {
-                    fullName: order.shipping_full_name || '',
-                    addressLine1: order.shipping_address_line1 || '',
+                    fullName: order.shipping_full_name ?? '',
+                    addressLine1: order.shipping_address_line1 ?? '',
                     addressLine2: order.shipping_address_line2,
-                    city: order.shipping_city || '',
-                    state: order.shipping_state || '',
-                    postalCode: order.shipping_postal_code || '',
-                    country: order.shipping_country || '',
+                    city: order.shipping_city ?? '',
+                    state: order.shipping_state ?? '',
+                    postalCode: order.shipping_postal_code ?? '',
+                    country: order.shipping_country ?? '',
                 },
             };
 
@@ -449,13 +447,13 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
                 quantity: order.quantity,
                 total: order.total,
                 shippingAddress: {
-                    fullName: order.shipping_full_name || '',
-                    addressLine1: order.shipping_address_line1 || '',
+                    fullName: order.shipping_full_name ?? '',
+                    addressLine1: order.shipping_address_line1 ?? '',
                     addressLine2: order.shipping_address_line2,
-                    city: order.shipping_city || '',
-                    state: order.shipping_state || '',
-                    postalCode: order.shipping_postal_code || '',
-                    country: order.shipping_country || '',
+                    city: order.shipping_city ?? '',
+                    state: order.shipping_state ?? '',
+                    postalCode: order.shipping_postal_code ?? '',
+                    country: order.shipping_country ?? '',
                 },
             };
 

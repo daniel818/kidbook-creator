@@ -96,7 +96,9 @@ export async function POST(request: NextRequest) {
             for (const old of existingOrders) {
                 // Cancel old PaymentIntent if it exists
                 if (old.stripe_payment_intent_id) {
-                    await stripe.paymentIntents.cancel(old.stripe_payment_intent_id).catch(() => {});
+                    await stripe.paymentIntents.cancel(old.stripe_payment_intent_id).catch((err) => {
+                        console.error(`[create-intent] Failed to cancel stale PI ${old.stripe_payment_intent_id}:`, err);
+                    });
                 }
                 // Delete the stale pending order
                 await adminDb.from('orders').delete().eq('id', old.id);
@@ -162,7 +164,9 @@ export async function POST(request: NextRequest) {
         if (updateError) {
             console.error('Failed to link payment intent to order:', updateError);
             // Cancel the orphaned PaymentIntent so the user isn't charged
-            await stripe.paymentIntents.cancel(paymentIntent.id).catch(() => {});
+            await stripe.paymentIntents.cancel(paymentIntent.id).catch((err) => {
+                console.error(`[create-intent] Failed to cancel orphaned PI ${paymentIntent.id}:`, err);
+            });
             return NextResponse.json(
                 { error: 'Failed to finalize order setup. Please try again.' },
                 { status: 500 }
