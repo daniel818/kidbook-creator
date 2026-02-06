@@ -41,6 +41,8 @@ export async function updateSession(request: NextRequest) {
     await supabase.auth.getUser();
 
     // Add Content Security Policy
+    // NOTE: 'unsafe-eval' in script-src is required by jsPDF/html2canvas for PDF generation
+    // NOTE: 'unsafe-inline' in script-src is required for Next.js inline scripts
     // Allowing 'data:' in font-src is CRITICAL for jsPDF/html2canvas to embed fonts
     const csp = `
         default-src 'self';
@@ -61,8 +63,33 @@ export async function updateSession(request: NextRequest) {
     supabaseResponse.headers.set('Pragma', 'no-cache');
     supabaseResponse.headers.set('Expires', '0');
 
-    // Debug Log (Check server console to see if this runs!)
-    console.log('[Middleware] Applied CSP Headers');
+    // --- Security Headers ---
+
+    // Prevent MIME type sniffing
+    supabaseResponse.headers.set('X-Content-Type-Options', 'nosniff');
+
+    // Prevent clickjacking (Stripe iframe uses frame-src in CSP, not X-Frame-Options)
+    supabaseResponse.headers.set('X-Frame-Options', 'DENY');
+
+    // Control referrer information sent with requests
+    supabaseResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+    // Restrict browser feature access
+    supabaseResponse.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
+
+    // Legacy XSS protection for older browsers
+    supabaseResponse.headers.set('X-XSS-Protection', '1; mode=block');
+
+    // Enable DNS prefetching for linked domains
+    supabaseResponse.headers.set('X-DNS-Prefetch-Control', 'on');
+
+    // Force HTTPS in production (1 year, include subdomains, allow preload list)
+    if (process.env.NODE_ENV === 'production') {
+        supabaseResponse.headers.set(
+            'Strict-Transport-Security',
+            'max-age=31536000; includeSubDomains; preload'
+        );
+    }
 
     return supabaseResponse;
 }
