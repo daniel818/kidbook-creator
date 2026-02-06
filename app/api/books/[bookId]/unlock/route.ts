@@ -202,16 +202,30 @@ export async function POST(request: NextRequest, context: RouteContext) {
         if (firstPage) {
             const firstPageImages = Array.isArray(firstPage.image_elements) ? firstPage.image_elements : [];
             if (firstPageImages.length > 0 && firstPageImages[0]?.src) {
+                const imgSrc = firstPageImages[0].src as string;
+                // SSRF mitigation: only fetch from our own Supabase storage domain
+                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                const isAllowedOrigin = imgSrc.startsWith(supabaseUrl) || imgSrc.startsWith('data:');
+                if (!isAllowedOrigin) {
+                    logUnlock('Skipping style reference: image URL not from allowed origin', { src: imgSrc.slice(0, 100) });
+                } else {
                 try {
-                    const resp = await fetch(firstPageImages[0].src);
+                    const resp = await fetch(imgSrc);
                     if (resp.ok) {
                         const contentType = resp.headers.get('content-type') || 'image/png';
+                        // Size guard: reject images over 10MB to prevent memory issues
+                        const contentLength = parseInt(resp.headers.get('content-length') || '0', 10);
+                        if (contentLength > 10 * 1024 * 1024) {
+                            logUnlock('Skipping style reference: image too large', { contentLength });
+                        } else {
                         const buffer = Buffer.from(await resp.arrayBuffer());
                         styleReferenceImage = `data:${contentType};base64,${buffer.toString('base64')}`;
                         logUnlock('Loaded page 1 image as style reference');
+                        }
                     }
                 } catch (err) {
                     console.warn('Failed to load page 1 image for style reference', err);
+                }
                 }
             }
         }
