@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { Elements } from '@stripe/react-stripe-js';
 import { Book, BookTypeInfo, BookThemeInfo } from '@/lib/types';
 import { getBookById } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -12,6 +13,7 @@ import { generateInteriorPDF } from '@/lib/lulu/pdf-generator';
 import { generateCoverPDF } from '@/lib/lulu/cover-generator';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 import { createClient } from '@/lib/supabase/client';
+import PaymentForm from '@/components/PaymentForm/PaymentForm';
 import styles from './page.module.css';
 
 type BookFormat = 'softcover' | 'hardcover';
@@ -104,6 +106,14 @@ export default function OrderPage() {
     const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isUnlockCheckout, setIsUnlockCheckout] = useState(false);
+
+    // Embedded Stripe PaymentElement state
+    const [clientSecret, setClientSecret] = useState<string | null>(null);
+    const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
+    const [isCreatingIntent, setIsCreatingIntent] = useState(false);
+
+    // Digital unlock embedded payment state
+    const [unlockClientSecret, setUnlockClientSecret] = useState<string | null>(null);
 
     // Dynamic pricing state
     const [priceData, setPriceData] = useState<{
@@ -206,8 +216,8 @@ export default function OrderPage() {
             if (!response.ok) {
                 throw new Error(data?.error || 'Failed to start unlock checkout');
             }
-            if (data.url) {
-                window.location.href = data.url;
+            if (data.clientSecret) {
+                setUnlockClientSecret(data.clientSecret);
             }
         } catch (err) {
             console.error('Unlock checkout error:', err);
@@ -432,7 +442,7 @@ export default function OrderPage() {
         setStep('review');
     };
 
-    const handleContinueToPayment = () => {
+    const handleContinueToPayment = async () => {
         if (!reviewQuote && priceData && shippingLevel) {
             setReviewQuote({
                 pricing: priceData,
@@ -444,6 +454,39 @@ export default function OrderPage() {
             });
         }
         setStep('payment');
+
+        // Create PaymentIntent + order immediately so PaymentElement can render
+        setIsCreatingIntent(true);
+        setError(null);
+        setClientSecret(null);
+        setPaymentOrderId(null);
+
+        try {
+            const response = await fetch('/api/checkout/create-intent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bookId,
+                    format,
+                    size,
+                    quantity,
+                    shipping,
+                    shippingLevel,
+                }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to initialize payment');
+            }
+
+            setClientSecret(data.clientSecret);
+            setPaymentOrderId(data.orderId);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to initialize payment');
+        } finally {
+            setIsCreatingIntent(false);
+        }
     };
 
 
@@ -459,28 +502,26 @@ export default function OrderPage() {
         return path;
     };
 
-    const handleCheckout = async () => {
-        if (!user) {
+    /**
+     * Called by PaymentForm before stripe.confirmPayment().
+     * Generates PDFs, uploads them, and attaches them to the order.
+     * Returns true when ready for payment confirmation.
+     */
+    const handlePrepareAndPay = async (): Promise<boolean> => {
+        if (!user || !paymentOrderId) {
             setError('Please sign in to complete your order');
-            return;
+            return false;
         }
 
         if (!agreedToTerms) {
             setError('Please agree to the Terms of Service');
-            return;
-        }
-
-        if (!shippingLevel) {
-            setError('Please select a shipping method');
-            return;
+            return false;
         }
 
         setError(null);
         setIsProcessing(true);
 
         try {
-            // Helper to wrap promise with timeout
-            // Fix: Use 'extends unknown' or trailing comma for generics in TSX
             const withTimeout = async <T,>(promise: Promise<T>, ms: number, msg: string): Promise<T> => {
                 return Promise.race([
                     promise,
@@ -490,10 +531,9 @@ export default function OrderPage() {
                 ]);
             };
 
-            // 1. Generate PDFs (Client-side)
-            const TIMEOUT_MS = 45000; // 45 seconds
+            const TIMEOUT_MS = 45000;
 
-            // Interior
+            // 1. Generate PDFs (Client-side)
             console.log('Generating interior PDF...');
             const interiorBlob = await withTimeout(
                 generateInteriorPDF(book!, format, size),
@@ -501,7 +541,6 @@ export default function OrderPage() {
                 'Interior PDF generation timed out. Please check your internet connection or images.'
             );
 
-            // Cover
             console.log('Generating cover PDF...');
             const coverBlob = await withTimeout(
                 generateCoverPDF(book!, format, size),
@@ -520,49 +559,30 @@ export default function OrderPage() {
                 uploadFile(coverBlob, coverPath)
             ]);
 
-            // 3. Create Stripe Session with File Paths
-            console.log('Creating checkout session...');
-            const response = await fetch('/api/checkout', {
+            // 3. Attach PDF paths to the order
+            console.log('Attaching PDFs to order...');
+            const attachResponse = await fetch('/api/checkout/attach-pdfs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    bookId,
-                    format,
-                    size,
-                    quantity,
-                    shipping,
-                    shippingLevel,
-                    // Pass the paths to the API to save in the order
+                    orderId: paymentOrderId,
                     pdfUrl: interiorPath,
                     coverUrl: coverPath,
                 }),
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to create checkout session');
+            if (!attachResponse.ok) {
+                const attachData = await attachResponse.json();
+                throw new Error(attachData.error || 'Failed to prepare order files');
             }
 
-            // 4. Redirect to Stripe
-            const stripe = await getStripe();
-            if (stripe && data.sessionId) {
-                const { error: stripeError } = await stripe.redirectToCheckout({
-                    sessionId: data.sessionId,
-                });
-
-                if (stripeError) {
-                    throw new Error(stripeError.message);
-                }
-            } else if (data.url) {
-                window.location.href = data.url;
-            }
+            return true; // Ready for payment confirmation
         } catch (err) {
-            console.error('Checkout error:', err);
-            // Show detailed error to user so they can report it
+            console.error('Prepare order error:', err);
             const errorMessage = err instanceof Error ? err.message : String(err);
             setError(`Failed to prepare order: ${errorMessage}`);
             setIsProcessing(false);
+            return false;
         }
     };
 
@@ -696,6 +716,58 @@ export default function OrderPage() {
                             onClick={() => router.push(`/book/${bookId}`)}
                         >
                             Back to Preview
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Digital Unlock Payment Modal */}
+            {unlockClientSecret && (
+                <div className={styles.unlockOverlay}>
+                    <div className={styles.unlockModal}>
+                        <h3 className={styles.unlockModalTitle}>Unlock Full Book — $15</h3>
+                        <p className={styles.unlockModalDesc}>
+                            Get the complete story, all illustrations, and high-res PDF download.
+                        </p>
+                        <Elements
+                            stripe={getStripe()}
+                            options={{
+                                clientSecret: unlockClientSecret,
+                                appearance: {
+                                    theme: 'stripe',
+                                    variables: {
+                                        colorPrimary: '#6366f1',
+                                        colorBackground: '#ffffff',
+                                        colorText: '#111827',
+                                        colorDanger: '#ef4444',
+                                        fontFamily: 'Inter, system-ui, sans-serif',
+                                        borderRadius: '12px',
+                                    },
+                                },
+                            }}
+                        >
+                            <PaymentForm
+                                amount={15}
+                                onConfirmClick={async () => true}
+                                isPreparingOrder={false}
+                                onPaymentSuccess={() => {
+                                    setUnlockClientSecret(null);
+                                    router.push(`/unlock/success?bookId=${bookId}`);
+                                }}
+                                onPaymentError={(errMsg) => {
+                                    setError(errMsg);
+                                }}
+                                returnUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/unlock/success?bookId=${bookId}`}
+                            />
+                        </Elements>
+                        <button
+                            className={styles.unlockModalClose}
+                            onClick={() => {
+                                setUnlockClientSecret(null);
+                                setIsUnlockCheckout(false);
+                            }}
+                        >
+                            Cancel
                         </button>
                     </div>
                 </div>
@@ -889,12 +961,18 @@ export default function OrderPage() {
                             <div className={`${styles.shippingForm} ${styles.stitchShippingForm}`}>
                                 <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
-                                        <label>Full Name *</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <label>Full Name *</label>
+                                            <span style={{ fontSize: '11px', color: shipping.fullName.length > 50 ? 'red' : '#6b7280' }}>
+                                                {shipping.fullName.length}/50
+                                            </span>
+                                        </div>
                                         <input
                                             type="text"
                                             value={shipping.fullName}
                                             onChange={(e) => setShipping({ ...shipping, fullName: e.target.value })}
                                             placeholder="John Doe"
+                                            maxLength={50}
                                             autoComplete="name"
                                         />
                                     </div>
@@ -940,22 +1018,34 @@ export default function OrderPage() {
 
                                 <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
-                                        <label>City *</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <label>City *</label>
+                                            <span style={{ fontSize: '11px', color: shipping.city.length > 35 ? 'red' : '#6b7280' }}>
+                                                {shipping.city.length}/35
+                                            </span>
+                                        </div>
                                         <input
                                             type="text"
                                             value={shipping.city}
                                             onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
                                             placeholder="New York"
+                                            maxLength={35}
                                             autoComplete="address-level2"
                                         />
                                     </div>
                                     <div className={styles.formGroup}>
-                                        <label>State / Province *</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <label>State / Province *</label>
+                                            <span style={{ fontSize: '11px', color: shipping.state.length > 30 ? 'red' : '#6b7280' }}>
+                                                {shipping.state.length}/30
+                                            </span>
+                                        </div>
                                         <input
                                             type="text"
                                             value={shipping.state}
                                             onChange={(e) => setShipping({ ...shipping, state: e.target.value })}
                                             placeholder="NY"
+                                            maxLength={30}
                                             autoComplete="address-level1"
                                         />
                                     </div>
@@ -963,12 +1053,18 @@ export default function OrderPage() {
 
                                 <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
-                                        <label>Postal Code *</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <label>Postal Code *</label>
+                                            <span style={{ fontSize: '11px', color: shipping.postalCode.length > 10 ? 'red' : '#6b7280' }}>
+                                                {shipping.postalCode.length}/10
+                                            </span>
+                                        </div>
                                         <input
                                             type="text"
                                             value={shipping.postalCode}
                                             onChange={(e) => setShipping({ ...shipping, postalCode: e.target.value })}
                                             placeholder="10001"
+                                            maxLength={10}
                                             autoComplete="postal-code"
                                             required
                                         />
@@ -994,12 +1090,18 @@ export default function OrderPage() {
 
                                 <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
-                                        <label>Phone Number *</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <label>Phone Number *</label>
+                                            <span style={{ fontSize: '11px', color: shipping.phone.length > 20 ? 'red' : '#6b7280' }}>
+                                                {shipping.phone.length}/20
+                                            </span>
+                                        </div>
                                         <input
                                             type="tel"
                                             value={shipping.phone}
                                             onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
                                             placeholder="+1 (555) 123-4567"
+                                            maxLength={20}
                                             autoComplete="tel"
                                             required
                                         />
@@ -1171,7 +1273,7 @@ export default function OrderPage() {
                         </motion.div>
                     )}
 
-                    {/* Payment Step */}
+                    {/* Payment Step — Embedded Stripe PaymentElement */}
                     {step === 'payment' && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -1203,107 +1305,90 @@ export default function OrderPage() {
                                 </div>
                             </div>
 
-                            <div className={styles.stitchPaymentExpressButtons}>
-                                <ApplePayButton />
-                                <GooglePayButton />
-                            </div>
+                            {isCreatingIntent && (
+                                <div className={styles.paymentLoading}>
+                                    <span className={styles.btnSpinner}></span>
+                                    <p>Setting up secure payment...</p>
+                                </div>
+                            )}
 
-                            <div className={styles.stitchPaymentDividerText}>
-                                <span>or pay with card</span>
-                            </div>
-
-                            <div className={styles.stitchPaymentForm}>
-                                <div className={styles.formGroup}>
-                                    <label>Email</label>
-                                    <div className={styles.stitchPaymentInputWithIcon}>
-                                        <input type="text" value={user?.email || ''} readOnly />
-                                        <span className="material-symbols-outlined">check_circle</span>
+                            {clientSecret && (
+                                <Elements
+                                    stripe={getStripe()}
+                                    options={{
+                                        clientSecret,
+                                        appearance: {
+                                            theme: 'stripe',
+                                            variables: {
+                                                colorPrimary: '#6366f1',
+                                                colorBackground: '#ffffff',
+                                                colorText: '#111827',
+                                                colorDanger: '#ef4444',
+                                                fontFamily: 'Inter, system-ui, sans-serif',
+                                                borderRadius: '12px',
+                                                spacingUnit: '4px',
+                                            },
+                                            rules: {
+                                                '.Input': {
+                                                    border: '2px solid #e5e7eb',
+                                                    padding: '12px',
+                                                    transition: 'all 0.15s ease',
+                                                },
+                                                '.Input:focus': {
+                                                    borderColor: '#6366f1',
+                                                    boxShadow: '0 0 0 3px rgba(99, 102, 241, 0.1)',
+                                                },
+                                                '.Tab': {
+                                                    borderRadius: '12px',
+                                                },
+                                                '.Tab--selected': {
+                                                    borderColor: '#6366f1',
+                                                    boxShadow: '0 0 0 1px #6366f1',
+                                                },
+                                            },
+                                        },
+                                    }}
+                                >
+                                    <div className={styles.stitchPaymentTermsRow}>
+                                        <label className={styles.stitchReviewCheckbox}>
+                                            <input
+                                                type="checkbox"
+                                                checked={agreedToTerms}
+                                                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                                            />
+                                            <span>I agree to the Terms of Service and Privacy Policy</span>
+                                        </label>
                                     </div>
-                                </div>
 
-                                <div className={styles.formGroup}>
-                                    <label>Card Information</label>
-                                    <div className={styles.stitchCardInfoGroup}>
-                                        <div className={styles.stitchCardNumberRow}>
-                                            <span className={`material-symbols-outlined ${styles.stitchCardLeftIcon}`}>credit_card</span>
-                                            <input type="text" placeholder="Card number" readOnly />
-                                            <div className={styles.stitchCardBrandBlocks}>
-                                                <span></span>
-                                                <span></span>
-                                            </div>
+                                    {error && (
+                                        <div className={styles.errorBox}>
+                                            ⚠️ {error}
                                         </div>
-                                        <div className={styles.stitchCardSplitRow}>
-                                            <input type="text" placeholder="MM / YY" readOnly />
-                                            <div className={styles.stitchCardCvcWrap}>
-                                                <input type="text" placeholder="CVC" readOnly />
-                                                <span className="material-symbols-outlined">help</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                    )}
 
-                                <div className={styles.formGroup}>
-                                    <label>Name on Card</label>
-                                    <input type="text" placeholder="Full name" readOnly />
-                                </div>
-
-                                <div className={styles.formGroup}>
-                                    <label>Billing Zip Code</label>
-                                    <input type="text" placeholder="10001" readOnly />
-                                </div>
-                            </div>
-
-                            <div className={styles.stitchPaymentTermsRow}>
-                                <label className={styles.stitchReviewCheckbox}>
-                                    <input
-                                        type="checkbox"
-                                        checked={billingSameAsShipping}
-                                        onChange={(e) => setBillingSameAsShipping(e.target.checked)}
+                                    <PaymentForm
+                                        amount={grandTotal}
+                                        onConfirmClick={handlePrepareAndPay}
+                                        isPreparingOrder={isProcessing}
+                                        onPaymentSuccess={(piId) => {
+                                            router.push(`/order/success?payment_intent=${piId}&order_id=${paymentOrderId}`);
+                                        }}
+                                        onPaymentError={(errMsg) => {
+                                            setError(errMsg);
+                                            setIsProcessing(false);
+                                        }}
+                                        returnUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/order/success?order_id=${paymentOrderId}`}
+                                        disabled={!agreedToTerms || !user || isPreview}
                                     />
-                                    <span>Billing address same as shipping</span>
-                                </label>
-                            </div>
+                                </Elements>
+                            )}
 
                             <div className={styles.stitchPaymentSecureRow}>
                                 <span className="material-symbols-outlined">lock</span>
                                 <span>Payment information is secure</span>
                             </div>
 
-                            {error && (
-                                <div className={styles.errorBox}>
-                                    ⚠️ {error}
-                                </div>
-                            )}
-
-                            <div className={styles.stitchPaymentFooterDesktop}>
-                                <button
-                                    className={styles.stitchPaymentCompleteBtn}
-                                    onClick={handleCheckout}
-                                    disabled={isPreview || isProcessing || !user}
-                                >
-                                    <span className={styles.stitchPaymentCompleteIcon}>
-                                        <span className="material-symbols-outlined">arrow_forward</span>
-                                    </span>
-                                    <span>Complete Order</span>
-                                    <span>${shippingFooterTotal.toFixed(2)}</span>
-                                </button>
-                                <div className={styles.stitchPaymentPoweredBy}>Powered by <em>stripe</em></div>
-                            </div>
-
-                            <div className={styles.stitchPaymentFooterMobile}>
-                                <button
-                                    className={styles.stitchPaymentCompleteBtn}
-                                    onClick={handleCheckout}
-                                    disabled={isPreview || isProcessing || !user}
-                                >
-                                    <span className={styles.stitchPaymentCompleteIcon}>
-                                        <span className="material-symbols-outlined">arrow_forward</span>
-                                    </span>
-                                    <span>Complete Order</span>
-                                    <span>${shippingFooterTotal.toFixed(2)}</span>
-                                </button>
-                                <div className={styles.stitchPaymentPoweredBy}>Powered by <em>stripe</em></div>
-                            </div>
+                            <div className={styles.stitchPaymentPoweredBy}>Powered by <em>stripe</em></div>
                         </motion.div>
                     )}
                 </div>

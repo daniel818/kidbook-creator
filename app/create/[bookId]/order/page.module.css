@@ -2801,40 +2801,17 @@
         font-size: 1.75rem;
     }
 
-    .stitchPaymentForm .formGroup label {
-        font-size: 0.8rem;
-    }
-
-    .stitchPaymentForm .formGroup input {
-        height: 44px;
-        font-size: 0.85rem;
-    }
-
-    .stitchCardNumberRow input,
-    .stitchCardSplitRow input {
-        height: 44px !important;
-    }
-
     .stitchPaymentTermsRow .stitchReviewCheckbox {
         font-size: 0.82rem;
     }
 
-    .stitchPaymentCompleteBtn {
-        height: 50px;
-    }
-
-    .stitchPaymentCompleteBtn > span:nth-child(2),
-    .stitchPaymentCompleteBtn > span:last-child {
-        font-size: 1.1rem;
-    }
-
-    .stitchPaymentCompleteIcon {
-        width: 34px;
-        height: 34px;
-    }
-
     .stitchPaymentPoweredBy {
         font-size: 0.68rem;
+    }
+
+    .unlockModal {
+        width: 95%;
+        max-width: none;
     }
 }
 
@@ -2870,92 +2847,8 @@
         align-items: center;
     }
 
-    .stitchPaymentExpressButtons {
-        gap: 8px;
-        width: 100%;
-    }
-
     .stitchPaymentTaxRow {
         font-size: 0.8rem;
-    }
-
-    .stitchApplePayBtn,
-    .stitchGooglePayBtn {
-        height: 44px;
-        font-size: 1.05rem;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .stitchPayInner {
-        font-size: 1.05rem;
-        gap: 7px;
-    }
-
-    .stitchPayIcon {
-        width: 18px;
-        height: 18px;
-    }
-
-    .stitchPaymentDividerText {
-        margin: 10px 0;
-        font-size: 0.68rem;
-        gap: 8px;
-    }
-
-    .stitchPaymentForm {
-        gap: 8px;
-        width: 100%;
-    }
-
-    .stitchPaymentForm .formGroup label {
-        font-size: 0.78rem;
-    }
-
-    .stitchPaymentForm .formGroup input {
-        height: 42px;
-        font-size: 0.8rem;
-        width: 100%;
-        min-width: 0;
-        box-sizing: border-box;
-    }
-
-    .stitchPaymentInputWithIcon {
-        width: 100%;
-    }
-
-    .stitchPaymentInputWithIcon .material-symbols-outlined {
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .stitchCardInfoGroup {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .stitchCardNumberRow {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .stitchCardNumberRow input,
-    .stitchCardSplitRow input {
-        height: 42px !important;
-        width: 100%;
-        min-width: 0;
-        box-sizing: border-box;
-    }
-
-    .stitchCardBrandBlocks {
-        top: 50%;
-        transform: translateY(-50%);
-        right: 8px;
-    }
-
-    .stitchCardSplitRow {
-        width: 100%;
-        min-width: 0;
     }
 
     .stitchPaymentTermsRow {
@@ -2966,42 +2859,79 @@
     .stitchPaymentTermsRow .stitchReviewCheckbox {
         font-size: 0.8rem;
     }
+}
 
-    .stitchPaymentFooterDesktop {
-        display: none;
-    }
+/* Payment Loading State */
+.paymentLoading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-xl);
+    justify-content: center;
+}
 
-    .stitchPaymentFooterMobile {
-        display: block;
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 45;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(6px);
-        border-top: 1px solid #edf2ff;
-        padding: 10px 14px 12px;
-        box-sizing: border-box;
-    }
+.paymentLoading p {
+    color: var(--color-gray-600);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
 
-    .stitchPaymentFooterMobile .stitchPaymentCompleteBtn {
-        margin-top: 0;
-        height: 50px;
-    }
+/* Digital Unlock Payment Modal */
+.unlockOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    backdrop-filter: blur(4px);
+}
 
-    .stitchPaymentFooterMobile .stitchPaymentCompleteBtn > span:nth-child(2),
-    .stitchPaymentFooterMobile .stitchPaymentCompleteBtn > span:last-child {
-        font-size: 1.04rem;
-    }
+.unlockModal {
+    background: var(--color-white);
+    border-radius: var(--radius-2xl);
+    padding: var(--spacing-2xl);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadow-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
 
-    .stitchPaymentFooterMobile .stitchPaymentCompleteIcon {
-        width: 34px;
-        height: 34px;
-    }
+.unlockModalTitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray-900);
+    text-align: center;
+    margin: 0;
+}
 
-    .stitchPaymentFooterMobile .stitchPaymentPoweredBy {
-        margin-top: 6px;
-        font-size: 0.64rem;
-    }
+.unlockModalDesc {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600);
+    text-align: center;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.unlockModalClose {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    border: none;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.unlockModalClose:hover {
+    background: var(--color-gray-200);
 }

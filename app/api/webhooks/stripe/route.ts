@@ -80,9 +80,26 @@ export async function POST(request: NextRequest) {
             }
 
             case 'payment_intent.succeeded': {
-                // Backup handler in case checkout.session.completed is missed
-                console.log('[Webhook] Payment succeeded:', event.data.object.id);
-                logWebhook('payment_intent.succeeded', { id: event.data.object.id });
+                const paymentIntent = event.data.object as Stripe.PaymentIntent;
+                const piMetadata = paymentIntent.metadata;
+
+                if (piMetadata?.flow === 'embedded_print') {
+                    logWebhook('Handling embedded print payment', {
+                        id: paymentIntent.id,
+                        orderId: piMetadata?.orderId,
+                    });
+                    await handlePaymentIntentSucceeded(paymentIntent);
+                } else if (piMetadata?.flow === 'embedded_digital') {
+                    logWebhook('Handling embedded digital payment', {
+                        id: paymentIntent.id,
+                        bookId: piMetadata?.bookId,
+                    });
+                    await handleDigitalPaymentIntentSucceeded(paymentIntent);
+                } else {
+                    // Legacy Checkout Session flow — handled by checkout.session.completed
+                    console.log('[Webhook] Payment succeeded (legacy):', paymentIntent.id);
+                    logWebhook('payment_intent.succeeded (legacy)', { id: paymentIntent.id });
+                }
                 break;
             }
 
@@ -306,6 +323,210 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
         const emailResult = await sendDigitalUnlockEmail(emailData);
         if (emailResult.success) {
             // Best-effort: some environments may not have this column yet.
+            const { error: emailSentError } = await supabase
+                .from('books')
+                .update({ digital_unlock_email_sent: true })
+                .eq('id', book.id);
+            if (emailSentError) {
+                logWebhook('Failed to mark digital unlock email sent (non-fatal)', { error: emailSentError, bookId: book.id });
+            }
+        }
+    } catch (emailError) {
+        console.error('[Webhook] Digital unlock email error:', emailError);
+    }
+}
+
+/**
+ * Handle successful payment via embedded PaymentElement (print orders)
+ * Mirrors handleCheckoutComplete but works with PaymentIntent metadata.
+ */
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+    console.log(`[Webhook] Processing payment intent: ${paymentIntent.id}`);
+
+    const supabase = await createAdminClient();
+    const metadata = paymentIntent.metadata;
+
+    // Get order ID from metadata or find by payment intent ID
+    let orderId = metadata?.orderId;
+    let order: any = null;
+
+    if (!orderId) {
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('stripe_payment_intent_id', paymentIntent.id)
+            .single();
+
+        if (error || !data) {
+            console.error('[Webhook] Could not find order for PI:', paymentIntent.id);
+            return;
+        }
+        order = data;
+        orderId = order.id;
+    }
+
+    // Update order payment status
+    const { data: updatedOrder, error: updateError } = await supabase
+        .from('orders')
+        .update({
+            payment_status: 'paid',
+            stripe_payment_intent_id: paymentIntent.id,
+        })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+    if (updateError) {
+        console.error('[Webhook] Failed to update order:', updateError);
+        return;
+    }
+
+    order = updatedOrder;
+    console.log(`[Webhook] Order ${orderId} marked as paid (embedded flow)`);
+
+    // Update book status to 'ordered'
+    const bookId = metadata?.bookId || order.book_id;
+    let book: any = null;
+    if (bookId) {
+        const { data: bookData } = await supabase
+            .from('books')
+            .update({ status: 'ordered', digital_unlock_paid: true })
+            .eq('id', bookId)
+            .select()
+            .single();
+        book = bookData;
+    }
+
+    // Send order confirmation email
+    const customerEmail = paymentIntent.receipt_email;
+    if (customerEmail && order && book) {
+        try {
+            const emailData: OrderEmailData = {
+                orderId: order.id,
+                customerEmail,
+                customerName: order.shipping_full_name || 'Customer',
+                bookTitle: book.title || 'Personalized Book',
+                childName: book.child_name || 'your child',
+                format: order.format,
+                size: order.size,
+                quantity: order.quantity,
+                total: order.total,
+                shippingAddress: {
+                    fullName: order.shipping_full_name,
+                    addressLine1: order.shipping_address_line1,
+                    addressLine2: order.shipping_address_line2,
+                    city: order.shipping_city,
+                    state: order.shipping_state,
+                    postalCode: order.shipping_postal_code,
+                    country: order.shipping_country,
+                },
+            };
+
+            const emailResult = await sendOrderConfirmation(emailData);
+            if (emailResult.success) {
+                console.log('[Webhook] Order confirmation email sent:', emailResult.id);
+            } else {
+                console.error('[Webhook] Failed to send order confirmation email');
+            }
+        } catch (emailError) {
+            console.error('[Webhook] Email sending error:', emailError);
+        }
+    }
+
+    // Trigger Lulu fulfillment
+    if (!orderId) {
+        console.error('[Webhook] Cannot trigger fulfillment: missing orderId');
+        return;
+    }
+    console.log(`[Webhook] Triggering fulfillment for order: ${orderId}`);
+    try {
+        const result = await fulfillOrder(orderId);
+
+        if (result.status === FulfillmentStatus.SUCCESS) {
+            console.log(`[Webhook] Fulfillment successful for order ${orderId}`);
+        } else {
+            console.error(`[Webhook] Fulfillment failed for order ${orderId}:`, result.error);
+        }
+    } catch (fulfillError) {
+        console.error(`[Webhook] Fulfillment error for order ${orderId}:`, fulfillError);
+    }
+}
+
+/**
+ * Handle successful digital unlock via embedded PaymentElement
+ * Mirrors handleDigitalUnlock but works with PaymentIntent metadata.
+ */
+async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+    const supabase = await createAdminClient();
+    const bookId = paymentIntent.metadata?.bookId;
+    if (!bookId) {
+        console.error('[Webhook] Digital unlock PI missing bookId');
+        logWebhook('Digital unlock PI missing bookId');
+        return;
+    }
+
+    // Idempotency check
+    const { data: existingBook } = await supabase
+        .from('books')
+        .select('digital_unlock_paid, digital_unlock_session_id')
+        .eq('id', bookId)
+        .maybeSingle();
+
+    if (
+        existingBook?.digital_unlock_paid &&
+        existingBook.digital_unlock_session_id === paymentIntent.id
+    ) {
+        logWebhook('Digital unlock already processed (PI)', { bookId, piId: paymentIntent.id });
+        return;
+    }
+
+    const { data: book, error } = await supabase
+        .from('books')
+        .update({
+            digital_unlock_paid: true,
+            digital_unlock_session_id: paymentIntent.id,
+        })
+        .eq('id', bookId)
+        .select('id, user_id, title, child_name')
+        .single();
+
+    if (error || !book) {
+        console.error('[Webhook] Failed to mark digital unlock paid (PI)', error);
+        logWebhook('Failed to mark digital unlock paid (PI)', { error, bookId, piId: paymentIntent.id });
+        throw new Error(`Failed to mark digital unlock paid for book ${bookId}`);
+    }
+
+    logWebhook('Digital unlock marked paid (PI)', { bookId, piId: paymentIntent.id });
+
+    // Get customer email
+    let recipientEmail = paymentIntent.receipt_email || '';
+    let recipientName = 'Customer';
+
+    if (!recipientEmail) {
+        const { data: userResult, error: userError } = await supabase.auth.admin.getUserById(book.user_id);
+        if (userError) {
+            console.error('[Webhook] Failed to load user email', userError);
+        } else {
+            recipientEmail = userResult?.user?.email || '';
+            recipientName = userResult?.user?.user_metadata?.full_name || recipientName;
+        }
+    }
+
+    if (!recipientEmail) {
+        console.error('[Webhook] Missing recipient email for digital unlock');
+        return;
+    }
+
+    try {
+        const emailData: DigitalUnlockEmailData = {
+            bookId: book.id,
+            customerEmail: recipientEmail,
+            customerName: recipientName,
+            bookTitle: book.title || 'Personalized Book',
+            childName: book.child_name || 'your child',
+        };
+        const emailResult = await sendDigitalUnlockEmail(emailData);
+        if (emailResult.success) {
             const { error: emailSentError } = await supabase
                 .from('books')
                 .update({ digital_unlock_email_sent: true })
