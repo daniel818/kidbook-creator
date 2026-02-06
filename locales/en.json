@@ -641,6 +641,60 @@
         ]
       },
       {
+        "id": "pricing-details",
+        "title": "Pricing",
+        "faqs": [
+          {
+            "id": "printed-price-includes",
+            "question": "What's included in the printed price?",
+            "answer": "<p>The printed price includes professional printing on premium paper, hardcover binding, and shipping to your door.</p>",
+            "relatedFaqs": ["pricing-options"]
+          },
+          {
+            "id": "digital-with-printed",
+            "question": "Can I get a digital copy with my printed book?",
+            "answer": "<p>Yes! Every printed book order includes a complimentary digital PDF version that you can download immediately.</p>",
+            "relatedFaqs": ["pricing-options", "digital-vs-physical"]
+          },
+          {
+            "id": "payment-methods",
+            "question": "What payment methods do you accept?",
+            "answer": "<p>We accept all major credit cards, debit cards, and PayPal through our secure payment processor.</p>",
+            "relatedFaqs": ["pricing-options"]
+          },
+          {
+            "id": "additional-fees",
+            "question": "Are there any additional fees?",
+            "answer": "<p>Taxes are calculated at checkout based on your location. Shipping costs vary by country and are shown before you complete your purchase.</p>",
+            "relatedFaqs": ["pricing-options", "shipping-delivery"]
+          },
+          {
+            "id": "print-specifications",
+            "question": "What about print specifications?",
+            "answer": "<p>Printed books are professionally bound with premium paper. Specific format options (size, binding type) are available during the book creation process.</p>",
+            "relatedFaqs": ["digital-vs-physical"]
+          },
+          {
+            "id": "who-prints",
+            "question": "Who prints my book?",
+            "answer": "<p>We partner with a high-quality, professional printing provider to ensure your book is produced to the highest standards. While we handle all customer service, pricing, and delivery coordination, our trusted printing partner manufactures your book using premium materials and state-of-the-art printing technology. This partnership allows us to offer you exceptional quality at competitive prices.</p>",
+            "relatedFaqs": ["print-specifications"]
+          },
+          {
+            "id": "why-not-in-house",
+            "question": "Why don't you print in-house?",
+            "answer": "<p>By partnering with specialized printing experts, we can focus on what we do best—creating magical, personalized stories for your child—while ensuring your book is printed with professional-grade quality, eco-friendly materials, and reliable delivery. Our printing partner has decades of experience and can handle orders worldwide.</p>",
+            "relatedFaqs": ["who-prints"]
+          },
+          {
+            "id": "print-quality",
+            "question": "Does this affect the quality of my book?",
+            "answer": "<p>Absolutely not! Our printing partner is carefully selected for their commitment to quality. Every book is printed on premium paper with vibrant, fade-resistant inks and durable binding. We maintain strict quality control standards to ensure your book exceeds expectations.</p>",
+            "relatedFaqs": ["who-prints", "print-specifications"]
+          }
+        ]
+      },
+      {
         "id": "shipping-delivery",
         "title": "Shipping & Delivery",
         "faqs": [
