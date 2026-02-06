@@ -637,11 +637,6 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            const updatedPages = book.pages.map((page, i) => {
-                if (page.type !== 'inside') return page;
-                return page;
-            });
-
             // RE-Logic for Save:
             const newBookPages = [...book.pages];
             let innerIdx = 0;

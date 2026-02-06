@@ -18,6 +18,43 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
+/** Supabase order row shape used throughout webhook handlers */
+interface OrderRow {
+    id: string;
+    book_id: string;
+    format: string;
+    size: string;
+    quantity: number;
+    total: number;
+    payment_status: string;
+    fulfillment_status: string;
+    stripe_checkout_session_id?: string;
+    stripe_payment_intent_id?: string;
+    shipping_full_name?: string;
+    shipping_address_line1?: string;
+    shipping_address_line2?: string;
+    shipping_city?: string;
+    shipping_state?: string;
+    shipping_postal_code?: string;
+    shipping_country?: string;
+    shipping_level?: string;
+    pdf_url?: string;
+    cover_url?: string;
+    [key: string]: unknown;
+}
+
+/** Supabase book row shape used throughout webhook handlers */
+interface BookRow {
+    id: string;
+    user_id: string;
+    title?: string;
+    child_name?: string;
+    status?: string;
+    digital_unlock_paid?: boolean;
+    digital_unlock_email_sent?: boolean;
+    [key: string]: unknown;
+}
+
 const logWebhook = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[Webhook ${timestamp}] ${message}`;
@@ -139,7 +176,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
 
     // Get order ID from metadata or find by session ID
     let orderId = metadata?.orderId;
-    let order: any = null;
+    let order: OrderRow | null = null;
 
     if (!orderId) {
         // Try to find order by Stripe session ID
@@ -153,7 +190,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
             console.error('[Webhook] Could not find order for session:', session.id);
             return;
         }
-        order = data;
+        order = data as OrderRow;
         orderId = order.id;
     }
 
@@ -173,11 +210,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
         return;
     }
 
-    order = updatedOrder;
+    order = updatedOrder as OrderRow;
     console.log(`[Webhook] Order ${orderId} marked as paid`);
 
     // Update book status to 'ordered'
-    let book: any = null;
+    let book: BookRow | null = null;
     if (metadata?.bookId) {
         const { data: bookData } = await supabase
             .from('books')
@@ -185,7 +222,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
             .eq('id', metadata.bookId)
             .select()
             .single();
-        book = bookData;
+        book = bookData as BookRow | null;
     } else if (order.book_id) {
         const { data: bookData } = await supabase
             .from('books')
@@ -193,7 +230,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
             .eq('id', order.book_id)
             .select()
             .single();
-        book = bookData;
+        book = bookData as BookRow | null;
     }
 
     // Send order confirmation email
@@ -210,13 +247,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
                 quantity: order.quantity,
                 total: order.total,
                 shippingAddress: {
-                    fullName: order.shipping_full_name,
-                    addressLine1: order.shipping_address_line1,
+                    fullName: order.shipping_full_name || '',
+                    addressLine1: order.shipping_address_line1 || '',
                     addressLine2: order.shipping_address_line2,
-                    city: order.shipping_city,
-                    state: order.shipping_state,
-                    postalCode: order.shipping_postal_code,
-                    country: order.shipping_country,
+                    city: order.shipping_city || '',
+                    state: order.shipping_state || '',
+                    postalCode: order.shipping_postal_code || '',
+                    country: order.shipping_country || '',
                 },
             };
 
@@ -348,7 +385,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 
     // Get order ID from metadata or find by payment intent ID
     let orderId = metadata?.orderId;
-    let order: any = null;
+    let order: OrderRow | null = null;
 
     if (!orderId) {
         const { data, error } = await supabase
@@ -361,7 +398,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
             console.error('[Webhook] Could not find order for PI:', paymentIntent.id);
             return;
         }
-        order = data;
+        order = data as OrderRow;
         orderId = order.id;
     }
 
@@ -381,12 +418,12 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
         return;
     }
 
-    order = updatedOrder;
+    order = updatedOrder as OrderRow;
     console.log(`[Webhook] Order ${orderId} marked as paid (embedded flow)`);
 
     // Update book status to 'ordered'
     const bookId = metadata?.bookId || order.book_id;
-    let book: any = null;
+    let book: BookRow | null = null;
     if (bookId) {
         const { data: bookData } = await supabase
             .from('books')
@@ -394,7 +431,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
             .eq('id', bookId)
             .select()
             .single();
-        book = bookData;
+        book = bookData as BookRow | null;
     }
 
     // Send order confirmation email
@@ -412,13 +449,13 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
                 quantity: order.quantity,
                 total: order.total,
                 shippingAddress: {
-                    fullName: order.shipping_full_name,
-                    addressLine1: order.shipping_address_line1,
+                    fullName: order.shipping_full_name || '',
+                    addressLine1: order.shipping_address_line1 || '',
                     addressLine2: order.shipping_address_line2,
-                    city: order.shipping_city,
-                    state: order.shipping_state,
-                    postalCode: order.shipping_postal_code,
-                    country: order.shipping_country,
+                    city: order.shipping_city || '',
+                    state: order.shipping_state || '',
+                    postalCode: order.shipping_postal_code || '',
+                    country: order.shipping_country || '',
                 },
             };
 
