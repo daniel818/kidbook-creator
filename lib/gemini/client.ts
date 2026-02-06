@@ -50,6 +50,20 @@ export interface StoryGenerationInput {
     language?: Language;
 }
 
+export interface IllustrationOptions {
+    scenePrompt: string;
+    characterDescription: string;
+    artStyle?: ArtStyle;
+    quality?: ImageQuality;
+    referenceImage?: string;
+    aspectRatio?: '1:1' | '3:4';
+    language?: Language;
+    styleReferenceImage?: string;
+    pageNumber?: number;
+    totalPages?: number;
+    bookTitle?: string;
+}
+
 export interface GeneratedPage {
     pageNumber: number;
     title?: string;
@@ -98,7 +112,8 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
         bookType: input.bookType,
         pageCount: input.pageCount || 10,
         characterDescription: input.characterDescription,
-        storyDescription: input.storyDescription
+        storyDescription: input.storyDescription,
+        artStyle: input.artStyle,
     });
 
     logWithTime('--- STORY PROMPT SENT TO MODEL ---', prompt);
@@ -147,16 +162,24 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
 
 // Generate an illustration using Gemini
 export async function generateIllustration(
-    scenePrompt: string,
-    characterDescription: string,
-    artStyle: ArtStyle = 'storybook_classic',
-    quality: ImageQuality = 'fast',
-    referenceImage?: string,
-    aspectRatio: '1:1' | '3:4' = '3:4',
-    language: Language = 'en'
+    options: IllustrationOptions
 ): Promise<{ imageUrl: string; usage: UsageMetadata }> {
+    const {
+        scenePrompt,
+        characterDescription,
+        artStyle = 'storybook_classic',
+        quality = 'fast',
+        referenceImage,
+        aspectRatio = '3:4',
+        language = 'en',
+        styleReferenceImage,
+        pageNumber,
+        totalPages,
+        bookTitle,
+    } = options;
+
     const startTime = Date.now();
-    logWithTime(`=== IMAGE GENERATION STARTED ===`);
+    logWithTime(`=== IMAGE GENERATION STARTED (page ${pageNumber || '?'}/${totalPages || '?'}) ===`);
 
     const styleInfo = ART_STYLES[artStyle] || ART_STYLES.storybook_classic;
 
@@ -177,18 +200,28 @@ export async function generateIllustration(
         characterDescription,
         styleInfo.prompt,
         aspectRatio,
-        !!referenceImage
+        !!referenceImage,
+        pageNumber,
+        totalPages,
+        !!styleReferenceImage,
+        bookTitle
     );
 
-    // Add Reference Image if available
+    // Text prompt first
+    parts.push({ text: promptText });
+
+    // Add child's Reference Image if available (for facial likeness)
     if (referenceImage) {
         logWithTime('Including Reference Image in prompt...');
         const base64Image = referenceImage.replace(/^data:image\/\w+;base64,/, '');
-
-        parts.push({ text: promptText });
         parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Image } });
-    } else {
-        parts.push({ text: promptText });
+    }
+
+    // Add Style Reference Image if available (for visual consistency)
+    if (styleReferenceImage) {
+        logWithTime('Including Style Reference Image (page 1) in prompt...');
+        const base64Style = styleReferenceImage.replace(/^data:image\/\w+;base64,/, '');
+        parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Style } });
     }
 
     try {
@@ -251,7 +284,7 @@ export async function extractCharacterFromPhoto(photoBase64: string, language: L
         });
 
         const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
-        // Note: We could capture usage here too, but focused on text return for now. 
+        // Note: We could capture usage here too, but focused on text return for now.
         // Ideally we should refactor this too, but for now we'll skip logging this minor step cost or treat as negligible.
         return text || "A happy child";
     } catch (error) {
@@ -289,7 +322,7 @@ export async function generateCompleteBook(
         imageCount: 0
     });
 
-    const characterDescription = story.characterDescription || input.characterDescription || `A cute child named ${input.childName}`;
+    const characterDescription = input.characterDescription || story.characterDescription || `A cute child named ${input.childName}`;
 
     const illustrations: string[] = new Array(story.pages.length).fill('');
     const maxIllustrations = Math.min(options?.illustrationLimit ?? story.pages.length, story.pages.length);
@@ -298,19 +331,33 @@ export async function generateCompleteBook(
     const CONCURRENCY_LIMIT = 1;
     const SAFETY_DELAY_MS = 2000; // 2 seconds between batches to be safe with rate limits
 
+    // Style reference: capture page 1's illustration for visual consistency across pages
+    let styleReferenceImage: string | undefined;
+
     // Helper to generate a single page
     const generatePageFn = async (pageIndex: number) => {
         try {
-            const { imageUrl, usage: imgUsage } = await generateIllustration(
-                story.pages[pageIndex].imagePrompt,
+            const { imageUrl, usage: imgUsage } = await generateIllustration({
+                scenePrompt: story.pages[pageIndex].imagePrompt,
                 characterDescription,
-                input.artStyle,
-                input.imageQuality,
-                input.childPhoto,
-                input.aspectRatio,
-                input.language || 'en'
-            );
+                artStyle: input.artStyle,
+                quality: input.imageQuality,
+                referenceImage: input.childPhoto,
+                aspectRatio: input.aspectRatio,
+                language: input.language || 'en',
+                styleReferenceImage: pageIndex > 0 ? styleReferenceImage : undefined,
+                pageNumber: pageIndex + 1,
+                totalPages: story.pages.length,
+                bookTitle: story.title,
+            });
             illustrations[pageIndex] = imageUrl;
+
+            // Capture first page as style reference for subsequent pages
+            if (pageIndex === 0 && imageUrl) {
+                styleReferenceImage = imageUrl;
+                logWithTime('Captured page 1 as style reference for subsequent pages');
+            }
+
             generationLogs.push({
                 stepName: `illustration_page_${pageIndex + 1}`,
                 model: imgUsage.model,
@@ -352,14 +399,16 @@ export async function generateCompleteBook(
     if (options?.includeBackCover !== false) {
         try {
             const backCoverPrompt = "A magical background pattern or simple scenic view suitable for a book back cover. No characters, just atmosphere matching the book theme.";
-            const { imageUrl, usage: backUsage } = await generateIllustration(
-                backCoverPrompt, // Scene
-                "", // No character description needed for back cover background usually
-                input.artStyle,
-                input.imageQuality,
-                undefined, // No reference
-                input.aspectRatio
-            );
+            const { imageUrl, usage: backUsage } = await generateIllustration({
+                scenePrompt: backCoverPrompt,
+                characterDescription: "",
+                artStyle: input.artStyle,
+                quality: input.imageQuality,
+                referenceImage: undefined,
+                aspectRatio: input.aspectRatio,
+                styleReferenceImage,
+                bookTitle: story.title,
+            });
             backCoverImage = imageUrl;
             generationLogs.push({
                 stepName: 'back_cover',

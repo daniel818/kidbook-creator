@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import HTMLFlipBook from 'react-pageflip';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
+import { formatTextIntoParagraphs, normalizeParagraphText } from '@/lib/utils/text-formatting';
 import { Elements } from '@stripe/react-stripe-js';
 import { getStripe } from '@/lib/stripe/client';
 import PaymentForm from '@/components/PaymentForm/PaymentForm';
@@ -191,6 +192,115 @@ const IllustrationPage = forwardRef<HTMLDivElement, {
 IllustrationPage.displayName = 'IllustrationPage';
 
 // ============================================
+// Paragraph Editor (contentEditable with <p> tags)
+// Preserves paragraph structure during editing
+// ============================================
+function ParagraphEditor({
+    paragraphs,
+    onChange,
+}: {
+    paragraphs: string[];
+    onChange: (text: string) => void;
+}) {
+    const editorRef = useRef<HTMLDivElement>(null);
+    const initializedRef = useRef(false);
+    const onChangeRef = useRef(onChange);
+    onChangeRef.current = onChange;
+
+    // Set initial content once on mount
+    useEffect(() => {
+        if (!editorRef.current || initializedRef.current) return;
+        initializedRef.current = true;
+        const html = paragraphs
+            .map(p => `<p>${p.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`)
+            .join('');
+        editorRef.current.innerHTML = html || '<p><br></p>';
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const extractAndSync = useCallback(() => {
+        if (!editorRef.current) return;
+        const pElements = editorRef.current.querySelectorAll('p');
+        let texts: string[];
+        if (pElements.length > 0) {
+            texts = Array.from(pElements).map(p => p.textContent?.trim() || '');
+        } else {
+            // Fallback: user deleted all <p> tags
+            texts = (editorRef.current.innerText || '').split('\n');
+        }
+        onChangeRef.current(texts.filter(Boolean).join('\n\n'));
+    }, []);
+
+    // Only sync state on blur — avoids re-render during typing
+    const handleBlur = useCallback(() => {
+        extractAndSync();
+    }, [extractAndSync]);
+
+    // Handle keyboard events — block arrow keys from bubbling to pageflip
+    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        // Stop all keyboard events from reaching react-pageflip
+        e.stopPropagation();
+
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const selection = window.getSelection();
+            if (!selection || !selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+
+            // Create a new paragraph
+            const newP = document.createElement('p');
+            newP.innerHTML = '<br>';
+
+            // Find the parent <p> element
+            let currentNode: Node | null = range.startContainer;
+            while (currentNode && currentNode.nodeName !== 'P' && currentNode !== editorRef.current) {
+                currentNode = currentNode.parentNode;
+            }
+
+            if (currentNode && currentNode.nodeName === 'P' && editorRef.current) {
+                // Split text after cursor into new paragraph
+                const afterRange = document.createRange();
+                afterRange.setStart(range.startContainer, range.startOffset);
+                afterRange.setEndAfter(currentNode.lastChild || currentNode);
+                const afterContent = afterRange.extractContents();
+
+                // Put extracted content into new paragraph
+                if (afterContent.textContent?.trim()) {
+                    newP.innerHTML = '';
+                    newP.appendChild(afterContent);
+                }
+
+                // Insert new paragraph after current one
+                currentNode.parentNode?.insertBefore(newP, currentNode.nextSibling);
+            } else if (editorRef.current) {
+                editorRef.current.appendChild(newP);
+            }
+
+            // Move cursor to new paragraph
+            const newRange = document.createRange();
+            newRange.setStart(newP, 0);
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+        }
+    }, []);
+
+    return (
+        <StopPropagationWrapper>
+            <div
+                ref={editorRef}
+                className={styles.paragraphEditor}
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
+            />
+        </StopPropagationWrapper>
+    );
+}
+
+// ============================================
 // Text Page (Right side of spread)
 // Story text with elegant typography
 // ============================================
@@ -198,7 +308,7 @@ const TextPage = forwardRef<HTMLDivElement, {
     textElements: { id?: string; content: string }[];
     pageNumber: number;
     isEditing?: boolean;
-    onTextChange?: (idx: number, val: string) => void;
+    onTextChange?: (val: string) => void;
     isLocked?: boolean;
 }>((props, ref) => {
     const { textElements, pageNumber, isEditing, onTextChange, isLocked } = props;
@@ -211,21 +321,16 @@ const TextPage = forwardRef<HTMLDivElement, {
                         <div className={styles.lockedBadge}>🔒 Locked</div>
                         <p>Unlock the full book to read this page.</p>
                     </div>
+                ) : isEditing ? (
+                    <ParagraphEditor
+                        paragraphs={textElements.map(t => t.content)}
+                        onChange={(val) => onTextChange?.(val)}
+                    />
                 ) : (
                     textElements.map((text, idx) => (
-                        isEditing ? (
-                            <StopPropagationWrapper key={text.id || idx}>
-                                <textarea
-                                    className={styles.editableText}
-                                    value={text.content}
-                                    onChange={(e) => onTextChange?.(idx, e.target.value)}
-                                />
-                            </StopPropagationWrapper>
-                        ) : (
-                            <p key={text.id || idx} className={styles.storyParagraph}>
-                                {text.content}
-                            </p>
-                        )
+                        <p key={text.id || idx} className={styles.storyParagraph}>
+                            {text.content}
+                        </p>
                     ))
                 )}
             </div>
@@ -591,7 +696,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     }, []);
 
     // Editor Handlers
-    const handleTextChange = (pageIndex: number, textIdx: number, val: string) => {
+    const handleTextChange = (pageIndex: number, val: string) => {
         // pageIndex is 0-based index of innerPages array
         // We need to map this to logical pageNumber for edits state
         const pageNum = pageIndex + 1;
@@ -635,56 +740,97 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     };
 
     const handleSave = async () => {
+        // Force-sync any active ParagraphEditor before reading edits state
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+        await new Promise(resolve => setTimeout(resolve, 0));
+
         setIsSaving(true);
         try {
-            // RE-Logic for Save:
-            const newBookPages = [...book.pages];
-            let innerIdx = 0;
-            for (let i = 0; i < newBookPages.length; i++) {
-                if (newBookPages[i].type === 'inside') {
-                    const pageNum = innerIdx + 1; // 1-based logic used in UI
-                    const edit = edits[pageNum];
-                    if (edit) {
-                        const page = newBookPages[i];
-                        if (edit.image) {
-                            if (page.imageElements.length > 0) {
-                                page.imageElements[0].src = edit.image;
-                            }
-                        }
-                        if (edit.text) {
-                            if (page.textElements.length > 0) {
-                                page.textElements[0].content = edit.text;
-                            }
-                        }
-                        newBookPages[i] = { ...page };
-                    }
-                    innerIdx++;
-                }
+            // Build surgical page edits — only send changed fields for changed pages.
+            // This prevents overwriting data that may have been updated by background generation.
+            const pageEdits: { pageId: string; text?: string; image?: string }[] = [];
+            const innerPages = liveBook.pages.filter(p => p.type === 'inside');
+
+            for (const [pageNumStr, edit] of Object.entries(edits)) {
+                const pageIdx = parseInt(pageNumStr, 10) - 1; // 1-based → 0-based
+                const page = innerPages[pageIdx];
+                if (!page || (!edit.text && !edit.image)) continue;
+
+                const pageEdit: { pageId: string; text?: string; image?: string } = { pageId: page.id };
+                if (edit.text) pageEdit.text = normalizeParagraphText(edit.text);
+                if (edit.image) pageEdit.image = edit.image;
+                pageEdits.push(pageEdit);
             }
 
             const response = await fetch(`/api/books/${book.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    pages: newBookPages,
                     settings: {
                         ...liveBook.settings,
                         title: titleDraft
-                    }
+                    },
+                    ...(pageEdits.length > 0 ? { pageEdits } : {})
                 })
             });
 
             if (!response.ok) throw new Error('Save failed');
 
+            // Apply edits to liveBook BEFORE clearing edits state,
+            // so the UI shows the updated content immediately without needing a refresh.
+            setLiveBook(prev => {
+                const updatedPages = [...prev.pages];
+                const innerPages = updatedPages.filter(p => p.type === 'inside');
+
+                for (const [pageNumStr, edit] of Object.entries(edits)) {
+                    const pageIdx = parseInt(pageNumStr, 10) - 1;
+                    const page = innerPages[pageIdx];
+                    if (!page) continue;
+
+                    // Find the actual index in updatedPages (which includes cover/back pages)
+                    const realIdx = updatedPages.indexOf(page);
+                    if (realIdx === -1) continue;
+
+                    const updatedPage = { ...updatedPages[realIdx] };
+
+                    if (edit.text) {
+                        const normalizedText = normalizeParagraphText(edit.text);
+                        const existingElements = [...(updatedPage.textElements || [])];
+                        if (existingElements.length > 0) {
+                            existingElements[0] = { ...existingElements[0], content: normalizedText };
+                        } else {
+                            existingElements.push({ id: `te-${Date.now()}`, content: normalizedText } as typeof existingElements[0]);
+                        }
+                        updatedPage.textElements = existingElements;
+                    }
+
+                    if (edit.image) {
+                        const existingImages = [...(updatedPage.imageElements || [])];
+                        if (existingImages.length > 0) {
+                            existingImages[0] = { ...existingImages[0], src: edit.image };
+                        } else {
+                            existingImages.push({ id: `ie-${Date.now()}`, src: edit.image } as typeof existingImages[0]);
+                        }
+                        updatedPage.imageElements = existingImages;
+                    }
+
+                    updatedPages[realIdx] = updatedPage;
+                }
+
+                return {
+                    ...prev,
+                    pages: updatedPages,
+                    settings: {
+                        ...prev.settings,
+                        title: titleDraft
+                    }
+                };
+            });
+
             setIsEditing(false);
             setEdits({});
-            setLiveBook(prev => ({
-                ...prev,
-                settings: {
-                    ...prev.settings,
-                    title: titleDraft
-                }
-            }));
             router.refresh();
         } catch (e) {
             console.error(e);
@@ -768,9 +914,12 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             // Resolve content (edit > original)
             const displayImage = edit.image || getPageImage(page);
             const displayText = edit.text || (page.textElements[0]?.content || '');
-            const textElements = page.textElements.length > 0
-                ? [{ ...page.textElements[0], content: displayText }]
-                : [{ content: displayText }];
+            // Split text into paragraphs for better readability
+            const paragraphs = formatTextIntoParagraphs(displayText);
+            const textElements = paragraphs.map((content, i) => ({
+                id: `${page.id || index}-p-${i}`,
+                content
+            }));
             const isLocked = isPreview && !liveBook.digitalUnlockPaid && index >= unlockedInnerCount;
             const isGenerating = unlockState === 'generating' && !displayImage && !isLocked;
 
@@ -787,7 +936,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             textElements={textElements}
                             pageNumber={leftPageNum}
                             isEditing={isEditing && !isLocked}
-                            onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                            onTextChange={(val) => handleTextChange(index, val)}
                             isLocked={isLocked}
                         />
                     </Page>
@@ -830,7 +979,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                             textElements={textElements}
                             pageNumber={rightPageNum}
                             isEditing={isEditing && !isLocked}
-                            onTextChange={(idx, val) => handleTextChange(index, idx, val)}
+                            onTextChange={(val) => handleTextChange(index, val)}
                             isLocked={isLocked}
                         />
                     </Page>

@@ -177,7 +177,7 @@ export async function PUT(
         }
 
         const body = await request.json();
-        const { settings, pages, status } = body;
+        const { settings, pages, pageEdits, status } = body;
 
         // Validate settings if provided
         if (settings) {
@@ -260,6 +260,61 @@ export async function PUT(
             if (pagesError) {
                 console.error('Error updating pages:', pagesError);
                 return NextResponse.json({ error: 'Failed to update pages' }, { status: 500 });
+            }
+        }
+
+        // Surgical page edits — update only specific fields on specific pages
+        // Safe to use during background generation since it reads current DB state first
+        if (pageEdits && Array.isArray(pageEdits) && pageEdits.length > 0) {
+            for (const edit of pageEdits) {
+                if (!edit.pageId) continue;
+
+                // Fetch current page data from DB (not from client)
+                const { data: currentPage, error: fetchError } = await supabase
+                    .from('pages')
+                    .select('id, text_elements, image_elements')
+                    .eq('id', edit.pageId)
+                    .eq('book_id', bookId)
+                    .single();
+
+                if (fetchError || !currentPage) {
+                    console.error('Page not found for edit:', edit.pageId);
+                    continue;
+                }
+
+                const updates: Record<string, unknown> = {};
+
+                if (edit.text !== undefined) {
+                    const textElements = Array.isArray(currentPage.text_elements)
+                        ? [...currentPage.text_elements] as Record<string, unknown>[]
+                        : [];
+                    if (textElements.length > 0) {
+                        textElements[0] = { ...textElements[0], content: edit.text };
+                    }
+                    updates.text_elements = textElements;
+                }
+
+                if (edit.image !== undefined) {
+                    const imageElements = Array.isArray(currentPage.image_elements)
+                        ? [...currentPage.image_elements] as Record<string, unknown>[]
+                        : [];
+                    if (imageElements.length > 0) {
+                        imageElements[0] = { ...imageElements[0], src: edit.image };
+                    }
+                    updates.image_elements = imageElements;
+                }
+
+                if (Object.keys(updates).length > 0) {
+                    const { error: updateError } = await supabase
+                        .from('pages')
+                        .update(updates)
+                        .eq('id', edit.pageId)
+                        .eq('book_id', bookId);
+
+                    if (updateError) {
+                        console.error('Error updating page:', edit.pageId, updateError);
+                    }
+                }
             }
         }
 
