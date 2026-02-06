@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
+import { checkRateLimit, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
@@ -13,6 +14,17 @@ export async function POST(request: NextRequest) {
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit by user ID
+        const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            const response = NextResponse.json(
+                { error: 'Too many AI requests. Please wait before trying again.' },
+                { status: 429 }
+            );
+            addRateLimitHeaders(response.headers, rateResult);
+            return response;
         }
 
         const body = await request.json();

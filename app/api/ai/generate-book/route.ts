@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client';
 import { uploadReferenceImage } from '@/lib/supabase/upload';
+import { checkRateLimit, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -124,6 +125,18 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         log(`User authenticated: ${user.id}`);
+
+        // Rate limit by user ID (AI generation is expensive)
+        const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            log('Rate limited', { userId: user.id });
+            const response = NextResponse.json(
+                { error: 'Too many AI requests. Please wait before trying again.' },
+                { status: 429 }
+            );
+            addRateLimitHeaders(response.headers, rateResult);
+            return response;
+        }
 
         // Determine aspect ratio from print format
         let aspectRatio: '1:1' | '3:4' = '3:4';

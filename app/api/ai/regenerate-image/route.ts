@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -28,6 +29,17 @@ export async function POST(req: NextRequest) {
         if (authError || !user) {
             log('Unauthorized regenerate attempt');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit by user ID
+        const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            const response = NextResponse.json(
+                { error: 'Too many AI requests. Please wait before trying again.' },
+                { status: 429 }
+            );
+            addRateLimitHeaders(response.headers, rateResult);
+            return response;
         }
 
         const { data: profile, error: profileError } = await supabase
