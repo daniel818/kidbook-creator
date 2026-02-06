@@ -1255,9 +1255,6 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
 
                             {paywallView === 'offers' && (
                                 <div className={styles.paywallFooter}>
-                                    <button className={styles.paywallRestore} type="button">
-                                        Restore Purchases
-                                    </button>
                                     <div className={styles.paywallLinks}>
                                         <a href="#" rel="noreferrer">Terms of Service</a>
                                         <span></span>
