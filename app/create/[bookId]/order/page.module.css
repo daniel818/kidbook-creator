@@ -101,20 +101,27 @@
 }
 
 .backButton {
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: transparent;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
     border: none;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-gray-600);
+    background: #fff;
+    color: #0d0d1b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .backButton:hover {
-    background: var(--color-gray-100);
-    color: var(--color-gray-900);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.backButton .material-symbols-outlined {
+    font-size: 1.35rem;
 }
 
 .headerTitle {
@@ -892,6 +899,1335 @@
     font-size: var(--font-size-base);
 }
 
+/* Stitch Options Screen */
+.stitchOrderMain {
+    background: #f6f6f8;
+    padding-bottom: 340px;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.stitchOrderHeader {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(246, 246, 248, 0.95);
+    backdrop-filter: blur(8px);
+    padding: 16px 20px 12px;
+}
+
+.stitchOrderTopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stitchBackButton {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    border: none;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+.stitchBackButton .material-symbols-outlined {
+    font-size: 28px;
+    color: #0d0d1b;
+}
+
+.stitchOrderTitle {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0d0d1b;
+    margin: 0;
+}
+
+.stitchOrderTopSpacer {
+    width: 52px;
+}
+
+.stitchPreviewPill {
+    margin-top: 14px;
+    height: 46px;
+    border-radius: 999px;
+    background: #fff5cc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #b45309;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stitchPreviewPill .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.stitchOrderStepper {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.stitchOrderStepItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.stitchOrderStepBar {
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: #e3e5f5;
+}
+
+.stitchOrderStepBarActive {
+    background: #2b2bee;
+}
+
+.stitchOrderStepItem span {
+    font-size: 0.72rem;
+    color: #2b2bee;
+    font-weight: 700;
+}
+
+.stitchOrderLayout {
+    display: block;
+    max-width: 100%;
+    padding: 0 20px 20px;
+}
+
+.stitchOptionsContent {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+.stitchSectionTitle {
+    margin: 26px 0 18px;
+    font-size: 1.9rem;
+    line-height: 1.04;
+    font-weight: 700;
+    color: #0d0d1b;
+}
+
+.stitchFormatGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.stitchFormatCard {
+    position: relative;
+    border-radius: 22px;
+    border: 2px solid #edf2ff;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+    padding: 12px;
+    cursor: pointer;
+}
+
+.stitchFormatCardSelected {
+    border-color: #2b2bee;
+    box-shadow: 0 8px 20px rgba(43, 43, 238, 0.12);
+}
+
+.stitchPopularTag {
+    position: absolute;
+    top: -14px;
+    right: 10px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #2b2bee;
+    color: #fff;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.stitchFormatImage {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 28px;
+    background-size: cover;
+    background-position: center;
+}
+
+.stitchFormatMeta {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.stitchFormatName {
+    margin: 0;
+    color: #0d0d1b;
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+.stitchFormatNameActive {
+    color: #2b2bee;
+}
+
+.stitchFormatPrice {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 1.25rem;
+}
+
+.stitchFormatMark {
+    font-size: 1.45rem;
+    color: #cbd5e1;
+}
+
+.stitchFormatMarkActive {
+    color: #2b2bee;
+}
+
+.stitchSizeList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.stitchSizeRow {
+    height: 74px;
+    border-radius: 999px;
+    border: 2px solid #edf2ff;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 22px;
+    cursor: pointer;
+}
+
+.stitchSizeRowSelected {
+    border-color: #2b2bee;
+    background: #f5f7ff;
+}
+
+.stitchSizeIconWrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 16px;
+    background: #eef2f8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+
+.stitchSizeIconWrap .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+
+.stitchSizeIconWrapActive {
+    background: #2b2bee;
+    color: #fff;
+}
+
+.stitchSizeText {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    flex: 1;
+}
+
+.stitchSizeTitle {
+    color: #0d0d1b;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.stitchSizeTitleActive {
+    color: #2b2bee;
+}
+
+.stitchSizeSubtitle {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.stitchSizeMark {
+    color: #cbd5e1;
+    font-size: 1.35rem;
+}
+
+.stitchSizeMarkActive {
+    color: #2b2bee;
+}
+
+.stitchQuantityCard {
+    margin-top: 18px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.stitchQuantityTitle {
+    margin: 0;
+    color: #0d0d1b;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.stitchQuantitySubtitle {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.stitchQtyControl {
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stitchQtyBtn {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: none;
+    background: #fff;
+    color: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.stitchQtyBtn .material-symbols-outlined {
+    font-size: 0.95rem;
+}
+
+.stitchQtyBtnPrimary {
+    background: #2b2bee;
+    color: #fff;
+}
+
+.stitchQtyValue {
+    min-width: 28px;
+    text-align: center;
+    color: #0d0d1b;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.stitchTrustRow {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    opacity: 0.82;
+}
+
+.stitchTrustRow > div {
+    width: 48px;
+    height: 48px;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stitchTrustRow > div:first-child {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.stitchTrustRow > div:last-child {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.stitchTrustRow .material-symbols-outlined {
+    font-size: 1.3rem;
+}
+
+.stitchFooter {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(520px, 100vw);
+    bottom: 0;
+    z-index: 30;
+    background: #fff;
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -10px 28px rgba(15, 23, 42, 0.08);
+    padding: 10px 16px 18px;
+}
+
+.stitchFooterHandle {
+    width: 56px;
+    height: 6px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    margin: 0 auto 12px;
+}
+
+.stitchFooterSummary {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.stitchFooterCover {
+    width: 34px;
+    height: 50px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.stitchFooterMeta {
+    flex: 1;
+}
+
+.stitchFooterTitleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.stitchFooterTitleRow h4 {
+    margin: 0;
+    color: #0d0d1b;
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.stitchFooterTitleRow span {
+    color: #2b2bee;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.stitchFooterLines {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stitchFooterLines div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.stitchContinueBtn {
+    margin-top: 16px;
+    width: 100%;
+    height: 50px;
+    border-radius: 999px;
+    border: none;
+    color: #fff;
+    background: linear-gradient(90deg, #2b2bee 0%, #4c4cff 100%);
+    box-shadow: 0 12px 26px rgba(43, 43, 238, 0.28);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.stitchContinueBtn .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.stitchDesktopContinue {
+    display: none;
+    margin-top: 16px;
+    width: 100%;
+    height: 50px;
+    border-radius: 999px;
+    border: none;
+    color: #fff;
+    background: linear-gradient(90deg, #2b2bee 0%, #4c4cff 100%);
+    box-shadow: 0 12px 26px rgba(43, 43, 238, 0.28);
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.stitchDesktopContinue .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.stitchSummaryOnOptions {
+    display: none;
+}
+
+.stitchFooterMobile {
+    display: block;
+}
+
+.stitchDesktopSteps {
+    display: none;
+    background: #fff;
+    border: 1px solid #e7ecff;
+    box-shadow: 0 6px 18px rgba(43, 43, 238, 0.06);
+}
+
+.stitchDesktopSteps .stepIndicator {
+    border: 1px solid transparent;
+}
+
+.stitchDesktopSteps .stepIndicator.active {
+    background: #f3f6ff;
+    border-color: #dbe4ff;
+}
+
+.stitchDesktopSteps .stepIndicator.completed {
+    opacity: 1;
+    background: #f8faff;
+}
+
+.stitchDesktopSteps .stepNumber {
+    background: #e6ebfa;
+    color: #64748b;
+}
+
+.stitchDesktopSteps .stepIndicator.active .stepNumber {
+    background: #2b2bee;
+    color: #fff;
+}
+
+.stitchDesktopSteps .stepIndicator.completed .stepNumber {
+    background: #cfd9ff;
+    color: #2b2bee;
+}
+
+.stitchDesktopSteps .stepLabel {
+    color: #64748b;
+}
+
+.stitchDesktopSteps .stepIndicator.active .stepLabel {
+    color: #2b2bee;
+}
+
+.stitchDesktopSteps .stepIndicator.completed .stepLabel {
+    color: #3f4f78;
+}
+
+.stitchHideSummaryMobile {
+    display: none;
+}
+
+/* Stitch Shipping Step */
+.stitchShippingHeader {
+    background: rgba(246, 246, 248, 0.95);
+    border-bottom: 1px solid #e7ecff;
+    padding: 12px 14px 10px;
+}
+
+.stitchShippingBackButton {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.stitchShippingBackButton .material-symbols-outlined {
+    font-size: 22px;
+    color: #0d0d1b;
+}
+
+.stitchShippingHeaderTitle {
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    font-size: 1.25rem;
+    color: #0d0d1b;
+    font-weight: 700;
+}
+
+.stitchShippingTopSpacer {
+    width: 40px;
+}
+
+.stitchShippingSteps {
+    margin-top: 4px;
+}
+
+.stitchShippingContent {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+.stitchShippingTitle {
+    margin-bottom: 4px;
+    font-size: 1.9rem;
+}
+
+.stitchShippingSubtitle {
+    margin: 0 0 14px;
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.stitchShippingForm {
+    background: #fff;
+    border: 1px solid #edf2ff;
+    border-radius: 22px;
+    padding: 14px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+}
+
+.stitchShippingForm .formGroup label {
+    font-size: 0.88rem;
+    color: #0d0d1b;
+    font-weight: 700;
+}
+
+.stitchShippingForm .formGroup input,
+.stitchShippingForm .formGroup select {
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.9rem;
+    color: #0f172a;
+    padding: 0 1rem;
+    line-height: normal;
+}
+
+.stitchShippingForm .formGroup select {
+    padding-right: 2.25rem;
+    text-overflow: ellipsis;
+}
+
+.stitchShippingMethods {
+    margin-top: 10px;
+}
+
+.stitchShippingMethods h3 {
+    font-size: 1.15rem;
+    color: #0d0d1b;
+}
+
+.stitchShippingMethods .shippingOption {
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    padding: 10px 12px;
+}
+
+.stitchShippingMethods .shippingOptionTitle {
+    font-size: 0.88rem;
+}
+
+.stitchShippingMethods .shippingOptionMeta {
+    font-size: 0.8rem;
+}
+
+.stitchShippingButtonRow {
+    margin-top: 10px;
+}
+
+.stitchShippingFooterMobile {
+    display: none;
+}
+
+.stitchShippingTotals {
+    font-size: 0.98rem;
+    color: #475569;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stitchShippingTotals > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stitchShippingTotalLine {
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.stitchShippingTotalRow {
+    color: #0d0d1b;
+    font-size: 1.65rem;
+    font-weight: 700;
+}
+
+.stitchShippingContinueBtn {
+    margin-top: 12px;
+    width: 100%;
+}
+
+.stitchContinueBtn:disabled,
+.stitchShippingContinueBtn:disabled,
+.stitchShippingInlineContinue:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.stitchShippingInlineContinue {
+    flex: 2;
+}
+
+/* Stitch Review Step */
+.stitchReviewStepper {
+    position: relative;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 18px;
+}
+
+.stitchReviewStepperLine {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 14px;
+    height: 4px;
+    border-radius: 999px;
+    background: #e5e7eb;
+}
+
+.stitchReviewStepperProgress {
+    position: absolute;
+    left: 20px;
+    right: 56px;
+    top: 14px;
+    height: 4px;
+    border-radius: 999px;
+    background: #2b2bee;
+}
+
+.stitchReviewStepDot {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: #2b2bee;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.stitchReviewStepDot .material-symbols-outlined {
+    font-size: 0.9rem;
+}
+
+.stitchReviewStepDotActive {
+    box-shadow: 0 0 0 4px rgba(43, 43, 238, 0.18);
+}
+
+.stitchReviewStepDotActive span {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.stitchReviewStepLabel {
+    position: absolute;
+    right: 8px;
+    top: 40px;
+    margin: 0;
+    font-size: 0.82rem;
+    color: #2b2bee;
+    font-weight: 700;
+}
+
+.stitchReviewContent {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+.stitchReviewCards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stitchReviewCard,
+.stitchReviewCardCompact,
+.stitchReviewPriceCard {
+    background: #fff;
+    border: 1px solid #edf2ff;
+    border-radius: 18px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.stitchReviewCard {
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.stitchReviewBookThumb {
+    width: 78px;
+    height: 102px;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.stitchReviewBookMeta {
+    flex: 1;
+}
+
+.stitchReviewBookMeta h3 {
+    margin: 0 0 6px;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: #0d0d1b;
+    font-weight: 700;
+}
+
+.stitchReviewBookMeta p {
+    margin: 0 0 4px;
+    font-size: 0.98rem;
+    color: #64748b;
+}
+
+.stitchReviewEditBtn {
+    border: none;
+    background: transparent;
+    color: #2b2bee;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+.stitchReviewCardCompact {
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stitchReviewIconWrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    background: rgba(43, 43, 238, 0.1);
+    color: #2b2bee;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stitchReviewIconWrap .material-symbols-outlined {
+    font-size: 1.4rem;
+}
+
+.stitchReviewCompactMeta {
+    flex: 1;
+}
+
+.stitchReviewCompactMeta h4 {
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+    color: #0d0d1b;
+    font-weight: 700;
+}
+
+.stitchReviewCompactMeta p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.35;
+}
+
+.stitchReviewPriceCard {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stitchReviewPriceCard > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #334155;
+    font-size: 0.98rem;
+}
+
+.stitchReviewDigitalRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stitchReviewDigitalRow .material-symbols-outlined {
+    color: #2b2bee;
+    font-size: 1rem;
+}
+
+.stitchReviewPriceDivider {
+    height: 1px;
+    background: #e2e8f0;
+    margin-top: 2px;
+}
+
+.stitchReviewTotalRow {
+    color: #0d0d1b !important;
+    font-weight: 700;
+}
+
+.stitchReviewTotalRow span:last-child {
+    color: #2b2bee;
+    font-size: 1.85rem;
+    font-weight: 700;
+}
+
+.stitchReviewTerms {
+    margin-top: 10px;
+}
+
+.stitchReviewCheckbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.stitchReviewCheckbox input {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    margin-top: 2px;
+}
+
+.stitchReviewCheckbox a {
+    color: #8b9cff;
+}
+
+.stitchReviewProceedBtn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.stitchHideSummaryReview {
+    display: block;
+}
+
+.stitchSecurePill {
+    background: #f0fdf4;
+    border-color: #d1fae5;
+    color: #15803d;
+}
+
+.stitchSecurePill .material-symbols-outlined {
+    color: #16a34a;
+}
+
+/* Stitch Payment Step */
+.stitchPaymentContent {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+.stitchPaymentAmountCard {
+    background: #fff;
+    border: 1px solid #edf2ff;
+    border-radius: 22px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.stitchPaymentAmountHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.stitchPaymentAmountLabel {
+    margin: 0 0 4px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.stitchPaymentAmountValue {
+    margin: 0;
+    color: #0d0d1b;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.stitchPaymentDetailsBtn {
+    border: none;
+    background: transparent;
+    color: #2b2bee;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    font-size: 0.98rem;
+}
+
+.stitchPaymentDetailsBtn .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.stitchPaymentAmountDivider {
+    height: 1px;
+    background: #edf2ff;
+    margin: 12px 0 10px;
+}
+
+.stitchPaymentTaxRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #4f46e5;
+    font-size: 0.92rem;
+}
+
+.stitchPaymentTaxRow .material-symbols-outlined {
+    color: #22c55e;
+    font-size: 1rem;
+}
+
+.stitchPaymentExpressButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stitchApplePayBtn,
+.stitchGooglePayBtn {
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.stitchApplePayBtn {
+    border-color: #111827;
+    background: #000;
+    color: #fff;
+}
+
+.stitchGooglePayBtn {
+    background: #fff;
+    color: #334155;
+}
+
+.stitchPayInner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.stitchPayIcon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    fill: currentColor;
+}
+
+.stitchPaymentDividerText {
+    margin: 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+}
+
+.stitchPaymentDividerText::before,
+.stitchPaymentDividerText::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.stitchPaymentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stitchPaymentForm .formGroup {
+    gap: 6px;
+}
+
+.stitchPaymentForm .formGroup label {
+    color: #0d0d1b;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.stitchPaymentForm .formGroup input {
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    padding: 0 1rem;
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+.stitchPaymentInputWithIcon {
+    position: relative;
+}
+
+.stitchPaymentInputWithIcon input {
+    padding-right: 2.5rem !important;
+}
+
+.stitchPaymentInputWithIcon .material-symbols-outlined {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    color: #22c55e;
+    font-size: 1.15rem;
+}
+
+.stitchCardInfoGroup {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.stitchCardNumberRow {
+    position: relative;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.stitchCardLeftIcon {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    color: #94a3b8;
+    font-size: 1.2rem;
+}
+
+.stitchCardNumberRow input {
+    border: none !important;
+    border-radius: 0 !important;
+    height: 48px !important;
+    width: 100%;
+    padding-left: 2.7rem !important;
+    padding-right: 4.6rem !important;
+}
+
+.stitchCardBrandBlocks {
+    position: absolute;
+    right: 10px;
+    top: 13px;
+    display: inline-flex;
+    gap: 6px;
+}
+
+.stitchCardBrandBlocks span {
+    width: 24px;
+    height: 14px;
+    border-radius: 4px;
+    background: #f1f5f9;
+}
+
+.stitchCardSplitRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.stitchCardSplitRow input {
+    border: none !important;
+    border-radius: 0 !important;
+    height: 48px !important;
+    text-align: center;
+}
+
+.stitchCardCvcWrap {
+    position: relative;
+    border-left: 1px solid #e2e8f0;
+}
+
+.stitchCardCvcWrap input {
+    padding-right: 2.4rem !important;
+}
+
+.stitchCardCvcWrap .material-symbols-outlined {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+.stitchPaymentTermsRow {
+    margin-top: 10px;
+}
+
+.stitchPaymentTermsRow .stitchReviewCheckbox {
+    color: #2b2bee;
+    font-size: 1rem;
+}
+
+.stitchPaymentSecureRow {
+    margin-top: 12px;
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 0.92rem;
+}
+
+.stitchPaymentSecureRow .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.stitchPaymentCompleteBtn {
+    margin-top: 14px;
+    width: 100%;
+    height: 56px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(90deg, #2b2bee 0%, #ec4899 100%);
+    box-shadow: 0 14px 28px rgba(43, 43, 238, 0.26);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px 0 8px;
+    cursor: pointer;
+}
+
+.stitchPaymentCompleteBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.stitchPaymentCompleteBtn > span:nth-child(2) {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.stitchPaymentCompleteBtn > span:last-child {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.stitchPaymentCompleteIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stitchPaymentCompleteIcon .material-symbols-outlined {
+    font-size: 1.1rem;
+}
+
+.stitchPaymentPoweredBy {
+    margin-top: 10px;
+    color: #94a3b8;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+    font-weight: 700;
+}
+
+.stitchPaymentPoweredBy em {
+    font-style: italic;
+    color: #64748b;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1rem;
+}
+
+.stitchPaymentFooterMobile {
+    display: none;
+}
+
+.stitchPaymentFooterDesktop {
+    display: block;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .orderLayout {
@@ -916,6 +2252,83 @@
     .trustBadges {
         flex-direction: row;
         flex-wrap: wrap;
+    }
+
+    .stitchHideSummaryReview {
+        display: none;
+    }
+}
+
+@media (min-width: 1025px) {
+    .stitchOrderMain {
+        max-width: none;
+        margin: 0;
+        padding-bottom: 0;
+    }
+
+    .stitchOrderHeader {
+        padding: 20px 32px 14px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .stitchOrderTitle {
+        font-size: 2.25rem;
+    }
+
+    .stitchOrderLayout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: var(--spacing-xl);
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-2xl);
+    }
+
+    .stitchOrderStepper {
+        display: none;
+    }
+
+    .stitchOptionsContent {
+        background: #fff;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        padding: var(--spacing-2xl);
+    }
+
+    .stitchFooterMobile {
+        display: none;
+    }
+
+    .stitchDesktopContinue {
+        display: inline-flex;
+    }
+
+    .stitchSummaryOnOptions {
+        display: block;
+    }
+
+    .stitchDesktopSteps {
+        display: flex;
+    }
+
+    .stitchHideSummaryMobile {
+        display: block;
+    }
+
+    .stitchShippingHeader {
+        background: var(--color-white);
+    }
+
+    .stitchShippingHeaderTitle {
+        font-size: 1.6rem;
+    }
+
+    .stitchShippingFooterMobile {
+        display: none;
+    }
+
+    .stitchShippingButtonRow {
+        display: flex;
     }
 }
 
@@ -968,5 +2381,627 @@
 
     .summaryCard {
         grid-template-columns: 1fr;
+    }
+
+    .stitchOrderHeader {
+        padding: 12px 14px 10px;
+    }
+
+    .stitchBackButton {
+        width: 44px;
+        height: 44px;
+    }
+
+    .stitchBackButton .material-symbols-outlined {
+        font-size: 1.35rem;
+    }
+
+    .stitchOrderTitle {
+        font-size: 1.25rem;
+    }
+
+    .stitchPreviewPill {
+        height: 40px;
+        font-size: 0.66rem;
+        gap: 6px;
+    }
+
+    .stitchOrderStepper {
+        margin-top: 12px;
+        gap: 10px;
+    }
+
+    .stitchOrderStepBar {
+        height: 8px;
+    }
+
+    .stitchOrderStepItem span {
+        font-size: 0.62rem;
+    }
+
+    .stitchOrderLayout {
+        padding: 0 14px 14px;
+    }
+
+    .stitchSectionTitle {
+        margin: 16px 0 12px;
+        font-size: 1.05rem;
+    }
+
+    .stitchFormatGrid {
+        gap: 10px;
+    }
+
+    .stitchFormatCard {
+        border-radius: 18px;
+        padding: 10px;
+    }
+
+    .stitchPopularTag {
+        font-size: 0.52rem;
+        padding: 4px 8px;
+    }
+
+    .stitchFormatImage {
+        border-radius: 20px;
+    }
+
+    .stitchFormatMeta {
+        margin-top: 10px;
+    }
+
+    .stitchFormatName {
+        font-size: 1.02rem;
+    }
+
+    .stitchFormatPrice {
+        font-size: 0.92rem;
+    }
+
+    .stitchFormatMark {
+        font-size: 1.08rem;
+    }
+
+    .stitchSizeList {
+        gap: 9px;
+    }
+
+    .stitchSizeRow {
+        height: 64px;
+        padding: 0 14px;
+        gap: 10px;
+    }
+
+    .stitchSizeIconWrap {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+    }
+
+    .stitchSizeIconWrap .material-symbols-outlined {
+        font-size: 0.98rem;
+    }
+
+    .stitchSizeTitle {
+        font-size: 0.98rem;
+    }
+
+    .stitchSizeSubtitle {
+        font-size: 0.72rem;
+    }
+
+    .stitchSizeMark {
+        font-size: 1.04rem;
+    }
+
+    .stitchQuantityCard {
+        margin-top: 12px;
+        border-radius: 18px;
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .stitchQuantityTitle {
+        font-size: 1rem;
+    }
+
+    .stitchQuantitySubtitle {
+        font-size: 0.72rem;
+    }
+
+    .stitchQtyControl {
+        gap: 6px;
+        padding: 4px;
+    }
+
+    .stitchQtyBtn {
+        width: 30px;
+        height: 30px;
+    }
+
+    .stitchQtyBtn .material-symbols-outlined {
+        font-size: 0.86rem;
+    }
+
+    .stitchQtyValue {
+        font-size: 0.98rem;
+    }
+
+    .stitchTrustRow {
+        margin-top: 14px;
+        gap: 30px;
+    }
+
+    .stitchTrustRow > div {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+    }
+
+    .stitchTrustRow .material-symbols-outlined {
+        font-size: 1rem;
+    }
+
+    .stitchFooter {
+        border-radius: 20px 20px 0 0;
+        padding: 8px 12px 12px;
+    }
+
+    .stitchFooterHandle {
+        margin-bottom: 8px;
+    }
+
+    .stitchFooterSummary {
+        gap: 8px;
+    }
+
+    .stitchFooterCover {
+        width: 28px;
+        height: 42px;
+    }
+
+    .stitchFooterTitleRow h4 {
+        font-size: 0.84rem;
+    }
+
+    .stitchFooterTitleRow span {
+        font-size: 1.08rem;
+    }
+
+    .stitchFooterLines div {
+        font-size: 0.7rem;
+    }
+
+    .stitchContinueBtn {
+        margin-top: 10px;
+        height: 44px;
+        font-size: 0.92rem;
+    }
+
+    .stitchContinueBtn .material-symbols-outlined {
+        font-size: 0.92rem;
+    }
+
+    .stitchShippingHeader {
+        padding: 8px 12px 6px;
+    }
+
+    .stitchShippingHeaderTitle {
+        font-size: 1.05rem;
+    }
+
+    .stitchShippingSteps {
+        flex-direction: row !important;
+        padding: 8px 10px;
+        gap: 10px;
+    }
+
+    .stitchShippingSteps .stepIndicator {
+        width: auto;
+    }
+
+    .stitchShippingContent {
+        padding-bottom: 230px;
+    }
+
+    .stitchShippingTitle {
+        font-size: 1rem;
+    }
+
+    .stitchShippingSubtitle {
+        font-size: 0.76rem;
+    }
+
+    .stitchShippingForm {
+        border-radius: 16px;
+        padding: 10px;
+    }
+
+    .stitchShippingForm .formGroup label {
+        font-size: 0.78rem;
+    }
+
+    .stitchShippingForm .formGroup input,
+    .stitchShippingForm .formGroup select {
+        height: 42px;
+        font-size: 0.82rem;
+        padding: 0 0.9rem;
+    }
+
+    .stitchShippingForm .formGroup select {
+        padding-right: 2rem;
+    }
+
+    .stitchShippingMethods h3 {
+        font-size: 1rem;
+    }
+
+    .stitchShippingMethods .shippingOption {
+        padding: 9px 10px;
+        border-radius: 12px;
+    }
+
+    .stitchShippingMethods .shippingOptionTitle {
+        font-size: 0.82rem;
+    }
+
+    .stitchShippingMethods .shippingOptionMeta {
+        font-size: 0.75rem;
+    }
+
+    .stitchShippingButtonRow {
+        display: none;
+    }
+
+    .stitchShippingFooterMobile {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        display: block;
+        background: #fff;
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.09);
+        padding: 14px 14px 16px;
+    }
+
+    .stitchShippingTotals {
+        font-size: 0.9rem;
+        gap: 6px;
+    }
+
+    .stitchShippingTotalRow {
+        font-size: 1.25rem;
+    }
+
+    .stitchShippingContinueBtn {
+        margin-top: 10px;
+    }
+
+    .stitchReviewStepper {
+        padding: 0 12px 14px;
+    }
+
+    .stitchReviewStepperLine,
+    .stitchReviewStepperProgress {
+        left: 12px;
+        right: 12px;
+    }
+
+    .stitchReviewStepperProgress {
+        right: 48px;
+    }
+
+    .stitchReviewStepDot {
+        width: 26px;
+        height: 26px;
+    }
+
+    .stitchReviewStepDot .material-symbols-outlined {
+        font-size: 0.76rem;
+    }
+
+    .stitchReviewStepLabel {
+        font-size: 0.72rem;
+        top: 36px;
+    }
+
+    .stitchReviewCard,
+    .stitchReviewCardCompact,
+    .stitchReviewPriceCard {
+        border-radius: 14px;
+    }
+
+    .stitchReviewCard {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .stitchReviewBookThumb {
+        width: 56px;
+        height: 74px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+    }
+
+    .stitchReviewBookMeta h3 {
+        font-size: 0.94rem;
+        margin-bottom: 4px;
+    }
+
+    .stitchReviewBookMeta p {
+        font-size: 0.72rem;
+        margin-bottom: 2px;
+    }
+
+    .stitchReviewEditBtn {
+        font-size: 0.8rem;
+    }
+
+    .stitchReviewCardCompact {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .stitchReviewIconWrap {
+        width: 38px;
+        height: 38px;
+    }
+
+    .stitchReviewIconWrap .material-symbols-outlined {
+        font-size: 1.05rem;
+    }
+
+    .stitchReviewCompactMeta h4 {
+        font-size: 0.92rem;
+    }
+
+    .stitchReviewCompactMeta p {
+        font-size: 0.74rem;
+    }
+
+    .stitchReviewPriceCard {
+        padding: 10px;
+        gap: 6px;
+    }
+
+    .stitchReviewPriceCard > div {
+        font-size: 0.82rem;
+    }
+
+    .stitchReviewDigitalRow .material-symbols-outlined {
+        font-size: 0.82rem;
+    }
+
+    .stitchReviewTotalRow span:last-child {
+        font-size: 1.35rem;
+    }
+
+    .stitchReviewCheckbox {
+        font-size: 0.72rem;
+        gap: 8px;
+    }
+
+    .stitchReviewCheckbox input {
+        width: 16px;
+        height: 16px;
+    }
+
+    .stitchReviewProceedBtn {
+        margin-top: 8px;
+    }
+
+    .stitchPaymentAmountCard {
+        border-radius: 16px;
+        padding: 12px;
+    }
+
+    .stitchPaymentAmountValue {
+        font-size: 1.75rem;
+    }
+
+    .stitchPaymentForm .formGroup label {
+        font-size: 0.8rem;
+    }
+
+    .stitchPaymentForm .formGroup input {
+        height: 44px;
+        font-size: 0.85rem;
+    }
+
+    .stitchCardNumberRow input,
+    .stitchCardSplitRow input {
+        height: 44px !important;
+    }
+
+    .stitchPaymentTermsRow .stitchReviewCheckbox {
+        font-size: 0.82rem;
+    }
+
+    .stitchPaymentCompleteBtn {
+        height: 50px;
+    }
+
+    .stitchPaymentCompleteBtn > span:nth-child(2),
+    .stitchPaymentCompleteBtn > span:last-child {
+        font-size: 1.1rem;
+    }
+
+    .stitchPaymentCompleteIcon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .stitchPaymentPoweredBy {
+        font-size: 0.68rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .stitchPaymentContent {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: clip;
+        padding: 0 0 140px;
+        box-sizing: border-box;
+    }
+
+    .stitchPaymentAmountCard {
+        margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .stitchPaymentAmountLabel {
+        font-size: 0.62rem;
+    }
+
+    .stitchPaymentAmountValue {
+        font-size: 1.55rem;
+    }
+
+    .stitchPaymentDetailsBtn {
+        font-size: 0.84rem;
+        white-space: nowrap;
+    }
+
+    .stitchPaymentAmountHeader {
+        align-items: center;
+    }
+
+    .stitchPaymentExpressButtons {
+        gap: 8px;
+        width: 100%;
+    }
+
+    .stitchPaymentTaxRow {
+        font-size: 0.8rem;
+    }
+
+    .stitchApplePayBtn,
+    .stitchGooglePayBtn {
+        height: 44px;
+        font-size: 1.05rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .stitchPayInner {
+        font-size: 1.05rem;
+        gap: 7px;
+    }
+
+    .stitchPayIcon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .stitchPaymentDividerText {
+        margin: 10px 0;
+        font-size: 0.68rem;
+        gap: 8px;
+    }
+
+    .stitchPaymentForm {
+        gap: 8px;
+        width: 100%;
+    }
+
+    .stitchPaymentForm .formGroup label {
+        font-size: 0.78rem;
+    }
+
+    .stitchPaymentForm .formGroup input {
+        height: 42px;
+        font-size: 0.8rem;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .stitchPaymentInputWithIcon {
+        width: 100%;
+    }
+
+    .stitchPaymentInputWithIcon .material-symbols-outlined {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .stitchCardInfoGroup {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .stitchCardNumberRow {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .stitchCardNumberRow input,
+    .stitchCardSplitRow input {
+        height: 42px !important;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .stitchCardBrandBlocks {
+        top: 50%;
+        transform: translateY(-50%);
+        right: 8px;
+    }
+
+    .stitchCardSplitRow {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .stitchPaymentTermsRow {
+        margin-top: 8px;
+        width: 100%;
+    }
+
+    .stitchPaymentTermsRow .stitchReviewCheckbox {
+        font-size: 0.8rem;
+    }
+
+    .stitchPaymentFooterDesktop {
+        display: none;
+    }
+
+    .stitchPaymentFooterMobile {
+        display: block;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 45;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(6px);
+        border-top: 1px solid #edf2ff;
+        padding: 10px 14px 12px;
+        box-sizing: border-box;
+    }
+
+    .stitchPaymentFooterMobile .stitchPaymentCompleteBtn {
+        margin-top: 0;
+        height: 50px;
+    }
+
+    .stitchPaymentFooterMobile .stitchPaymentCompleteBtn > span:nth-child(2),
+    .stitchPaymentFooterMobile .stitchPaymentCompleteBtn > span:last-child {
+        font-size: 1.04rem;
+    }
+
+    .stitchPaymentFooterMobile .stitchPaymentCompleteIcon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .stitchPaymentFooterMobile .stitchPaymentPoweredBy {
+        margin-top: 6px;
+        font-size: 0.64rem;
     }
 }

@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Book not found or unauthorized' }, { status: 404 });
         }
 
+        // Check if this is a preview book that needs unlock bundled in
         const isPreview = book.is_preview || book.status === 'preview';
-        if (isPreview && !book.digital_unlock_paid) {
-            return NextResponse.json({ error: 'Unlock required before ordering' }, { status: 402 });
-        }
+        const needsUnlock = isPreview && !book.digital_unlock_paid;
+        const unlockFee = needsUnlock ? 1500 : 0; // $15.00 in cents
 
         // Validate quantity
         if (!Number.isInteger(quantity) || quantity < 1) {
@@ -79,6 +79,9 @@ export async function POST(request: NextRequest) {
             shipping,
         });
 
+        // Add unlock fee to total if needed
+        const totalWithUnlock = pricing.total + unlockFee;
+
         // 1. Create PENDING Order Record FIRST (Prevent Dangling Payment Risk)
         const { data: order, error: orderError } = await adminDb
             .from('orders')
@@ -90,7 +93,7 @@ export async function POST(request: NextRequest) {
                 quantity,
                 subtotal: pricing.subtotal / 100,
                 shipping_cost: pricing.shipping / 100,
-                total: pricing.total / 100,
+                total: totalWithUnlock / 100,
                 shipping_full_name: shipping.fullName,
                 shipping_address_line1: shipping.addressLine1,
                 shipping_address_line2: shipping.addressLine2,
@@ -113,40 +116,59 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to initialize order.' }, { status: 500 });
         }
 
+        // Build line items
+        const lineItems: any[] = [
+            {
+                price_data: {
+                    currency: 'usd',
+                    product_data: {
+                        name: `${book.title} - Personalized Children's Book`,
+                        description: `${format.charAt(0).toUpperCase() + format.slice(1)}, ${size}, ${interiorPageCount} pages`,
+                        images: book.thumbnail_url ? [book.thumbnail_url] : [],
+                    },
+                    unit_amount: Math.round(pricing.subtotal / quantity),
+                },
+                quantity: quantity,
+            },
+            {
+                price_data: {
+                    currency: 'usd',
+                    product_data: {
+                        name: 'Shipping & Handling',
+                        description: 'Standard shipping (5-10 business days)',
+                    },
+                    unit_amount: Math.round(pricing.shipping),
+                },
+                quantity: 1,
+            },
+        ];
+
+        // Add unlock fee line item if needed
+        if (needsUnlock) {
+            lineItems.push({
+                price_data: {
+                    currency: 'usd',
+                    product_data: {
+                        name: 'Digital Unlock & Full Generation',
+                        description: 'Generates all pages + high-res PDF download',
+                    },
+                    unit_amount: unlockFee,
+                },
+                quantity: 1,
+            });
+        }
+
         // 2. Create Stripe checkout session
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',
             payment_method_types: ['card'],
             customer_email: user.email,
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: `${book.title} - Personalized Children's Book`,
-                            description: `${format.charAt(0).toUpperCase() + format.slice(1)}, ${size}, ${interiorPageCount} pages`,
-                            images: book.thumbnail_url ? [book.thumbnail_url] : [],
-                        },
-                        unit_amount: Math.round(pricing.subtotal / quantity),
-                    },
-                    quantity: quantity,
-                },
-                {
-                    price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: 'Shipping & Handling',
-                            description: 'Standard shipping (5-10 business days)',
-                        },
-                        unit_amount: Math.round(pricing.shipping),
-                    },
-                    quantity: 1,
-                },
-            ],
+            line_items: lineItems,
             metadata: {
                 orderId: order.id, // Link specifically to THIS order
                 bookId: book.id,
                 userId: user.id,
+                isUnlockBundled: needsUnlock ? 'true' : 'false',
             },
             success_url: `${process.env.NEXT_PUBLIC_APP_URL}/order/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/create/${bookId}/order`,

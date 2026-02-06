@@ -33,6 +33,32 @@ interface ShippingOption {
     traceable?: boolean;
 }
 
+function ApplePayButton({ className }: { className?: string }) {
+    return (
+        <button type="button" className={`${styles.stitchApplePayBtn} ${className || ''}`}>
+            <span className={styles.stitchPayInner}>
+                <svg className={styles.stitchPayIcon} viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M223.3,169.59a8.07,8.07,0,0,0-2.8-3.4C203.53,154.53,200,134.64,200,120c0-17.67,13.47-33.06,21.5-40.67a8,8,0,0,0,0-11.62C208.82,55.74,187.82,48,168,48a72.2,72.2,0,0,0-40,12.13,71.56,71.56,0,0,0-90.71,9.09A74.63,74.63,0,0,0,16,123.4a127.06,127.06,0,0,0,40.14,89.73A39.8,39.8,0,0,0,83.59,224h87.68a39.84,39.84,0,0,0,29.12-12.57,125,125,0,0,0,17.82-24.6C225.23,174,224.33,172,223.3,169.59Zm-34.63,30.94a23.76,23.76,0,0,1-17.4,7.47H83.59a23.82,23.82,0,0,1-16.44-6.51A111.14,111.14,0,0,1,32,123,58.5,58.5,0,0,1,48.65,80.47,54.81,54.81,0,0,1,88,64h.78A55.45,55.45,0,0,1,123,76.28a8,8,0,0,0,10,0A55.44,55.44,0,0,1,168,64a70.64,70.64,0,0,1,36,10.35c-13,14.52-20,30.47-20,45.65,0,23.77,7.64,42.73,22.18,55.3A105.82,105.82,0,0,1,188.67,200.53ZM128.23,30A40,40,0,0,1,167,0h1a8,8,0,0,1,0,16h-1a24,24,0,0,0-23.24,18,8,8,0,1,1-15.5-4Z"></path>
+                </svg>
+                <span>Pay</span>
+            </span>
+        </button>
+    );
+}
+
+function GooglePayButton({ className }: { className?: string }) {
+    return (
+        <button type="button" className={`${styles.stitchGooglePayBtn} ${className || ''}`}>
+            <span className={styles.stitchPayInner}>
+                <svg className={styles.stitchPayIcon} viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M224,128a96,96,0,1,1-21.95-61.09,8,8,0,1,1-12.33,10.18A80,80,0,1,0,207.6,136H128a8,8,0,0,1,0-16h88A8,8,0,0,1,224,128Z" fill="currentColor"></path>
+                </svg>
+                <span>Pay</span>
+            </span>
+        </button>
+    );
+}
+
 function formatShippingCost(option: ShippingOption): string | null {
     if (option.cost_excl_tax === undefined || option.cost_excl_tax === null) return null;
     const amount = typeof option.cost_excl_tax === 'string'
@@ -46,16 +72,14 @@ function formatShippingLevel(level: string): string {
     return level.replace(/_/g, ' ');
 }
 
-const SIZE_LABELS: Record<BookSize, string> = {
-    '7.5x7.5': '7.5" × 7.5" (Small Square)',
-    '8x8': '8.5" × 8.5" (Standard Square)',
-    '8x10': '8.5" × 11" (Standard Portrait)'
-};
-
 const ALL_SIZES: BookSize[] = ['7.5x7.5', '8x8', '8x10'];
 const SIZES_BY_RATIO: Record<'square' | 'portrait', BookSize[]> = {
     square: ['7.5x7.5', '8x8'],
     portrait: ['8x10']
+};
+const FORMAT_PRICES: Record<BookFormat, number> = {
+    softcover: 24.99,
+    hardcover: 39.99
 };
 
 function getAvailableSizes(printFormat?: Book['settings']['printFormat']): BookSize[] {
@@ -77,6 +101,7 @@ export default function OrderPage() {
     const [quantity, setQuantity] = useState(1);
     const [step, setStep] = useState<OrderStep>('options');
     const [agreedToTerms, setAgreedToTerms] = useState(false);
+    const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isUnlockCheckout, setIsUnlockCheckout] = useState(false);
 
@@ -364,6 +389,7 @@ export default function OrderPage() {
     const totalPrice = displayedPricing?.subtotal ?? 0;
     const hasShippingQuote = Boolean(displayedShippingLevel) && Boolean(displayedPricing);
     const shippingCost = hasShippingQuote ? displayedPricing!.shipping : 0;
+
     const grandTotal = hasShippingQuote ? displayedPricing!.total : totalPrice;
     const bookPriceLabel = 'Book price (printing + production)';
     const bookPriceValue = priceError
@@ -553,6 +579,14 @@ export default function OrderPage() {
     const themeColors = book.settings.bookTheme
         ? BookThemeInfo[book.settings.bookTheme].colors
         : ['#6366f1', '#ec4899'];
+    const coverPage = book.pages.find((page) => page.type === 'cover') || book.pages[0];
+    const coverImageUrl = (
+        coverPage?.imageElements?.[0]?.src ||
+        coverPage?.backgroundImage ||
+        (coverPage as { background_image?: string } | undefined)?.background_image ||
+        book.thumbnailUrl ||
+        null
+    );
     const interiorPageCount = getPrintableInteriorPageCount(book, format, size);
     const steps: OrderStep[] = ['options', 'shipping', 'review', 'payment'];
     const currentStepIndex = steps.indexOf(step);
@@ -567,26 +601,87 @@ export default function OrderPage() {
     ].filter(Boolean) as string[];
     const shippingLevelLabel = displayedShippingLevel ? formatShippingLevel(displayedShippingLevel) : '';
     const isPreview = book.status === 'preview' || book.isPreview;
+    const optionBookPrice = FORMAT_PRICES[format];
+    const optionDigitalPrice = isPreview && !book.digitalUnlockPaid ? 15 : 0;
+    const optionTotal = optionBookPrice + optionDigitalPrice;
+    const isOptionsStep = step === 'options';
+    const isShippingStep = step === 'shipping';
+    const isReviewStep = step === 'review';
+    const isPaymentStep = step === 'payment';
+    const digitalUnlockCost = isPreview && !book.digitalUnlockPaid ? 15 : 0;
+    const shippingFooterTotal = (hasShippingQuote ? grandTotal : totalPrice) + digitalUnlockCost;
 
     return (
-        <main className={styles.main}>
+        <main className={`${styles.main} ${isOptionsStep ? styles.stitchOrderMain : ''}`}>
             {/* Header */}
-            <header className={styles.header}>
-                <button
-                    className={styles.backButton}
-                    onClick={() => router.push(`/book/${bookId}`)}
-                >
-                    ← Back to Book
-                </button>
-                <h1 className={styles.headerTitle}>Order Your Book</h1>
-                <div className={styles.placeholder}></div>
-            </header>
+            {(isOptionsStep || isShippingStep || isReviewStep || isPaymentStep) ? (
+                <header className={styles.stitchOrderHeader}>
+                    <div className={styles.stitchOrderTopRow}>
+                        <button
+                            className={styles.stitchBackButton}
+                            onClick={() =>
+                                isPaymentStep
+                                    ? setStep('review')
+                                    : isReviewStep
+                                        ? setStep('shipping')
+                                        : isShippingStep
+                                            ? setStep('options')
+                                            : router.push(`/book/${bookId}`)
+                            }
+                            aria-label={
+                                isPaymentStep
+                                    ? 'Back to review'
+                                    : isReviewStep
+                                        ? 'Back to shipping'
+                                        : isShippingStep
+                                            ? 'Back to options'
+                                            : 'Back to book'
+                            }
+                        >
+                            <span className="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <h1 className={styles.stitchOrderTitle}>Order Your Book</h1>
+                        <div className={styles.stitchOrderTopSpacer}></div>
+                    </div>
+                    {isPaymentStep ? (
+                        <div className={`${styles.stitchPreviewPill} ${styles.stitchSecurePill}`}>
+                            <span className="material-symbols-outlined">lock</span>
+                            <span>SSL</span>
+                        </div>
+                    ) : (
+                        <div className={styles.stitchPreviewPill}>
+                            <span className="material-symbols-outlined">visibility</span>
+                            <span>Preview Mode</span>
+                        </div>
+                    )}
+                    <div className={styles.stitchOrderStepper}>
+                        {steps.map((s, i) => (
+                            <div key={s} className={styles.stitchOrderStepItem}>
+                                <div className={`${styles.stitchOrderStepBar} ${i <= currentStepIndex ? styles.stitchOrderStepBarActive : ''}`}></div>
+                                {i === currentStepIndex && <span>{s.charAt(0).toUpperCase() + s.slice(1)}</span>}
+                            </div>
+                        ))}
+                    </div>
+                </header>
+            ) : (
+                <header className={styles.header}>
+                    <button
+                        className={styles.backButton}
+                        onClick={() => router.push(`/book/${bookId}`)}
+                        aria-label="Back to book"
+                    >
+                        <span className="material-symbols-outlined">arrow_back</span>
+                    </button>
+                    <h1 className={styles.headerTitle}>Order Your Book</h1>
+                    <div className={styles.placeholder}></div>
+                </header>
+            )}
 
-            {isPreview && (
+            {isPreview && !isOptionsStep && !isShippingStep && (
                 <div className={styles.previewNotice}>
                     <div>
                         <strong>Preview Mode</strong>
-                        <p>Unlock the full book to generate all pages before ordering.</p>
+                        <p>Your order includes digital unlock. All pages will be generated after payment.</p>
                     </div>
                     <div className={styles.previewNoticeActions}>
                         <button
@@ -594,7 +689,7 @@ export default function OrderPage() {
                             onClick={handleUnlockCheckout}
                             disabled={isUnlockCheckout}
                         >
-                            {isUnlockCheckout ? 'Opening checkout…' : 'Unlock $15'}
+                            {isUnlockCheckout ? 'Opening checkout…' : 'Unlock $15 (Digital Only)'}
                         </button>
                         <button
                             className={styles.previewNoticeSecondary}
@@ -606,11 +701,11 @@ export default function OrderPage() {
                 </div>
             )}
 
-            <div className={styles.orderLayout}>
+            <div className={`${styles.orderLayout} ${isOptionsStep ? styles.stitchOrderLayout : ''}`}>
                 {/* Left - Options */}
                 <div className={styles.optionsSection}>
                     {/* Step Indicator */}
-                    <div className={styles.steps}>
+                    <div className={`${styles.steps} ${(isOptionsStep || isShippingStep || isReviewStep || isPaymentStep) ? styles.stitchDesktopSteps : ''}`}>
                         {steps.map((s, i) => (
                             <div
                                 key={s}
@@ -627,95 +722,158 @@ export default function OrderPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className={styles.stepContent}
+                            className={styles.stitchOptionsContent}
                         >
-                            <h2 className={styles.sectionTitle}>Choose Your Format</h2>
+                            <h2 className={styles.stitchSectionTitle}>Choose Format</h2>
 
-                            <div className={styles.formatGrid}>
+                            <div className={styles.stitchFormatGrid}>
                                 {(['softcover', 'hardcover'] as BookFormat[]).map(f => (
                                     <button
                                         key={f}
-                                        className={`${styles.formatCard} ${format === f ? styles.selected : ''}`}
+                                        className={`${styles.stitchFormatCard} ${format === f ? styles.stitchFormatCardSelected : ''}`}
                                         onClick={() => setFormat(f)}
                                     >
-                                        <span className={styles.formatIcon}>
-                                            {f === 'softcover' ? '📄' : '📕'}
-                                        </span>
-                                        <span className={styles.formatName}>
-                                            {f.charAt(0).toUpperCase() + f.slice(1)}
-                                        </span>
-                                        <span className={styles.formatDesc}>
-                                            {f === 'softcover'
-                                                ? (interiorPageCount < 32
-                                                    ? 'Stapled booklet binding (Saddle Stitch)'
-                                                    : 'Flexible, lightweight cover (Perfect Bound)')
-                                                : (interiorPageCount < 32
-                                                    ? 'Premium Hardcover (Casewrap)'
-                                                    : 'Premium, durable hardback')
-                                            }
-                                        </span>
-                                        {format === f && <span className={styles.checkmark}>✓</span>}
+                                        {f === 'hardcover' && <span className={styles.stitchPopularTag}>Popular</span>}
+                                        <div
+                                            className={styles.stitchFormatImage}
+                                            style={{
+                                                backgroundImage: f === 'softcover'
+                                                    ? 'url("/images/softcover-book.png")'
+                                                    : 'url("/images/hardcover-book.png")'
+                                            }}
+                                        ></div>
+                                        <div className={styles.stitchFormatMeta}>
+                                            <div>
+                                                <p className={`${styles.stitchFormatName} ${format === f ? styles.stitchFormatNameActive : ''}`}>
+                                                    {f.charAt(0).toUpperCase() + f.slice(1)}
+                                                </p>
+                                                <p className={styles.stitchFormatPrice}>${FORMAT_PRICES[f].toFixed(2)}</p>
+                                            </div>
+                                            <span className={`material-symbols-outlined ${styles.stitchFormatMark} ${format === f ? styles.stitchFormatMarkActive : ''}`}>
+                                                {format === f ? 'check_circle' : 'radio_button_unchecked'}
+                                            </span>
+                                        </div>
                                     </button>
                                 ))}
                             </div>
-                            <p className={styles.priceHint}>
-                                Estimated price updates in the summary as you choose options.
-                            </p>
 
-                            <h2 className={styles.sectionTitle}>Select Size</h2>
+                            <h2 className={styles.stitchSectionTitle}>Select Size</h2>
 
-                            <div className={styles.sizeGrid}>
+                            <div className={styles.stitchSizeList}>
                                 {availableSizes.map(s => (
                                     <button
                                         key={s}
-                                        className={`${styles.sizeCard} ${size === s ? styles.selected : ''}`}
+                                        className={`${styles.stitchSizeRow} ${size === s ? styles.stitchSizeRowSelected : ''}`}
                                         onClick={() => setSize(s)}
                                     >
-                                        <span className={styles.sizePreview}>
-                                            <span
-                                                className={styles.sizeBox}
-                                                style={{
-                                                    width: s === '7.5x7.5' ? '46px' : s === '8x8' ? '50px' : '50px',
-                                                    height: s === '7.5x7.5' ? '46px' : s === '8x8' ? '50px' : '62px'
-                                                }}
-                                            ></span>
+                                        <span className={`${styles.stitchSizeIconWrap} ${size === s ? styles.stitchSizeIconWrapActive : ''}`}>
+                                            <span className="material-symbols-outlined">
+                                                {s === '7.5x7.5' ? 'aspect_ratio' : s === '8x8' ? 'crop_square' : 'crop_portrait'}
+                                            </span>
                                         </span>
-                                        <span className={styles.sizeName}>{SIZE_LABELS[s]}</span>
-                                        {size === s && <span className={styles.checkmark}>✓</span>}
+                                        <span className={styles.stitchSizeText}>
+                                            <span className={`${styles.stitchSizeTitle} ${size === s ? styles.stitchSizeTitleActive : ''}`}>
+                                                {s === '7.5x7.5' ? '7.5 × 7.5 inch' : s === '8x8' ? '8.5 × 8.5 inch' : '8.5 × 11 inch'}
+                                            </span>
+                                            <span className={styles.stitchSizeSubtitle}>
+                                                {s === '7.5x7.5' ? 'Compact square' : s === '8x8' ? 'Standard Square' : 'Large Portrait'}
+                                            </span>
+                                        </span>
+                                        <span className={`material-symbols-outlined ${styles.stitchSizeMark} ${size === s ? styles.stitchSizeMarkActive : ''}`}>
+                                            {size === s ? 'check_circle' : 'radio_button_unchecked'}
+                                        </span>
                                     </button>
                                 ))}
                             </div>
 
-                            <h2 className={styles.sectionTitle}>Quantity</h2>
+                            <div className={styles.stitchQuantityCard}>
+                                <div>
+                                    <h2 className={styles.stitchQuantityTitle}>Quantity</h2>
+                                    <p className={styles.stitchQuantitySubtitle}>Copies to print</p>
+                                </div>
+                                <div className={styles.stitchQtyControl}>
+                                    <button
+                                        className={styles.stitchQtyBtn}
+                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        disabled={quantity <= 1}
+                                    >
+                                        <span className="material-symbols-outlined">remove</span>
+                                    </button>
+                                    <span className={styles.stitchQtyValue}>{quantity}</span>
+                                    <button
+                                        className={`${styles.stitchQtyBtn} ${styles.stitchQtyBtnPrimary}`}
+                                        onClick={() => setQuantity(quantity + 1)}
+                                    >
+                                        <span className="material-symbols-outlined">add</span>
+                                    </button>
+                                </div>
+                            </div>
 
-                            <div className={styles.quantitySelector}>
-                                <button
-                                    className={styles.qtyBtn}
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    disabled={quantity <= 1}
-                                >
-                                    −
-                                </button>
-                                <span className={styles.qtyValue}>{quantity}</span>
-                                <button
-                                    className={styles.qtyBtn}
-                                    onClick={() => setQuantity(quantity + 1)}
-                                >
-                                    +
-                                </button>
+                            <div className={styles.stitchTrustRow}>
+                                <div>
+                                    <span className="material-symbols-outlined">eco</span>
+                                </div>
+                                <div>
+                                    <span className="material-symbols-outlined">verified</span>
+                                </div>
                             </div>
 
                             <button
-                                className={styles.continueBtn}
+                                className={styles.stitchDesktopContinue}
                                 onClick={() => {
                                     setReviewQuote(null);
                                     setStep('shipping');
                                 }}
-                                disabled={isPreview}
                             >
-                                Continue to Shipping →
+                                <span>Continue to Shipping</span>
+                                <span className="material-symbols-outlined">arrow_forward</span>
                             </button>
                         </motion.div>
+                    )}
+
+                    {step === 'options' && (
+                        <footer className={`${styles.stitchFooter} ${styles.stitchFooterMobile}`}>
+                            <div className={styles.stitchFooterHandle}></div>
+                            <div className={styles.stitchFooterSummary}>
+                                <div
+                                    className={styles.stitchFooterCover}
+                                    style={{
+                                        background: `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`
+                                    }}
+                                >
+                                    <span>{BookTypeInfo[book.settings.bookType].icon}</span>
+                                </div>
+                                <div className={styles.stitchFooterMeta}>
+                                    <div className={styles.stitchFooterTitleRow}>
+                                        <h4>{book.settings.title}</h4>
+                                        <span>${optionTotal.toFixed(2)}</span>
+                                    </div>
+                                    <div className={styles.stitchFooterLines}>
+                                        <div>
+                                            <span>{format.charAt(0).toUpperCase() + format.slice(1)} Book (x{quantity})</span>
+                                            <span>${optionBookPrice.toFixed(2)}</span>
+                                        </div>
+                                        {optionDigitalPrice > 0 && (
+                                            <div>
+                                                <span>Digital Copy</span>
+                                                <span>$15.00</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                className={styles.stitchContinueBtn}
+                                onClick={() => {
+                                    setReviewQuote(null);
+                                    setStep('shipping');
+                                }}
+                            >
+                                <span>Continue to Shipping</span>
+                                <span className="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                        </footer>
                     )}
 
                     {/* Shipping Step */}
@@ -723,11 +881,12 @@ export default function OrderPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className={styles.stepContent}
+                            className={`${styles.stepContent} ${styles.stitchShippingContent}`}
                         >
-                            <h2 className={styles.sectionTitle}>Shipping Address</h2>
+                            <h2 className={`${styles.sectionTitle} ${styles.stitchShippingTitle}`}>Shipping Details</h2>
+                            <p className={styles.stitchShippingSubtitle}>Where should we send your masterpiece?</p>
 
-                            <div className={styles.shippingForm}>
+                            <div className={`${styles.shippingForm} ${styles.stitchShippingForm}`}>
                                 <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
                                         <label>Full Name *</label>
@@ -814,6 +973,9 @@ export default function OrderPage() {
                                             required
                                         />
                                     </div>
+                                </div>
+
+                                <div className={styles.formRow}>
                                     <div className={styles.formGroup}>
                                         <label>Country *</label>
                                         <select
@@ -845,7 +1007,7 @@ export default function OrderPage() {
                                     </div>
                                 </div>
 
-                                <div className={styles.shippingOptions}>
+                                <div className={`${styles.shippingOptions} ${styles.stitchShippingMethods}`}>
                                     <h3>Shipping Method</h3>
                                     {!isShippingValid() && (
                                         <p className={styles.helperText}>Enter a valid address to load shipping methods.</p>
@@ -893,24 +1055,33 @@ export default function OrderPage() {
                                     )}
                                 </div>
 
-                                <div className={styles.buttonRow}>
+                                <div className={`${styles.buttonRow} ${styles.stitchShippingButtonRow}`}>
                                     <button
-                                        className={styles.backBtn}
-                                        onClick={() => {
-                                            setReviewQuote(null);
-                                            setStep('options');
-                                        }}
-                                    >
-                                        ← Back
-                                    </button>
-                                    <button
-                                        className={styles.continueBtn}
+                                        className={`${styles.continueBtn} ${styles.stitchContinueBtn} ${styles.stitchShippingInlineContinue}`}
                                         onClick={handleContinueToReview}
                                         disabled={isPreview || !isShippingValid() || !shippingLevel || isShippingOptionsLoading || isPriceLoading || !priceData}
                                     >
                                         Review Order →
                                     </button>
                                 </div>
+                            </div>
+
+                            <div className={styles.stitchShippingFooterMobile}>
+                                <div className={styles.stitchShippingTotals}>
+                                    <div><span>Book ({quantity}x)</span><span>{bookPriceValue === 'Unavailable' || bookPriceValue === '—' ? '$0.00' : bookPriceValue}</span></div>
+                                    {digitalUnlockCost > 0 && <div><span>Digital Unlock</span><span>$15.00</span></div>}
+                                    <div><span>Shipping</span><span>{hasShippingQuote ? `$${shippingCost.toFixed(2)}` : '$0.00'}</span></div>
+                                    <div className={styles.stitchShippingTotalLine}></div>
+                                    <div className={styles.stitchShippingTotalRow}><span>Total</span><span>${shippingFooterTotal.toFixed(2)}</span></div>
+                                </div>
+                                <button
+                                    className={`${styles.stitchContinueBtn} ${styles.stitchShippingContinueBtn}`}
+                                    onClick={handleContinueToReview}
+                                    disabled={isPreview || !isShippingValid() || !shippingLevel || isShippingOptionsLoading || isPriceLoading || !priceData}
+                                >
+                                    <span>Continue to Review</span>
+                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                </button>
                             </div>
                         </motion.div>
                     )}
@@ -920,99 +1091,83 @@ export default function OrderPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className={styles.stepContent}
+                            className={`${styles.stepContent} ${styles.stitchReviewContent}`}
                         >
-                            <h2 className={styles.sectionTitle}>Review Your Order</h2>
-
-                            <div className={styles.reviewGrid}>
-                                <div className={styles.reviewCard}>
-                                    <h3 className={styles.reviewTitle}>Book Details</h3>
-                                    <div className={styles.selectedOptions}>
-                                        <div className={styles.optionRow}>
-                                            <span>Format</span>
-                                            <span>{format.charAt(0).toUpperCase() + format.slice(1)}</span>
-                                        </div>
-                                        <div className={styles.optionRow}>
-                                            <span>Size</span>
-                                            <span>{size}</span>
-                                        </div>
-                                        <div className={styles.optionRow}>
-                                            <span>Pages</span>
-                                            <span>{interiorPageCount}</span>
-                                        </div>
-                                        <div className={styles.optionRow}>
-                                            <span>Quantity</span>
-                                            <span>×{quantity}</span>
-                                        </div>
+                            <div className={styles.stitchReviewCards}>
+                                <div className={styles.stitchReviewCard}>
+                                    <div
+                                        className={styles.stitchReviewBookThumb}
+                                        style={coverImageUrl
+                                            ? { backgroundImage: `url(${coverImageUrl})` }
+                                            : { background: `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)` }}
+                                    >
+                                        {!coverImageUrl && <span>{BookTypeInfo[book.settings.bookType].icon}</span>}
                                     </div>
+                                    <div className={styles.stitchReviewBookMeta}>
+                                        <h3>{book.settings.title}</h3>
+                                        <p>{format.charAt(0).toUpperCase() + format.slice(1)}, {size}</p>
+                                        <p>Age: {book.settings.childAge || '—'} years</p>
+                                        <p>Qty: {quantity}</p>
+                                    </div>
+                                    <button className={styles.stitchReviewEditBtn} onClick={() => setStep('options')}>Edit</button>
                                 </div>
 
-                                <div className={styles.reviewCard}>
-                                    <h3 className={styles.reviewTitle}>Shipping</h3>
-                                    <div className={styles.reviewText}>
-                                        {shippingLines.map((line, index) => (
-                                            <div key={`${index}-${line}`}>{line}</div>
-                                        ))}
+                                <div className={styles.stitchReviewCardCompact}>
+                                    <div className={styles.stitchReviewIconWrap}><span className="material-symbols-outlined">location_on</span></div>
+                                    <div className={styles.stitchReviewCompactMeta}>
+                                        <h4>Shipping Address</h4>
+                                        <p>{shipping.fullName || '—'}</p>
+                                        <p>{shipping.addressLine1 || '—'}{shipping.city ? `, ${shipping.city}` : ''}</p>
                                     </div>
-                                    <div className={styles.selectedOptions}>
-                                        <div className={styles.optionRow}>
-                                            <span>Method</span>
-                                            <span>{shippingLevelLabel || '—'}</span>
-                                        </div>
-                                        <div className={styles.optionRow}>
-                                            <span>Shipping</span>
-                                            <span>{shippingValue}</span>
-                                        </div>
-                                    </div>
+                                    <button className={styles.stitchReviewEditBtn} onClick={() => setStep('shipping')}>Edit</button>
                                 </div>
 
-                                <div className={styles.reviewCard}>
-                                    <h3 className={styles.reviewTitle}>Pricing</h3>
-                                    <div className={styles.pricing}>
-                                        <div className={styles.priceRow}>
-                                            <span>{bookPriceLabel}</span>
-                                            <span>{bookPriceValue}</span>
-                                        </div>
-                                        <div className={styles.priceRow}>
-                                            <span>Shipping</span>
-                                            <span>{shippingValue}</span>
-                                        </div>
-                                        {hasShippingQuote && (
-                                            <div className={`${styles.priceRow} ${styles.total}`}>
-                                                <span>Total</span>
-                                                <span>${grandTotal.toFixed(2)}</span>
-                                            </div>
-                                        )}
+                                <div className={styles.stitchReviewCardCompact}>
+                                    <div className={styles.stitchReviewIconWrap}><span className="material-symbols-outlined">package_2</span></div>
+                                    <div className={styles.stitchReviewCompactMeta}>
+                                        <h4>{shippingLevelLabel || 'Shipping Method'}</h4>
+                                        <p>{shippingOptions.find(o => o.level === displayedShippingLevel)?.min_delivery_date && shippingOptions.find(o => o.level === displayedShippingLevel)?.max_delivery_date
+                                            ? `Est. ${shippingOptions.find(o => o.level === displayedShippingLevel)?.min_delivery_date} - ${shippingOptions.find(o => o.level === displayedShippingLevel)?.max_delivery_date}`
+                                            : '5-10 business days'}</p>
                                     </div>
-                                    <p className={styles.pricingNote}>
-                                        Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method.
-                                    </p>
-                                    {priceError && (
-                                        <p className={styles.reviewNote}>
-                                            {priceError}
-                                        </p>
+                                    <button className={styles.stitchReviewEditBtn} onClick={() => setStep('shipping')}>Edit</button>
+                                </div>
+
+                                <div className={styles.stitchReviewPriceCard}>
+                                    <div><span>Book Price (x{quantity})</span><span>{bookPriceValue === 'Unavailable' || bookPriceValue === '—' ? '$0.00' : bookPriceValue}</span></div>
+                                    <div><span>Shipping</span><span>{hasShippingQuote ? `$${shippingCost.toFixed(2)}` : '$0.00'}</span></div>
+                                    {digitalUnlockCost > 0 && (
+                                        <div>
+                                            <span className={styles.stitchReviewDigitalRow}>Digital Unlock <span className="material-symbols-outlined">verified</span></span>
+                                            <span>$15.00</span>
+                                        </div>
                                     )}
+                                    <div className={styles.stitchReviewPriceDivider}></div>
+                                    <div className={styles.stitchReviewTotalRow}><span>Total</span><span>${shippingFooterTotal.toFixed(2)}</span></div>
                                 </div>
                             </div>
 
-                            <div className={styles.buttonRow}>
-                                <button
-                                    className={styles.backBtn}
-                                    onClick={() => {
-                                        setReviewQuote(null);
-                                        setStep('shipping');
-                                    }}
-                                >
-                                    ← Back
-                                </button>
-                                <button
-                                    className={styles.continueBtn}
-                                    onClick={handleContinueToPayment}
-                                    disabled={isPreview || !displayedPricing || !displayedShippingLevel}
-                                >
-                                    Continue to Payment →
-                                </button>
+                            <div className={styles.stitchReviewTerms}>
+                                <label className={styles.stitchReviewCheckbox}>
+                                    <input
+                                        type="checkbox"
+                                        checked={agreedToTerms}
+                                        onChange={(e) => setAgreedToTerms(e.target.checked)}
+                                    />
+                                    <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                                </label>
                             </div>
+
+                            {error && <div className={styles.errorBox}>⚠️ {error}</div>}
+
+                            <button
+                                className={`${styles.stitchContinueBtn} ${styles.stitchReviewProceedBtn}`}
+                                onClick={handleContinueToPayment}
+                                disabled={isPreview || !displayedPricing || !displayedShippingLevel || !agreedToTerms}
+                            >
+                                <span>Proceed to Payment</span>
+                                <span className="material-symbols-outlined">arrow_forward</span>
+                            </button>
                         </motion.div>
                     )}
 
@@ -1021,10 +1176,8 @@ export default function OrderPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className={styles.stepContent}
+                            className={`${styles.stepContent} ${styles.stitchPaymentContent}`}
                         >
-                            <h2 className={styles.sectionTitle}>Payment</h2>
-
                             {!user && (
                                 <div className={styles.loginNotice}>
                                     <span>🔐</span>
@@ -1032,28 +1185,88 @@ export default function OrderPage() {
                                 </div>
                             )}
 
-                            <div className={styles.paymentBox}>
-                                <div className={styles.paymentIcon}>💳</div>
-                                h3&gt;Secure Checkout&lt;/h3
-                                <p>
-                                    You&apos;ll be redirected to Stripe&apos;s secure payment page to complete your order.
-                                </p>
-
-                                <div className={styles.securityBadges}>
-                                    <span>🔒 SSL Encrypted</span>
-                                    <span>✓ PCI Compliant</span>
+                            <div className={styles.stitchPaymentAmountCard}>
+                                <div className={styles.stitchPaymentAmountHeader}>
+                                    <div>
+                                        <p className={styles.stitchPaymentAmountLabel}>Total Amount</p>
+                                        <p className={styles.stitchPaymentAmountValue}>${shippingFooterTotal.toFixed(2)}</p>
+                                    </div>
+                                    <button type="button" className={styles.stitchPaymentDetailsBtn}>
+                                        <span>View details</span>
+                                        <span className="material-symbols-outlined">arrow_forward</span>
+                                    </button>
+                                </div>
+                                <div className={styles.stitchPaymentAmountDivider}></div>
+                                <div className={styles.stitchPaymentTaxRow}>
+                                    <span className="material-symbols-outlined">check_circle</span>
+                                    <span>Includes shipping &amp; estimated taxes</span>
                                 </div>
                             </div>
 
-                            <div className={styles.termsBox}>
-                                <label className={styles.checkbox}>
+                            <div className={styles.stitchPaymentExpressButtons}>
+                                <ApplePayButton />
+                                <GooglePayButton />
+                            </div>
+
+                            <div className={styles.stitchPaymentDividerText}>
+                                <span>or pay with card</span>
+                            </div>
+
+                            <div className={styles.stitchPaymentForm}>
+                                <div className={styles.formGroup}>
+                                    <label>Email</label>
+                                    <div className={styles.stitchPaymentInputWithIcon}>
+                                        <input type="text" value={user?.email || ''} readOnly />
+                                        <span className="material-symbols-outlined">check_circle</span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Card Information</label>
+                                    <div className={styles.stitchCardInfoGroup}>
+                                        <div className={styles.stitchCardNumberRow}>
+                                            <span className={`material-symbols-outlined ${styles.stitchCardLeftIcon}`}>credit_card</span>
+                                            <input type="text" placeholder="Card number" readOnly />
+                                            <div className={styles.stitchCardBrandBlocks}>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                        <div className={styles.stitchCardSplitRow}>
+                                            <input type="text" placeholder="MM / YY" readOnly />
+                                            <div className={styles.stitchCardCvcWrap}>
+                                                <input type="text" placeholder="CVC" readOnly />
+                                                <span className="material-symbols-outlined">help</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Name on Card</label>
+                                    <input type="text" placeholder="Full name" readOnly />
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Billing Zip Code</label>
+                                    <input type="text" placeholder="10001" readOnly />
+                                </div>
+                            </div>
+
+                            <div className={styles.stitchPaymentTermsRow}>
+                                <label className={styles.stitchReviewCheckbox}>
                                     <input
                                         type="checkbox"
-                                        checked={agreedToTerms}
-                                        onChange={(e) => setAgreedToTerms(e.target.checked)}
+                                        checked={billingSameAsShipping}
+                                        onChange={(e) => setBillingSameAsShipping(e.target.checked)}
                                     />
-                                    <span>I agree to the Terms of Service and Privacy Policy</span>
+                                    <span>Billing address same as shipping</span>
                                 </label>
+                            </div>
+
+                            <div className={styles.stitchPaymentSecureRow}>
+                                <span className="material-symbols-outlined">lock</span>
+                                <span>Payment information is secure</span>
                             </div>
 
                             {error && (
@@ -1062,35 +1275,41 @@ export default function OrderPage() {
                                 </div>
                             )}
 
-                            <div className={styles.buttonRow}>
+                            <div className={styles.stitchPaymentFooterDesktop}>
                                 <button
-                                    className={styles.backBtn}
-                                    onClick={() => setStep('review')}
-                                    disabled={isProcessing}
-                                >
-                                    ← Back
-                                </button>
-                                <button
-                                    className={styles.payBtn}
+                                    className={styles.stitchPaymentCompleteBtn}
                                     onClick={handleCheckout}
                                     disabled={isPreview || isProcessing || !user}
                                 >
-                                    {isProcessing ? (
-                                        <>
-                                            <span className={styles.btnSpinner}></span>
-                                            Preparing Book...
-                                        </>
-                                    ) : (
-                                        `Pay $${grandTotal.toFixed(2)} →`
-                                    )}
+                                    <span className={styles.stitchPaymentCompleteIcon}>
+                                        <span className="material-symbols-outlined">arrow_forward</span>
+                                    </span>
+                                    <span>Complete Order</span>
+                                    <span>${shippingFooterTotal.toFixed(2)}</span>
                                 </button>
+                                <div className={styles.stitchPaymentPoweredBy}>Powered by <em>stripe</em></div>
+                            </div>
+
+                            <div className={styles.stitchPaymentFooterMobile}>
+                                <button
+                                    className={styles.stitchPaymentCompleteBtn}
+                                    onClick={handleCheckout}
+                                    disabled={isPreview || isProcessing || !user}
+                                >
+                                    <span className={styles.stitchPaymentCompleteIcon}>
+                                        <span className="material-symbols-outlined">arrow_forward</span>
+                                    </span>
+                                    <span>Complete Order</span>
+                                    <span>${shippingFooterTotal.toFixed(2)}</span>
+                                </button>
+                                <div className={styles.stitchPaymentPoweredBy}>Powered by <em>stripe</em></div>
                             </div>
                         </motion.div>
                     )}
                 </div>
 
                 {/* Right - Order Summary */}
-                <aside className={styles.summarySection}>
+                <aside className={`${styles.summarySection} ${isOptionsStep ? styles.stitchSummaryOnOptions : ''} ${(isShippingStep || isPaymentStep) ? styles.stitchHideSummaryMobile : ''} ${isReviewStep ? styles.stitchHideSummaryReview : ''}`}>
                     <div className={styles.summaryCard}>
                         <h2 className={styles.summaryTitle}>Order Summary</h2>
 
@@ -1147,16 +1366,30 @@ export default function OrderPage() {
                                         <span>Shipping</span>
                                         <span>{shippingValue}</span>
                                     </div>
+                                    {isPreview && !book.digitalUnlockPaid && (
+                                        <div className={styles.priceRow}>
+                                            <span>Digital Unlock</span>
+                                            <span>$15.00</span>
+                                        </div>
+                                    )}
                                     <div className={`${styles.priceRow} ${styles.total}`}>
                                         <span>Total</span>
-                                        <span>${grandTotal.toFixed(2)}</span>
+                                        <span>${(grandTotal + (isPreview && !book.digitalUnlockPaid ? 15 : 0)).toFixed(2)}</span>
                                     </div>
                                 </>
                             ) : (
-                                <div className={styles.priceRow}>
-                                    <span>Shipping</span>
-                                    <span>{shippingValue}</span>
-                                </div>
+                                <>
+                                    <div className={styles.priceRow}>
+                                        <span>Shipping</span>
+                                        <span>{shippingValue}</span>
+                                    </div>
+                                    {isPreview && !book.digitalUnlockPaid && (
+                                        <div className={styles.priceRow}>
+                                            <span>Digital Unlock</span>
+                                            <span>$15.00</span>
+                                        </div>
+                                    )}
+                                </>
                             )}
                             <p className={styles.pricingNote}>
                                 Book price uses Lulu print costs with a default US address. Shipping updates after you enter your address and choose a method.
