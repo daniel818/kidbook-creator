@@ -142,7 +142,7 @@ function OrderSuccessContent() {
     const timelineStep = getTimelineStep(order?.fulfillmentStatus);
     const childName = order?.childName || order?.bookTitle?.replace(/^The Adventures of\s*/i, '') || '';
     const formatLabel = order ? `${order.format === 'hardcover' ? 'Hardcover' : 'Softcover'}, ${order.size} inches` : '';
-    const pageCount = order?.pageCount || order?.quantity || 24;
+    const pageCount = order?.pageCount || 24;
 
     // Build shipping address string
     const addr = order?.shippingAddress;

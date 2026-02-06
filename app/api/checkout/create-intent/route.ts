@@ -34,6 +34,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Validate enum values to prevent arbitrary input
+        const VALID_FORMATS = ['softcover', 'hardcover'];
+        const VALID_SIZES = ['7.5x7.5', '8x8', '8x10'];
+        const VALID_SHIPPING_LEVELS = ['MAIL', 'PRIORITY_MAIL', 'GROUND_HD', 'GROUND', 'EXPEDITED', 'EXPRESS'];
+
+        if (!VALID_FORMATS.includes(format)) {
+            return NextResponse.json({ error: 'Invalid format' }, { status: 400 });
+        }
+        if (!VALID_SIZES.includes(size)) {
+            return NextResponse.json({ error: 'Invalid size' }, { status: 400 });
+        }
+        if (!VALID_SHIPPING_LEVELS.includes(shippingLevel)) {
+            return NextResponse.json({ error: 'Invalid shipping level' }, { status: 400 });
+        }
+
         // Fetch book and verify ownership
         const { data: book, error: bookError } = await adminDb
             .from('books')
@@ -67,6 +82,26 @@ export async function POST(request: NextRequest) {
             shippingOption: shippingLevel,
             shipping,
         });
+
+        // Idempotency: cancel any existing pending order for this book/user
+        // to prevent duplicate orders from retries or back-navigation
+        const { data: existingOrders } = await adminDb
+            .from('orders')
+            .select('id, stripe_payment_intent_id')
+            .eq('book_id', bookId)
+            .eq('user_id', user.id)
+            .eq('payment_status', 'pending');
+
+        if (existingOrders && existingOrders.length > 0) {
+            for (const old of existingOrders) {
+                // Cancel old PaymentIntent if it exists
+                if (old.stripe_payment_intent_id) {
+                    await stripe.paymentIntents.cancel(old.stripe_payment_intent_id).catch(() => {});
+                }
+                // Delete the stale pending order
+                await adminDb.from('orders').delete().eq('id', old.id);
+            }
+        }
 
         // 1. Create PENDING order (without PDF paths — those come later via /attach-pdfs)
         const { data: order, error: orderError } = await adminDb

@@ -25,7 +25,8 @@ export async function GET(
                 books (
                     title,
                     child_name,
-                    thumbnail_url
+                    thumbnail_url,
+                    pages (id)
                 )
             `)
             .eq('id', orderId)
@@ -48,6 +49,16 @@ export async function GET(
             estimatedDelivery: getEstimatedDelivery(),
             thumbnailUrl: order.books?.thumbnail_url || null,
             childName: order.books?.child_name || null,
+            pageCount: order.books?.pages?.length || null,
+            shippingAddress: {
+                name: order.shipping_full_name || null,
+                line1: order.shipping_address_line1 || null,
+                line2: order.shipping_address_line2 || null,
+                city: order.shipping_city || null,
+                state: order.shipping_state || null,
+                postalCode: order.shipping_postal_code || null,
+                country: order.shipping_country || null,
+            },
         });
     } catch (error) {
         console.error('Error fetching order:', error);
