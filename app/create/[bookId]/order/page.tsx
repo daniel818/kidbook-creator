@@ -923,12 +923,6 @@ export default function OrderPage() {
                                             <span>{format.charAt(0).toUpperCase() + format.slice(1)} Book (x{quantity})</span>
                                             <span>${optionBookPrice.toFixed(2)}</span>
                                         </div>
-                                        {optionDigitalPrice > 0 && (
-                                            <div>
-                                                <span>Digital Copy</span>
-                                                <span>$15.00</span>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
