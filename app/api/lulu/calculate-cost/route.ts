@@ -5,30 +5,31 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
+import { calculateCostSchema, parseBody } from '@/lib/validations';
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { format, size, pageCount, quantity, countryCode, postalCode, stateCode, shippingOption, shipping: shippingAddress } = body;
 
-        // Validate required fields
-        if (!format || !size || !pageCount || !quantity) {
+        // Validate request body with Zod
+        const { data, error: validationError } = parseBody(calculateCostSchema, body);
+        if (validationError) {
             return NextResponse.json(
-                { error: 'Missing required fields: format, size, pageCount, quantity' },
+                { error: validationError },
                 { status: 400 }
             );
         }
 
         const pricing = await calculateRetailPricing({
-            format,
-            size,
-            pageCount,
-            quantity,
-            shippingOption,
-            shipping: shippingAddress,
-            countryCode,
-            postalCode,
-            stateCode,
+            format: data.format,
+            size: data.size,
+            pageCount: data.pageCount,
+            quantity: data.quantity,
+            shippingOption: data.shippingOption,
+            shipping: data.shipping,
+            countryCode: data.countryCode,
+            postalCode: data.postalCode,
+            stateCode: data.stateCode,
         });
 
         return NextResponse.json({
