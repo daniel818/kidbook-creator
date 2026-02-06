@@ -20,7 +20,7 @@
     }
   },
   "navbar": {
-    "communityBooks": "Our Books",
+    "ourBooks": "Our Books",
     "pricing": "Pricing",
     "faq": "FAQ",
     "aboutUs": "About Us",
@@ -28,10 +28,17 @@
     "privacy": "Privacy",
     "createBook": "Create a Book",
     "signIn": "Sign In",
+    "signUp": "Sign Up",
     "myBooks": "My Books",
     "purchases": "Purchases",
+    "orders": "My Orders",
     "profile": "Profile",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "home": "Home",
+    "more": "More",
+    "create": "Create",
+    "help": "FAQ & Support",
+    "signInSubtitle": "Access your books"
   },
   "home": {
     "hero": {

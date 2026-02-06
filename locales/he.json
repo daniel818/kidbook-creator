@@ -20,7 +20,7 @@
     }
   },
   "navbar": {
-    "communityBooks": "הספרים שלנו",
+    "ourBooks": "הספרים שלנו",
     "pricing": "תמחור",
     "faq": "שאלות נפוצות",
     "aboutUs": "אודותינו",
@@ -28,10 +28,17 @@
     "privacy": "פרטיות",
     "createBook": "צור ספר",
     "signIn": "התחבר",
+    "signUp": "הרשמה",
     "myBooks": "הספרים שלי",
     "purchases": "רכישות",
+    "orders": "ההזמנות שלי",
     "profile": "פרופיל",
-    "signOut": "התנתק"
+    "signOut": "התנתק",
+    "home": "דף הבית",
+    "more": "עוד",
+    "create": "יצירה",
+    "help": "שאלות נפוצות ותמיכה",
+    "signInSubtitle": "גישה לספרים שלך"
   },
   "home": {
     "hero": {
