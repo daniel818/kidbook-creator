@@ -269,7 +269,11 @@ BLURB: 2-3 sentences introducing ${input.childName} with positive trait, hinting
 
 --- LANGUAGE ---
 
-Write ENTIRELY in ${languageName}. NO other languages.
+STORY TEXT (title, text, backCoverBlurb): Write ENTIRELY in ${languageName}.
+IMAGE PROMPTS (imagePrompt): Write ENTIRELY in English — these feed directly into an image generation model that works best in English.
+CHARACTER DESCRIPTION (characterDescription): Write ENTIRELY in English — this is used internally for consistent illustration generation.
+
+NOTE: The user's "Story Request" above may be written in ${languageName}. Understand and incorporate it, but follow the language rules above for each output field.
 
 --- IMAGE PROMPTS (CRITICAL) ---
 
@@ -313,23 +317,23 @@ AGE-SPECIFIC IMAGERY:
 
 --- OUTPUT FORMAT ---
 
-Return ONLY valid JSON in ${languageName}:
+Return ONLY valid JSON:
 
 {
     "title": "Engaging title (in ${languageName})",
     "backCoverBlurb": "2-3 sentence summary (in ${languageName})",
-    "characterDescription": "Physical description of ${input.childName} (in ${languageName})",
+    "characterDescription": "Physical description of ${input.childName} (in English)",
     "pages": [
         {
             "pageNumber": 1,
             "text": "Story text (age-appropriate length, in ${languageName})",
-            "imagePrompt": "RICH scene description 40-100 words (in ${languageName})"
+            "imagePrompt": "RICH scene description 60-100 words (in English)"
         }
         // ... exactly ${input.pageCount} pages
     ]
 }
 
-CRITICAL: Exactly ${input.pageCount} pages. Consistent character appearance. All content in ${languageName}.
+CRITICAL: Exactly ${input.pageCount} pages. Consistent character appearance. Story text in ${languageName}. imagePrompt and characterDescription in English.
 `;
 };
 
@@ -361,7 +365,7 @@ EXTRACT THESE LAYERS:
 
 OUTPUT: Write a flowing paragraph capturing this character's "visual DNA" - a portable identity recognizable across any scene.
 
-IMPORTANT: Write your response in ${languageName}.
+IMPORTANT: Write your response in English. This description will be used as input for an image generation model that works best with English descriptions.
 `;
 };
 
