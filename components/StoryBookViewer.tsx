@@ -237,7 +237,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [hudVisible, setHudVisible] = useState(true);
-    const hudTimerRef = useRef<number | null>(null);
+    const hudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [pageSize, setPageSize] = useState({ width: 550, height: 733 });
 
     // Editor State

@@ -128,6 +128,19 @@ For challenging themes: acknowledge emotion, include coping strategy, end empowe
     return structures[themeKey] || structures.custom;
 }
 
+/**
+ * Returns gender-specific pronoun guidance
+ */
+function getGenderGuidelines(childName: string, childGender?: 'boy' | 'girl' | 'other'): string {
+    if (childGender === 'boy') {
+        return `Use he/him pronouns for ${childName}. Masculine descriptions are appropriate.`;
+    }
+    if (childGender === 'girl') {
+        return `Use she/her pronouns for ${childName}. Feminine descriptions are appropriate.`;
+    }
+    return `Use they/them pronouns for ${childName}. Keep all descriptions gender-neutral — avoid gendered clothing, traits, or stereotypes.`;
+}
+
 // ============================================
 // Core Prompt Template Functions
 // ============================================
@@ -148,6 +161,7 @@ export const getStoryPrompt = (
     const languageName = LANGUAGE_NAMES[targetLanguage] || targetLanguage.toUpperCase();
     const ageGuidelines = getAgeGuidelines(input.childAge);
     const themeStructure = getThemeStructure(input.bookTheme);
+    const genderGuidelines = getGenderGuidelines(input.childName, input.childGender);
 
     return `
 You are an expert children's book author creating FUN, ENGAGING, MEMORABLE stories that are safe and age-appropriate.
@@ -156,11 +170,16 @@ You are an expert children's book author creating FUN, ENGAGING, MEMORABLE stori
 
 Child's Name: ${input.childName}
 Age: ${input.childAge} years old
+Gender: ${input.childGender || 'unspecified'}
 Book Type: ${input.bookType}
 Theme: ${input.bookTheme}
 Page Count: ${input.pageCount} (MUST be exactly this number)
 ${input.characterDescription ? `Character Description: ${input.characterDescription}` : ''}
 ${input.storyDescription ? `Story Request: ${input.storyDescription}` : ''}
+
+--- GENDER & PRONOUNS ---
+
+${genderGuidelines}
 
 --- STORY ESSENCE (EVERY STORY, EVERY AGE) ---
 
@@ -233,7 +252,7 @@ If including a helper character:
 
 Create a satisfying narrative arc across exactly ${input.pageCount} pages:
 - **Beginning**: Introduce ${input.childName} and their world
-- **Middle**: Build to challenge, adventure, or discovery  
+- **Middle**: Build to challenge, adventure, or discovery
 - **Climax**: Main challenge or exciting moment
 - **Resolution**: Problem solved, goal achieved
 - **Ending**: Warm, positive conclusion
@@ -352,24 +371,65 @@ export const getIllustrationPrompt = (
     stylePrompt: string,
     aspectRatio: '1:1' | '3:4',
     hasReferenceImage: boolean,
-    targetLanguage: Language = 'en'
+    targetLanguage: Language = 'en',
+    pageNumber?: number,
+    totalPages?: number,
+    hasStyleReference?: boolean,
+    bookTitle?: string
 ) => {
-    const languageName = LANGUAGE_NAMES[targetLanguage] || targetLanguage.toUpperCase();
+    const pageContext = pageNumber && totalPages
+        ? `You are illustrating page ${pageNumber} of ${totalPages} in a children's book${bookTitle ? ` titled "${bookTitle}"` : ''}.`
+        : 'You are illustrating a page in a children\'s book.';
 
-    let prompt = `Generate a children's book illustration.
-Style: ${stylePrompt}
-Scene: ${scenePrompt}
-Character: ${characterDescription}
-Ratio: ${aspectRatio === '1:1' ? 'Square 1:1' : '3:4 Portrait'}.
-High quality, vibrant, detailed.
-Ensure the art style is consistent with the description above.`;
+    let prompt = `${pageContext}
+
+=== VISUAL IDENTITY (CRITICAL) ===
+Every illustration in this book MUST look like it belongs to the same series. Maintain:
+- IDENTICAL character appearance on every page (same face, hair, proportions, clothing colors)
+- CONSISTENT art style throughout (same line weight, rendering technique, level of detail)
+- UNIFIED color palette (same warmth/coolness, saturation level, background treatment)
+- MATCHING composition style (similar framing approach, perspective conventions)
+
+=== ART STYLE ===
+${stylePrompt}
+
+=== CHARACTER ===
+${characterDescription}
+The character MUST look identical across all pages. Do not change hair color, eye color, skin tone, clothing, or proportions.
+
+=== SCENE ===
+${scenePrompt}
+
+=== TECHNICAL REQUIREMENTS ===
+- Aspect ratio: ${aspectRatio === '1:1' ? 'Square 1:1' : '3:4 Portrait'}
+- No text, words, letters, signs, labels, or speech bubbles in the illustration
+- High quality, vibrant colors, detailed rendering
+- Professional children's book illustration quality`;
 
     if (hasReferenceImage) {
-        prompt += "\nIMPORTANT: The character MUST look exactly like the child in the provided reference image. Maintain facial features, hair, and likeness.";
+        prompt += `
+
+=== REFERENCE PHOTO ===
+A photo of the real child is provided. The illustrated character MUST maintain the child's:
+- Exact facial features (face shape, eyes, nose, mouth)
+- Hair color, style, length, and texture
+- Skin tone
+- Overall likeness
+Translate these features into the art style specified above while preserving recognizability.`;
     }
 
-    // Note: Image generation prompts work best in English regardless of the story language
-    // The scene description coming from the story will already be in the target language
+    if (hasStyleReference) {
+        prompt += `
+
+=== STYLE REFERENCE IMAGE ===
+An illustration from an earlier page of THIS SAME BOOK is provided. You MUST:
+- Match its exact art style, rendering technique, and line quality
+- Use the same color palette and saturation levels
+- Render the character with identical proportions and features
+- Maintain the same level of detail and background treatment
+This new illustration must look like it was drawn by the same artist in the same session.`;
+    }
+
     return prompt;
 };
 
@@ -397,14 +457,22 @@ export const getPrompts = (language: Language = 'en') => {
             characterDescription: string,
             stylePrompt: string,
             aspectRatio: '1:1' | '3:4',
-            hasReferenceImage: boolean
+            hasReferenceImage: boolean,
+            pageNumber?: number,
+            totalPages?: number,
+            hasStyleReference?: boolean,
+            bookTitle?: string
         ) => getIllustrationPrompt(
             scenePrompt,
             characterDescription,
             stylePrompt,
             aspectRatio,
             hasReferenceImage,
-            language
+            language,
+            pageNumber,
+            totalPages,
+            hasStyleReference,
+            bookTitle
         ),
     };
 };

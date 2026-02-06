@@ -176,6 +176,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         const imageQuality = book.image_quality || 'fast';
         const aspectRatio = book.print_format === 'square' ? '1:1' : '3:4';
         const language = book.language || 'en';
+        const bookTitle = book.title || '';
         let referenceImage: string | undefined;
         const referenceUrl = book.reference_image_url as string | null;
         if (referenceUrl) {
@@ -194,6 +195,28 @@ export async function POST(request: NextRequest, context: RouteContext) {
         const pages = (book.pages || [])
             .sort((a: { page_number: number }, b: { page_number: number }) => a.page_number - b.page_number);
 
+        // Load page 1's existing image as style reference for visual consistency
+        let styleReferenceImage: string | undefined;
+        const insidePages = pages.filter((p: { page_type: string }) => p.page_type === 'inside' || p.page_type === 'cover');
+        const firstPage = insidePages.find((p: { page_number: number }) => p.page_number <= previewPageCount);
+        if (firstPage) {
+            const firstPageImages = Array.isArray(firstPage.image_elements) ? firstPage.image_elements : [];
+            if (firstPageImages.length > 0 && firstPageImages[0]?.src) {
+                try {
+                    const resp = await fetch(firstPageImages[0].src);
+                    if (resp.ok) {
+                        const contentType = resp.headers.get('content-type') || 'image/png';
+                        const buffer = Buffer.from(await resp.arrayBuffer());
+                        styleReferenceImage = `data:${contentType};base64,${buffer.toString('base64')}`;
+                        logUnlock('Loaded page 1 image as style reference');
+                    }
+                } catch (err) {
+                    console.warn('Failed to load page 1 image for style reference', err);
+                }
+            }
+        }
+
+        const totalInsidePages = pages.filter((p: { page_type: string }) => p.page_type === 'inside' || p.page_type === 'cover').length;
         let updatedCount = 0;
 
         for (const page of pages) {
@@ -211,15 +234,19 @@ export async function POST(request: NextRequest, context: RouteContext) {
             const prompt = page.image_prompt as string | undefined;
             if (!prompt) continue;
 
-            const { imageUrl } = await generateIllustration(
-                prompt,
+            const { imageUrl } = await generateIllustration({
+                scenePrompt: prompt,
                 characterDescription,
                 artStyle,
-                imageQuality,
+                quality: imageQuality,
                 referenceImage,
                 aspectRatio,
-                language
-            );
+                language,
+                styleReferenceImage,
+                pageNumber: page.page_number,
+                totalPages: totalInsidePages,
+                bookTitle,
+            });
 
             const matches = imageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
             if (!matches || matches.length !== 3) continue;
@@ -250,25 +277,27 @@ export async function POST(request: NextRequest, context: RouteContext) {
             const imageElements = Array.isArray(backCover.image_elements) ? backCover.image_elements : [];
             if (imageElements.length === 0 || !imageElements[0]?.src) {
                 const backCoverPrompt = 'A magical background pattern or simple scenic view suitable for a book back cover. No characters, just atmosphere matching the book theme.';
-                const { imageUrl } = await generateIllustration(
-                    backCoverPrompt,
-                    '',
+                const { imageUrl } = await generateIllustration({
+                    scenePrompt: backCoverPrompt,
+                    characterDescription: '',
                     artStyle,
-                    imageQuality,
-                    undefined,
+                    quality: imageQuality,
+                    referenceImage: undefined,
                     aspectRatio,
-                    language
-                );
+                    language,
+                    styleReferenceImage,
+                    bookTitle,
+                });
 
                 const matches = imageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-            if (matches && matches.length === 3) {
-                const imageBuffer = Buffer.from(matches[2], 'base64');
-                const storedUrl = await uploadImageToStorage(bookId, backCover.page_number, imageBuffer);
-                await db
-                    .from('pages')
-                    .update({
-                        image_elements: [{
-                            id: crypto.randomUUID(),
+                if (matches && matches.length === 3) {
+                    const imageBuffer = Buffer.from(matches[2], 'base64');
+                    const storedUrl = await uploadImageToStorage(bookId, backCover.page_number, imageBuffer);
+                    await db
+                        .from('pages')
+                        .update({
+                            image_elements: [{
+                                id: crypto.randomUUID(),
                                 src: storedUrl,
                                 x: 0,
                                 y: 0,
