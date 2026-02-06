@@ -6,9 +6,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLuluClient } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { requireAuth } from '@/lib/auth/api-guard';
 
 export async function POST(request: NextRequest) {
     try {
+        const { error: authError } = await requireAuth();
+        if (authError) return authError;
+
         const body = await request.json();
         const {
             format,

@@ -3,7 +3,7 @@
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireAuth } from '@/lib/auth/api-guard';
 
 interface RouteContext {
     params: Promise<{ sessionId: string }>;
@@ -15,7 +15,8 @@ export async function GET(
 ) {
     try {
         const { sessionId } = await context.params;
-        const supabase = await createClient();
+        const { supabase, error: authError } = await requireAuth();
+        if (authError) return authError;
 
         // Get order by Stripe session ID
         const { data: order, error } = await supabase

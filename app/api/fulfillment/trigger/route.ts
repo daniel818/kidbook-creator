@@ -6,9 +6,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
+import { requireAdmin } from '@/lib/auth/api-guard';
 
 export async function POST(request: NextRequest) {
     try {
+        const { error: authError } = await requireAdmin();
+        if (authError) return authError;
+
         const { orderId, force } = await request.json();
 
         if (!orderId) {

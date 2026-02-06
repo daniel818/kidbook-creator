@@ -3,7 +3,7 @@
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireAuth } from '@/lib/auth/api-guard';
 
 interface RouteContext {
     params: Promise<{ orderId: string }>;
@@ -15,7 +15,8 @@ export async function GET(
 ) {
     try {
         const { orderId } = await context.params;
-        const supabase = await createClient();
+        const { supabase, error: authError } = await requireAuth();
+        if (authError) return authError;
 
         // RLS ensures user can only see their own orders
         const { data: order, error } = await supabase

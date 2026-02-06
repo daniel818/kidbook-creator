@@ -5,9 +5,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
+import { requireAuth } from '@/lib/auth/api-guard';
 
 export async function POST(request: NextRequest) {
     try {
+        const { error: authError } = await requireAuth();
+        if (authError) return authError;
+
         const body = await request.json();
         const { format, size, pageCount, quantity, countryCode, postalCode, stateCode, shippingOption, shipping: shippingAddress } = body;
 
