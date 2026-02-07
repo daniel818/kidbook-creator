@@ -9,3 +9,7 @@ process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = 'pk_test_xxx';
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_xxx';
 process.env.RESEND_API_KEY = 're_test_xxx';
 process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
+process.env.GEMINI_API_KEY = 'test-gemini-api-key';
+process.env.LULU_API_KEY = 'test-lulu-api-key';
+process.env.LULU_API_SECRET = 'test-lulu-api-secret';
+process.env.LULU_SANDBOX = 'true';
