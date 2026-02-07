@@ -32,27 +32,50 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         const hasUser = !authError && !!user;
-        const db = hasUser ? supabase : adminDb;
         logUnlock('Auth status', { hasUser, userId: user?.id || null });
 
-        const bookQuery = db
-            .from('books')
-            .select('*, pages (*)')
-            .eq('id', bookId);
-        if (hasUser && user) {
-            bookQuery.eq('user_id', user.id);
+        // Require either a logged-in user or a valid Stripe session ID
+        if (!hasUser && !sessionIdFromQuery) {
+            logUnlock('Unauthorized: no user and no session id');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { data: book, error: bookError } = await bookQuery.single();
+        // When unauthenticated with a session_id, verify Stripe session first
+        // to extract userId for ownership-scoped book lookup
+        let sessionUserId: string | null = null;
+        if (!hasUser && sessionIdFromQuery) {
+            try {
+                const session = await stripe.checkout.sessions.retrieve(sessionIdFromQuery);
+                const isPaid = session.payment_status === 'paid' || session.status === 'complete';
+                sessionUserId = session.metadata?.userId || null;
+                const sessionBookId = session.metadata?.bookId;
+
+                if (!isPaid || sessionBookId !== bookId || !sessionUserId) {
+                    logUnlock('Stripe session validation failed for unauthenticated request', {
+                        isPaid, sessionBookId, sessionUserId, bookId,
+                    });
+                    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+                }
+            } catch (err) {
+                console.error('[unlock-book] Stripe session verification failed', err);
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            }
+        }
+
+        // Always use ownership-scoped query: user_id from session or authenticated user
+        const ownerId = hasUser ? user!.id : sessionUserId!;
+        const db = hasUser ? supabase : adminDb;
+
+        const { data: book, error: bookError } = await db
+            .from('books')
+            .select('*, pages (*)')
+            .eq('id', bookId)
+            .eq('user_id', ownerId)
+            .single();
 
         if (bookError || !book) {
             logUnlock('Book not found', { bookError });
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
-        }
-
-        if (!hasUser && !sessionIdFromQuery) {
-            logUnlock('Unauthorized: no user and no session id');
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const isPreview = book.is_preview || book.status === 'preview';
@@ -71,14 +94,15 @@ export async function POST(request: NextRequest, context: RouteContext) {
                     const session = await stripe.checkout.sessions.retrieve(sessionIdFromQuery);
                     const isPaid = session.payment_status === 'paid' || session.status === 'complete';
                     const sessionBookId = session.metadata?.bookId;
-                    const sessionUserId = session.metadata?.userId;
+                    const metaUserId = session.metadata?.userId;
                     const bookUserId = (book.user_id as string | null) || null;
-                    const userMatches = sessionUserId ? sessionUserId === bookUserId : true;
+                    // Fail closed: if session has no userId in metadata, don't match
+                    const userMatches = metaUserId ? metaUserId === bookUserId : false;
                     logUnlock('Stripe session verified', {
                         sessionId: session.id,
                         isPaid,
                         sessionBookId,
-                        sessionUserId,
+                        metaUserId,
                         bookUserId,
                         userMatches,
                     });

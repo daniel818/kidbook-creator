@@ -15,10 +15,10 @@ export async function GET(
 ) {
     try {
         const { orderId } = await context.params;
-        const { supabase, error: authError } = await requireAuth();
+        const { user, supabase, error: authError } = await requireAuth();
         if (authError) return authError;
 
-        // RLS ensures user can only see their own orders
+        // Explicit ownership check + RLS for defense in depth
         const { data: order, error } = await supabase
             .from('orders')
             .select(`
@@ -31,6 +31,7 @@ export async function GET(
                 )
             `)
             .eq('id', orderId)
+            .eq('user_id', user!.id)
             .single();
 
         if (error || !order) {
