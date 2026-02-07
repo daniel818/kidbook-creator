@@ -291,17 +291,20 @@ export default function CreateBookPage() {
                 const errorText = await response.text();
                 console.log('[CLIENT] API error response:', errorText);
 
-                // Handle quota exceeded (429)
+                // Handle quota exceeded (429 with QUOTA_EXCEEDED code)
                 if (response.status === 429) {
                     try {
                         const errorData = JSON.parse(errorText);
-                        if (errorData.quota) setQuota(errorData.quota);
+                        if (errorData.code === 'QUOTA_EXCEEDED') {
+                            if (errorData.quota) setQuota(errorData.quota);
+                            setCreatingStatus('');
+                            setCreatingPhase('');
+                            setIsCreating(false);
+                            setShowQuotaModal(true);
+                            return;
+                        }
                     } catch { /* ignore parse error */ }
-                    setCreatingStatus('');
-                    setCreatingPhase('');
-                    setIsCreating(false);
-                    setShowQuotaModal(true);
-                    return;
+                    // Rate limit or other 429 — fall through to generic error
                 }
 
                 throw new Error('Failed to generate book');
