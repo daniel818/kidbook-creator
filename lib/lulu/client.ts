@@ -124,12 +124,13 @@ class LuluClient {
     private async request<T>(
         method: string,
         endpoint: string,
-        body?: unknown
+        body?: unknown,
+        options?: { skipRetry?: boolean }
     ): Promise<T> {
         const token = await this.getAccessToken();
         const url = `${this.baseUrl}${endpoint}`;
 
-        return withRetry(async () => {
+        const doFetch = async () => {
             const response = await fetch(url, {
                 method,
                 headers: {
@@ -145,8 +146,14 @@ class LuluClient {
                 throw new HttpError(`Lulu API error: ${response.status} - ${error}`, response.status);
             }
 
-            return response.json();
-        }, RETRY_CONFIGS.lulu);
+            return response.json() as Promise<T>;
+        };
+
+        if (options?.skipRetry) {
+            return doFetch();
+        }
+
+        return withRetry(doFetch, RETRY_CONFIGS.lulu);
     }
 
     // Upload a print-ready file
@@ -346,7 +353,7 @@ class LuluClient {
         const startTime = Date.now();
 
         while (Date.now() - startTime < timeoutMs) {
-            const response: any = await this.request('GET', `/printable-normalization/${id}/`);
+            const response: any = await this.request('GET', `/printable-normalization/${id}/`, undefined, { skipRetry: true });
             const status = response.status.name;
 
             console.log(`[Lulu] Validation Job ${id}: ${status}`);

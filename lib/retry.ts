@@ -117,7 +117,7 @@ export const RETRY_CONFIGS = {
     maxRetries: 3,
     initialDelayMs: 1000,
     maxDelayMs: 15000,
-    retryableStatusCodes: [429, 500, 503],
+    retryableStatusCodes: [429, 500, 502, 503],
     serviceLabel: 'Gemini',
   },
   lulu: {
@@ -131,7 +131,7 @@ export const RETRY_CONFIGS = {
     maxRetries: 3,
     initialDelayMs: 1000,
     maxDelayMs: 15000,
-    retryableStatusCodes: [429, 500, 503],
+    retryableStatusCodes: [429, 500, 502, 503],
     serviceLabel: 'Resend',
   },
   supabaseStorage: {
