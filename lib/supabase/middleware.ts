@@ -68,9 +68,10 @@ export async function updateSession(request: NextRequest) {
     // Prevent MIME type sniffing
     supabaseResponse.headers.set('X-Content-Type-Options', 'nosniff');
 
-    // Prevent clickjacking — use SAMEORIGIN instead of DENY to avoid breaking
-    // Stripe payment iframes (X-Frame-Options is enforced independently of CSP frame-src)
-    supabaseResponse.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    // Prevent clickjacking — DENY is safe here because X-Frame-Options only controls
+    // whether THIS page can be framed by others, NOT whether iframes we embed (like Stripe)
+    // can load. Stripe's js.stripe.com serves its own headers on its iframe responses.
+    supabaseResponse.headers.set('X-Frame-Options', 'DENY');
 
     // Control referrer information sent with requests
     supabaseResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -84,19 +85,15 @@ export async function updateSession(request: NextRequest) {
     // Enable DNS prefetching for linked domains
     supabaseResponse.headers.set('X-DNS-Prefetch-Control', 'on');
 
-    // Force HTTPS in production
-    // Start conservative without includeSubDomains/preload — these are hard to roll back
-    // and require ALL subdomains to serve HTTPS. Enable HSTS_INCLUDE_SUBDOMAINS=true
-    // and HSTS_PRELOAD=true only when ready for full commitment.
+    // Force HTTPS in production (1 year with includeSubDomains)
+    // Note: The 'preload' directive alone does NOT auto-submit to the HSTS preload list —
+    // that requires manual submission at hstspreload.org. We include it here so the site
+    // is ready for preload submission if/when desired.
     if (process.env.NODE_ENV === 'production') {
-        let hstsValue = 'max-age=31536000';
-        if (process.env.HSTS_INCLUDE_SUBDOMAINS === 'true') {
-            hstsValue += '; includeSubDomains';
-        }
-        if (process.env.HSTS_PRELOAD === 'true') {
-            hstsValue += '; preload';
-        }
-        supabaseResponse.headers.set('Strict-Transport-Security', hstsValue);
+        supabaseResponse.headers.set(
+            'Strict-Transport-Security',
+            'max-age=31536000; includeSubDomains; preload'
+        );
     }
 
     return supabaseResponse;
