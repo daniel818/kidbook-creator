@@ -6,11 +6,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLuluClient } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { requireAuth } from '@/lib/auth/api-guard';
 import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
-        // Rate limit by IP (public endpoint)
+        const { error: authError } = await requireAuth();
+        if (authError) return authError;
+
+        // Rate limit by IP
         const ip = getClientIp(request);
         const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
