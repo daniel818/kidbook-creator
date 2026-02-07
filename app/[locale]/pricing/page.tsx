@@ -197,8 +197,8 @@ export default function PricingPage() {
               <span className="material-symbols-outlined">magic_button</span>
             </div>
             <div className={styles.aiHighlightText}>
-              <strong>Magic Wand AI</strong>
-              <span>Every package includes our AI storytelling engine that turns your child&apos;s favorite things into a personalized adventure.</span>
+              <strong>Magic Wand</strong>
+              <span>Every package includes our storytelling engine that turns your child&apos;s favorite things into a personalized adventure.</span>
             </div>
           </div>
         </section>
