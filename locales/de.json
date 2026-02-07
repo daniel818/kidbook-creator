@@ -162,6 +162,7 @@
       "creating": "Dein Buch wird erstellt...",
       "footerStart": "Los geht's!",
       "footerAlmostThere": "Fast geschafft!",
+      "stepIndicator": "SCHRITT {{current}} VON {{total}}",
       "stepper": {
         "aria": "Fortschritt"
       }
@@ -192,7 +193,8 @@
         "photoSelected": "Foto ausgewählt",
         "photoChange": "Foto ändern",
         "photoMeta": "Plüschdrache als Begleiter",
-        "edit": "Held bearbeiten"
+        "edit": "Held bearbeiten",
+        "cardLabel": "Held"
       },
       "type": {
         "title": "Wähle einen Buchtyp",
@@ -215,6 +217,11 @@
           "32 Seiten, Glanzoberfläche möglich",
           "Ideal für textreiche Erzählungen"
         ],
+        "squareShort": "Quadrat",
+        "portraitShort": "Hochformat",
+        "squareMeta": "Premium 8,5 x 8,5",
+        "portraitMeta": "Premium 8 x 10",
+        "cardLabel": "Format",
         "edit": "Format bearbeiten"
       },
       "theme": {
@@ -222,7 +229,8 @@
         "subtitle": "Was für eine Geschichte soll es werden?",
         "storyLabel": "Erzähle uns mehr über die Geschichte (optional)",
         "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt.",
-        "edit": "Thema bearbeiten"
+        "edit": "Thema bearbeiten",
+        "cardLabel": "Thema"
       },
       "style": {
         "title": "Wähle einen Kunststil",
@@ -240,7 +248,8 @@
           "pixel": "Retro & Verspielt",
           "coloring": "Minimalistisch & Kreativ"
         },
-        "edit": "Stil bearbeiten"
+        "edit": "Stil bearbeiten",
+        "cardLabel": "Stil"
       },
       "title": {
         "title": "Benenne dein Buch",

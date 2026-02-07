@@ -162,6 +162,7 @@
       "creating": "Creating your book...",
       "footerStart": "Let's begin!",
       "footerAlmostThere": "Almost there!",
+      "stepIndicator": "STEP {{current}} OF {{total}}",
       "stepper": {
         "aria": "Progress"
       }
@@ -192,7 +193,8 @@
         "photoSelected": "Photo selected",
         "photoChange": "Change Photo",
         "photoMeta": "Plush Dragon companion",
-        "edit": "Edit hero"
+        "edit": "Edit hero",
+        "cardLabel": "Hero"
       },
       "type": {
         "title": "Choose a book type",
@@ -215,6 +217,11 @@
           "Includes 32 pages, Glossy finish option",
           "Great for text-rich narratives"
         ],
+        "squareShort": "Square",
+        "portraitShort": "Portrait",
+        "squareMeta": "Premium 8.5 x 8.5",
+        "portraitMeta": "Premium 8 x 10",
+        "cardLabel": "Format",
         "edit": "Edit format"
       },
       "theme": {
@@ -222,7 +229,8 @@
         "subtitle": "What kind of story will this be?",
         "storyLabel": "Tell us more about the story (optional)",
         "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon.",
-        "edit": "Edit theme"
+        "edit": "Edit theme",
+        "cardLabel": "Theme"
       },
       "style": {
         "title": "Choose an art style",
@@ -240,7 +248,8 @@
           "pixel": "Retro & Playful",
           "coloring": "Minimal & Creative"
         },
-        "edit": "Edit style"
+        "edit": "Edit style",
+        "cardLabel": "Style"
       },
       "title": {
         "title": "Name your book",

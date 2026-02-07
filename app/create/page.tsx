@@ -823,7 +823,7 @@ export default function CreateBookPage() {
                                         <div className={styles.stitchFinalCardIcon}>
                                             <span className="material-symbols-outlined" aria-hidden="true">face</span>
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Hero</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.child.cardLabel', 'Hero')}</div>
                                         <div className={styles.stitchFinalCardValue}>
                                             {settings.childName || t('steps.child.namePlaceholder', 'Hero')}, {settings.childAge || 3}
                                         </div>
@@ -844,12 +844,12 @@ export default function CreateBookPage() {
                                         <div className={styles.stitchFinalCardIcon}>
                                             <span className="material-symbols-outlined" aria-hidden="true">menu_book</span>
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Format</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.format.cardLabel', 'Format')}</div>
                                         <div className={styles.stitchFinalCardValue}>
-                                            {settings.printFormat === 'portrait' ? 'Portrait' : 'Square'}
+                                            {settings.printFormat === 'portrait' ? t('steps.format.portraitShort', 'Portrait') : t('steps.format.squareShort', 'Square')}
                                         </div>
                                         <div className={styles.stitchFinalCardMeta}>
-                                            {settings.printFormat === 'portrait' ? 'Premium 8 x 10' : 'Premium 8.5 x 8.5'}
+                                            {settings.printFormat === 'portrait' ? t('steps.format.portraitMeta', 'Premium 8 x 10') : t('steps.format.squareMeta', 'Premium 8.5 x 8.5')}
                                         </div>
                                     </div>
 
@@ -865,7 +865,7 @@ export default function CreateBookPage() {
                                         <div className={styles.stitchFinalCardIcon}>
                                             <span className="material-symbols-outlined" aria-hidden="true">rocket_launch</span>
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Theme</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.theme.cardLabel', 'Theme')}</div>
                                         <div className={styles.stitchFinalCardValue}>
                                             {settings.bookTheme ? t(`themes.${settings.bookTheme}`) : t('themes.adventure', 'Adventure')}
                                         </div>
@@ -889,7 +889,7 @@ export default function CreateBookPage() {
                                                 alt=""
                                             />
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Style</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.style.cardLabel', 'Style')}</div>
                                         <div className={styles.stitchFinalCardValue}>
                                             {settings.artStyle ? artStyleLabel(settings.artStyle) : t('steps.style.default', 'Watercolor')}
                                         </div>
@@ -918,7 +918,7 @@ export default function CreateBookPage() {
                         )}
                         <div className={styles.stitchFooterCenter} aria-hidden="true">
                             <div className={styles.stitchFooterStep}>
-                                {`STEP ${currentStepIndex + 1} OF ${steps.length}`}
+                                {t('wizard.stepIndicator', 'STEP {{current}} OF {{total}}', { current: currentStepIndex + 1, total: steps.length })}
                             </div>
                             <div className={styles.stitchFooterHint}>
                                 {currentStepIndex === 0 ? t('wizard.footerStart', "Let's begin!") : t('wizard.footerAlmostThere', 'Almost there!')}
