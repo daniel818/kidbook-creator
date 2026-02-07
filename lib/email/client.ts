@@ -4,6 +4,7 @@
 
 import { Resend } from 'resend';
 import { createModuleLogger } from '@/lib/logger';
+import { withRetry, RETRY_CONFIGS } from '../retry';
 
 const logger = createModuleLogger('email');
 
@@ -56,12 +57,15 @@ export interface DigitalUnlockEmailData {
 // Send order confirmation email
 export async function sendOrderConfirmation(data: OrderEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Order Confirmed! Your "${data.bookTitle}" is being prepared 📚`,
-      html: generateOrderConfirmationHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Order Confirmed! Your "${data.bookTitle}" is being prepared 📚`,
+        html: generateOrderConfirmationHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       logger.error({ err: error }, 'Failed to send order confirmation');
@@ -71,7 +75,7 @@ export async function sendOrderConfirmation(data: OrderEmailData) {
     logger.info({ emailId: result?.id }, 'Order confirmation sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    logger.error({ err: error }, 'Email error sending order confirmation');
+    logger.error({ err: error }, 'Email error sending order confirmation (after retries)');
     return { success: false, error };
   }
 }
@@ -79,12 +83,15 @@ export async function sendOrderConfirmation(data: OrderEmailData) {
 // Send shipping notification email
 export async function sendShippingNotification(data: ShippingEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Your book is on its way! 🚚 Track your "${data.bookTitle}"`,
-      html: generateShippingNotificationHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Your book is on its way! 🚚 Track your "${data.bookTitle}"`,
+        html: generateShippingNotificationHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       logger.error({ err: error }, 'Failed to send shipping notification');
@@ -94,7 +101,7 @@ export async function sendShippingNotification(data: ShippingEmailData) {
     logger.info({ emailId: result?.id }, 'Shipping notification sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    logger.error({ err: error }, 'Email error sending shipping notification');
+    logger.error({ err: error }, 'Email error sending shipping notification (after retries)');
     return { success: false, error };
   }
 }
@@ -102,12 +109,15 @@ export async function sendShippingNotification(data: ShippingEmailData) {
 // Send delivery confirmation email
 export async function sendDeliveryConfirmation(data: OrderEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Your "${data.bookTitle}" has been delivered! 🎉`,
-      html: generateDeliveryConfirmationHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Your "${data.bookTitle}" has been delivered! 🎉`,
+        html: generateDeliveryConfirmationHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       logger.error({ err: error }, 'Failed to send delivery confirmation');
@@ -117,7 +127,7 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
     logger.info({ emailId: result?.id }, 'Delivery confirmation sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    logger.error({ err: error }, 'Email error sending delivery confirmation');
+    logger.error({ err: error }, 'Email error sending delivery confirmation (after retries)');
     return { success: false, error };
   }
 }
@@ -125,12 +135,15 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
 // Send digital unlock email
 export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Your digital book "${data.bookTitle}" is ready ✨`,
-      html: generateDigitalUnlockHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Your digital book "${data.bookTitle}" is ready ✨`,
+        html: generateDigitalUnlockHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       logger.error({ err: error }, 'Failed to send digital unlock email');
@@ -140,7 +153,7 @@ export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
     logger.info({ emailId: result?.id }, 'Digital unlock email sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    logger.error({ err: error }, 'Email error sending digital unlock email');
+    logger.error({ err: error }, 'Email error sending digital unlock email (after retries)');
     return { success: false, error };
   }
 }

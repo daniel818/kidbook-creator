@@ -1,6 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { createModuleLogger } from '@/lib/logger';
+import { withRetry, RETRY_CONFIGS } from '../retry';
 
 const logger = createModuleLogger('upload');
 
@@ -26,21 +27,22 @@ export async function uploadImageToStorage(bookId: string, pageNumber: number, i
     const fileName = `${bookId}/page_${pageNumber}_${Date.now()}.png`;
     logger.info({ fileName, size: imageBuffer.length }, 'Uploading image');
 
-    const { data, error } = await supabase.storage
-        .from('book-images')
-        .upload(fileName, imageBuffer, {
-            contentType: 'image/png',
-            upsert: true
-        });
+    return withRetry(async () => {
+        const { data, error } = await supabase.storage
+            .from('book-images')
+            .upload(fileName, imageBuffer, {
+                contentType: 'image/png',
+                upsert: true
+            });
 
-    if (error) {
-        logger.error({ err: error }, 'Upload error');
-        throw error;
-    }
+        if (error) {
+            logger.error({ err: error }, 'Upload error');
+            throw error;
+        }
 
-    const { data: { publicUrl } } = supabase.storage.from('book-images').getPublicUrl(fileName); // Fixed bucket name here too?
-    // Let's check which bucket usage is correct.
-    return publicUrl;
+        const { data: { publicUrl } } = supabase.storage.from('book-images').getPublicUrl(fileName);
+        return publicUrl;
+    }, RETRY_CONFIGS.supabaseStorage);
 }
 
 export async function uploadReferenceImage(
@@ -62,18 +64,20 @@ export async function uploadReferenceImage(
     const fileName = `${userId}/${bookId}/reference.${ext}`;
     logger.info({ fileName, size: imageBuffer.length }, 'Uploading reference image');
 
-    const { error } = await supabase.storage
-        .from('book-images')
-        .upload(fileName, imageBuffer, {
-            contentType: safeType,
-            upsert: true
-        });
+    return withRetry(async () => {
+        const { error } = await supabase.storage
+            .from('book-images')
+            .upload(fileName, imageBuffer, {
+                contentType: safeType,
+                upsert: true
+            });
 
-    if (error) {
-        logger.error({ err: error }, 'Reference upload error');
-        throw error;
-    }
+        if (error) {
+            logger.error({ err: error }, 'Reference upload error');
+            throw error;
+        }
 
-    const { data: { publicUrl } } = supabase.storage.from('book-images').getPublicUrl(fileName);
-    return publicUrl;
+        const { data: { publicUrl } } = supabase.storage.from('book-images').getPublicUrl(fileName);
+        return publicUrl;
+    }, RETRY_CONFIGS.supabaseStorage);
 }

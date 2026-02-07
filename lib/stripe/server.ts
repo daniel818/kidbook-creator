@@ -14,6 +14,7 @@ function getStripe(): Stripe {
         _stripe = new Stripe(key, {
             apiVersion: '2025-02-24.acacia',
             typescript: true,
+            maxNetworkRetries: 2,
         });
     }
     return _stripe;

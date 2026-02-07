@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { updateBookSchema, parseBody } from '@/lib/validations';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
@@ -206,18 +207,17 @@ export async function PUT(
         }
 
         const body = await request.json();
-        const { settings, pages, pageEdits, status } = body;
 
-        // Validate settings if provided
+        // Validate request body with Zod
+        const validation = parseBody(updateBookSchema, body);
+        if (!validation.success) {
+            return NextResponse.json({ error: validation.error }, { status: 400 });
+        }
+
+        const { settings, pages, pageEdits, status } = validation.data;
+
+        // Update settings if provided
         if (settings) {
-            // Basic validation
-            if (settings.title && typeof settings.title !== 'string') {
-                return NextResponse.json({ error: 'Invalid title' }, { status: 400 });
-            }
-            if (settings.childAge !== undefined && (typeof settings.childAge !== 'number' || settings.childAge < 0 || settings.childAge > 18)) {
-                return NextResponse.json({ error: 'Invalid child age' }, { status: 400 });
-            }
-
             const { error: bookError } = await supabase
                 .from('books')
                 .update({

@@ -7,6 +7,7 @@ import { GoogleGenAI } from '@google/genai';
 import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
 import { getPrompts, Language } from './prompts';
 import { createModuleLogger } from '@/lib/logger';
+import { withRetry, RETRY_CONFIGS } from '../retry';
 import { sanitizeStoryInput, sanitizeInput } from '../sanitize';
 
 const logger = createModuleLogger('gemini');
@@ -116,13 +117,16 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     try {
         logger.debug('Sending request to Gemini API');
 
-        const response = await getGenAI().models.generateContent({
-            model: textModel,
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            config: {
-                responseMimeType: 'application/json'
-            }
-        });
+        const response = await withRetry(
+            () => getGenAI().models.generateContent({
+                model: textModel,
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                config: {
+                    responseMimeType: 'application/json'
+                }
+            }),
+            RETRY_CONFIGS.gemini
+        );
 
         const responseText = response.candidates?.[0]?.content?.parts?.[0]?.text;
 
@@ -224,13 +228,16 @@ export async function generateIllustration(
     }
 
     try {
-        const response = await getGenAI().models.generateContent({
-            model: modelName,
-            contents: [{
-                role: 'user',
-                parts: parts
-            }]
-        });
+        const response = await withRetry(
+            () => getGenAI().models.generateContent({
+                model: modelName,
+                contents: [{
+                    role: 'user',
+                    parts: parts
+                }]
+            }),
+            RETRY_CONFIGS.gemini
+        );
 
         const part = response.candidates?.[0]?.content?.parts?.[0];
         if (part?.inlineData?.data) {
@@ -264,23 +271,26 @@ export async function extractCharacterFromPhoto(photoBase64: string, language: L
         const prompts = getPrompts(language);
         const promptText = prompts.getCharacterExtractionPrompt();
 
-        const response = await getGenAI().models.generateContent({
-            model: model,
-            contents: [
-                {
-                    role: 'user',
-                    parts: [
-                        { text: promptText },
-                        {
-                            inlineData: {
-                                mimeType: 'image/jpeg',
-                                data: photoBase64
+        const response = await withRetry(
+            () => getGenAI().models.generateContent({
+                model: model,
+                contents: [
+                    {
+                        role: 'user',
+                        parts: [
+                            { text: promptText },
+                            {
+                                inlineData: {
+                                    mimeType: 'image/jpeg',
+                                    data: photoBase64
+                                }
                             }
-                        }
-                    ]
-                }
-            ]
-        });
+                        ]
+                    }
+                ]
+            }),
+            RETRY_CONFIGS.gemini
+        );
 
         const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
         // Note: We could capture usage here too, but focused on text return for now.

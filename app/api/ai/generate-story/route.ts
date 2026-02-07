@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateStory, StoryGenerationInput } from '@/lib/gemini/client';
 import { createRequestLogger } from '@/lib/logger';
+import { generateStorySchema, parseBody } from '@/lib/validations';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
@@ -26,24 +27,24 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription } = body;
-        const resolvedBookType = bookType || 'story';
 
-        if (!childName || !bookTheme) {
+        // Validate request body with Zod
+        const result = parseBody(generateStorySchema, body);
+        if (!result.success) {
             return NextResponse.json(
-                { error: 'Missing required fields: childName, bookTheme' },
+                { error: result.error },
                 { status: 400 }
             );
         }
 
         const input: StoryGenerationInput = {
-            childName,
-            childAge: childAge || 5,
-            childGender,
-            bookTheme,
-            bookType: resolvedBookType,
-            pageCount: pageCount || 10,
-            characterDescription,
+            childName: result.data.childName,
+            childAge: result.data.childAge,
+            childGender: result.data.childGender,
+            bookTheme: result.data.bookTheme,
+            bookType: result.data.bookType,
+            pageCount: result.data.pageCount,
+            characterDescription: result.data.characterDescription,
         };
 
         const story = await generateStory(input);

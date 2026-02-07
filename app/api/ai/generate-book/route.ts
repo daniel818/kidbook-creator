@@ -10,6 +10,7 @@ import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib
 import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
 import { createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { generateBookSchema, parseBody } from '@/lib/validations';
 
 // Pricing Constants (as per Plan)
 const PRICING = {
@@ -72,17 +73,17 @@ export async function POST(request: NextRequest) {
     try {
         logger.debug('Parsing request body');
         const body = await request.json();
-        const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = body;
+
+        // Validate request body with Zod
+        const validation = parseBody(generateBookSchema, body);
+        if (!validation.success) {
+            logger.warn({ error: validation.error }, 'Validation failed');
+            return NextResponse.json({ error: validation.error }, { status: 400 });
+        }
+
+        const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = validation.data;
         const resolvedBookType = bookType || 'story';
         logger.debug({ childName, childAge, childGender, bookTheme, bookType: resolvedBookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount }, 'Request body parsed');
-
-        if (!childName || !bookTheme) {
-            logger.info('Missing required fields');
-            return NextResponse.json(
-                { error: 'Missing required fields: childName, bookTheme' },
-                { status: 400 }
-            );
-        }
 
         // Authenticate User
         logger.debug('Authenticating user');
