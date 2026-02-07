@@ -130,7 +130,7 @@ export const calculateCostSchema = z.object({
     countryCode: z.string().length(2).optional(),
     postalCode: z.string().max(20).optional(),
     stateCode: z.string().max(10).optional(),
-    shippingOption: z.string().optional(),
+    shippingOption: z.enum(['MAIL', 'PRIORITY_MAIL', 'GROUND', 'EXPEDITED', 'EXPRESS']).optional(),
     shipping: z.object({
         fullName: z.string().max(100).optional(),
         addressLine1: z.string().max(200).optional(),
