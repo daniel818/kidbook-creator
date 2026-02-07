@@ -36,6 +36,6 @@ export const onRequestError = async (
         Sentry.captureRequestError(err, request, context);
     } catch {
         // Sentry not available, just log
-        console.error('[Instrumentation] Request error:', err.message, request.path);
+        console.error('[Instrumentation] Request error:', err?.message, request?.path);
     }
 };

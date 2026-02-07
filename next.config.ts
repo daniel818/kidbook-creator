@@ -37,8 +37,8 @@ export default withSentryConfig(nextConfig, {
   // Automatically tree-shake Sentry logger statements
   disableLogger: true,
 
-  // Hide source maps from clients
-  hideSourceMaps: true,
+  // Note: hideSourceMaps was removed in @sentry/nextjs v9+
+  // Hidden source maps are now the default behavior.
 
   // Tunnel Sentry events to avoid ad-blockers (optional)
   // tunnelRoute: '/monitoring-tunnel',
