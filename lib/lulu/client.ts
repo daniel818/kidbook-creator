@@ -437,13 +437,23 @@ interface LuluCostResponse {
     currency?: string;
 }
 
-// Factory function to create client
+// Module-level singleton so OAuth token cache persists across requests
+let _luluClientSingleton: LuluClient | null = null;
+
 export function createLuluClient(): LuluClient {
-    return new LuluClient({
-        apiKey: process.env.LULU_API_KEY!,
-        apiSecret: process.env.LULU_API_SECRET!,
-        sandbox: process.env.LULU_SANDBOX === 'true',
-    });
+    if (!_luluClientSingleton) {
+        _luluClientSingleton = new LuluClient({
+            apiKey: process.env.LULU_API_KEY!,
+            apiSecret: process.env.LULU_API_SECRET!,
+            sandbox: process.env.LULU_SANDBOX === 'true',
+        });
+    }
+    return _luluClientSingleton;
+}
+
+/** Reset singleton — exposed for testing only */
+export function _resetLuluClient(): void {
+    _luluClientSingleton = null;
 }
 
 export { LuluClient };
