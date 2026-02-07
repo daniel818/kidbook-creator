@@ -1,10 +1,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateIllustration } from '@/lib/gemini/client';
+import { generateIllustration, type ArtStyle } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createClient } from '@/lib/supabase/server';
 import { sanitizeInput } from '@/lib/sanitize';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { regenerateImageSchema, parseBody } from '@/lib/validations';
+import { ART_STYLES } from '@/lib/art-styles';
 
 function log(msg: string, data?: unknown) {
     console.log(`[Regenerate] ${msg}`, data || '');
@@ -40,13 +42,16 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { bookId, pageNumber, prompt, currentImageContext, style, quality } = body;
-        log('Parsed body', { bookId, pageNumber, hasPrompt: !!prompt });
 
-        if (!bookId || !pageNumber || !prompt) {
-            log('Missing fields');
-            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        // Validate request body with Zod
+        const result = parseBody(regenerateImageSchema, body);
+        if (!result.success) {
+            log('Validation failed', result.error);
+            return NextResponse.json({ error: result.error }, { status: 400 });
         }
+
+        const { bookId, pageNumber, prompt, currentImageContext, style, quality } = result.data;
+        log('Parsed body', { bookId, pageNumber, hasPrompt: !!prompt });
 
         log(`Starting generation for book ${bookId} page ${pageNumber}`);
 
@@ -55,7 +60,7 @@ export async function POST(req: NextRequest) {
         const imageResult = await generateIllustration({
             scenePrompt: sanitizeInput(prompt, 'storyDescription'),
             characterDescription: sanitizeInput(style || 'A cute child character', 'characterDescription'),
-            artStyle: currentImageContext || 'storybook_classic',
+            artStyle: (currentImageContext && currentImageContext in ART_STYLES ? currentImageContext as ArtStyle : 'storybook_classic'),
             quality: quality || 'fast',
         });
         log('generateIllustration returned', { imageUrl: imageResult?.imageUrl });

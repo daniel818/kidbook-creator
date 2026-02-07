@@ -11,6 +11,7 @@ import { stripe } from '@/lib/stripe/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { createPaymentIntentSchema, parseBody } from '@/lib/validations';
 
 export async function POST(request: NextRequest) {
     try {
@@ -32,30 +33,14 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { bookId, format, size, quantity, shipping, shippingLevel } = body;
 
-        // Validate required fields (PDFs are NOT required at this stage — they come later via /attach-pdfs)
-        if (!bookId || !format || !size || !quantity || !shipping || !shippingLevel) {
-            return NextResponse.json(
-                { error: 'Missing required fields' },
-                { status: 400 }
-            );
+        // Validate request body with Zod (PDFs are NOT required at this stage — they come later via /attach-pdfs)
+        const result = parseBody(createPaymentIntentSchema, body);
+        if (!result.success) {
+            return NextResponse.json({ error: result.error }, { status: 400 });
         }
 
-        // Validate enum values to prevent arbitrary input
-        const VALID_FORMATS = ['softcover', 'hardcover'];
-        const VALID_SIZES = ['7.5x7.5', '8x8', '8x10'];
-        const VALID_SHIPPING_LEVELS = ['MAIL', 'PRIORITY_MAIL', 'GROUND_HD', 'GROUND', 'EXPEDITED', 'EXPRESS'];
-
-        if (!VALID_FORMATS.includes(format)) {
-            return NextResponse.json({ error: 'Invalid format' }, { status: 400 });
-        }
-        if (!VALID_SIZES.includes(size)) {
-            return NextResponse.json({ error: 'Invalid size' }, { status: 400 });
-        }
-        if (!VALID_SHIPPING_LEVELS.includes(shippingLevel)) {
-            return NextResponse.json({ error: 'Invalid shipping level' }, { status: 400 });
-        }
+        const { bookId, format, size, quantity, shipping, shippingLevel } = result.data;
 
         // Fetch book and verify ownership
         const { data: book, error: bookError } = await adminDb
@@ -73,11 +58,6 @@ export async function POST(request: NextRequest) {
         const isPreview = book.is_preview || book.status === 'preview';
         if (isPreview && !book.digital_unlock_paid) {
             return NextResponse.json({ error: 'Unlock required before ordering' }, { status: 402 });
-        }
-
-        // Validate quantity
-        if (!Number.isInteger(quantity) || quantity < 1) {
-            return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
         }
 
         // Calculate pricing (includes profit margin)

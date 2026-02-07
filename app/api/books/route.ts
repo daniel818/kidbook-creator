@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { createBookSchema, parseBody } from '@/lib/validations';
 
 // GET /api/books - Get all books for the current user
 export async function GET() {
@@ -172,14 +173,14 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { settings } = body;
 
-        if (!settings) {
-            return NextResponse.json(
-                { error: 'Book settings are required' },
-                { status: 400 }
-            );
+        // Validate request body with Zod
+        const result = parseBody(createBookSchema, body);
+        if (!result.success) {
+            return NextResponse.json({ error: result.error }, { status: 400 });
         }
+
+        const { settings } = result.data;
 
         // Create the book
         const { data: book, error: bookError } = await supabase

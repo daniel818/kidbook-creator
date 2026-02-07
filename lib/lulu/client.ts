@@ -378,7 +378,7 @@ export interface CostCalculationOptions {
     stateCode?: string;
     postalCode?: string;
     shippingCity?: string;
-    shippingOption?: 'MAIL' | 'PRIORITY_MAIL' | 'GROUND' | 'EXPEDITED' | 'EXPRESS';
+    shippingOption?: ShippingLevel;
 }
 
 export interface ShippingOptionRequest {
