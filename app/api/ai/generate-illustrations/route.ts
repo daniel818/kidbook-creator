@@ -133,8 +133,16 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // Determine max illustrations to generate
-        const maxIllustrations = isPreview ? previewPageCount : pages.length;
+        // Count eligible pages (inside pages without images) for accurate limit
+        const eligiblePages = pages.filter((p: { page_type: string; image_elements: unknown[]; image_prompt?: string; page_number: number }) => {
+            if (p.page_type !== 'inside') return false;
+            if (isPreview && p.page_number > previewPageCount) return false;
+            const imgs = Array.isArray(p.image_elements) ? p.image_elements : [];
+            if (imgs.length > 0 && (imgs[0] as { src?: string })?.src) return false;
+            if (!p.image_prompt) return false;
+            return true;
+        });
+        const maxIllustrations = isPreview ? Math.min(previewPageCount, eligiblePages.length) : eligiblePages.length;
         let generatedCount = 0;
 
         // Rate limit delay between images
