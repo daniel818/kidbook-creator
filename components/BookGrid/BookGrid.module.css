@@ -348,6 +348,184 @@
   color: #6366f1;
 }
 
+/* =========================================
+   Status Badges (overlaid on 3D container)
+   ========================================= */
+.statusBadge {
+  position: absolute;
+  z-index: 30;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.badgeIcon {
+  font-size: 13px !important;
+}
+
+/* Badge positioning: draft & ordered → top-left; preview, ready, delivered → top-right */
+.statusBadge_draft,
+.statusBadge_ordered {
+  top: 16px;
+  left: 16px;
+}
+
+.statusBadge_preview,
+.statusBadge_ready,
+.statusBadge_delivered {
+  top: 16px;
+  right: 16px;
+}
+
+/* Badge colors */
+.statusBadge_draft { background: #ffedd5; color: #c2410c; }
+.statusBadge_preview { background: #fef3c7; color: #92400e; }
+.statusBadge_ready { background: #dcfce7; color: #166534; }
+.statusBadge_ordered { background: #dcfce7; color: #166534; }
+.statusBadge_delivered { background: #ccfbf1; color: #0f766e; }
+
+/* =========================================
+   Progress Bars
+   ========================================= */
+.progressBarContainer {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  z-index: 25;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.progressBar_draft {
+  background: linear-gradient(90deg, #f59e0b, #eab308);
+}
+
+/* =========================================
+   CTA Section (below meta)
+   ========================================= */
+.bookCta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.ctaOrderPrint {
+  padding: 5px 14px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.ctaOrderPrint:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+.ctaUnlock {
+  padding: 5px 14px;
+  background: #1f2937;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+.ctaUnlock:hover {
+  background: #111827;
+  transform: translateY(-1px);
+}
+
+.ctaDeliveryDate {
+  font-size: 12px;
+  color: #22c55e;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+.ctaReorder {
+  font-size: 12px;
+  color: #0f766e;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  transition: opacity 0.2s;
+}
+
+.ctaReorder:hover {
+  opacity: 0.8;
+}
+
+.ctaDraftInfo {
+  font-size: 12px;
+  color: #f59e0b;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+/* =========================================
+   Draft card visual treatment
+   ========================================= */
+.bookItem_draft .book3DFront {
+  box-shadow:
+    rgba(0, 0, 0, 0.2) 0px 3px 3px -2px,
+    rgba(0, 0, 0, 0.14) 0px 3px 4px 0px,
+    rgba(0, 0, 0, 0.12) 0px 1px 8px 0px,
+    inset 2px 0 2px rgba(255, 255, 255, 0.3),
+    inset 0 0 0 2px rgba(245, 158, 11, 0.3);
+}
+
+/* =========================================
+   RTL badge positioning
+   ========================================= */
+[dir="rtl"] .statusBadge_draft,
+[dir="rtl"] .statusBadge_ordered {
+  left: auto;
+  right: 16px;
+}
+
+[dir="rtl"] .statusBadge_preview,
+[dir="rtl"] .statusBadge_ready,
+[dir="rtl"] .statusBadge_delivered {
+  right: auto;
+  left: 16px;
+}
+
 /* Tablet */
 @media (max-width: 768px) {
   .booksGrid {
@@ -417,71 +595,122 @@
   }
 }
 
-/* Mobile phones */
+/* Mobile phones - 2 column grid matching Stitch design */
 @media (max-width: 480px) {
   .booksGrid {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 16px 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 12px;
+    padding: 12px 0;
   }
 
   .bookItem {
-    max-width: 280px;
+    max-width: none;
     width: 100%;
   }
 
   .book3DContainer {
-    height: 300px;
+    height: 220px;
   }
 
   .book3D {
-    width: 180px;
-    height: 252px;
-    transform: rotateY(-18deg) rotateX(6deg);
-    margin-left: 20px;
+    width: 120px;
+    height: 168px;
+    transform: rotateY(-15deg) rotateX(5deg);
+    margin-left: 12px;
   }
 
   .book3DSpine {
-    width: 30px;
-    transform: translateX(-15px) rotateY(-90deg);
+    width: 22px;
+    transform: translateX(-11px) rotateY(-90deg);
   }
 
   .book3DFront {
-    transform: translateZ(15px);
+    transform: translateZ(11px);
+    border-radius: 0 12px 12px 0;
   }
 
   .book3DBack {
-    transform: translateZ(-15px) rotateY(180deg);
+    transform: translateZ(-11px) rotateY(180deg);
+    border-radius: 12px 0 0 12px;
   }
 
   .bookPagesTop,
   .bookPagesBottom {
-    width: 174px;
-    height: 26px;
-    transform: translateY(2px) rotateX(90deg) translateZ(13px);
+    width: 114px;
+    height: 20px;
+    transform: translateY(2px) rotateX(90deg) translateZ(10px);
   }
 
   .bookPagesBottom {
-    transform: translateY(-2px) rotateX(-90deg) translateZ(13px);
+    transform: translateY(-2px) rotateX(-90deg) translateZ(10px);
   }
 
   .bookPagesRight {
-    width: 26px;
-    right: 5px;
-    top: 5px;
-    bottom: 5px;
-    transform: rotateY(90deg) translateZ(13px);
+    width: 20px;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+    transform: rotateY(90deg) translateZ(10px);
   }
 
   .book3DShadow {
-    width: 150px;
+    width: 100px;
+    height: 20px;
   }
 
   .book3DTitle {
-    font-size: 18px;
+    font-size: 14px;
+    padding: 0 10px;
   }
 
   .book3DEmoji {
-    font-size: 3rem;
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+
+  .statusBadge {
+    font-size: 9px;
+    padding: 3px 7px;
+    top: 10px;
+  }
+
+  .statusBadge_draft,
+  .statusBadge_ordered {
+    left: 10px;
+    top: 10px;
+  }
+
+  .statusBadge_preview,
+  .statusBadge_ready,
+  .statusBadge_delivered {
+    right: 10px;
+    top: 10px;
+  }
+
+  .badgeIcon {
+    font-size: 11px !important;
+  }
+
+  .metaTitle {
+    font-size: 13px;
+  }
+
+  .ctaOrderPrint,
+  .ctaUnlock {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .ctaDeliveryDate,
+  .ctaReorder,
+  .ctaDraftInfo {
+    font-size: 11px;
+  }
+
+  .progressBarContainer {
+    bottom: 10px;
+    left: 14px;
+    right: 14px;
+    height: 3px;
   }
 }

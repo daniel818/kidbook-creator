@@ -391,13 +391,40 @@
   "mybooks": {
     "header": {
       "title": "My Books",
+      "createNew": "Create new book",
       "booksCount": "{{count}} book created",
       "booksCount_other": "{{count}} books created"
+    },
+    "filters": {
+      "all": "All",
+      "draft": "Drafts",
+      "preview": "Preview",
+      "ready": "Ready",
+      "ordered": "Ordered"
+    },
+    "status": {
+      "draft": "Draft",
+      "preview": "Preview",
+      "ready": "Ready",
+      "ordered": "Ordered",
+      "delivered": "Delivered"
+    },
+    "cta": {
+      "orderPrint": "Order Print",
+      "unlockFullBook": "Unlock Full Book",
+      "arriving": "Arriving {{dateRange}}",
+      "orderProcessing": "Processing order...",
+      "orderAnother": "Order Another"
+    },
+    "progress": {
+      "stepOf": "Step {{current}} of {{total}}"
     },
     "empty": {
       "title": "No books yet",
       "subtitle": "Create your first personalized children's book and watch the magic happen",
-      "button": "✨ Create Your First Book"
+      "button": "✨ Create Your First Book",
+      "filteredTitle": "No books in this category",
+      "filteredSubtitle": "Try a different filter or create a new book"
     },
     "deleteModal": {
       "title": "Delete Book",
@@ -405,6 +432,7 @@
       "confirmText": "Delete"
     },
     "bookCard": {
+      "untitled": "Untitled Story",
       "pages": "{{count}} pgs",
       "forChild": "For {{childName}}, age {{age}}",
       "status": {
