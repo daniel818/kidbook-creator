@@ -20,7 +20,6 @@ type DisplayPhase = 'gathering' | 'writing' | 'painting' | 'opening';
 export function BookCreationLoader({ isActive, childName, hasPhoto, phase }: BookCreationLoaderProps) {
     const { t } = useTranslation('create');
     const [mounted, setMounted] = useState(false);
-    const [isExiting, setIsExiting] = useState(false);
     const [displayPhase, setDisplayPhase] = useState<DisplayPhase>('gathering');
     const [progressPercent, setProgressPercent] = useState(0);
 
@@ -44,14 +43,14 @@ export function BookCreationLoader({ isActive, childName, hasPhoto, phase }: Boo
         if (!isActive) {
             setDisplayPhase('gathering');
             setProgressPercent(0);
-            setIsExiting(false);
             return;
         }
 
         if (phase === 'opening') {
             setDisplayPhase('opening');
             setProgressPercent(100);
-            setIsExiting(true);
+            // Don't fade out — keep overlay opaque until route change unmounts us.
+            // This prevents the wizard from flashing between the loader and the viewer.
             return;
         }
 
@@ -125,7 +124,7 @@ export function BookCreationLoader({ isActive, childName, hasPhoto, phase }: Boo
 
     return createPortal(
         <div
-            className={`${styles.overlay} ${isExiting ? styles.overlayExiting : ''}`}
+            className={styles.overlay}
             role="dialog"
             aria-modal="true"
             aria-label={heroText}

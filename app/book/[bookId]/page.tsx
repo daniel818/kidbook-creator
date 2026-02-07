@@ -99,7 +99,7 @@ export default function BookViewerPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 minHeight: '100vh',
-                background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)',
                 color: 'white'
             }}>
                 <div style={{ textAlign: 'center' }}>
@@ -142,10 +142,20 @@ export default function BookViewerPage() {
     }
 
     return (
-        <StoryBookViewer
-            book={book}
-            onClose={handleClose}
-            isFullScreen={true}
-        />
+        <div style={{
+            animation: 'viewerFadeIn 0.6s ease-out forwards',
+        }}>
+            <style>{`
+                @keyframes viewerFadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+            `}</style>
+            <StoryBookViewer
+                book={book}
+                onClose={handleClose}
+                isFullScreen={true}
+            />
+        </div>
     );
 }

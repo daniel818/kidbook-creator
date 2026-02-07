@@ -288,7 +288,9 @@ export default function CreateBookPage() {
             console.log('[CLIENT] Step 3: Navigating to book viewer...');
             setCreatingPhase('opening');
             setCreatingStatus(t('status.openingBook'));
-            await new Promise(resolve => setTimeout(resolve, 1200));
+            // Brief pause to show "Opening your book..." then navigate.
+            // The overlay stays opaque — the viewer page handles the fade-in.
+            await new Promise(resolve => setTimeout(resolve, 600));
 
             const totalDuration = Date.now() - startTime;
             console.log('[CLIENT] ========================================');
