@@ -17,7 +17,13 @@ function getStripe(): Stripe {
 
 export const stripe = new Proxy({} as Stripe, {
     get(_, prop) {
-        return (getStripe() as unknown as Record<string | symbol, unknown>)[prop];
+        const instance = getStripe();
+        const value = (instance as unknown as Record<string | symbol, unknown>)[prop];
+        // Bind functions to the real instance to preserve `this` context
+        if (typeof value === 'function') {
+            return value.bind(instance);
+        }
+        return value;
     },
 });
 
