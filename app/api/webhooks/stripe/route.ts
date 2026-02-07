@@ -6,15 +6,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe/server';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendOrderConfirmation, sendDigitalUnlockEmail, OrderEmailData, DigitalUnlockEmailData } from '@/lib/email/client';
-import * as fs from 'fs';
-import * as path from 'path';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-02-24.acacia',
-});
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
@@ -56,12 +51,6 @@ interface BookRow {
 const logWebhook = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[Webhook ${timestamp}] ${message}`;
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        fs.appendFileSync(logPath, `${logMsg} ${data ? JSON.stringify(data) : ''}\n`);
-    } catch {
-        // ignore
-    }
     if (data !== undefined) {
         console.log(logMsg, data);
     } else {

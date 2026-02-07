@@ -10,8 +10,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
-import * as fs from 'fs';
-import * as path from 'path';
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 
@@ -34,11 +32,6 @@ const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[API generate-illustrations ${timestamp}] ${message}`;
     console.log(logMsg);
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
-        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
-    } catch { /* ignore */ }
     if (data !== undefined) {
         console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 500));
     }

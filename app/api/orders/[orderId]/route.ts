@@ -3,7 +3,8 @@
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireAuth } from '@/lib/auth/api-guard';
+import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ orderId: string }>;
@@ -15,9 +16,21 @@ export async function GET(
 ) {
     try {
         const { orderId } = await context.params;
-        const supabase = await createClient();
+        const { user, supabase, error: authError } = await requireAuth();
+        if (authError) return authError;
+        if (!user || !supabase) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
-        // RLS ensures user can only see their own orders
+        // Rate limit by IP
+        const ip = getClientIp(request);
+        const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            console.log(`[Rate Limit] orders/[orderId] GET blocked for IP ${ip}`);
+            return rateLimitResponse(rateResult);
+        }
+
+        // Explicit ownership check + RLS for defense in depth
         const { data: order, error } = await supabase
             .from('orders')
             .select(`
@@ -30,6 +43,7 @@ export async function GET(
                 )
             `)
             .eq('id', orderId)
+            .eq('user_id', user.id)
             .single();
 
         if (error || !order) {

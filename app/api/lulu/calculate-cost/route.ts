@@ -1,13 +1,26 @@
 // ============================================
 // Lulu Cost Calculation API
 // ============================================
-// Returns real-time pricing from Lulu's API
+// Returns real-time retail pricing (never exposes wholesale costs)
 
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
+import { requireAuth } from '@/lib/auth/api-guard';
+import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
+        const { error: authError } = await requireAuth();
+        if (authError) return authError;
+
+        // Rate limit by IP
+        const ip = getClientIp(request);
+        const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            console.log(`[Rate Limit] lulu/calculate-cost blocked for IP ${ip}`);
+            return rateLimitResponse(rateResult);
+        }
+
         const body = await request.json();
         const { format, size, pageCount, quantity, countryCode, postalCode, stateCode, shippingOption, shipping: shippingAddress } = body;
 
@@ -32,14 +45,11 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({
-            wholesale: pricing.wholesale,           // Lulu's price (cents)
-            subtotal: pricing.subtotal,            // Your price after markup (cents)
-            shipping: pricing.shipping,            // Shipping cost (cents)
-            total: pricing.total,                  // Final total (cents)
-            margin: pricing.margin,
-            isEstimate: pricing.isEstimate,          // True if using fallback prices
+            subtotal: pricing.subtotal,
+            shipping: pricing.shipping,
+            total: pricing.total,
+            isEstimate: pricing.isEstimate,
             formatted: {
-                wholesale: `$${(pricing.wholesale / 100).toFixed(2)}`,
                 subtotal: `$${(pricing.subtotal / 100).toFixed(2)}`,
                 shipping: `$${(pricing.shipping / 100).toFixed(2)}`,
                 total: `$${(pricing.total / 100).toFixed(2)}`,
@@ -51,7 +61,7 @@ export async function POST(request: NextRequest) {
         const message = error instanceof Error ? error.message : 'Failed to calculate cost';
         return NextResponse.json(
             { error: message },
-            { status: 502 }
+            { status: 500 }
         );
     }
 }

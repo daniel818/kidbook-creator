@@ -49,7 +49,6 @@ export default function CreateBookPage() {
     const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
     const [pendingLanguage, setPendingLanguage] = useState<string | null>(null);
     const previousLanguageRef = useRef<string>(i18n.language);
-    const [stitchHeroImgOk, setStitchHeroImgOk] = useState(true);
     const [showAdvancedStyle, setShowAdvancedStyle] = useState(false);
 
     // Track unsaved changes
@@ -389,110 +388,9 @@ export default function CreateBookPage() {
                                 exit={{ opacity: 0, x: -50 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <div className={styles.stitchChildCard}>
-                                    <div className={styles.stitchHeroRow}>
-                                        <div className={styles.stitchHeroBubble}>
-                                            {t('steps.child.heroPrompt', "Let's create your magical hero!")}
-                                        </div>
-                                    </div>
-                                    <div className={`${styles.stitchHeroVisual} ${styles.stitchHeroVisualUnder}`} aria-hidden="true">
-                                        <div className={styles.stitchHeroImageWrap}>
-                                            {stitchHeroImgOk ? (
-                                                <img
-                                                    className={styles.stitchHeroImage}
-                                                    src="/images/dragon-hero.png"
-                                                    alt={t('steps.child.heroImageAlt', 'Dragon hero')}
-                                                    onError={() => setStitchHeroImgOk(false)}
-                                                />
-                                            ) : (
-                                                <div className={styles.stitchHeroAvatar}>🐉</div>
-                                            )}
-                                        </div>
-                                        <div className={styles.stitchHeroCloud}></div>
-                                    </div>
-
-                                    <section className={`${styles.stitchSection} ${styles.stitchSectionName}`}>
-                                        <label className={styles.stitchSectionLabel} htmlFor="stitch-child-name">
-                                            {t('steps.child.nameQuestion', "WHAT'S THEIR NAME?")}
-                                        </label>
-                                        <input
-                                            id="stitch-child-name"
-                                            type="text"
-                                            className={styles.stitchTextInput}
-                                            placeholder={t('steps.child.namePlaceholder')}
-                                            value={settings.childName || ''}
-                                            onChange={(e) => updateSettings('childName', e.target.value)}
-                                            autoFocus
-                                        />
-                                    </section>
-
-                                    <section className={`${styles.stitchSection} ${styles.stitchSectionGender}`}>
-                                        <div className={styles.stitchSectionLabel}>
-                                            {t('steps.child.genderQuestion', 'CHOOSE GENDER')}
-                                        </div>
-                                        <div
-                                            className={styles.stitchGenderGrid}
-                                            role="radiogroup"
-                                            aria-label={t('steps.child.genderQuestion', 'Choose gender')}
-                                        >
-                                            <button
-                                                type="button"
-                                                className={`${styles.stitchGenderOption} ${settings.childGender === 'boy' ? styles.stitchGenderOptionSelected : ''}`}
-                                                onClick={() => updateSettings('childGender', 'boy')}
-                                                role="radio"
-                                                aria-checked={settings.childGender === 'boy'}
-                                            >
-                                                <span className={styles.stitchGenderEmoji} aria-hidden="true">👦</span>
-                                                <span className={styles.stitchGenderText}>{t('steps.child.genderBoy', 'Boy')}</span>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`${styles.stitchGenderOption} ${settings.childGender === 'girl' ? styles.stitchGenderOptionSelected : ''}`}
-                                                onClick={() => updateSettings('childGender', 'girl')}
-                                                role="radio"
-                                                aria-checked={settings.childGender === 'girl'}
-                                            >
-                                                <span className={styles.stitchGenderEmoji} aria-hidden="true">👧</span>
-                                                <span className={styles.stitchGenderText}>{t('steps.child.genderGirl', 'Girl')}</span>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`${styles.stitchGenderOption} ${settings.childGender === 'other' ? styles.stitchGenderOptionSelected : ''}`}
-                                                onClick={() => updateSettings('childGender', 'other')}
-                                                role="radio"
-                                                aria-checked={settings.childGender === 'other'}
-                                            >
-                                                <span className={styles.stitchGenderEmoji} aria-hidden="true">✨</span>
-                                                <span className={styles.stitchGenderText}>{t('steps.child.genderOther', 'Other')}</span>
-                                            </button>
-                                        </div>
-                                    </section>
-
-                                    <section className={`${styles.stitchSection} ${styles.stitchSectionAge}`}>
-                                        <div className={styles.stitchAgeHeader}>
-                                            <label className={styles.stitchSectionLabel} htmlFor="stitch-child-age">
-                                                {t('steps.child.ageQuestion', 'HOW OLD?')}
-                                            </label>
-                                            <span className={styles.stitchAgePill}>
-                                                {settings.childAge} {t('steps.child.agePill', 'Years Old')}
-                                            </span>
-                                        </div>
-                                        <input
-                                            id="stitch-child-age"
-                                            type="range"
-                                            className={styles.stitchAgeSlider}
-                                            min="1"
-                                            max="12"
-                                            value={settings.childAge || 3}
-                                            onChange={(e) => updateSettings('childAge', parseInt(e.target.value))}
-                                        />
-                                        <div className={styles.stitchAgeRange} aria-hidden="true">
-                                            <span>1</span>
-                                            <span>12+</span>
-                                        </div>
-                                    </section>
-
-                                    <section className={`${styles.stitchSection} ${styles.stitchSectionPhoto}`}>
+                                <div className={styles.glassPanel}>
+                                    {/* Photo Upload */}
+                                    <div className={styles.glassPhotoSection}>
                                         <input
                                             type="file"
                                             ref={fileInputRef}
@@ -502,31 +400,140 @@ export default function CreateBookPage() {
                                         />
                                         <button
                                             type="button"
-                                            className={styles.stitchUploadRow}
+                                            className={styles.glassPhotoButton}
                                             onClick={() => fileInputRef.current?.click()}
                                         >
-                                            <span className={styles.stitchUploadIcon} aria-hidden="true">
-                                                <span className="material-symbols-outlined">add_a_photo</span>
-                                            </span>
-                                            <span className={styles.stitchUploadBody}>
-                                                <span className={styles.stitchUploadTitle}>
-                                                    {t('steps.child.photoCta', 'Add Hero Photo')}
-                                                </span>
-                                                <span className={styles.stitchUploadMeta}>
-                                                    {t('steps.child.photoMeta', 'OPTIONAL • JPG/PNG')}
-                                                </span>
-                                            </span>
                                             {photoPreview ? (
                                                 <img
-                                                    className={styles.stitchUploadPreview}
+                                                    className={styles.glassPhotoPreview}
                                                     src={photoPreview}
-                                                    alt={t('steps.child.photoPreviewAlt', 'Uploaded hero photo preview')}
+                                                    alt={t('steps.child.photoPreviewAlt', 'Uploaded photo preview')}
                                                 />
                                             ) : (
-                                                <span className={styles.stitchUploadChevron} aria-hidden="true">→</span>
+                                                <span className="material-symbols-outlined" style={{ fontSize: 42, fontVariationSettings: "'FILL' 1, 'wght' 300" }}>add_a_photo</span>
                                             )}
+                                            <span className={styles.glassPhotoBadge}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>add</span>
+                                            </span>
                                         </button>
-                                    </section>
+                                        <p className={styles.glassPhotoLabel}>
+                                            {t('steps.child.photoCta', "Add Child's Photo")}
+                                        </p>
+                                    </div>
+
+                                    {/* Child's Name */}
+                                    <div className={styles.glassFieldGroup}>
+                                        <label className={styles.glassFieldLabel} htmlFor="glass-child-name">
+                                            {t('steps.child.nameQuestion', "Child's Name")}
+                                        </label>
+                                        <div className={styles.glassInputWrap}>
+                                            <input
+                                                id="glass-child-name"
+                                                type="text"
+                                                className={styles.glassTextInput}
+                                                placeholder={t('steps.child.namePlaceholder', 'e.g. Leo')}
+                                                value={settings.childName || ''}
+                                                onChange={(e) => updateSettings('childName', e.target.value)}
+                                                autoFocus
+                                            />
+                                            <span className={styles.glassInputIcon} aria-hidden="true">
+                                                <span className="material-symbols-outlined">face</span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Age Stepper */}
+                                    <div className={styles.glassFieldGroup}>
+                                        <label className={styles.glassFieldLabel}>
+                                            {t('steps.child.ageQuestion', 'How old are they?')}
+                                        </label>
+                                        <div className={styles.glassStepper} role="group" aria-label={t('steps.child.ageQuestion', 'How old are they?')}>
+                                            <button
+                                                type="button"
+                                                className={`${styles.glassStepperBtn} ${(settings.childAge ?? 3) <= 0 ? styles.glassStepperBtnDisabled : ''}`}
+                                                onClick={() => updateSettings('childAge', Math.max(0, (settings.childAge ?? 3) - 1))}
+                                                disabled={(settings.childAge ?? 3) <= 0}
+                                                aria-label={t('steps.child.ageDecrease', 'Decrease age')}
+                                            >
+                                                <span className="material-symbols-outlined" style={{ fontSize: 28 }}>remove</span>
+                                            </button>
+                                            <div className={styles.glassStepperValue}>
+                                                <span className={styles.glassStepperNumber}>{settings.childAge ?? 3}</span>
+                                                <span className={styles.glassStepperUnit}>{t('steps.child.ageUnit', 'years')}</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className={`${styles.glassStepperBtn} ${(settings.childAge ?? 3) >= 12 ? styles.glassStepperBtnDisabled : ''}`}
+                                                onClick={() => updateSettings('childAge', Math.min(12, (settings.childAge ?? 3) + 1))}
+                                                disabled={(settings.childAge ?? 3) >= 12}
+                                                aria-label={t('steps.child.ageIncrease', 'Increase age')}
+                                            >
+                                                <span className="material-symbols-outlined" style={{ fontSize: 28 }}>add</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Gender Selection */}
+                                    <div className={styles.glassFieldGroup}>
+                                        <label className={styles.glassFieldLabel}>
+                                            {t('steps.child.genderQuestion', 'Gender')}
+                                        </label>
+                                        <div
+                                            className={styles.glassGenderPills}
+                                            role="radiogroup"
+                                            aria-label={t('steps.child.genderQuestion', 'Gender')}
+                                        >
+                                            {(['girl', 'boy', 'other'] as const).map((gender) => (
+                                                <button
+                                                    key={gender}
+                                                    type="button"
+                                                    className={`${styles.glassGenderPill} ${settings.childGender === gender ? styles.glassGenderPillSelected : ''}`}
+                                                    onClick={() => updateSettings('childGender', gender)}
+                                                    role="radio"
+                                                    aria-checked={settings.childGender === gender}
+                                                >
+                                                    {t(`steps.child.gender${gender.charAt(0).toUpperCase() + gender.slice(1)}`, gender.charAt(0).toUpperCase() + gender.slice(1))}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Story Language */}
+                                    <div className={styles.glassFieldGroup}>
+                                        <label className={styles.glassFieldLabel}>
+                                            {t('steps.child.languageLabel', 'Story Language')}
+                                        </label>
+                                        <div className={styles.glassLangScroll}>
+                                            <div className={styles.glassLangCards}>
+                                                {([
+                                                    { code: 'en' as const, flag: '\u{1F1FA}\u{1F1F8}', label: 'English' },
+                                                    { code: 'de' as const, flag: '\u{1F1E9}\u{1F1EA}', label: 'Deutsch' },
+                                                    { code: 'he' as const, flag: '\u{1F1EE}\u{1F1F1}', label: '\u05E2\u05D1\u05E8\u05D9\u05EA' },
+                                                ]).map((lang) => {
+                                                    const isSelected = (settings.language || i18n.language?.slice(0, 2) || 'en') === lang.code;
+                                                    return (
+                                                        <button
+                                                            key={lang.code}
+                                                            type="button"
+                                                            className={`${styles.glassLangCard} ${isSelected ? styles.glassLangCardSelected : ''}`}
+                                                            onClick={() => updateSettings('language', lang.code)}
+                                                        >
+                                                            <div className={styles.glassLangCardTop}>
+                                                                <span className={styles.glassLangFlag}>{lang.flag}</span>
+                                                                {isSelected && (
+                                                                    <span className={styles.glassLangCheck}>
+                                                                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>check</span>
+                                                                    </span>
+                                                                )}
+                                                                {!isSelected && <span className={styles.glassLangCheckEmpty}></span>}
+                                                            </div>
+                                                            <span className={styles.glassLangLabel}>{lang.label}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
@@ -816,7 +823,7 @@ export default function CreateBookPage() {
                                         <div className={styles.stitchFinalCardIcon}>
                                             <span className="material-symbols-outlined" aria-hidden="true">face</span>
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Hero</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.child.cardLabel', 'Hero')}</div>
                                         <div className={styles.stitchFinalCardValue}>
                                             {settings.childName || t('steps.child.namePlaceholder', 'Hero')}, {settings.childAge || 3}
                                         </div>
@@ -837,12 +844,12 @@ export default function CreateBookPage() {
                                         <div className={styles.stitchFinalCardIcon}>
                                             <span className="material-symbols-outlined" aria-hidden="true">menu_book</span>
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Format</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.format.cardLabel', 'Format')}</div>
                                         <div className={styles.stitchFinalCardValue}>
-                                            {settings.printFormat === 'portrait' ? 'Portrait' : 'Square'}
+                                            {settings.printFormat === 'portrait' ? t('steps.format.portraitShort', 'Portrait') : t('steps.format.squareShort', 'Square')}
                                         </div>
                                         <div className={styles.stitchFinalCardMeta}>
-                                            {settings.printFormat === 'portrait' ? 'Premium 8 x 10' : 'Premium 8.5 x 8.5'}
+                                            {settings.printFormat === 'portrait' ? t('steps.format.portraitMeta', 'Premium 8 x 10') : t('steps.format.squareMeta', 'Premium 8.5 x 8.5')}
                                         </div>
                                     </div>
 
@@ -858,7 +865,7 @@ export default function CreateBookPage() {
                                         <div className={styles.stitchFinalCardIcon}>
                                             <span className="material-symbols-outlined" aria-hidden="true">rocket_launch</span>
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Theme</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.theme.cardLabel', 'Theme')}</div>
                                         <div className={styles.stitchFinalCardValue}>
                                             {settings.bookTheme ? t(`themes.${settings.bookTheme}`) : t('themes.adventure', 'Adventure')}
                                         </div>
@@ -882,7 +889,7 @@ export default function CreateBookPage() {
                                                 alt=""
                                             />
                                         </div>
-                                        <div className={styles.stitchFinalCardLabel}>Style</div>
+                                        <div className={styles.stitchFinalCardLabel}>{t('steps.style.cardLabel', 'Style')}</div>
                                         <div className={styles.stitchFinalCardValue}>
                                             {settings.artStyle ? artStyleLabel(settings.artStyle) : t('steps.style.default', 'Watercolor')}
                                         </div>
@@ -911,7 +918,7 @@ export default function CreateBookPage() {
                         )}
                         <div className={styles.stitchFooterCenter} aria-hidden="true">
                             <div className={styles.stitchFooterStep}>
-                                {`STEP ${currentStepIndex + 1} OF ${steps.length}`}
+                                {t('wizard.stepIndicator', 'STEP {{current}} OF {{total}}', { current: currentStepIndex + 1, total: steps.length })}
                             </div>
                             <div className={styles.stitchFooterHint}>
                                 {currentStepIndex === 0 ? t('wizard.footerStart', "Let's begin!") : t('wizard.footerAlmostThere', 'Almost there!')}
