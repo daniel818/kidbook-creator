@@ -6,8 +6,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
 import { getPrompts, Language } from './prompts';
-import * as fs from 'fs';
-import * as path from 'path';
 
 // Re-export art styles for convenience
 export { ART_STYLES, type ArtStyle } from '../art-styles';
@@ -17,12 +15,6 @@ const logWithTime = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[GEMINI ${timestamp}] ${message}`;
     console.log(logMsg);
-
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
-        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
-    } catch (e) { }
 
     if (data !== undefined) {
         console.log(`[GEMINI ${timestamp}] Data:`, JSON.stringify(data, null, 2).slice(0, 500));
