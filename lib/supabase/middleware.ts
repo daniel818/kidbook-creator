@@ -68,8 +68,9 @@ export async function updateSession(request: NextRequest) {
     // Prevent MIME type sniffing
     supabaseResponse.headers.set('X-Content-Type-Options', 'nosniff');
 
-    // Prevent clickjacking (Stripe iframe uses frame-src in CSP, not X-Frame-Options)
-    supabaseResponse.headers.set('X-Frame-Options', 'DENY');
+    // Prevent clickjacking — use SAMEORIGIN instead of DENY to avoid breaking
+    // Stripe payment iframes (X-Frame-Options is enforced independently of CSP frame-src)
+    supabaseResponse.headers.set('X-Frame-Options', 'SAMEORIGIN');
 
     // Control referrer information sent with requests
     supabaseResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -83,12 +84,19 @@ export async function updateSession(request: NextRequest) {
     // Enable DNS prefetching for linked domains
     supabaseResponse.headers.set('X-DNS-Prefetch-Control', 'on');
 
-    // Force HTTPS in production (1 year, include subdomains, allow preload list)
+    // Force HTTPS in production
+    // Start conservative without includeSubDomains/preload — these are hard to roll back
+    // and require ALL subdomains to serve HTTPS. Enable HSTS_INCLUDE_SUBDOMAINS=true
+    // and HSTS_PRELOAD=true only when ready for full commitment.
     if (process.env.NODE_ENV === 'production') {
-        supabaseResponse.headers.set(
-            'Strict-Transport-Security',
-            'max-age=31536000; includeSubDomains; preload'
-        );
+        let hstsValue = 'max-age=31536000';
+        if (process.env.HSTS_INCLUDE_SUBDOMAINS === 'true') {
+            hstsValue += '; includeSubDomains';
+        }
+        if (process.env.HSTS_PRELOAD === 'true') {
+            hstsValue += '; preload';
+        }
+        supabaseResponse.headers.set('Strict-Transport-Security', hstsValue);
     }
 
     return supabaseResponse;
