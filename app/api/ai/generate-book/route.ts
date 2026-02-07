@@ -1,13 +1,13 @@
 // ============================================
 // Complete Book Generation API
+// Phase 1: Generate story text + cover illustration (synchronous)
+// Phase 2: Trigger background illustration generation (fire-and-forget)
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { generateCompleteBook, StoryGenerationInput } from '@/lib/gemini/client';
-import { uploadReferenceImage } from '@/lib/supabase/upload';
-import * as fs from 'fs';
-import * as path from 'path';
+import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib/gemini/client';
+import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
 
 const safeStringify = (value: unknown) => {
     try {
@@ -22,15 +22,6 @@ const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[API generate-book ${timestamp}] ${message}`;
     console.log(logMsg);
-
-    // Also write to file for deeper debugging
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : safeStringify(data)) : '';
-        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
-    } catch (e) {
-        // ignore write error
-    }
 
     if (data !== undefined) {
         console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : safeStringify(data).slice(0, 500));
@@ -66,26 +57,25 @@ const parseDataUrl = (value: unknown): { contentType: string; base64: string } |
     };
 };
 
-function calculateCost(log: any): number {
+function calculateCost(gLog: { model: string; inputTokens?: number; outputTokens?: number; imageCount: number }): number {
     let cost = 0;
 
     // Text Cost
-    if (log.model.includes('flash') || log.model.includes('gemini-3')) {
-        const rates = PRICING['gemini-3-flash-preview']; // Default to flash rates for text
-        cost += (log.inputTokens || 0) * rates.input;
-        cost += (log.outputTokens || 0) * rates.output;
+    if (gLog.model.includes('flash') || gLog.model.includes('gemini-3')) {
+        const rates = PRICING['gemini-3-flash-preview'];
+        cost += (gLog.inputTokens || 0) * rates.input;
+        cost += (gLog.outputTokens || 0) * rates.output;
     }
 
     // Image Cost
-    if (log.imageCount > 0) {
-        let rate = 0.04; // Default
-        if (log.model.includes('ultra') || log.model.includes('pro')) rate = 0.08;
-        // Specific overrides
-        if (PRICING[log.model as keyof typeof PRICING]) {
+    if (gLog.imageCount > 0) {
+        let rate = 0.04;
+        if (gLog.model.includes('ultra') || gLog.model.includes('pro')) rate = 0.08;
+        if (PRICING[gLog.model as keyof typeof PRICING]) {
             // @ts-ignore
-            rate = PRICING[log.model].image || rate;
+            rate = PRICING[gLog.model].image || rate;
         }
-        cost += log.imageCount * rate;
+        cost += gLog.imageCount * rate;
     }
 
     return cost;
@@ -94,7 +84,7 @@ function calculateCost(log: any): number {
 export async function POST(request: NextRequest) {
     const requestStartTime = Date.now();
     log('========================================');
-    log('=== GENERATE-BOOK API REQUEST STARTED ===');
+    log('=== GENERATE-BOOK API REQUEST STARTED (Progressive Mode) ===');
     log('========================================');
 
     try {
@@ -148,9 +138,6 @@ export async function POST(request: NextRequest) {
             language: language || 'en',
         };
 
-        // Generate the complete book (story + illustrations)
-        log('Step 3: Starting book generation...');
-        const genStartTime = Date.now();
         const isPreview = preview === true;
         const defaultPreviewCount = 3;
         const maxPreviewCount = 4;
@@ -158,31 +145,94 @@ export async function POST(request: NextRequest) {
             maxPreviewCount,
             Math.max(1, Number(previewPageCount || defaultPreviewCount))
         );
-        const result = await generateCompleteBook(
-            input,
-            undefined,
-            {
-                illustrationLimit: isPreview ? effectivePreviewCount : undefined,
-                includeBackCover: !isPreview
-            }
-        );
 
-        // Calculate Costs from Logs
+        // =========================================================
+        // PHASE 1: Generate story text (fast, ~5 seconds)
+        // =========================================================
+        log('Step 3a: Generating story text only...');
+        const storyStartTime = Date.now();
+        const { story, usage: storyUsage } = await generateStory(input);
+        log(`Story generated in ${Date.now() - storyStartTime}ms: "${story.title}", ${story.pages.length} pages`);
+
+        const resolvedCharacterDescription = input.characterDescription || story.characterDescription || `A cute child named ${input.childName}`;
+
+        // =========================================================
+        // PHASE 1b: Generate cover illustration (first page only)
+        // =========================================================
+        log('Step 3b: Generating cover illustration...');
+        const coverStartTime = Date.now();
+        let coverImageUrl: string | null = null;
+        let coverStoredUrl: string | null = null;
+        let coverStyleRef: string | undefined;
+
+        const userId = user.id;
+        const bookId = crypto.randomUUID();
+        log(`Created bookId: ${bookId}`);
+
+        if (story.pages.length > 0) {
+            try {
+                const firstPage = story.pages[0];
+                const { imageUrl, usage: coverUsage } = await generateIllustration({
+                    scenePrompt: firstPage.imagePrompt,
+                    characterDescription: resolvedCharacterDescription,
+                    artStyle: input.artStyle,
+                    quality: input.imageQuality,
+                    referenceImage: input.childPhoto,
+                    aspectRatio: input.aspectRatio,
+                    language: input.language || 'en',
+                    pageNumber: 1,
+                    totalPages: story.pages.length,
+                    bookTitle: story.title,
+                });
+
+                coverImageUrl = imageUrl;
+                coverStyleRef = imageUrl; // Save as style reference for subsequent pages
+
+                // Upload cover image to storage
+                const parsed = parseDataUrl(imageUrl);
+                if (parsed) {
+                    const buffer = Buffer.from(parsed.base64, 'base64');
+                    coverStoredUrl = await uploadImageToStorage(bookId, 1, buffer);
+                }
+
+                log(`Cover illustration generated in ${Date.now() - coverStartTime}ms`);
+            } catch (err) {
+                log('Cover illustration generation failed, continuing without it', err);
+            }
+        }
+
+        // =========================================================
+        // Calculate costs for Phase 1
+        // =========================================================
+        const generationLogs = [
+            {
+                stepName: 'story_generation',
+                model: storyUsage.model,
+                inputTokens: storyUsage.inputTokens,
+                outputTokens: storyUsage.outputTokens,
+                imageCount: 0,
+            },
+        ];
+        if (coverImageUrl) {
+            generationLogs.push({
+                stepName: 'cover_illustration',
+                model: process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview',
+                inputTokens: 0,
+                outputTokens: 0,
+                imageCount: 1,
+            });
+        }
+
         let totalCost = 0;
-        const processedLogs = result.generationLogs.map(gLog => {
+        const processedLogs = generationLogs.map(gLog => {
             const cost = calculateCost(gLog);
             totalCost += cost;
             return { ...gLog, cost_usd: cost };
         });
 
-        log(`Book generation completed in ${Date.now() - genStartTime}ms`);
-        log(`Generated: ${result.story.pages.length} pages, ${result.illustrations.filter(i => i).length} images`);
-        log(`Total Estimated Cost: $${totalCost.toFixed(4)}`);
-
-        // Identifiers
-        const userId = user.id;
-        const bookId = crypto.randomUUID();
-        log(`Created bookId: ${bookId}`);
+        // =========================================================
+        // Upload reference image if provided
+        // =========================================================
         let referenceImageUrl: string | null = null;
         if (childPhoto) {
             const parsed = parseDataUrl(childPhoto);
@@ -194,65 +244,14 @@ export async function POST(request: NextRequest) {
                     log('Reference image upload failed', err);
                 }
             } else {
-                log('Reference image skipped: invalid data URL');
+                log('WARNING: childPhoto provided but is not a valid data URL, skipping reference image upload');
             }
         }
+
         const previewCountClamped = isPreview
-            ? Math.min(effectivePreviewCount, result.story.pages.length)
-            : result.story.pages.length;
-        const totalPageCount = result.story.pages.length + (result.story.backCoverBlurb ? 1 : 0);
-
-        // ---------------------------------------------------------
-        // IMAGE UPLOAD LOGIC
-        // ---------------------------------------------------------
-        log('Step 4: Processing and uploading images...');
-        const uploadStartTime = Date.now();
-        let uploadedCount = 0;
-
-        // Helper to upload base64
-        const uploadBase64 = async (base64Str: string, filename: string) => {
-            if (!base64Str || base64Str.length < 100) return null;
-            try {
-                const parsed = parseDataUrl(base64Str);
-                if (!parsed) return null;
-                const buffer = Buffer.from(parsed.base64, 'base64');
-                // log(`Uploading ${Math.round(buffer.length / 1024)}KB as ${filename}`);
-
-                const { error: uploadError } = await supabase.storage
-                    .from('book-images')
-                    .upload(filename, buffer, { contentType: parsed.contentType, upsert: true });
-
-                if (uploadError) {
-                    log(`Upload FAILED for ${filename}`, uploadError.message);
-                    return null;
-                }
-                const { data: { publicUrl } } = supabase.storage
-                    .from('book-images')
-                    .getPublicUrl(filename);
-                return publicUrl;
-            } catch (e) {
-                log(`Processing ERROR for ${filename}`, e);
-            }
-            return null;
-        };
-
-        // 1. Upload Story Illustrations
-        for (let i = 0; i < result.illustrations.length; i++) {
-            const publicUrl = await uploadBase64(result.illustrations[i], `${userId}/${bookId}/${i}.png`);
-            if (publicUrl) {
-                result.illustrations[i] = publicUrl;
-                uploadedCount++;
-            }
-        }
-
-        // 2. Upload Back Cover Image
-        let backCoverUrl = '';
-        if (result.backCoverImage) {
-            const url = await uploadBase64(result.backCoverImage, `${userId}/${bookId}/back_cover.png`);
-            if (url) backCoverUrl = url;
-        }
-
-        log(`Image upload complete: ${uploadedCount} images + back cover in ${Date.now() - uploadStartTime}ms`);
+            ? Math.min(effectivePreviewCount, story.pages.length)
+            : story.pages.length;
+        const totalPageCount = story.pages.length + (story.backCoverBlurb ? 1 : 0);
 
         const getAgeGroup = (age: number) => {
             if (age <= 2) return '0-2';
@@ -261,14 +260,16 @@ export async function POST(request: NextRequest) {
             return '9-12';
         };
 
-        // Insert into Database
-        log('Step 5: Saving to database...');
+        // =========================================================
+        // Save book to database
+        // =========================================================
+        log('Step 4: Saving to database...');
         const dbStartTime = Date.now();
 
         const { error: dbError } = await supabase.from('books').insert({
             id: bookId,
             user_id: userId,
-            title: result.story.title,
+            title: story.title,
             child_name: childName,
             child_age: childAge,
             child_gender: childGender || null,
@@ -277,12 +278,12 @@ export async function POST(request: NextRequest) {
             book_type: resolvedBookType,
             print_format: aspectRatio === '1:1' ? 'square' : 'portrait',
             status: isPreview ? 'preview' : 'draft',
-            estimated_cost: totalCost, // Save aggregated cost
-            language: language || 'en', // Save book language
+            estimated_cost: totalCost,
+            language: language || 'en',
             is_preview: isPreview,
             preview_page_count: previewCountClamped,
             total_page_count: totalPageCount,
-            character_description: result.story.characterDescription || characterDescription || null,
+            character_description: resolvedCharacterDescription,
             art_style: artStyle || input.artStyle || null,
             image_quality: imageQuality || input.imageQuality || null,
             story_description: storyDescription || null,
@@ -294,7 +295,7 @@ export async function POST(request: NextRequest) {
             throw dbError;
         }
 
-        // Save Generation Logs (Async, don't block response too much, but good to await for safety)
+        // Save generation logs
         const logInserts = processedLogs.map(l => ({
             book_id: bookId,
             step_name: l.stepName,
@@ -308,9 +309,10 @@ export async function POST(request: NextRequest) {
         const { error: logError } = await supabase.from('generation_logs').insert(logInserts);
         if (logError) log('ERROR: Failed to save generation logs', logError);
 
-        log(`Book record & logs saved in ${Date.now() - dbStartTime}ms`);
-
-        const pagesData = result.story.pages.map((page, index) => ({
+        // =========================================================
+        // Save pages - cover has image, rest have empty image_elements
+        // =========================================================
+        const pagesData = story.pages.map((page, index) => ({
             book_id: bookId,
             page_number: page.pageNumber,
             page_type: page.pageNumber === 1 ? 'cover' : 'inside',
@@ -322,34 +324,30 @@ export async function POST(request: NextRequest) {
                 x: 10, y: 70, width: 80, fontSize: 18,
                 fontFamily: 'Inter', color: '#333333', textAlign: 'center', fontWeight: 'normal'
             }] : [],
-            image_elements: result.illustrations[index] ? [{
+            // Only the cover (index 0) gets its image now; rest are generated in background
+            image_elements: (index === 0 && coverStoredUrl) ? [{
                 id: crypto.randomUUID(),
-                src: result.illustrations[index],
+                src: coverStoredUrl,
                 x: 0, y: 0, width: 100, height: 100,
                 rotation: 0
             }] : []
         }));
 
-        // Add Back Cover Page
-        if (result.story.backCoverBlurb || backCoverUrl) {
+        // Add Back Cover Page placeholder (text only, image generated in background)
+        if (story.backCoverBlurb) {
             pagesData.push({
                 book_id: bookId,
                 page_number: pagesData.length + 1,
                 page_type: 'back',
                 background_color: '#ffffff',
-                image_prompt: '', // Back cover doesn't have a specific image prompt
-                text_elements: result.story.backCoverBlurb ? [{
+                image_prompt: 'A magical background pattern or simple scenic view suitable for a book back cover. No characters, just atmosphere matching the book theme.',
+                text_elements: [{
                     id: crypto.randomUUID(),
-                    content: result.story.backCoverBlurb,
+                    content: story.backCoverBlurb,
                     x: 15, y: 30, width: 70, fontSize: 14,
                     fontFamily: 'Inter', color: '#000000', textAlign: 'center', fontWeight: 'normal'
-                }] : [],
-                image_elements: backCoverUrl ? [{
-                    id: crypto.randomUUID(),
-                    src: backCoverUrl,
-                    x: 0, y: 0, width: 100, height: 100,
-                    rotation: 0
-                }] : []
+                }],
+                image_elements: []
             });
         }
 
@@ -362,11 +360,45 @@ export async function POST(request: NextRequest) {
             throw pagesError;
         }
         log(`Pages saved in ${Date.now() - pagesStartTime}ms`);
+        log(`Book record & logs saved in ${Date.now() - dbStartTime}ms`);
 
         const totalDuration = Date.now() - requestStartTime;
         log('========================================');
-        log(`=== GENERATE-BOOK API REQUEST COMPLETE in ${totalDuration}ms ===`);
+        log(`=== PHASE 1 COMPLETE in ${totalDuration}ms - Story + Cover saved ===`);
         log('========================================');
+
+        // =========================================================
+        // PHASE 2: Fire-and-forget background illustration generation
+        // =========================================================
+        const internalKey = process.env.INTERNAL_API_KEY;
+        if (internalKey) {
+            // Use server-only INTERNAL_API_BASE_URL if set, fall back to NEXT_PUBLIC_APP_URL for dev
+            const baseUrl = process.env.INTERNAL_API_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            log('Triggering background illustration generation...');
+
+            fetch(`${baseUrl}/api/ai/generate-illustrations`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Internal-Key': internalKey,
+                },
+                body: JSON.stringify({
+                    bookId,
+                    userId,
+                    characterDescription: resolvedCharacterDescription,
+                    artStyle: input.artStyle,
+                    imageQuality: input.imageQuality,
+                    childPhoto: input.childPhoto,
+                    aspectRatio,
+                    language: input.language || 'en',
+                    isPreview,
+                    previewPageCount: effectivePreviewCount,
+                    styleReferenceImage: coverStyleRef,
+                }),
+            }).catch(err => log('Background illustration trigger failed (non-blocking)', err));
+        } else {
+            log('WARNING: INTERNAL_API_KEY not set, skipping background illustration generation');
+        }
 
         return NextResponse.json({
             success: true,

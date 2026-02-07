@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import Link from 'next/link';
 import styles from './page.module.css';
 
@@ -401,6 +402,7 @@ export default function OrdersPage() {
                     )}
                 </div>
             </main>
+            <Footer />
         </>
     );
 }

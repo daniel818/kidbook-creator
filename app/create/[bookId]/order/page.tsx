@@ -53,11 +53,13 @@ const SIZES_BY_RATIO: Record<'square' | 'portrait', BookSize[]> = {
     square: ['7.5x7.5', '8x8'],
     portrait: ['8x10']
 };
-// Estimated starting prices shown on the options step before the server quote arrives.
+// Starting prices derived from fallback table with standard markup.
 // Actual price is computed server-side via calculateRetailPricing on shipping/review steps.
+import { getStartingRetailPrice } from '@/lib/lulu/fallback-prices';
+
 const FORMAT_STARTING_PRICES: Record<BookFormat, number> = {
-    softcover: 24.99,
-    hardcover: 39.99
+    softcover: getStartingRetailPrice('softcover') / 100,
+    hardcover: getStartingRetailPrice('hardcover') / 100,
 };
 
 function getAvailableSizes(printFormat?: Book['settings']['printFormat']): BookSize[] {

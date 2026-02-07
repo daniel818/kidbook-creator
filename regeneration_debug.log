@@ -1,9 +1,0 @@
-2026-01-20T11:09:33.952Z: Request received 
-2026-01-20T11:09:33.952Z: Parsed body {"bookId":"9ddf600e-44a2-4816-a150-d84e9cae8ac1","pageNumber":1,"hasPrompt":true}
-2026-01-20T11:09:33.953Z: Starting generation for book 9ddf600e-44a2-4816-a150-d84e9cae8ac1 page 1 
-2026-01-20T11:09:33.954Z: Calling generateIllustration... 
-2026-01-20T11:09:46.218Z: generateIllustration returned {"length":2367214}
-2026-01-20T11:09:46.221Z: Buffer created: 1775392 bytes 
-2026-01-20T11:09:46.221Z: Uploading to storage... 
-2026-01-20T11:09:46.222Z [Upload]: Uploading 9ddf600e-44a2-4816-a150-d84e9cae8ac1/page_1_1768907386222.png, size: 1775392
-2026-01-20T11:09:46.289Z: Upload success: http://127.0.0.1:54321/storage/v1/object/public/book-images/9ddf600e-44a2-4816-a150-d84e9cae8ac1/page_1_1768907386222.png 

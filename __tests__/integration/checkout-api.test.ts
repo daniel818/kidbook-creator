@@ -19,12 +19,22 @@ jest.mock('@/lib/stripe/server', () => ({
             },
         },
     },
-    calculatePrice: jest.fn(() => ({
-        subtotal: 2999, // cents
+    formatPrice: jest.fn((cents: number) => `$${(cents / 100).toFixed(2)}`),
+}));
+
+// Mock Lulu pricing
+jest.mock('@/lib/lulu/pricing', () => ({
+    calculateRetailPricing: jest.fn(() => Promise.resolve({
+        subtotal: 2999,
         shipping: 499,
         total: 3498,
+        isEstimate: false,
     })),
-    formatPrice: jest.fn((cents: number) => `$${(cents / 100).toFixed(2)}`),
+}));
+
+// Mock page count
+jest.mock('@/lib/lulu/page-count', () => ({
+    getPrintableInteriorPageCount: jest.fn(() => 24),
 }));
 
 // Mock Supabase
@@ -35,12 +45,14 @@ const mockSupabase = {
     from: jest.fn(() => mockSupabase),
     select: jest.fn(() => mockSupabase),
     insert: jest.fn(() => mockSupabase),
+    update: jest.fn(() => mockSupabase),
     eq: jest.fn(() => mockSupabase),
     single: jest.fn(),
 };
 
 jest.mock('@/lib/supabase/server', () => ({
     createClient: jest.fn(() => Promise.resolve(mockSupabase)),
+    createAdminClient: jest.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 describe('Checkout API', () => {
@@ -55,6 +67,9 @@ describe('Checkout API', () => {
             format: 'softcover',
             size: '7.5x7.5',
             quantity: 1,
+            shippingLevel: 'MAIL',
+            pdfUrl: 'https://storage.example.com/interior.pdf',
+            coverUrl: 'https://storage.example.com/cover.pdf',
             shipping: {
                 fullName: 'John Doe',
                 addressLine1: '123 Main St',
