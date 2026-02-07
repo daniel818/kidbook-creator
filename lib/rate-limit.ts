@@ -100,10 +100,12 @@ export function checkRateLimit(identifier: string, config: RateLimitConfig): Rat
     // Allow and record
     entry.timestamps.push(now);
 
+    // resetAt = when the oldest request in the window will expire (consistent with blocked path)
+    const oldestTimestamp = entry.timestamps[0];
     return {
         allowed: true,
         remaining: config.maxRequests - entry.timestamps.length,
-        resetAt: now + config.windowMs,
+        resetAt: oldestTimestamp + config.windowMs,
         limit: config.maxRequests,
     };
 }
