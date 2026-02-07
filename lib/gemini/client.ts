@@ -6,6 +6,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
 import { getPrompts, Language } from './prompts';
+import { sanitizeStoryInput, sanitizeInput } from '../sanitize';
 
 // Re-export art styles for convenience
 export { ART_STYLES, type ArtStyle } from '../art-styles';
@@ -102,7 +103,9 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     logWithTime(`Using model: ${textModel}, language: ${language}`);
 
     const prompts = getPrompts(language);
-    const prompt = prompts.getStoryPrompt({
+
+    // Sanitize all user-provided inputs before prompt interpolation
+    const sanitizedInput = sanitizeStoryInput({
         childName: input.childName,
         childAge: input.childAge,
         childGender: input.childGender,
@@ -113,6 +116,8 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
         storyDescription: input.storyDescription,
         artStyle: input.artStyle,
     });
+
+    const prompt = prompts.getStoryPrompt(sanitizedInput);
 
     logWithTime('--- STORY PROMPT SENT TO MODEL ---', prompt);
 
@@ -191,11 +196,15 @@ export async function generateIllustration(
 
     const parts: any[] = [];
 
+    // Sanitize user-controlled inputs before prompt interpolation
+    const sanitizedScene = sanitizeInput(scenePrompt, 'storyDescription');
+    const sanitizedCharacter = sanitizeInput(characterDescription, 'characterDescription');
+
     // Construct Prompt using localized template
     const prompts = getPrompts(language);
     const promptText = prompts.getIllustrationPrompt(
-        scenePrompt,
-        characterDescription,
+        sanitizedScene,
+        sanitizedCharacter,
         styleInfo.prompt,
         aspectRatio,
         !!referenceImage,
