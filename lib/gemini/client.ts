@@ -6,8 +6,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
 import { getPrompts, Language } from './prompts';
-import * as fs from 'fs';
-import * as path from 'path';
+import { sanitizeStoryInput, sanitizeInput } from '../sanitize';
 
 // Re-export art styles for convenience
 export { ART_STYLES, type ArtStyle } from '../art-styles';
@@ -18,21 +17,21 @@ const logWithTime = (message: string, data?: unknown) => {
     const logMsg = `[GEMINI ${timestamp}] ${message}`;
     console.log(logMsg);
 
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
-        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
-    } catch (e) { }
-
     if (data !== undefined) {
         console.log(`[GEMINI ${timestamp}] Data:`, JSON.stringify(data, null, 2).slice(0, 500));
     }
 };
 
-// Initialize Gemini client (server-side only)
-logWithTime('Initializing Gemini Unified client (@google/genai)...');
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-logWithTime('Gemini client initialized');
+// Initialize Gemini client lazily (server-side only)
+let _genAI: GoogleGenAI | null = null;
+function getGenAI(): GoogleGenAI {
+    if (!_genAI) {
+        logWithTime('Initializing Gemini Unified client (@google/genai)...');
+        _genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        logWithTime('Gemini client initialized');
+    }
+    return _genAI;
+}
 
 export interface StoryGenerationInput {
     childName: string;
@@ -104,7 +103,9 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     logWithTime(`Using model: ${textModel}, language: ${language}`);
 
     const prompts = getPrompts(language);
-    const prompt = prompts.getStoryPrompt({
+
+    // Sanitize all user-provided inputs before prompt interpolation
+    const sanitizedInput = sanitizeStoryInput({
         childName: input.childName,
         childAge: input.childAge,
         childGender: input.childGender,
@@ -116,12 +117,14 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
         artStyle: input.artStyle,
     });
 
+    const prompt = prompts.getStoryPrompt(sanitizedInput);
+
     logWithTime('--- STORY PROMPT SENT TO MODEL ---', prompt);
 
     try {
         logWithTime('Sending request to Gemini API...');
 
-        const response = await genAI.models.generateContent({
+        const response = await getGenAI().models.generateContent({
             model: textModel,
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             config: {
@@ -193,11 +196,15 @@ export async function generateIllustration(
 
     const parts: any[] = [];
 
+    // Sanitize user-controlled inputs before prompt interpolation
+    const sanitizedScene = sanitizeInput(scenePrompt, 'storyDescription');
+    const sanitizedCharacter = sanitizeInput(characterDescription, 'characterDescription');
+
     // Construct Prompt using localized template
     const prompts = getPrompts(language);
     const promptText = prompts.getIllustrationPrompt(
-        scenePrompt,
-        characterDescription,
+        sanitizedScene,
+        sanitizedCharacter,
         styleInfo.prompt,
         aspectRatio,
         !!referenceImage,
@@ -225,7 +232,7 @@ export async function generateIllustration(
     }
 
     try {
-        const response = await genAI.models.generateContent({
+        const response = await getGenAI().models.generateContent({
             model: modelName,
             contents: [{
                 role: 'user',
@@ -265,7 +272,7 @@ export async function extractCharacterFromPhoto(photoBase64: string, language: L
         const prompts = getPrompts(language);
         const promptText = prompts.getCharacterExtractionPrompt();
 
-        const response = await genAI.models.generateContent({
+        const response = await getGenAI().models.generateContent({
             model: model,
             contents: [
                 {

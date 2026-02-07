@@ -159,21 +159,42 @@
     "wizard": {
       "back": "← Zurück",
       "next": "Weiter →",
-      "creating": "Dein Buch wird erstellt..."
+      "creating": "Dein Buch wird erstellt...",
+      "footerStart": "Los geht's!",
+      "footerAlmostThere": "Fast geschafft!",
+      "stepIndicator": "SCHRITT {{current}} VON {{total}}",
+      "stepper": {
+        "aria": "Fortschritt"
+      }
     },
     "steps": {
       "child": {
         "title": "Für wen ist dieses Buch?",
         "subtitle": "Erzähle uns von dem besonderen Kind, das dieses Buch genießen wird",
         "nameLabel": "Name des Kindes",
-        "namePlaceholder": "Name eingeben...",
+        "nameQuestion": "Name des Kindes",
+        "namePlaceholder": "z.B. Leo",
         "ageLabel": "Alter:",
+        "ageQuestion": "Wie alt ist das Kind?",
+        "ageDecrease": "Alter verringern",
+        "ageIncrease": "Alter erhöhen",
+        "ageUnit": "Jahre",
         "ageYears": "Jahre",
+        "genderQuestion": "Geschlecht",
+        "genderGirl": "Mädchen",
+        "genderBoy": "Junge",
+        "genderOther": "Andere",
+        "languageLabel": "Sprache der Geschichte",
+        "photoCta": "Foto des Kindes hinzufügen",
+        "photoPreviewAlt": "Vorschau des hochgeladenen Fotos",
         "photoLabel": "📷 Foto hochladen (optional)",
         "photoHint": "Lade ein Foto des Kindes hoch, um die Illustrationen zu personalisieren. Die KI wird dies verwenden, damit die Hauptfigur wie das Kind aussieht!",
         "photoButton": "Foto auswählen",
         "photoSelected": "Foto ausgewählt",
-        "photoChange": "Foto ändern"
+        "photoChange": "Foto ändern",
+        "photoMeta": "Plüschdrache als Begleiter",
+        "edit": "Held bearbeiten",
+        "cardLabel": "Held"
       },
       "type": {
         "title": "Wähle einen Buchtyp",
@@ -183,18 +204,52 @@
       "format": {
         "title": "Wähle ein Format",
         "subtitle": "Bereite dein Buch für den professionellen Druck vor",
-        "note": "Das Format bestimmt den Bildausschnitt für den Druck."
+        "note": "Das Format bestimmt den Bildausschnitt für den Druck.",
+        "squareTitle": "Quadrat (8,5 x 8,5)",
+        "squareBullets": [
+          "Ideal zum Teilen und kreative Layouts",
+          "24 Seiten, Premium-Mattpapier",
+          "Perfekt für bildlastige Geschichten"
+        ],
+        "portraitTitle": "Hochformat (8 x 10)",
+        "portraitBullets": [
+          "Klassisches Märchenbuch-Gefühl zum Vorlesen",
+          "32 Seiten, Glanzoberfläche möglich",
+          "Ideal für textreiche Erzählungen"
+        ],
+        "squareShort": "Quadrat",
+        "portraitShort": "Hochformat",
+        "squareMeta": "Premium 8,5 x 8,5",
+        "portraitMeta": "Premium 8 x 10",
+        "cardLabel": "Format",
+        "edit": "Format bearbeiten"
       },
       "theme": {
         "title": "Wähle ein Thema",
         "subtitle": "Was für eine Geschichte soll es werden?",
         "storyLabel": "Erzähle uns mehr über die Geschichte (optional)",
-        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt."
+        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt.",
+        "edit": "Thema bearbeiten",
+        "cardLabel": "Thema"
       },
       "style": {
         "title": "Wähle einen Kunststil",
         "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?",
-        "advancedLabel": "Erweitert"
+        "advancedLabel": "Erweitert",
+        "compareTitle": "Kunststile vergleichen",
+        "compareSubtitle": "Wähle den perfekten Look für das Abenteuer deines Drachen.",
+        "selectedHint": "{{style}} ausgewählt",
+        "default": "Aquarell",
+        "descriptors": {
+          "storybook": "Klassisch & Detailliert",
+          "watercolor": "Verträumt & Sanft",
+          "digital": "Modern & Lebhaft",
+          "cartoon": "Lustig & Ausdrucksstark",
+          "pixel": "Retro & Verspielt",
+          "coloring": "Minimalistisch & Kreativ"
+        },
+        "edit": "Stil bearbeiten",
+        "cardLabel": "Stil"
       },
       "title": {
         "title": "Benenne dein Buch",
@@ -273,6 +328,7 @@
       "signInToCreate": "Anmelden zum Erstellen"
     },
     "errors": {
+      "creationFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
       "createFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
       "photoUploadFailed": "Foto-Upload fehlgeschlagen. Bitte versuche es erneut.",
       "invalidSettings": "Bitte fülle alle erforderlichen Felder aus.",
@@ -526,19 +582,31 @@
   },
   "about": {
     "hero": {
-      "title": "Wir sind Geschichtenerzähler, Eltern & Träumer",
-      "subtitle": "Wir erschaffen magische Geschichten, die lehren, inspirieren und begeistern"
+      "titleStart": "Gemacht von ",
+      "titleHighlight": "Eltern",
+      "titleEnd": ", für Kinder",
+      "subtitle": "Wir sind Eltern, die glauben, dass jedes Kind der Held seiner eigenen Geschichte sein sollte."
     },
     "story": {
-      "heading": "Unsere Geschichte",
-      "paragraph1": "Wir sind ein Team junger Unternehmer, die Eltern sind und im Herzen selbst noch Kinder. Wir glauben an die Magie des Geschichtenerzählens und die Kraft einer guten Geschichte, junge Köpfe zu formen.",
-      "paragraph2": "Wir lieben Geschichten, die Kindern Bedeutung vermitteln – Geschichten, die die Fantasie anregen, Charakter aufbauen und bleibende Erinnerungen schaffen. Jedes auf unserer Plattform erstellte Buch ist eine Gelegenheit, Werte, Lektionen und Liebe zu teilen.",
-      "paragraph3": "Kreativität und Innovation treiben alles an, was wir tun. Wir erforschen ständig neue Wege, um das Geschichtenerzählen zugänglicher, persönlicher und bedeutungsvoller für Familien auf der ganzen Welt zu machen."
+      "heading": "Warum wir das gebaut haben",
+      "paragraph1": "Es begann zur Schlafenszeit. Wir wollten unseren Kindern Geschichten erzählen, in denen sie die Hauptfigur sind — Geschichten, die Freundlichkeit, Mut und Neugier lehren. Wir konnten nichts finden, das persönlich genug war, also haben wir es selbst gebaut.",
+      "paragraph2": "Wir sind ein kleines Team aus Eltern, Designern und Entwicklern, die glauben, dass eine gute Geschichte die Welt eines Kindes formen kann. Jedes Buch auf KidBook Creator wird mit der gleichen Liebe und Absicht gemacht, die wir in die Geschichten stecken, die wir unseren eigenen Kindern erzählen.",
+      "paragraph3": "Wir halten die Dinge bewusst einfach. Lade ein Foto hoch, wähle ein Thema, und in wenigen Minuten hast du ein wunderschönes, einzigartiges Buch — bereit zum Lesen auf dem Bildschirm oder zum in die Hand nehmen. Keine komplizierten Werkzeuge, kein Füllmaterial. Einfach echte Geschichten für echte Familien."
     },
-    "images": {
-      "placeholder1Alt": "KidBook Creator Team bei der Zusammenarbeit",
-      "placeholder2Alt": "KidBook Creator kreativer Arbeitsbereich",
-      "comingSoon": "Foto folgt in Kürze"
+    "values": {
+      "heading": "Was uns antreibt",
+      "love": {
+        "title": "Mit Liebe gemacht",
+        "description": "Jede Funktion wird mit der gleichen Sorgfalt gebaut, die wir in Gute-Nacht-Geschichten für unsere eigenen Kinder stecken."
+      },
+      "imagination": {
+        "title": "Fantasie wecken",
+        "description": "Wir glauben, dass Geschichten formen, wer Kinder werden. Jedes Buch ist ein Samen des Staunens, des Muts und der Freundlichkeit."
+      },
+      "family": {
+        "title": "Für jede Familie",
+        "description": "In mehreren Sprachen verfügbar, mit Geschichten, die jedes Kind feiern, egal woher es kommt."
+      }
     },
     "cta": {
       "heading": "Bereit, Magie zu erschaffen?",

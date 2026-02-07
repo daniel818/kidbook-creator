@@ -159,21 +159,42 @@
     "wizard": {
       "back": "← Back",
       "next": "Next →",
-      "creating": "Creating your book..."
+      "creating": "Creating your book...",
+      "footerStart": "Let's begin!",
+      "footerAlmostThere": "Almost there!",
+      "stepIndicator": "STEP {{current}} OF {{total}}",
+      "stepper": {
+        "aria": "Progress"
+      }
     },
     "steps": {
       "child": {
         "title": "Who is this book for?",
         "subtitle": "Tell us about the special child who will enjoy this book",
         "nameLabel": "Child's Name",
-        "namePlaceholder": "Enter name...",
+        "nameQuestion": "Child's Name",
+        "namePlaceholder": "e.g. Leo",
         "ageLabel": "Age:",
+        "ageQuestion": "How old are they?",
+        "ageDecrease": "Decrease age",
+        "ageIncrease": "Increase age",
+        "ageUnit": "years",
         "ageYears": "years",
+        "genderQuestion": "Gender",
+        "genderGirl": "Girl",
+        "genderBoy": "Boy",
+        "genderOther": "Other",
+        "languageLabel": "Story Language",
+        "photoCta": "Add Child's Photo",
+        "photoPreviewAlt": "Uploaded photo preview",
         "photoLabel": "📷 Upload a photo (optional)",
         "photoHint": "Upload a photo of the child to personalize the illustrations. The AI will use this to make the main character look like them!",
         "photoButton": "Choose Photo",
         "photoSelected": "Photo selected",
-        "photoChange": "Change Photo"
+        "photoChange": "Change Photo",
+        "photoMeta": "Plush Dragon companion",
+        "edit": "Edit hero",
+        "cardLabel": "Hero"
       },
       "type": {
         "title": "Choose a book type",
@@ -183,18 +204,52 @@
       "format": {
         "title": "Choose a Format",
         "subtitle": "Prepare your book for professional printing",
-        "note": "Format controls image framing for print."
+        "note": "Format controls image framing for print.",
+        "squareTitle": "Square (8.5 x 8.5)",
+        "squareBullets": [
+          "Best for sharing and creative layouts",
+          "Includes 24 pages, Premium matte paper",
+          "Perfect for visual-heavy stories"
+        ],
+        "portraitTitle": "Portrait (8 x 10)",
+        "portraitBullets": [
+          "Classic storybook feel for bedside reading",
+          "Includes 32 pages, Glossy finish option",
+          "Great for text-rich narratives"
+        ],
+        "squareShort": "Square",
+        "portraitShort": "Portrait",
+        "squareMeta": "Premium 8.5 x 8.5",
+        "portraitMeta": "Premium 8 x 10",
+        "cardLabel": "Format",
+        "edit": "Edit format"
       },
       "theme": {
         "title": "Pick a theme",
         "subtitle": "What kind of story will this be?",
         "storyLabel": "Tell us more about the story (optional)",
-        "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon."
+        "storyPlaceholder": "e.g. I want the story to be about learning to share with friends, and feature a friendly dragon.",
+        "edit": "Edit theme",
+        "cardLabel": "Theme"
       },
       "style": {
         "title": "Choose an art style",
         "subtitle": "How should your book's illustrations look?",
-        "advancedLabel": "Advanced"
+        "advancedLabel": "Advanced",
+        "compareTitle": "Compare Art Styles",
+        "compareSubtitle": "Pick the perfect look for your dragon's adventure.",
+        "selectedHint": "{{style}} selected",
+        "default": "Watercolor",
+        "descriptors": {
+          "storybook": "Classic & Detailed",
+          "watercolor": "Dreamy & Soft",
+          "digital": "Modern & Vibrant",
+          "cartoon": "Fun & Expressive",
+          "pixel": "Retro & Playful",
+          "coloring": "Minimal & Creative"
+        },
+        "edit": "Edit style",
+        "cardLabel": "Style"
       },
       "title": {
         "title": "Name your book",

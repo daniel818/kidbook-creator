@@ -1,11 +1,19 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import styles from './LanguageSwitcher.module.css';
 
 export function LanguageSwitcher({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'navbar' | 'footer' }) {
+  return (
+    <Suspense fallback={null}>
+      <LanguageSwitcherInner compact={compact} variant={variant} />
+    </Suspense>
+  );
+}
+
+function LanguageSwitcherInner({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'navbar' | 'footer' }) {
   const { i18n } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
