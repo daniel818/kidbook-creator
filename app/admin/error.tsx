@@ -16,7 +16,7 @@ export default function AdminError({
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f5f7] dark:bg-[#221019] font-display px-4">
       <div className="text-center max-w-md">
-        <span className="material-symbols-outlined text-7xl text-[#f4258c]" aria-hidden="true">admin_panel_settings</span>
+        <span className="material-symbols-outlined text-[#f4258c] mb-6 block" style={{ fontSize: '5rem' }} aria-hidden="true">admin_panel_settings</span>
         <h2 className="text-3xl font-black text-[#1c0d14] dark:text-white mb-3">
           Admin dashboard error
         </h2>

@@ -22,7 +22,7 @@ export default function Error({
       </div>
 
       <div className="text-center max-w-md relative z-10">
-        <span className="material-symbols-outlined text-7xl text-[#f4258c]" aria-hidden="true">error_outline</span>
+        <span className="material-symbols-outlined text-[#f4258c] mb-6 block" style={{ fontSize: '5rem' }} aria-hidden="true">error_outline</span>
         <h2 className="text-3xl font-black text-[#1c0d14] dark:text-white mb-3">
           Something went wrong
         </h2>
