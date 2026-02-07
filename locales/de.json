@@ -182,7 +182,8 @@
       },
       "format": {
         "title": "Wähle ein Format",
-        "subtitle": "Bereite dein Buch für den professionellen Druck vor"
+        "subtitle": "Bereite dein Buch für den professionellen Druck vor",
+        "note": "Das Format bestimmt den Bildausschnitt für den Druck."
       },
       "theme": {
         "title": "Wähle ein Thema",
@@ -192,7 +193,8 @@
       },
       "style": {
         "title": "Wähle einen Kunststil",
-        "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?"
+        "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?",
+        "advancedLabel": "Erweitert"
       },
       "title": {
         "title": "Benenne dein Buch",
@@ -278,8 +280,13 @@
     },
     "status": {
       "extractingCharacter": "Foto wird analysiert...",
+      "generatingPreview": "Vorschau wird erstellt...",
       "generatingStory": "Deine Geschichte wird erstellt...",
-      "openingBook": "Dein Buch wird geöffnet..."
+      "openingBook": "Dein Buch wird geöffnet...",
+      "gatheringMagic": "Magie sammeln...",
+      "writingStory": "Deine Geschichte wird geschrieben...",
+      "paintingCover": "Das Cover wird gemalt...",
+      "creatingAdventure": "{{childName}}s Abenteuer wird erstellt..."
     }
   },
   "profile": {
@@ -399,13 +406,38 @@
     "header": {
       "title": "Meine Bücher",
       "subtitle": "Deine personalisierte Büchersammlung",
+      "createNew": "Neues Buch erstellen",
       "booksCount": "{{count}} Buch erstellt",
       "booksCount_other": "{{count}} Bücher erstellt"
+    },
+    "filters": {
+      "all": "Alle",
+      "draft": "Meine Bücher",
+      "preview": "Vorschau",
+      "ordered": "Bestellt"
+    },
+    "status": {
+      "draft": "Digital",
+      "preview": "Vorschau",
+      "ordered": "Bestellt",
+      "delivered": "Zugestellt"
+    },
+    "cta": {
+      "orderPrint": "Drucken bestellen",
+      "unlockFullBook": "Vollständiges Buch freischalten",
+      "arriving": "Lieferung {{dateRange}}",
+      "orderProcessing": "Bestellung wird bearbeitet...",
+      "orderAnother": "Erneut bestellen"
+    },
+    "progress": {
+      "stepOf": "Schritt {{current}} von {{total}}"
     },
     "empty": {
       "title": "Noch keine Bücher",
       "subtitle": "Erstelle dein erstes personalisiertes Kinderbuch und erlebe die Magie",
-      "button": "✨ Dein erstes Buch erstellen"
+      "button": "✨ Dein erstes Buch erstellen",
+      "filteredTitle": "Keine Bücher in dieser Kategorie",
+      "filteredSubtitle": "Versuche einen anderen Filter oder erstelle ein neues Buch"
     },
     "deleteModal": {
       "title": "Buch löschen",
@@ -413,6 +445,7 @@
       "confirmText": "Löschen"
     },
     "bookCard": {
+      "untitled": "Unbenannte Geschichte",
       "pages": "{{count}} S.",
       "forChild": "Für {{childName}}, {{age}} Jahre alt",
       "status": {

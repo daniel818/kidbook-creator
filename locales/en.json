@@ -182,7 +182,8 @@
       },
       "format": {
         "title": "Choose a Format",
-        "subtitle": "Prepare your book for professional printing"
+        "subtitle": "Prepare your book for professional printing",
+        "note": "Format controls image framing for print."
       },
       "theme": {
         "title": "Pick a theme",
@@ -192,7 +193,8 @@
       },
       "style": {
         "title": "Choose an art style",
-        "subtitle": "How should your book's illustrations look?"
+        "subtitle": "How should your book's illustrations look?",
+        "advancedLabel": "Advanced"
       },
       "title": {
         "title": "Name your book",
@@ -279,8 +281,13 @@
     },
     "status": {
       "extractingCharacter": "Analyzing photo...",
+      "generatingPreview": "Creating your preview...",
       "generatingStory": "Creating your story...",
-      "openingBook": "Opening your book..."
+      "openingBook": "Opening your book...",
+      "gatheringMagic": "Gathering the magic...",
+      "writingStory": "Writing your story...",
+      "paintingCover": "Painting the cover...",
+      "creatingAdventure": "Creating {{childName}}'s Adventure..."
     }
   },
   "profile": {
@@ -400,13 +407,38 @@
     "header": {
       "title": "My Books",
       "subtitle": "Your personalized book collection",
+      "createNew": "Create new book",
       "booksCount": "{{count}} book created",
       "booksCount_other": "{{count}} books created"
+    },
+    "filters": {
+      "all": "All",
+      "draft": "My Books",
+      "preview": "Preview",
+      "ordered": "Ordered"
+    },
+    "status": {
+      "draft": "Digital",
+      "preview": "Preview",
+      "ordered": "Ordered",
+      "delivered": "Delivered"
+    },
+    "cta": {
+      "orderPrint": "Order Print",
+      "unlockFullBook": "Unlock Full Book",
+      "arriving": "Arriving {{dateRange}}",
+      "orderProcessing": "Processing order...",
+      "orderAnother": "Order Another"
+    },
+    "progress": {
+      "stepOf": "Step {{current}} of {{total}}"
     },
     "empty": {
       "title": "No books yet",
       "subtitle": "Create your first personalized children's book and watch the magic happen",
-      "button": "✨ Create Your First Book"
+      "button": "✨ Create Your First Book",
+      "filteredTitle": "No books in this category",
+      "filteredSubtitle": "Try a different filter or create a new book"
     },
     "deleteModal": {
       "title": "Delete Book",
@@ -414,6 +446,7 @@
       "confirmText": "Delete"
     },
     "bookCard": {
+      "untitled": "Untitled Story",
       "pages": "{{count}} pgs",
       "forChild": "For {{childName}}, age {{age}}",
       "status": {

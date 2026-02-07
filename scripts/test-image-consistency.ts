@@ -83,15 +83,13 @@ async function regenerateBookImages(bookId: string, forceStyle?: string) {
         console.log(`Scene: ${scenePrompt}`);
 
         try {
-            // @ts-ignore
-            const { imageUrl, usage } = await generateIllustration(
+            const { imageUrl, usage } = await generateIllustration({
                 scenePrompt,
-                "A cute child character",
-                (forceStyle || 'storybook_classic') as any, // Cast to any or ArtStyle
-                'fast',
-                undefined,
-                book.print_format === 'square' ? '1:1' : '3:4'
-            );
+                characterDescription: "A cute child character",
+                artStyle: (forceStyle || 'storybook_classic') as any,
+                quality: 'fast',
+                aspectRatio: book.print_format === 'square' ? '1:1' : '3:4',
+            });
 
             console.log(`Generated URL: ${imageUrl.substring(0, 30)}...`);
 
