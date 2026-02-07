@@ -183,7 +183,7 @@ describe('generateBookSchema', () => {
 
 describe('regenerateImageSchema', () => {
     const validData = {
-        bookId: 'abc-123',
+        bookId: '550e8400-e29b-41d4-a716-446655440000',
         pageNumber: 1,
         prompt: 'A magical forest scene',
     };
@@ -200,6 +200,10 @@ describe('regenerateImageSchema', () => {
             quality: 'pro',
         });
         expect(result.success).toBe(true);
+    });
+
+    it('rejects non-UUID bookId', () => {
+        expect(regenerateImageSchema.safeParse({ ...validData, bookId: 'abc-123' }).success).toBe(false);
     });
 
     it('rejects missing bookId', () => {

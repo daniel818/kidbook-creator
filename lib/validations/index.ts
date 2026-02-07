@@ -37,10 +37,10 @@ export const generateImageSchema = z.object({
 });
 
 export const regenerateImageSchema = z.object({
-    bookId: z.string().min(1),
+    bookId: z.string().uuid(),
     pageNumber: z.number().int().min(1),
     prompt: z.string().min(1).max(1000),
-    currentImageContext: artStyleSchema.optional(),
+    currentImageContext: z.string().max(500).optional(),
     style: z.string().max(500).optional(),
     quality: imageQualitySchema.optional(),
 });
