@@ -173,7 +173,7 @@
 .footerLangBtn {
   background: transparent;
   border: none;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -182,16 +182,16 @@
 }
 
 .footerLangBtn:hover {
-  color: #ffffff;
+  color: #f4258c;
 }
 
 .footerLangActive {
-  color: #3b82f6;
+  color: #6366f1;
   font-weight: 600;
 }
 
 .footerSep {
-  color: #475569;
+  color: #cbd5e1;
   font-size: 13px;
   user-select: none;
 }

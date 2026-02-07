@@ -13,8 +13,10 @@ export default function FAQPage() {
     return (
       <>
         <Navbar />
-        <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-          <div style={{ textAlign: 'center', padding: '3rem 0' }}>Loading...</div>
+        <main style={{ minHeight: '100vh', background: '#f8f5f7' }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1rem' }}>
+            <div style={{ textAlign: 'center', padding: '3rem 0', color: '#9c4973' }}>Loading...</div>
+          </div>
         </main>
         <Footer />
       </>
@@ -27,8 +29,10 @@ export default function FAQPage() {
     return (
       <>
         <Navbar />
-        <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-          <div style={{ textAlign: 'center', padding: '3rem 0' }}>Error loading FAQ data</div>
+        <main style={{ minHeight: '100vh', background: '#f8f5f7' }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1rem' }}>
+            <div style={{ textAlign: 'center', padding: '3rem 0', color: '#9c4973' }}>Error loading FAQ data</div>
+          </div>
         </main>
         <Footer />
       </>
@@ -38,29 +42,34 @@ export default function FAQPage() {
   return (
     <>
       <Navbar />
-      <main>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-          <h1 style={{ 
-            fontSize: '2.5rem', 
-            fontWeight: 'bold', 
-            textAlign: 'center', 
-            marginBottom: '1rem',
-            color: '#111827'
+      <main style={{ minHeight: '100vh', background: '#f8f5f7' }}>
+        {/* Hero */}
+        <div style={{
+          background: 'linear-gradient(135deg, #fdf2f8 0%, #ede9fe 50%, #e0e7ff 100%)',
+          padding: '100px 1rem 60px',
+          textAlign: 'center',
+        }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 4vw, 2.75rem)',
+            fontWeight: 800,
+            color: '#1c0d14',
+            margin: '0 0 0.75rem',
           }}>
             {data.heading}
           </h1>
-          
-          <p style={{ 
-            textAlign: 'center', 
-            color: '#6b7280', 
-            marginBottom: '3rem',
-            fontSize: '1.125rem'
+
+          <p style={{
+            color: '#9c4973',
+            fontSize: '1.125rem',
+            margin: '0 auto',
+            maxWidth: '600px',
+            lineHeight: 1.6,
           }}>
             {data.meta.description}
           </p>
-
-          <FAQList data={data} />
         </div>
+
+        <FAQList data={data} />
       </main>
       <Footer />
     </>

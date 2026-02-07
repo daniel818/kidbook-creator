@@ -485,29 +485,41 @@
   },
   "about": {
     "hero": {
-      "title": "We're Storytellers, Parents & Dreamers",
-      "subtitle": "Creating magical stories that teach, inspire, and delight"
+      "titleStart": "Made by ",
+      "titleHighlight": "Parents",
+      "titleEnd": ", for Kids",
+      "subtitle": "We're parents who believe every child deserves to be the hero of their own story."
     },
     "story": {
-      "heading": "Our Story",
-      "paragraph1": "We're a team of young entrepreneurs who are parents and, at heart, still kids ourselves. We believe in the magic of storytelling and the power of a good story to shape young minds.",
-      "paragraph2": "We love stories that teach children meaning—stories that spark imagination, build character, and create lasting memories. Every book created on our platform is a chance to share values, lessons, and love.",
-      "paragraph3": "Creativity and innovation drive everything we do. We're constantly exploring new ways to make storytelling more accessible, more personal, and more meaningful for families around the world."
+      "heading": "Why We Built This",
+      "paragraph1": "It started at bedtime. We wanted to tell our kids stories where they were the main character — stories that taught kindness, courage, and curiosity. We couldn't find anything that felt personal enough, so we built it ourselves.",
+      "paragraph2": "We're a small team of parents, designers, and engineers who believe a good story can shape a child's world. Every book on KidBook Creator is made with the same love and intention we put into the stories we tell our own children.",
+      "paragraph3": "We keep things simple on purpose. Upload a photo, pick a theme, and in minutes you have a beautiful, one-of-a-kind book — ready to read on screen or hold in your hands. No complicated tools, no filler. Just real stories for real families."
     },
-    "images": {
-      "placeholder1Alt": "KidBook Creator team collaborating",
-      "placeholder2Alt": "KidBook Creator creative workspace",
-      "comingSoon": "Photo Coming Soon"
+    "values": {
+      "heading": "What Drives Us",
+      "love": {
+        "title": "Made with Love",
+        "description": "Every feature is built with the same care we put into bedtime stories for our own kids."
+      },
+      "imagination": {
+        "title": "Spark Imagination",
+        "description": "We believe stories shape who children become. Every book is a seed of wonder, courage, and kindness."
+      },
+      "family": {
+        "title": "For Every Family",
+        "description": "Available in multiple languages with stories that celebrate every child, no matter where they come from."
+      }
     },
     "cta": {
-      "heading": "Ready to Create Magic?",
-      "description": "Join thousands of families creating personalized stories that bring joy and wonder to children around the world.",
-      "primary": "Start Creating",
-      "secondary": "Explore Our Books"
+      "heading": "Ready to Create Something Magical?",
+      "description": "Your child's next favourite story is just a few clicks away.",
+      "primary": "Create a Book",
+      "secondary": "See Pricing"
     },
     "contact": {
-      "heading": "Get in Touch",
-      "description": "Have questions or need help? We'd love to hear from you!",
+      "heading": "Say Hello",
+      "description": "We're real people and we love hearing from other parents. Questions, ideas, or just want to share your child's reaction — reach out anytime.",
       "button": "Contact Us"
     }
   },
