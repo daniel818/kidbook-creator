@@ -159,21 +159,40 @@
     "wizard": {
       "back": "← Zurück",
       "next": "Weiter →",
-      "creating": "Dein Buch wird erstellt..."
+      "creating": "Dein Buch wird erstellt...",
+      "footerStart": "Los geht's!",
+      "footerAlmostThere": "Fast geschafft!",
+      "stepper": {
+        "aria": "Fortschritt"
+      }
     },
     "steps": {
       "child": {
         "title": "Für wen ist dieses Buch?",
         "subtitle": "Erzähle uns von dem besonderen Kind, das dieses Buch genießen wird",
         "nameLabel": "Name des Kindes",
-        "namePlaceholder": "Name eingeben...",
+        "nameQuestion": "Name des Kindes",
+        "namePlaceholder": "z.B. Leo",
         "ageLabel": "Alter:",
+        "ageQuestion": "Wie alt ist das Kind?",
+        "ageDecrease": "Alter verringern",
+        "ageIncrease": "Alter erhöhen",
+        "ageUnit": "Jahre",
         "ageYears": "Jahre",
+        "genderQuestion": "Geschlecht",
+        "genderGirl": "Mädchen",
+        "genderBoy": "Junge",
+        "genderOther": "Andere",
+        "languageLabel": "Sprache der Geschichte",
+        "photoCta": "Foto des Kindes hinzufügen",
+        "photoPreviewAlt": "Vorschau des hochgeladenen Fotos",
         "photoLabel": "📷 Foto hochladen (optional)",
         "photoHint": "Lade ein Foto des Kindes hoch, um die Illustrationen zu personalisieren. Die KI wird dies verwenden, damit die Hauptfigur wie das Kind aussieht!",
         "photoButton": "Foto auswählen",
         "photoSelected": "Foto ausgewählt",
-        "photoChange": "Foto ändern"
+        "photoChange": "Foto ändern",
+        "photoMeta": "Plüschdrache als Begleiter",
+        "edit": "Held bearbeiten"
       },
       "type": {
         "title": "Wähle einen Buchtyp",
@@ -183,18 +202,45 @@
       "format": {
         "title": "Wähle ein Format",
         "subtitle": "Bereite dein Buch für den professionellen Druck vor",
-        "note": "Das Format bestimmt den Bildausschnitt für den Druck."
+        "note": "Das Format bestimmt den Bildausschnitt für den Druck.",
+        "squareTitle": "Quadrat (8,5 x 8,5)",
+        "squareBullets": [
+          "Ideal zum Teilen und kreative Layouts",
+          "24 Seiten, Premium-Mattpapier",
+          "Perfekt für bildlastige Geschichten"
+        ],
+        "portraitTitle": "Hochformat (8 x 10)",
+        "portraitBullets": [
+          "Klassisches Märchenbuch-Gefühl zum Vorlesen",
+          "32 Seiten, Glanzoberfläche möglich",
+          "Ideal für textreiche Erzählungen"
+        ],
+        "edit": "Format bearbeiten"
       },
       "theme": {
         "title": "Wähle ein Thema",
         "subtitle": "Was für eine Geschichte soll es werden?",
         "storyLabel": "Erzähle uns mehr über die Geschichte (optional)",
-        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt."
+        "storyPlaceholder": "z.B. Ich möchte, dass die Geschichte davon handelt, mit Freunden zu teilen, und einen freundlichen Drachen zeigt.",
+        "edit": "Thema bearbeiten"
       },
       "style": {
         "title": "Wähle einen Kunststil",
         "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?",
-        "advancedLabel": "Erweitert"
+        "advancedLabel": "Erweitert",
+        "compareTitle": "Kunststile vergleichen",
+        "compareSubtitle": "Wähle den perfekten Look für das Abenteuer deines Drachen.",
+        "selectedHint": "{{style}} ausgewählt",
+        "default": "Aquarell",
+        "descriptors": {
+          "storybook": "Klassisch & Detailliert",
+          "watercolor": "Verträumt & Sanft",
+          "digital": "Modern & Lebhaft",
+          "cartoon": "Lustig & Ausdrucksstark",
+          "pixel": "Retro & Verspielt",
+          "coloring": "Minimalistisch & Kreativ"
+        },
+        "edit": "Stil bearbeiten"
       },
       "title": {
         "title": "Benenne dein Buch",
