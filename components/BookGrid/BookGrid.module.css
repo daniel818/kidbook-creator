@@ -13,6 +13,8 @@
   gap: 8px;
   cursor: pointer;
   z-index: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .bookItem:hover {
@@ -267,27 +269,21 @@
 }
 
 .metaActions {
-  margin-top: 8px;
-  opacity: 0;
-  transform: translateY(5px);
-  transition: all 0.2s ease;
-  height: 24px;
-}
-
-.bookItem:hover .metaActions {
-  opacity: 1;
-  transform: translateY(0);
+  margin-top: 4px;
+  display: flex;
+  justify-content: center;
 }
 
 .deleteBtn {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
   padding: 4px;
   border-radius: 4px;
-  color: #9ca3af;
+  color: #d1d5db;
   transition: color 0.2s;
+  display: flex;
+  align-items: center;
 }
 
 .deleteBtn:hover {
