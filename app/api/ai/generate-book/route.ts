@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { calculateQuota } from '@/lib/quota';
 import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib/gemini/client';
 import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
 import * as fs from 'fs';
@@ -125,6 +126,20 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         log(`User authenticated: ${user.id}`);
+
+        // Quota check for preview generations
+        if (preview === true) {
+            const quota = await calculateQuota(user.id, supabase);
+            log(`Quota check: ${quota.remaining} remaining (${quota.used}/${quota.total})`, quota);
+
+            if (quota.remaining <= 0) {
+                log('ERROR: Quota exceeded', quota);
+                return NextResponse.json(
+                    { error: 'Preview generation quota exceeded', code: 'QUOTA_EXCEEDED', quota },
+                    { status: 429 }
+                );
+            }
+        }
 
         // Determine aspect ratio from print format
         let aspectRatio: '1:1' | '3:4' = '3:4';

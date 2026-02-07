@@ -25,8 +25,7 @@ i18n
       order: ['path', 'localStorage', 'navigator'],
       lookupFromPathIndex: 0,
       caches: ['localStorage'],
-      checkWhitelist: true,
-    },
+    } as Record<string, unknown>,
   });
 
 export default i18n;

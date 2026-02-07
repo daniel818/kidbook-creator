@@ -288,6 +288,15 @@
       "writingStory": "Writing your story...",
       "paintingCover": "Painting the cover...",
       "creatingAdventure": "Creating {{childName}}'s Adventure..."
+    },
+    "quota": {
+      "remaining": "{{count}} free previews remaining",
+      "none": "No free previews remaining",
+      "exceeded": {
+        "title": "Preview Limit Reached",
+        "message": "You've used all your free preview generations. Purchase or unlock one of your existing books to earn 2 more previews!",
+        "viewBooks": "View My Books"
+      }
     }
   },
   "profile": {

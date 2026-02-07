@@ -41,9 +41,9 @@ export async function middleware(request: NextRequest) {
             // Try to get locale from cookie or browser, validate against allowed locales
             const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
             const headerLocale = getLocaleFromHeader(request.headers.get('accept-language'));
-            const resolvedLocale = locales.includes(cookieLocale || '')
+            const resolvedLocale = (locales.includes(cookieLocale || '')
                 ? cookieLocale
-                : (headerLocale || defaultLocale);
+                : (headerLocale || defaultLocale)) || defaultLocale;
 
             // Redirect to the same path with locale prefix, preserving query string
             const redirectUrl = request.nextUrl.clone();
