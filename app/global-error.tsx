@@ -15,6 +15,12 @@ export default function GlobalError({
 
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         style={{
           margin: 0,
@@ -34,7 +40,13 @@ export default function GlobalError({
             maxWidth: '480px',
           }}
         >
-          <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>📖</div>
+          <span
+            className="material-symbols-outlined"
+            aria-hidden="true"
+            style={{ fontSize: '4.5rem', color: '#f4258c', marginBottom: '1.5rem', display: 'block' }}
+          >
+            error_outline
+          </span>
           <h1 style={{ fontSize: '1.875rem', fontWeight: 900, marginBottom: '0.75rem', color: '#1c0d14' }}>
             Oops! Something went wrong
           </h1>

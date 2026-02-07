@@ -22,7 +22,7 @@ export default function BookError({
       </div>
 
       <div className="text-center max-w-md relative z-10">
-        <div className="text-8xl mb-6">📚</div>
+        <span className="material-symbols-outlined text-7xl text-[#f4258c]" aria-hidden="true">library_books</span>
         <h2 className="text-3xl font-black text-[#1c0d14] dark:text-white mb-3">
           We couldn&apos;t load this book
         </h2>
