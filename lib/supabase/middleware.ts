@@ -49,7 +49,7 @@ export async function updateSession(request: NextRequest) {
         script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com;
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
         font-src 'self' data: https://fonts.gstatic.com https://js.stripe.com;
-        img-src 'self' blob: data: https://*.supabase.co https://*.stripe.com https://via.placeholder.com http://127.0.0.1:54321 https://www.gstatic.com https://warm-zebras-vanish.loca.lt;
+        img-src 'self' blob: data: https://*.supabase.co https://*.stripe.com http://127.0.0.1:54321 https://www.gstatic.com https://warm-zebras-vanish.loca.lt;
         connect-src 'self' https://*.supabase.co https://api.stripe.com https://maps.googleapis.com http://127.0.0.1:54321 https://warm-zebras-vanish.loca.lt;
         frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
         object-src 'none';
