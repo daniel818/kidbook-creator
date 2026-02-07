@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: #ffffff;
+  background: #f8f5f7;
 }
 
 /* Hero Section */
@@ -12,14 +12,14 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 20%, #fbbf24 40%, #f472b6 70%, #c084fc 100%);
+  background: linear-gradient(135deg, #fdf2f8 0%, #ede9fe 50%, #e0e7ff 100%);
 }
 
 .heroBackground {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .floatingShape1,
@@ -34,7 +34,7 @@
 .floatingShape1 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(244, 37, 140, 0.3) 0%, transparent 70%);
   top: -100px;
   left: -100px;
   animation-delay: 0s;
@@ -43,7 +43,7 @@
 .floatingShape2 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(244, 114, 182, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
   bottom: -150px;
   right: -150px;
   animation-delay: 7s;
@@ -52,7 +52,7 @@
 .floatingShape3 {
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.3) 0%, transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -84,9 +84,13 @@
   font-weight: 800;
   margin: 0 0 24px 0;
   line-height: 1.1;
-  color: white;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  color: #1c0d14;
   animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.titleHighlight {
+  color: #f4258c;
+  font-style: italic;
 }
 
 @keyframes fadeInUp {
@@ -101,12 +105,11 @@
 }
 
 .subtitle {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 400;
   margin: 0;
-  color: rgba(255, 255, 255, 0.95);
+  color: #9c4973;
   line-height: 1.6;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
@@ -123,10 +126,10 @@
 
 .heading {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 800;
   margin: 0 0 40px 0;
   text-align: center;
-  color: #2d3748;
+  color: #1c0d14;
 }
 
 .content {
@@ -138,17 +141,101 @@
 .paragraph {
   font-size: 1.125rem;
   line-height: 1.8;
-  color: #4a5568;
+  color: #9c4973;
   margin: 0;
   text-align: left;
+}
+
+.highlight {
+  color: #f4258c;
+  font-weight: 600;
+}
+
+/* Values Section */
+.valuesSection {
+  padding: 80px 20px;
+  background: #f8f5f7;
+}
+
+.valuesContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.valuesHeading {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  color: #1c0d14;
+  margin: 0 0 48px;
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.valueCard {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 28px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.valueCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(244, 37, 140, 0.1);
+}
+
+.valueIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 28px;
+}
+
+.valueIconLove {
+  background: rgba(244, 37, 140, 0.12);
+  color: #f4258c;
+}
+
+.valueIconImagination {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+}
+
+.valueIconFamily {
+  background: rgba(244, 114, 182, 0.12);
+  color: #ec4899;
+}
+
+.valueTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1c0d14;
+  margin: 0 0 12px;
+}
+
+.valueDescription {
+  font-size: 0.95rem;
+  color: #9c4973;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* CTA Section */
 .ctaSection {
   padding: 80px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #fdf2f8 0%, #ede9fe 50%, #e0e7ff 100%);
   text-align: center;
-  color: white;
+  color: #1c0d14;
 }
 
 .ctaContainer {
@@ -158,7 +245,7 @@
 
 .ctaHeading {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 800;
   margin: 0 0 20px 0;
   line-height: 1.2;
 }
@@ -166,7 +253,7 @@
 .ctaDescription {
   font-size: 1.25rem;
   margin: 0 0 40px 0;
-  opacity: 0.95;
+  color: #9c4973;
   line-height: 1.6;
 }
 
@@ -182,7 +269,7 @@
   padding: 16px 32px;
   font-size: 1.125rem;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 999px;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -190,30 +277,32 @@
 }
 
 .primaryButton {
-  background: white;
-  color: #667eea;
+  background: #f4258c;
+  color: white;
+  box-shadow: 0 4px 16px rgba(244, 37, 140, 0.3);
 }
 
 .primaryButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(244, 37, 140, 0.4);
 }
 
 .secondaryButton {
   background: transparent;
-  color: white;
-  border: 2px solid white;
+  color: #6366f1;
+  border: 2px solid rgba(99, 102, 241, 0.3);
 }
 
 .secondaryButton:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(99, 102, 241, 0.06);
+  border-color: #6366f1;
   transform: translateY(-2px);
 }
 
 /* Contact Section */
 .contactSection {
   padding: 80px 20px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #ffffff;
   text-align: center;
 }
 
@@ -223,35 +312,34 @@
 }
 
 .contactHeading {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1c0d14;
+  margin-bottom: 16px;
 }
 
 .contactDescription {
   font-size: 1.125rem;
-  color: #4a5568;
+  color: #9c4973;
   margin-bottom: 30px;
   line-height: 1.6;
 }
 
 .contactButton {
   display: inline-block;
-  padding: 16px 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 14px 36px;
+  background: #1c0d14;
   color: white;
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 999px;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .contactButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  box-shadow: 0 6px 20px rgba(28, 13, 20, 0.3);
 }
 
 .contactButton:active {
@@ -291,6 +379,19 @@
 
   .paragraph {
     font-size: 1rem;
+  }
+
+  .valuesSection {
+    padding: 60px 20px;
+  }
+
+  .valuesGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .valueCard {
+    padding: 32px 24px;
   }
 
   .ctaSection {

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Book } from '@/lib/types';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import { BookGrid } from '@/components/BookGrid';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import styles from './books.module.css';
@@ -141,6 +142,7 @@ export default function BooksPage() {
         isLoading={isDeleting}
       />
       </main>
+      <Footer />
     </>
   );
 }

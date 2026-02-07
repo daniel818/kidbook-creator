@@ -54,12 +54,12 @@ export async function POST(req: NextRequest) {
 
         // 1. Generate new image
         log('Calling generateIllustration...');
-        const imageResult = await generateIllustration(
-            prompt,
-            style || 'whimsical', // default style
-            currentImageContext,
-            quality || 'fast'
-        );
+        const imageResult = await generateIllustration({
+            scenePrompt: prompt,
+            characterDescription: style || 'A cute child character',
+            artStyle: currentImageContext || 'storybook_classic',
+            quality: quality || 'fast',
+        });
         log('generateIllustration returned', { imageUrl: imageResult?.imageUrl });
 
         if (!imageResult || !imageResult.imageUrl) {

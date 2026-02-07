@@ -62,29 +62,34 @@
 
 #### Primary Colors
 ```
-Primary Blue:   #2563EB (Blue 600)
-├─ Hover:       #1D4ED8 (Blue 700)
-├─ Active:      #1E40AF (Blue 800)
-└─ Light:       #3B82F6 (Blue 500)
+Hot Pink:       #f4258c
+├─ Hover:       #d91e7a
+├─ Active:      #c01a6c
+└─ Shadow:      rgba(244, 37, 140, 0.4)
 
-Secondary Violet: #7C3AED (Violet 600)
-├─ Hover:         #6D28D9 (Violet 700)
-└─ Light:         #8B5CF6 (Violet 500)
+Indigo:         #6366f1
+├─ Hover:       #4f46e5
+├─ Active:      #4338ca
+└─ Light:       #818cf8
+
+Pink Secondary: #f472b6
+├─ Hover:       #ec4899
+└─ Usage:       Gradient endpoints, soft accents
 ```
 
 #### Neutral Scale
 ```
-Gray 900:  #111827  (Headings, primary text)
-Gray 800:  #1F2937  (Strong emphasis)
-Gray 700:  #374151  (Body text)
-Gray 600:  #4B5563  (Secondary text)
-Gray 500:  #6B7280  (Placeholders, disabled)
-Gray 400:  #9CA3AF  (Borders, dividers)
-Gray 300:  #D1D5DB  (Light borders)
-Gray 200:  #E5E7EB  (Subtle borders)
-Gray 100:  #F3F4F6  (Card backgrounds)
-Gray 50:   #F9FAFB  (Page backgrounds)
-White:     #FFFFFF  (Primary backgrounds)
+Dark Text:     #1c0d14  (Headings, primary text - warm dark)
+Muted Pink:    #9c4973  (Body text, descriptions)
+Nav Link:      #94a3b8  (Navbar links, muted text)
+Gray 500:      #6B7280  (Placeholders, disabled)
+Gray 300:      #D1D5DB  (Light borders)
+Gray 200:      #E5E7EB  (Subtle borders)
+Gray 100:      #F3F4F6  (Card backgrounds)
+Bg Light:      #f8f5f7  (Page background - warm off-white)
+Bg Dark:       #221019  (Dark mode background)
+Footer:        #0f172a  (Footer background - slate 900)
+White:         #FFFFFF  (Card backgrounds, navbar glass)
 ```
 
 #### Semantic Colors
@@ -96,17 +101,25 @@ Info:      #3B82F6 (Blue 500)
 ```
 
 #### Usage Guidelines
-- **Primary Blue**: Main CTAs, links, key highlights, brand moments
-- **Secondary Violet**: Accents, secondary CTAs, badges, special features
-- **Gray 900**: H1, H2 headings, important text
-- **Gray 700**: Body text, paragraphs, descriptions
-- **Gray 500**: Secondary information, placeholders, helper text
+- **Hot Pink**: Main CTAs, logo background, hero buttons, key highlights
+- **Indigo**: Navbar hover, gradient start, secondary CTAs, links
+- **Pink Secondary**: Gradient endpoints, soft accents
+- **Dark Text (#1c0d14)**: H1, H2 headings, important text
+- **Muted Pink (#9c4973)**: Body text, paragraphs, descriptions
+- **Nav Link (#94a3b8)**: Navbar links, muted interactive text
 - **Semantic colors**: Status messages, alerts, validation feedback
 
 ### Typography
 
 #### Font Stack
 ```css
+/* Primary - Display & Body */
+font-family: 'Plus Jakarta Sans', sans-serif;
+
+/* Secondary - Navbar brand, special UI */
+font-family: 'Outfit', 'Inter', sans-serif;
+
+/* Fallback - Forms, system text */
 font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 
              'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 ```
@@ -222,21 +235,35 @@ rounded-full: 9999px (Pills, avatars, badges)
 
 ### Buttons
 
-#### Primary Button
+#### Primary Button (Hero CTA)
 ```
-Background:     #2563EB (Primary Blue)
+Background:     #f4258c (Hot Pink)
 Text:           #FFFFFF (White)
-Font Weight:    600 (Semibold)
-Padding:        12px 24px (md), 16px 32px (lg)
-Border Radius:  8px (rounded-lg)
-Height:         44px (md), 52px (lg)
-Min Width:      120px
+Font Weight:    700 (Bold)
+Padding:        20px 40px
+Border Radius:  9999px (pill)
+Shadow:         0 25px 50px rgba(244, 37, 140, 0.4)
 
 States:
-├─ Default:     bg-blue-600 text-white
-├─ Hover:       bg-blue-700 shadow-lg translate-y-[-2px]
-├─ Active:      bg-blue-800 shadow-md translate-y-0
-├─ Focus:       ring-2 ring-blue-500 ring-offset-2
+├─ Default:     bg-[#f4258c] text-white
+├─ Hover:       scale(1.05)
+├─ Active:      scale(1.0)
+└─ Disabled:    bg-gray-300 text-gray-500 cursor-not-allowed
+```
+
+#### Gradient Button (Navbar CTA)
+```
+Background:     linear-gradient(90deg, #6366f1 0%, #f472b6 100%)
+Text:           #FFFFFF (White)
+Font Weight:    700 (Bold)
+Padding:        10px 22px
+Border Radius:  9999px (pill)
+Shadow:         0 12px 24px rgba(99, 102, 241, 0.2)
+
+States:
+├─ Default:     gradient bg, white text
+├─ Hover:       translateY(-1px), increased shadow
+├─ Active:      translateY(0)
 └─ Disabled:    bg-gray-300 text-gray-500 cursor-not-allowed
 ```
 
@@ -791,7 +818,7 @@ BEM:            For complex custom components
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: January 6, 2025  
-**Status**: Ready for implementation  
+**Document Version**: 2.0  
+**Last Updated**: February 6, 2026  
+**Status**: Updated to reflect current app design  
 **Related Documents**: Brand Guidelines, Tone & Voice, Accessibility Standards

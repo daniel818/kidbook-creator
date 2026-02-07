@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import styles from './page.module.css';
 
 const PRICING = {
@@ -219,6 +220,7 @@ export default function PricingPage() {
           </div>
         </section>
       </main>
+      <Footer />
     </>
   );
 }

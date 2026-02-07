@@ -20,7 +20,7 @@
     }
   },
   "navbar": {
-    "communityBooks": "Our Books",
+    "ourBooks": "Our Books",
     "pricing": "Pricing",
     "faq": "FAQ",
     "aboutUs": "About Us",
@@ -28,10 +28,17 @@
     "privacy": "Privacy",
     "createBook": "Create a Book",
     "signIn": "Sign In",
+    "signUp": "Sign Up",
     "myBooks": "My Books",
     "purchases": "Purchases",
+    "orders": "My Orders",
     "profile": "Profile",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "home": "Home",
+    "more": "More",
+    "create": "Create",
+    "help": "FAQ & Support",
+    "signInSubtitle": "Access your books"
   },
   "home": {
     "hero": {
@@ -175,7 +182,8 @@
       },
       "format": {
         "title": "Choose a Format",
-        "subtitle": "Prepare your book for professional printing"
+        "subtitle": "Prepare your book for professional printing",
+        "note": "Format controls image framing for print."
       },
       "theme": {
         "title": "Pick a theme",
@@ -185,7 +193,8 @@
       },
       "style": {
         "title": "Choose an art style",
-        "subtitle": "How should your book's illustrations look?"
+        "subtitle": "How should your book's illustrations look?",
+        "advancedLabel": "Advanced"
       },
       "title": {
         "title": "Name your book",
@@ -272,8 +281,13 @@
     },
     "status": {
       "extractingCharacter": "Analyzing photo...",
+      "generatingPreview": "Creating your preview...",
       "generatingStory": "Creating your story...",
-      "openingBook": "Opening your book..."
+      "openingBook": "Opening your book...",
+      "gatheringMagic": "Gathering the magic...",
+      "writingStory": "Writing your story...",
+      "paintingCover": "Painting the cover...",
+      "creatingAdventure": "Creating {{childName}}'s Adventure..."
     }
   },
   "profile": {
@@ -349,7 +363,8 @@
   "orders": {
     "header": {
       "backButton": "← Back to Home",
-      "title": "My Orders"
+      "title": "My Orders",
+      "subtitle": "Track your printed books and order status"
     },
     "loading": "Loading orders...",
     "empty": {
@@ -391,13 +406,39 @@
   "mybooks": {
     "header": {
       "title": "My Books",
+      "subtitle": "Your personalized book collection",
+      "createNew": "Create new book",
       "booksCount": "{{count}} book created",
       "booksCount_other": "{{count}} books created"
+    },
+    "filters": {
+      "all": "All",
+      "draft": "My Books",
+      "preview": "Preview",
+      "ordered": "Ordered"
+    },
+    "status": {
+      "draft": "Digital",
+      "preview": "Preview",
+      "ordered": "Ordered",
+      "delivered": "Delivered"
+    },
+    "cta": {
+      "orderPrint": "Order Print",
+      "unlockFullBook": "Unlock Full Book",
+      "arriving": "Arriving {{dateRange}}",
+      "orderProcessing": "Processing order...",
+      "orderAnother": "Order Another"
+    },
+    "progress": {
+      "stepOf": "Step {{current}} of {{total}}"
     },
     "empty": {
       "title": "No books yet",
       "subtitle": "Create your first personalized children's book and watch the magic happen",
-      "button": "✨ Create Your First Book"
+      "button": "✨ Create Your First Book",
+      "filteredTitle": "No books in this category",
+      "filteredSubtitle": "Try a different filter or create a new book"
     },
     "deleteModal": {
       "title": "Delete Book",
@@ -405,6 +446,7 @@
       "confirmText": "Delete"
     },
     "bookCard": {
+      "untitled": "Untitled Story",
       "pages": "{{count}} pgs",
       "forChild": "For {{childName}}, age {{age}}",
       "status": {
@@ -476,29 +518,41 @@
   },
   "about": {
     "hero": {
-      "title": "We're Storytellers, Parents & Dreamers",
-      "subtitle": "Creating magical stories that teach, inspire, and delight"
+      "titleStart": "Made by ",
+      "titleHighlight": "Parents",
+      "titleEnd": ", for Kids",
+      "subtitle": "We're parents who believe every child deserves to be the hero of their own story."
     },
     "story": {
-      "heading": "Our Story",
-      "paragraph1": "We're a team of young entrepreneurs who are parents and, at heart, still kids ourselves. We believe in the magic of storytelling and the power of a good story to shape young minds.",
-      "paragraph2": "We love stories that teach children meaning—stories that spark imagination, build character, and create lasting memories. Every book created on our platform is a chance to share values, lessons, and love.",
-      "paragraph3": "Creativity and innovation drive everything we do. We're constantly exploring new ways to make storytelling more accessible, more personal, and more meaningful for families around the world."
+      "heading": "Why We Built This",
+      "paragraph1": "It started at bedtime. We wanted to tell our kids stories where they were the main character — stories that taught kindness, courage, and curiosity. We couldn't find anything that felt personal enough, so we built it ourselves.",
+      "paragraph2": "We're a small team of parents, designers, and engineers who believe a good story can shape a child's world. Every book on KidBook Creator is made with the same love and intention we put into the stories we tell our own children.",
+      "paragraph3": "We keep things simple on purpose. Upload a photo, pick a theme, and in minutes you have a beautiful, one-of-a-kind book — ready to read on screen or hold in your hands. No complicated tools, no filler. Just real stories for real families."
     },
-    "images": {
-      "placeholder1Alt": "KidBook Creator team collaborating",
-      "placeholder2Alt": "KidBook Creator creative workspace",
-      "comingSoon": "Photo Coming Soon"
+    "values": {
+      "heading": "What Drives Us",
+      "love": {
+        "title": "Made with Love",
+        "description": "Every feature is built with the same care we put into bedtime stories for our own kids."
+      },
+      "imagination": {
+        "title": "Spark Imagination",
+        "description": "We believe stories shape who children become. Every book is a seed of wonder, courage, and kindness."
+      },
+      "family": {
+        "title": "For Every Family",
+        "description": "Available in multiple languages with stories that celebrate every child, no matter where they come from."
+      }
     },
     "cta": {
-      "heading": "Ready to Create Magic?",
-      "description": "Join thousands of families creating personalized stories that bring joy and wonder to children around the world.",
-      "primary": "Start Creating",
-      "secondary": "Explore Our Books"
+      "heading": "Ready to Create Something Magical?",
+      "description": "Your child's next favourite story is just a few clicks away.",
+      "primary": "Create a Book",
+      "secondary": "See Pricing"
     },
     "contact": {
-      "heading": "Get in Touch",
-      "description": "Have questions or need help? We'd love to hear from you!",
+      "heading": "Say Hello",
+      "description": "We're real people and we love hearing from other parents. Questions, ideas, or just want to share your child's reaction — reach out anytime.",
       "button": "Contact Us"
     }
   },
@@ -623,11 +677,57 @@
         "faqs": [
           {
             "id": "pricing-options",
-            "question": "What are your pricing options and discounts?",
-            "answer": "<p>We offer transparent, straightforward pricing with no hidden fees:</p><h4>Single Book Pricing:</h4><ul><li><strong>Digital PDF:</strong> $15 - Instant download after order</li><li><strong>Physical Hardcover:</strong> $45 - Includes digital copy, professional printing, and shipping</li></ul><h4>Payment Methods:</h4><p>We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, and Apple Pay.</p><h4>Currency & Pricing:</h4><p>All prices are displayed in your local currency based on your location. No currency conversion fees. Visit our pricing page to see exact prices in your currency.</p>",
-            "relatedFaqs": [
-              "shipping-delivery"
-            ]
+            "question": "What are your pricing options?",
+            "answer": "<p>We offer transparent, straightforward pricing with no hidden fees:</p><h4>Single Book Pricing:</h4><ul><li><strong>Digital PDF:</strong> $15 - Instant download after order</li><li><strong>Physical Hardcover:</strong> $45 - Includes digital copy, professional printing, and shipping</li></ul><h4>Currency & Pricing:</h4><p>All prices are displayed in your local currency based on your location. No currency conversion fees. Visit our pricing page to see exact prices in your currency.</p>",
+            "relatedFaqs": ["shipping-delivery", "printed-price-includes"]
+          },
+          {
+            "id": "printed-price-includes",
+            "question": "What's included in the printed price?",
+            "answer": "<p>The printed price includes professional printing on premium paper, hardcover binding, and shipping to your door.</p>",
+            "relatedFaqs": ["pricing-options"]
+          },
+          {
+            "id": "digital-with-printed",
+            "question": "Can I get a digital copy with my printed book?",
+            "answer": "<p>Yes! Every printed book order includes a complimentary digital PDF version that you can download immediately.</p>",
+            "relatedFaqs": ["pricing-options", "digital-vs-physical"]
+          },
+          {
+            "id": "payment-methods",
+            "question": "What payment methods do you accept?",
+            "answer": "<p>We accept all major credit cards, debit cards, and PayPal through our secure payment processor.</p>",
+            "relatedFaqs": ["pricing-options"]
+          },
+          {
+            "id": "additional-fees",
+            "question": "Are there any additional fees?",
+            "answer": "<p>Taxes are calculated at checkout based on your location. Shipping costs vary by country and are shown before you complete your purchase.</p>",
+            "relatedFaqs": ["pricing-options", "shipping-delivery"]
+          },
+          {
+            "id": "print-specifications",
+            "question": "What about print specifications?",
+            "answer": "<p>Printed books are professionally bound with premium paper. Specific format options (size, binding type) are available during the book creation process.</p>",
+            "relatedFaqs": ["digital-vs-physical"]
+          },
+          {
+            "id": "who-prints",
+            "question": "Who prints my book?",
+            "answer": "<p>We partner with a high-quality, professional printing provider to ensure your book is produced to the highest standards. While we handle all customer service, pricing, and delivery coordination, our trusted printing partner manufactures your book using premium materials and state-of-the-art printing technology. This partnership allows us to offer you exceptional quality at competitive prices.</p>",
+            "relatedFaqs": ["print-specifications"]
+          },
+          {
+            "id": "why-not-in-house",
+            "question": "Why don't you print in-house?",
+            "answer": "<p>By partnering with specialized printing experts, we can focus on what we do best—creating magical, personalized stories for your child—while ensuring your book is printed with professional-grade quality, eco-friendly materials, and reliable delivery. Our printing partner has decades of experience and can handle orders worldwide.</p>",
+            "relatedFaqs": ["who-prints"]
+          },
+          {
+            "id": "print-quality",
+            "question": "Does this affect the quality of my book?",
+            "answer": "<p>Absolutely not! Our printing partner is carefully selected for their commitment to quality. Every book is printed on premium paper with vibrant, fade-resistant inks and durable binding. We maintain strict quality control standards to ensure your book exceeds expectations.</p>",
+            "relatedFaqs": ["who-prints", "print-specifications"]
           }
         ]
       },

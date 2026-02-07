@@ -20,7 +20,7 @@
     }
   },
   "navbar": {
-    "communityBooks": "הספרים שלנו",
+    "ourBooks": "הספרים שלנו",
     "pricing": "תמחור",
     "faq": "שאלות נפוצות",
     "aboutUs": "אודותינו",
@@ -28,10 +28,17 @@
     "privacy": "פרטיות",
     "createBook": "צור ספר",
     "signIn": "התחבר",
+    "signUp": "הרשמה",
     "myBooks": "הספרים שלי",
     "purchases": "רכישות",
+    "orders": "ההזמנות שלי",
     "profile": "פרופיל",
-    "signOut": "התנתק"
+    "signOut": "התנתק",
+    "home": "דף הבית",
+    "more": "עוד",
+    "create": "יצירה",
+    "help": "שאלות נפוצות ותמיכה",
+    "signInSubtitle": "גישה לספרים שלך"
   },
   "home": {
     "hero": {
@@ -175,7 +182,8 @@
       },
       "format": {
         "title": "בחר פורמט",
-        "subtitle": "הכן את הספר שלך להדפסה מקצועית"
+        "subtitle": "הכן את הספר שלך להדפסה מקצועית",
+        "note": "הפורמט קובע את מסגור התמונה להדפסה."
       },
       "theme": {
         "title": "בחר נושא",
@@ -185,7 +193,8 @@
       },
       "style": {
         "title": "בחר סגנון אמנות",
-        "subtitle": "איך האיורים של הספר שלך צריכים להיראות?"
+        "subtitle": "איך האיורים של הספר שלך צריכים להיראות?",
+        "advancedLabel": "מתקדם"
       },
       "title": {
         "title": "תן שם לספר שלך",
@@ -272,8 +281,13 @@
     },
     "status": {
       "extractingCharacter": "מנתח תמונה...",
+      "generatingPreview": "יוצר תצוגה מקדימה...",
       "generatingStory": "יוצר את הסיפור שלך...",
-      "openingBook": "פותח את הספר שלך..."
+      "openingBook": "פותח את הספר שלך...",
+      "gatheringMagic": "...אוספים קסם",
+      "writingStory": "...כותבים את הסיפור שלך",
+      "paintingCover": "...מציירים את העטיפה",
+      "creatingAdventure": "...יוצרים את ההרפתקה של {{childName}}"
     }
   },
   "profile": {
@@ -349,7 +363,8 @@
   "orders": {
     "header": {
       "backButton": "חזרה לדף הבית ←",
-      "title": "ההזמנות שלי"
+      "title": "ההזמנות שלי",
+      "subtitle": "עקוב אחר הספרים המודפסים וסטטוס ההזמנות שלך"
     },
     "loading": "טוען הזמנות...",
     "empty": {
@@ -391,13 +406,39 @@
   "mybooks": {
     "header": {
       "title": "הספרים שלי",
+      "subtitle": "אוסף הספרים המותאם אישית שלך",
+      "createNew": "צור ספר חדש",
       "booksCount": "ספר אחד נוצר",
       "booksCount_other": "{{count}} ספרים נוצרו"
+    },
+    "filters": {
+      "all": "הכל",
+      "draft": "הספרים שלי",
+      "preview": "תצוגה מקדימה",
+      "ordered": "הוזמן"
+    },
+    "status": {
+      "draft": "דיגיטלי",
+      "preview": "תצוגה מקדימה",
+      "ordered": "הוזמן",
+      "delivered": "נמסר"
+    },
+    "cta": {
+      "orderPrint": "הזמן הדפסה",
+      "unlockFullBook": "פתח ספר מלא",
+      "arriving": "מגיע {{dateRange}}",
+      "orderProcessing": "ההזמנה בעיבוד...",
+      "orderAnother": "הזמן שוב"
+    },
+    "progress": {
+      "stepOf": "שלב {{current}} מתוך {{total}}"
     },
     "empty": {
       "title": "אין עדיין ספרים",
       "subtitle": "צור את ספר הילדים המותאם אישית הראשון שלך וצפה בקסם קורה",
-      "button": "✨ צור את הספר הראשון שלך"
+      "button": "✨ צור את הספר הראשון שלך",
+      "filteredTitle": "אין ספרים בקטגוריה זו",
+      "filteredSubtitle": "נסה מסנן אחר או צור ספר חדש"
     },
     "deleteModal": {
       "title": "מחק ספר",
@@ -405,6 +446,7 @@
       "confirmText": "מחק"
     },
     "bookCard": {
+      "untitled": "סיפור ללא כותרת",
       "pages": "{{count}} עמ'",
       "forChild": "עבור {{childName}}, גיל {{age}}",
       "status": {
