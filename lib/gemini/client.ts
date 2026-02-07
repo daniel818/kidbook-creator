@@ -29,10 +29,16 @@ const logWithTime = (message: string, data?: unknown) => {
     }
 };
 
-// Initialize Gemini client (server-side only)
-logWithTime('Initializing Gemini Unified client (@google/genai)...');
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-logWithTime('Gemini client initialized');
+// Initialize Gemini client lazily (server-side only)
+let _genAI: GoogleGenAI | null = null;
+function getGenAI(): GoogleGenAI {
+    if (!_genAI) {
+        logWithTime('Initializing Gemini Unified client (@google/genai)...');
+        _genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        logWithTime('Gemini client initialized');
+    }
+    return _genAI;
+}
 
 export interface StoryGenerationInput {
     childName: string;
@@ -121,7 +127,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     try {
         logWithTime('Sending request to Gemini API...');
 
-        const response = await genAI.models.generateContent({
+        const response = await getGenAI().models.generateContent({
             model: textModel,
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             config: {
@@ -225,7 +231,7 @@ export async function generateIllustration(
     }
 
     try {
-        const response = await genAI.models.generateContent({
+        const response = await getGenAI().models.generateContent({
             model: modelName,
             contents: [{
                 role: 'user',
@@ -265,7 +271,7 @@ export async function extractCharacterFromPhoto(photoBase64: string, language: L
         const prompts = getPrompts(language);
         const promptText = prompts.getCharacterExtractionPrompt();
 
-        const response = await genAI.models.generateContent({
+        const response = await getGenAI().models.generateContent({
             model: model,
             contents: [
                 {
