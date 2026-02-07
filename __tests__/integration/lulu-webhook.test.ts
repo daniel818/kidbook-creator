@@ -166,6 +166,18 @@ describe('Lulu Webhook Handler', () => {
             expect(res.status).toBe(200);
         });
 
+        it('should accept a valid signature with uppercase SHA256= prefix', async () => {
+            const POST = await importPOST();
+
+            const body = buildPayload();
+            const req = buildRequest(body, {
+                signature: `SHA256=${sign(body)}`,
+            });
+            const res = await POST(req);
+
+            expect(res.status).toBe(200);
+        });
+
         it('should accept a valid signature with uppercase hex', async () => {
             const POST = await importPOST();
 

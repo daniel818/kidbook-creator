@@ -177,8 +177,8 @@ const HEX_SHA256_RE = /^[0-9a-f]{64}$/;
 function verifyLuluSignature(payload: string, signature: string | null, secret: string): boolean {
     if (!signature) return false;
 
-    // Strip common HMAC prefixes (e.g., "sha256=") and normalize
-    const cleanSignature = signature.replace(/^sha256=/, '').trim().toLowerCase();
+    // Normalize case and strip common HMAC prefixes (e.g., "sha256=", "SHA256=")
+    const cleanSignature = signature.trim().toLowerCase().replace(/^sha256=/, '');
 
     // Validate the incoming signature looks like a hex SHA-256 digest
     if (!HEX_SHA256_RE.test(cleanSignature)) return false;
