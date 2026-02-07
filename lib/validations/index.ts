@@ -124,7 +124,7 @@ export const createPaymentIntentSchema = z.object({
 
 export const calculateCostSchema = z.object({
     format: z.enum(['softcover', 'hardcover']),
-    size: z.string().min(1).max(20),
+    size: z.enum(['7.5x7.5', '8x8', '8x10']),
     pageCount: z.number().int().min(4).max(200),
     quantity: z.number().int().min(1).max(100),
     countryCode: z.string().length(2).optional(),
