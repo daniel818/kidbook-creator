@@ -1,0 +1,117 @@
+/* ============================================
+   CategoryRow - Horizontal scroll row
+   ============================================ */
+
+.row {
+  margin-bottom: var(--spacing-3xl);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+  padding: 0 var(--spacing-xs);
+}
+
+.title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+.seeAll {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.seeAll:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.arrow {
+  transition: transform var(--transition-fast);
+}
+
+.seeAll:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* ---- Horizontal Scroll ---- */
+.scrollContainer {
+  overflow: visible;
+}
+
+.scrollTrack {
+  display: flex;
+  gap: var(--spacing-lg);
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-xs);
+  padding-bottom: var(--spacing-md);
+
+  /* Hide scrollbar */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollTrack::-webkit-scrollbar {
+  display: none;
+}
+
+.cardSlot {
+  flex-shrink: 0;
+  width: 180px;
+  scroll-snap-align: start;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 1024px) {
+  .cardSlot {
+    width: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: var(--font-size-lg);
+  }
+
+  .cardSlot {
+    width: 140px;
+  }
+
+  .scrollTrack {
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .row {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .cardSlot {
+    width: 130px;
+  }
+
+  .scrollTrack {
+    gap: var(--spacing-sm);
+  }
+}
