@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
         // Validate request body with Zod
         const result = parseBody(calculateCostSchema, body);
-        if (result.error) {
+        if (!result.success) {
             return NextResponse.json(
                 { error: result.error },
                 { status: 400 }

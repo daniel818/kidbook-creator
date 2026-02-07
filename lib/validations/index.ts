@@ -165,20 +165,20 @@ export const shippingOptionsSchema = z.object({
 
 /**
  * Parse and validate a request body against a Zod schema.
- * Returns { data, error } where error is a formatted error message string.
+ * Returns { success, data, error } using a boolean discriminant for proper TS narrowing.
  */
 export function parseBody<T extends z.ZodType>(
     schema: T,
     body: unknown
-): { data: z.infer<T>; error: null } | { data: null; error: string } {
+): { success: true; data: z.infer<T>; error: null } | { success: false; data: null; error: string } {
     const result = schema.safeParse(body);
     if (result.success) {
-        return { data: result.data, error: null };
+        return { success: true, data: result.data, error: null };
     }
 
     const messages = result.error.issues.map(
         (issue) => `${issue.path.join('.')}: ${issue.message}`
     );
 
-    return { data: null, error: messages.join('; ') };
+    return { success: false, data: null, error: messages.join('; ') };
 }
