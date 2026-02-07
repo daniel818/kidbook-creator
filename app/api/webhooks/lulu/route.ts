@@ -76,10 +76,17 @@ export async function POST(req: Request) {
         // Lulu sends different event types. We care about 'print_job_status_changed'
         // Payload: { id: "job_id", status: { name: "SHIPPED", ... }, line_item_statuses: [...] }
 
-        const payload: Record<string, unknown> = (body?.data as Record<string, unknown>) || body;
-        const printJobId = payload?.id as string | undefined;
-        const statusObj = payload?.status as Record<string, unknown> | undefined;
-        const status = statusObj?.name as string | undefined;
+        const rawPayload = body?.data ?? body;
+        // Ensure payload is a non-null, non-array object
+        if (!rawPayload || typeof rawPayload !== 'object' || Array.isArray(rawPayload)) {
+            return NextResponse.json({ error: 'Invalid payload structure' }, { status: 400 });
+        }
+        const payload = rawPayload as Record<string, unknown>;
+        const printJobId = typeof payload.id === 'string' ? payload.id : undefined;
+        const statusObj = (payload.status && typeof payload.status === 'object' && !Array.isArray(payload.status))
+            ? payload.status as Record<string, unknown>
+            : undefined;
+        const status = typeof statusObj?.name === 'string' ? statusObj.name : undefined;
 
         if (!printJobId || !status) {
             return NextResponse.json({ message: 'Ignored: No ID/Status' });
@@ -160,11 +167,14 @@ export async function POST(req: Request) {
 function verifyLuluSignature(payload: string, signature: string | null, secret: string): boolean {
     if (!signature) return false;
 
+    // Strip common HMAC prefixes (e.g., "sha256=") that some providers include
+    const cleanSignature = signature.replace(/^sha256=/, '');
+
     const hmac = crypto.createHmac('sha256', secret);
     const digest = hmac.update(payload).digest('hex');
 
     // Both buffers must be the same length for timingSafeEqual
-    const sigBuffer = Buffer.from(signature, 'utf8');
+    const sigBuffer = Buffer.from(cleanSignature, 'utf8');
     const digestBuffer = Buffer.from(digest, 'utf8');
 
     if (sigBuffer.length !== digestBuffer.length) return false;
