@@ -16,6 +16,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
 import { AlertModal } from '@/components/AlertModal';
+import { BookCreationLoader, CreationPhase } from '@/components/BookCreationLoader';
 import styles from './page.module.css';
 
 type WizardStep = 'child' | 'format' | 'theme' | 'preview';
@@ -38,6 +39,7 @@ export default function CreateBookPage() {
     });
     const [isCreating, setIsCreating] = useState(false);
     const [creatingStatus, setCreatingStatus] = useState('');
+    const [creatingPhase, setCreatingPhase] = useState<CreationPhase>('');
     const [childPhoto, setChildPhoto] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -202,6 +204,7 @@ export default function CreateBookPage() {
         console.log('[CLIENT] Settings:', settings);
 
         setIsCreating(true);
+        setCreatingPhase('extracting');
 
         try {
             // Step 1: Extract character from photo if provided
@@ -230,10 +233,11 @@ export default function CreateBookPage() {
                 console.log('[CLIENT] Step 1: No photo provided, skipping extraction');
             }
 
-            // Step 2: Generate the complete book with AI
-            console.log('[CLIENT] Step 2: Generating complete book...');
+            // Step 2: Generate story + cover illustration (remaining illustrations generate in background)
+            console.log('[CLIENT] Step 2: Generating story and cover...');
             const genStart = Date.now();
-            setCreatingStatus(t('status.generatingPreview'));
+            setCreatingPhase('writing');
+            setCreatingStatus(t('status.writingStory', 'Writing your story...'));
 
             // Convert photo to base64 if present for the generation API
             let base64Photo: string | undefined;
@@ -282,8 +286,9 @@ export default function CreateBookPage() {
             console.log('[CLIENT] API response data:', data);
 
             console.log('[CLIENT] Step 3: Navigating to book viewer...');
+            setCreatingPhase('opening');
             setCreatingStatus(t('status.openingBook'));
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1200));
 
             const totalDuration = Date.now() - startTime;
             console.log('[CLIENT] ========================================');
@@ -298,6 +303,7 @@ export default function CreateBookPage() {
             console.log('[CLIENT] ========================================');
             console.error('[CLIENT] Error:', error);
             setCreatingStatus('');
+            setCreatingPhase('');
             setIsCreating(false);
             alert(t('errors.creationFailed'));
         }
@@ -936,6 +942,14 @@ export default function CreateBookPage() {
                 <AuthModal
                     isOpen={showAuthModal}
                     onClose={() => setShowAuthModal(false)}
+                />
+
+                {/* Magical Loading Overlay */}
+                <BookCreationLoader
+                    isActive={isCreating}
+                    childName={settings.childName || ''}
+                    hasPhoto={!!childPhoto}
+                    phase={creatingPhase}
                 />
 
                 {/* Unsaved Changes Alert */}

@@ -126,6 +126,10 @@
     "extractingCharacter": "Analyzing photo...",
     "generatingPreview": "Creating your preview...",
     "generatingStory": "Creating your story...",
-    "openingBook": "Opening your book..."
+    "openingBook": "Opening your book...",
+    "gatheringMagic": "Gathering the magic...",
+    "writingStory": "Writing your story...",
+    "paintingCover": "Painting the cover...",
+    "creatingAdventure": "Creating {{childName}}'s Adventure..."
   }
 }

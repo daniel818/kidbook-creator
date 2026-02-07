@@ -107,6 +107,20 @@ export async function GET(
             })
             : responsePages;
 
+        // Compute illustration progress from page data
+        const insidePagesForProgress = responsePages.filter((p: { type: string }) => p.type === 'inside');
+        const pagesWithImages = insidePagesForProgress.filter((p: { imageElements: unknown[] }) => {
+            const imgs = Array.isArray(p.imageElements) ? p.imageElements : [];
+            return imgs.length > 0 && (imgs[0] as { src?: string })?.src;
+        }).length;
+        const totalInsidePages = insidePagesForProgress.length;
+
+        const illustrationProgress = {
+            completed: pagesWithImages,
+            total: totalInsidePages,
+            isGenerating: totalInsidePages > 0 && pagesWithImages < totalInsidePages,
+        };
+
         const response = {
             id: book.id,
             settings: {
@@ -129,6 +143,7 @@ export async function GET(
             previewPageCount,
             totalPageCount,
             digitalUnlockPaid,
+            illustrationProgress,
         };
         log(`Transform completed in ${Date.now() - transformStartTime}ms`);
 

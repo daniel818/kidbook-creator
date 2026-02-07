@@ -58,6 +58,12 @@ export interface BookPage {
   updatedAt: Date;
 }
 
+export interface IllustrationProgress {
+  completed: number;
+  total: number;
+  isGenerating: boolean;
+}
+
 export interface Book {
   id: string;
   settings: BookSettings;
@@ -73,6 +79,7 @@ export interface Book {
   totalPageCount?: number;
   referenceImageUrl?: string;
   digitalUnlockPaid?: boolean;
+  illustrationProgress?: IllustrationProgress;
 }
 
 export interface OrderDetails {

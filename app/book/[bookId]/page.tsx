@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Book, createNewPage } from '@/lib/types';
+import { Book } from '@/lib/types';
 import StoryBookViewer from '@/components/StoryBookViewer';
+
+const POLL_INTERVAL_MS = 3000;
+const POLL_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes safety timeout
 
 export default function BookViewerPage() {
     const params = useParams();
@@ -13,76 +16,77 @@ export default function BookViewerPage() {
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const pollStartRef = useRef<number>(0);
 
-    useEffect(() => {
-        const fetchBook = async () => {
-            const startTime = Date.now();
-            console.log('[VIEWER] ========================================');
-            console.log(`[VIEWER] === BOOK VIEWER LOADING STARTED (bookId: ${bookId}) ===`);
-            console.log('[VIEWER] ========================================');
-
-            try {
-                // Try API first (for logged-in users)
-                console.log('[VIEWER] Step 1: Fetching from API...');
-                const apiStartTime = Date.now();
-                const response = await fetch(`/api/books/${bookId}`);
-                console.log(`[VIEWER] API response status: ${response.status} in ${Date.now() - apiStartTime}ms`);
-
-                if (response.ok) {
-                    console.log('[VIEWER] Step 2: Parsing API response...');
-                    const parseStartTime = Date.now();
-                    const data = await response.json();
-                    console.log(`[VIEWER] Response parsed in ${Date.now() - parseStartTime}ms`);
-                    console.log(`[VIEWER] Book data: title="${data.settings?.title}", pages=${data.pages?.length || 0}`);
-
-                    // Check for image data
-                    const pagesWithImages = data.pages?.filter((p: any) =>
-                        p.backgroundImage || p.imageElements?.some((img: any) => img.src)
-                    )?.length || 0;
-                    console.log(`[VIEWER] Pages with images: ${pagesWithImages}/${data.pages?.length || 0}`);
-
-                    setBook(data);
-                    const totalDuration = Date.now() - startTime;
-                    console.log('[VIEWER] ========================================');
-                    console.log(`[VIEWER] === BOOK LOADED FROM API in ${totalDuration}ms ===`);
-                    console.log('[VIEWER] ========================================');
-                    return;
-                }
-
-                // If API fails (401 or 404), try localStorage
-                console.log('[VIEWER] API failed, trying localStorage...');
-                const localBooks = localStorage.getItem('kidbook_books');
-                if (localBooks) {
-                    const books = JSON.parse(localBooks);
-                    const localBook = books.find((b: Book) => b.id === bookId);
-                    if (localBook) {
-                        console.log('[VIEWER] Book found in localStorage');
-                        setBook(localBook);
-                        const totalDuration = Date.now() - startTime;
-                        console.log(`[VIEWER] === BOOK LOADED FROM LOCALSTORAGE in ${totalDuration}ms ===`);
-                        return;
-                    }
-                }
-
-                // Neither API nor localStorage had the book
-                console.log('[VIEWER] Book not found in API or localStorage');
-                throw new Error('Book not found');
-            } catch (err) {
-                const totalDuration = Date.now() - startTime;
-                console.log('[VIEWER] ========================================');
-                console.log(`[VIEWER] === BOOK LOADING FAILED after ${totalDuration}ms ===`);
-                console.log('[VIEWER] ========================================');
-                console.error('[VIEWER] Error:', err);
-                setError('Could not load this book');
-            } finally {
-                setLoading(false);
+    const fetchBook = useCallback(async () => {
+        try {
+            const response = await fetch(`/api/books/${bookId}`);
+            if (response.ok) {
+                const data = await response.json();
+                return data as Book;
             }
-        };
 
-        if (bookId) {
-            fetchBook();
+            // If API fails, try localStorage
+            const localBooks = localStorage.getItem('kidbook_books');
+            if (localBooks) {
+                const books = JSON.parse(localBooks);
+                const localBook = books.find((b: Book) => b.id === bookId);
+                if (localBook) return localBook;
+            }
+            return null;
+        } catch {
+            return null;
         }
     }, [bookId]);
+
+    // Initial fetch
+    useEffect(() => {
+        const loadBook = async () => {
+            console.log(`[VIEWER] Loading book ${bookId}...`);
+            const data = await fetchBook();
+            if (data) {
+                setBook(data);
+                if (data.illustrationProgress?.isGenerating) {
+                    pollStartRef.current = Date.now();
+                }
+            } else {
+                setError('Could not load this book');
+            }
+            setLoading(false);
+        };
+
+        if (bookId) loadBook();
+    }, [bookId, fetchBook]);
+
+    // Poll when illustrations are generating
+    useEffect(() => {
+        if (!book?.illustrationProgress?.isGenerating) return;
+
+        // Safety timeout
+        if (pollStartRef.current && Date.now() - pollStartRef.current > POLL_TIMEOUT_MS) {
+            console.log('[VIEWER] Polling timeout reached, stopping');
+            return;
+        }
+
+        const interval = setInterval(async () => {
+            // Safety timeout check inside interval
+            if (pollStartRef.current && Date.now() - pollStartRef.current > POLL_TIMEOUT_MS) {
+                clearInterval(interval);
+                return;
+            }
+
+            const data = await fetchBook();
+            if (data) {
+                setBook(data);
+                if (!data.illustrationProgress?.isGenerating) {
+                    console.log('[VIEWER] All illustrations complete, stopping polling');
+                    clearInterval(interval);
+                }
+            }
+        }, POLL_INTERVAL_MS);
+
+        return () => clearInterval(interval);
+    }, [book?.illustrationProgress?.isGenerating, fetchBook]);
 
     const handleClose = () => {
         router.push('/mybooks');

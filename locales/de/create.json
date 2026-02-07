@@ -125,6 +125,10 @@
     "extractingCharacter": "Foto wird analysiert...",
     "generatingPreview": "Vorschau wird erstellt...",
     "generatingStory": "Deine Geschichte wird erstellt...",
-    "openingBook": "Dein Buch wird geöffnet..."
+    "openingBook": "Dein Buch wird geöffnet...",
+    "gatheringMagic": "Magie sammeln...",
+    "writingStory": "Deine Geschichte wird geschrieben...",
+    "paintingCover": "Das Cover wird gemalt...",
+    "creatingAdventure": "{{childName}}s Abenteuer wird erstellt..."
   }
 }
