@@ -145,17 +145,8 @@ export default function MyBooksPage() {
       <Navbar />
       <main className={styles.main}>
         <div className={styles.container}>
-          {/* Header with FAB */}
-          <div className={styles.headerRow}>
-            <h1 className={styles.title}>{t('header.title')}</h1>
-            <button
-              className={styles.fabButton}
-              onClick={() => router.push('/create')}
-              aria-label={t('header.createNew', 'Create new book')}
-            >
-              <span className="material-symbols-outlined">add</span>
-            </button>
-          </div>
+          {/* Header */}
+          <h1 className={styles.title}>{t('header.title')}</h1>
 
           {/* Filter Tabs */}
           <div className={styles.filterTabs}>
