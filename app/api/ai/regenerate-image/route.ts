@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createClient } from '@/lib/supabase/server';
+import { sanitizeInput } from '@/lib/sanitize';
 
 function log(msg: string, data?: unknown) {
     console.log(`[Regenerate] ${msg}`, data || '');
@@ -44,8 +45,8 @@ export async function POST(req: NextRequest) {
         // 1. Generate new image
         log('Calling generateIllustration...');
         const imageResult = await generateIllustration({
-            scenePrompt: prompt,
-            characterDescription: style || 'A cute child character',
+            scenePrompt: sanitizeInput(prompt, 'storyDescription'),
+            characterDescription: sanitizeInput(style || 'A cute child character', 'characterDescription'),
             artStyle: currentImageContext || 'storybook_classic',
             quality: quality || 'fast',
         });

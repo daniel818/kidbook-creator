@@ -71,7 +71,11 @@ export function sanitizeInput(input: unknown, fieldName?: string): string {
     sanitized = sanitized
         .replace(/```/g, '')
         .replace(/<<</g, '')
-        .replace(/>>>/g, '');
+        .replace(/>>>/g, '')
+        // Strip triple-quote delimiters used in prompt templates
+        .replace(/"""/g, '')
+        // Strip section header patterns (=== SECTION ===) used in prompt structure
+        .replace(/={3,}/g, '');
 
     return sanitized.trim();
 }

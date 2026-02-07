@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
+import { sanitizeInput } from '@/lib/sanitize';
 
 export async function POST(request: NextRequest) {
     try {
@@ -26,8 +27,8 @@ export async function POST(request: NextRequest) {
         }
 
         const imageData = await generateIllustration({
-            scenePrompt: prompt,
-            characterDescription: style || '',
+            scenePrompt: sanitizeInput(prompt, 'storyDescription'),
+            characterDescription: sanitizeInput(style, 'characterDescription'),
         });
 
         return NextResponse.json({
