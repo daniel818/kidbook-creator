@@ -95,7 +95,7 @@ export async function GET(
             }));
 
         const maskedPages = isPreview && !digitalUnlockPaid && previewPageCount > 0
-            ? responsePages.map((page) => {
+            ? responsePages.map((page: { pageNumber: number; textElements: unknown[]; imageElements: unknown[]; [key: string]: unknown }) => {
                 if (page.pageNumber > previewPageCount) {
                     return {
                         ...page,

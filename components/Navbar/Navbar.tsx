@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -10,6 +10,14 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
+  return (
+    <Suspense fallback={null}>
+      <NavbarInner />
+    </Suspense>
+  );
+}
+
+function NavbarInner() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
