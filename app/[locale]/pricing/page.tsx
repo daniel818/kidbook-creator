@@ -36,6 +36,7 @@ export default function PricingPage() {
     <>
       <Navbar />
       <main className={styles.page}>
+        {/* Hero */}
         <header className={styles.hero}>
           <div className={styles.heroBackground}>
             <div className={`${styles.blob} ${styles.blobLeft}`}></div>
@@ -52,17 +53,21 @@ export default function PricingPage() {
           </div>
         </header>
 
-        <section className={styles.gridSection}>
-          <div className={styles.grid}>
-            {/* Digital — small card */}
-            <div className={`${styles.card} ${styles.cardDigital}`}>
-              <h3 className={styles.cardTitle}>{t('matrix.digital') || 'Digital'}</h3>
-              <p className={styles.cardSubtitle}>PDF Download</p>
-              <div className={styles.digitalPrice}>
-                <span className={styles.digitalAmount}>{pricing.symbol}{pricing.digital}</span>
-                <span className={styles.digitalUnit}>/book</span>
+        {/* Pricing Tiers */}
+        <section className={styles.pricingSection}>
+          <div className={styles.pricingCards}>
+            {/* Digital */}
+            <div className={styles.tierCard}>
+              <div className={styles.tierIcon}>
+                <span className="material-symbols-outlined">picture_as_pdf</span>
               </div>
-              <ul className={styles.featureListSmall}>
+              <h3 className={styles.tierName}>{t('matrix.digital') || 'Digital'}</h3>
+              <p className={styles.tierSubtitle}>PDF Download</p>
+              <div className={styles.tierPrice}>
+                <span className={styles.tierAmount}>{pricing.symbol}{pricing.digital}</span>
+                <span className={styles.tierUnit}>/book</span>
+              </div>
+              <ul className={styles.tierFeatures}>
                 <li>
                   <span className="material-symbols-outlined">check</span>
                   {t('features.digitalFeature1') || 'Instant download'}
@@ -76,71 +81,23 @@ export default function PricingPage() {
                   {t('features.digitalFeature3') || 'Print at home'}
                 </li>
               </ul>
-              <button className={styles.secondaryButton} onClick={handleCreateBook}>
+              <button className={styles.tierButton} onClick={handleCreateBook}>
                 Choose Digital
               </button>
             </div>
 
-            {/* Hardcover — MOST POPULAR hero card */}
-            <div className={`${styles.card} ${styles.cardPopular}`}>
-              <div className={styles.popularBadge}>MOST POPULAR</div>
-              <div className={styles.popularContent}>
-                <div className={styles.popularHeader}>
-                  <h3 className={styles.popularTitle}>Hardcover</h3>
-                  <p className={styles.popularSubtitle}>Premium Hardcover Book</p>
-                </div>
-                <div className={styles.priceRow}>
-                  <span className={styles.priceAmount}>{pricing.symbol}{pricing.hardcover}</span>
-                  <span className={styles.priceUnit}>/book</span>
-                </div>
-                <ul className={styles.featureList}>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature1') || 'Professional printing'}
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature2') || 'Premium paper quality'}
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    Hardcover binding
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature4') || 'Includes digital copy'}
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature5') || 'Shipping to your door'}
-                  </li>
-                </ul>
-                <button className={styles.heroButton} onClick={handleCreateBook}>
-                  {t('cta.primary') || 'Start Creating'}
-                </button>
+            {/* Softcover */}
+            <div className={styles.tierCard}>
+              <div className={styles.tierIcon}>
+                <span className="material-symbols-outlined">menu_book</span>
               </div>
-            </div>
-
-            {/* Magic Wand AI — info card */}
-            <div className={`${styles.card} ${styles.cardMagic}`}>
-              <div className={styles.iconBadge}>
-                <span className="material-symbols-outlined">magic_button</span>
+              <h3 className={styles.tierName}>Softcover</h3>
+              <p className={styles.tierSubtitle}>Printed Softcover Book</p>
+              <div className={styles.tierPrice}>
+                <span className={styles.tierAmount}>{pricing.symbol}{pricing.softcover}</span>
+                <span className={styles.tierUnit}>/book</span>
               </div>
-              <h3 className={styles.cardTitle}>Magic Wand AI</h3>
-              <p className={styles.cardCopy}>
-                Every package includes our AI storytelling engine that turns your child's favorite things into a personalized adventure.
-              </p>
-            </div>
-
-            {/* Softcover — small card */}
-            <div className={`${styles.card} ${styles.cardSoftcover}`}>
-              <h3 className={styles.cardTitle}>Softcover</h3>
-              <p className={styles.cardSubtitle}>Printed Softcover Book</p>
-              <div className={styles.digitalPrice}>
-                <span className={styles.digitalAmount}>{pricing.symbol}{pricing.softcover}</span>
-                <span className={styles.digitalUnit}>/book</span>
-              </div>
-              <ul className={styles.featureListSmall}>
+              <ul className={styles.tierFeatures}>
                 <li>
                   <span className="material-symbols-outlined">check</span>
                   {t('features.printedFeature1') || 'Professional printing'}
@@ -158,36 +115,48 @@ export default function PricingPage() {
                   {t('features.printedFeature5') || 'Shipping to your door'}
                 </li>
               </ul>
-              <button className={styles.secondaryButton} onClick={handleCreateBook}>
+              <button className={styles.tierButton} onClick={handleCreateBook}>
                 Choose Softcover
               </button>
             </div>
 
-            {/* Features strip */}
-            <div className={`${styles.card} ${styles.cardFeatures}`}>
-              <div className={styles.featureItem}>
-                <span className="material-symbols-outlined">verified_user</span>
-                <span>Secure Payment</span>
+            {/* Hardcover (Featured) */}
+            <div className={`${styles.tierCard} ${styles.tierFeatured}`}>
+              <div className={styles.featuredBadge}>MOST POPULAR</div>
+              <div className={styles.tierIcon}>
+                <span className="material-symbols-outlined">auto_stories</span>
               </div>
-              <div className={styles.featureDivider}></div>
-              <div className={styles.featureItem}>
-                <span className="material-symbols-outlined">local_shipping</span>
-                <span>Fast Delivery</span>
+              <h3 className={styles.tierName}>Hardcover</h3>
+              <p className={styles.tierSubtitle}>Premium Hardcover Book</p>
+              <div className={styles.tierPrice}>
+                <span className={styles.tierAmount}>{pricing.symbol}{pricing.hardcover}</span>
+                <span className={styles.tierUnit}>/book</span>
               </div>
-              <div className={styles.featureDivider}></div>
-              <div className={styles.featureItem}>
-                <span className="material-symbols-outlined">heart_check</span>
-                <span>Kid Safe AI</span>
-              </div>
-            </div>
-
-            {/* Rating */}
-            <div className={`${styles.card} ${styles.cardRating}`}>
-              <div className={styles.ratingHeader}>
-                <span className="material-symbols-outlined">star</span>
-                <span>4.9/5 Rating</span>
-              </div>
-              <p>Join 10,000+ parents creating magic every month.</p>
+              <ul className={styles.tierFeatures}>
+                <li>
+                  <span className="material-symbols-outlined">check_circle</span>
+                  {t('features.printedFeature1') || 'Professional printing'}
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check_circle</span>
+                  {t('features.printedFeature2') || 'Premium paper quality'}
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check_circle</span>
+                  Hardcover binding
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check_circle</span>
+                  {t('features.printedFeature4') || 'Includes digital copy'}
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check_circle</span>
+                  {t('features.printedFeature5') || 'Shipping to your door'}
+                </li>
+              </ul>
+              <button className={styles.tierButtonPrimary} onClick={handleCreateBook}>
+                {t('cta.primary') || 'Start Creating'}
+              </button>
             </div>
           </div>
 
@@ -196,6 +165,45 @@ export default function PricingPage() {
           </div>
         </section>
 
+        {/* Trust + Social Proof */}
+        <section className={styles.trustSection}>
+          <div className={styles.trustContent}>
+            <div className={styles.trustBadges}>
+              <div className={styles.trustBadge}>
+                <span className="material-symbols-outlined">verified_user</span>
+                <span>Secure Payment</span>
+              </div>
+              <div className={styles.trustBadge}>
+                <span className="material-symbols-outlined">local_shipping</span>
+                <span>Fast Delivery</span>
+              </div>
+              <div className={styles.trustBadge}>
+                <span className="material-symbols-outlined">heart_check</span>
+                <span>Kid Safe AI</span>
+              </div>
+            </div>
+            <div className={styles.trustDivider}></div>
+            <div className={styles.socialProof}>
+              <div className={styles.ratingBadge}>
+                <span className="material-symbols-outlined">star</span>
+                <span className={styles.ratingScore}>4.9/5</span>
+              </div>
+              <p className={styles.ratingText}>Join 10,000+ parents creating magic every month.</p>
+            </div>
+          </div>
+
+          <div className={styles.aiHighlight}>
+            <div className={styles.aiHighlightIcon}>
+              <span className="material-symbols-outlined">magic_button</span>
+            </div>
+            <div className={styles.aiHighlightText}>
+              <strong>Magic Wand AI</strong>
+              <span>Every package includes our AI storytelling engine that turns your child&apos;s favorite things into a personalized adventure.</span>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
         <section className={styles.ctaSection}>
           <div className={styles.ctaContent}>
             <div className={styles.ctaEmojiWrap}>

@@ -4,6 +4,10 @@
   color: #0f172a;
 }
 
+/* ============================
+   Hero Section (unchanged)
+   ============================ */
+
 .hero {
   position: relative;
   overflow: hidden;
@@ -72,150 +76,188 @@
   max-width: 520px;
 }
 
-.gridSection {
-  max-width: 1200px;
+/* ============================
+   Pricing Tier Cards
+   ============================ */
+
+.pricingSection {
+  max-width: 1100px;
   margin: -56px auto 0;
-  padding: 0 24px 80px;
+  padding: 0 24px 60px;
   position: relative;
   z-index: 3;
 }
 
-.grid {
+.pricingCards {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  align-items: stretch;
+  padding: 0 20px;
 }
 
-.card {
+.tierCard {
   background: #ffffff;
   border-radius: 24px;
   border: 1px solid #f1f5f9;
-  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.05), 0 10px 10px -5px rgba(15, 23, 42, 0.02);
-  padding: 32px;
-}
-
-.cardMagic {
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.05),
+              0 10px 10px -5px rgba(15, 23, 42, 0.02);
+  padding: 40px 32px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.iconBadge {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background: rgba(251, 191, 36, 0.2);
-  display: flex;
   align-items: center;
-  justify-content: center;
-  color: #b45309;
-  font-size: 28px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.cardTitle {
-  font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
+.tierCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 30px -5px rgba(15, 23, 42, 0.08),
+              0 12px 14px -5px rgba(15, 23, 42, 0.04);
 }
 
-.cardCopy {
-  font-size: 14px;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0;
-}
+/* --- Featured Tier (Hardcover) --- */
 
-.cardPopular {
+.tierFeatured {
   border: 4px solid #6366f1;
   box-shadow: 0 24px 40px -12px rgba(99, 102, 241, 0.25);
-  padding: 40px;
-  position: relative;
-  overflow: hidden;
+  transform: scale(1.05);
+  z-index: 2;
 }
 
-.popularBadge {
+.tierFeatured:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 28px 44px -12px rgba(99, 102, 241, 0.3);
+}
+
+.featuredBadge {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 16px;
+  right: 16px;
   background: #6366f1;
   color: #ffffff;
   font-size: 10px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.popularContent {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
+/* --- Card Content --- */
 
-.popularHeader {
-  margin-bottom: 24px;
-}
-
-.popularTitle {
-  font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: 30px;
-  margin: 0 0 8px;
-}
-
-.popularSubtitle {
-  color: #64748b;
-  margin: 0;
-}
-
-.priceRow {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 28px;
-}
-
-.priceAmount {
-  font-size: 48px;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.priceUnit {
-  color: #94a3b8;
-}
-
-.featureList,
-.featureListSmall {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 28px;
-  display: grid;
-  gap: 12px;
-}
-
-.featureList li,
-.featureListSmall li {
+.tierIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(99, 102, 241, 0.1);
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: #64748b;
-  font-size: 14px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-.featureList li :global(.material-symbols-outlined) {
-  color: #22c55e;
-}
-
-.featureListSmall li :global(.material-symbols-outlined) {
+.tierIcon :global(.material-symbols-outlined) {
+  font-size: 28px;
   color: #6366f1;
 }
 
-.heroButton {
+.tierFeatured .tierIcon {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.tierName {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #0f172a;
+}
+
+.tierSubtitle {
+  margin: 0 0 20px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.tierPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 28px;
+}
+
+.tierAmount {
+  font-size: 42px;
+  font-weight: 700;
+  color: #0f172a;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.tierUnit {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* --- Feature Lists --- */
+
+.tierFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+}
+
+.tierFeatures li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.tierFeatures li :global(.material-symbols-outlined) {
+  color: #6366f1;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.tierFeatured .tierFeatures li :global(.material-symbols-outlined) {
+  color: #22c55e;
+}
+
+/* --- Buttons --- */
+
+.tierButton {
+  margin-top: auto;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 16px;
+  border: none;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tierButton:hover {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+.tierButtonPrimary {
   margin-top: auto;
   width: 100%;
   padding: 16px 20px;
-  border-radius: 18px;
+  border-radius: 16px;
   border: none;
   cursor: pointer;
   font-weight: 700;
@@ -226,125 +268,150 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.heroButton:hover {
+.tierButtonPrimary:hover {
   transform: translateY(-2px);
   box-shadow: 0 18px 28px rgba(99, 102, 241, 0.3);
 }
 
-.cardDigital,
-.cardSoftcover {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+/* --- Disclaimer --- */
 
-.cardSubtitle {
-  margin: 0;
-  color: #94a3b8;
-  font-size: 13px;
-}
-
-.digitalPrice {
-  margin: 12px 0 16px;
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.digitalAmount {
-  font-size: 32px;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.digitalUnit {
+.disclaimer {
+  margin-top: 32px;
+  text-align: center;
   font-size: 12px;
   color: #94a3b8;
 }
 
-.secondaryButton {
-  margin-top: auto;
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 14px;
-  border: none;
-  background: #f1f5f9;
-  color: #0f172a;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* ============================
+   Trust + Social Proof
+   ============================ */
+
+.trustSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
 }
 
-.secondaryButton:hover {
-  background: #6366f1;
-  color: #ffffff;
-}
-
-.cardFeatures {
+.trustContent {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  gap: 16px;
-  background: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  justify-content: center;
+  gap: 32px;
+  padding: 28px 36px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  margin-bottom: 20px;
 }
 
-.featureItem {
-  text-align: center;
-  font-size: 10px;
+.trustBadges {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.trustBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #1e1b4b;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
-.featureItem :global(.material-symbols-outlined) {
-  font-size: 28px;
+.trustBadge :global(.material-symbols-outlined) {
+  font-size: 24px;
   color: #6366f1;
 }
 
-.featureDivider {
+.trustDivider {
   width: 1px;
-  height: 32px;
-  background: rgba(99, 102, 241, 0.2);
+  height: 40px;
+  background: #e2e8f0;
 }
 
-.cardRating {
-  background: #0f172a;
-  color: #ffffff;
+.socialProof {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
   gap: 12px;
 }
 
-.cardRating p {
-  margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.ratingHeader {
+.ratingBadge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-family: 'Outfit', 'Inter', sans-serif;
   font-weight: 700;
+  font-size: 16px;
+  color: #0f172a;
 }
 
-.ratingHeader :global(.material-symbols-outlined) {
+.ratingBadge :global(.material-symbols-outlined) {
   color: #ec4899;
+  font-size: 22px;
 }
 
-.disclaimer {
-  margin-top: 36px;
-  text-align: center;
-  font-size: 12px;
-  color: #94a3b8;
+.ratingScore {
+  white-space: nowrap;
 }
+
+.ratingText {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  max-width: 200px;
+}
+
+/* --- AI Highlight Strip --- */
+
+.aiHighlight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 28px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 16px;
+}
+
+.aiHighlightIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.aiHighlightIcon :global(.material-symbols-outlined) {
+  font-size: 24px;
+  color: #b45309;
+}
+
+.aiHighlightText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.aiHighlightText strong {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+/* ============================
+   CTA Section (unchanged)
+   ============================ */
 
 .ctaSection {
   background: #ffffff;
@@ -432,95 +499,63 @@
   box-shadow: 0 22px 34px rgba(99, 102, 241, 0.3);
 }
 
-@media (min-width: 960px) {
-  .grid {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+/* ============================
+   Responsive
+   ============================ */
+
+@media (max-width: 768px) {
+  .pricingCards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0;
   }
 
-  .cardMagic {
-    grid-column: span 4;
+  .tierFeatured {
+    transform: none;
+    order: -1;
   }
 
-  .cardPopular {
-    grid-column: span 5;
-    grid-row: span 2;
+  .tierFeatured:hover {
+    transform: translateY(-4px);
   }
 
-  .cardDigital {
-    grid-column: span 3;
-  }
-
-  .cardSoftcover {
-    grid-column: span 3;
-  }
-
-  .cardFeatures {
-    grid-column: span 4;
-  }
-
-  .cardRating {
-    grid-column: span 3;
-  }
-}
-
-@media (max-width: 960px) {
   .heroTitle {
     font-size: 32px;
   }
 
-  .gridSection {
+  .pricingSection {
     margin-top: -40px;
   }
 
-  .cardPopular {
-    order: 1;
-  }
-
-  .cardSoftcover {
-    order: 2;
-  }
-
-  .cardDigital {
-    order: 3;
-  }
-
-  .cardMagic {
-    order: 4;
-  }
-
-  .cardFeatures {
-    order: 5;
-  }
-
-  .cardRating {
-    order: 6;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero {
-    padding: 80px 20px 120px;
-  }
-
-  .heroTitle {
-    font-size: 28px;
-  }
-
-  .gridSection {
-    padding: 0 16px 64px;
-  }
-
-  .card {
+  .trustContent {
+    flex-direction: column;
+    gap: 20px;
     padding: 24px;
   }
 
-  .cardFeatures {
-    flex-direction: column;
+  .trustBadges {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
   }
 
-  .featureDivider {
+  .trustDivider {
     width: 60%;
     height: 1px;
+  }
+
+  .socialProof {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ratingText {
+    max-width: none;
+  }
+
+  .aiHighlight {
+    flex-direction: column;
+    text-align: center;
   }
 
   .ctaSection {
@@ -533,5 +568,27 @@
 
   .ctaContent p {
     font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 80px 20px 120px;
+  }
+
+  .heroTitle {
+    font-size: 26px;
+  }
+
+  .pricingSection {
+    padding: 0 16px 48px;
+  }
+
+  .tierCard {
+    padding: 32px 24px;
+  }
+
+  .tierAmount {
+    font-size: 36px;
   }
 }
