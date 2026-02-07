@@ -36,33 +36,33 @@
 ## Color Palette
 
 ### Primary Colors
-- **Magical Purple**: `#8B5CF6` (Violet 500)
-  - Usage: Primary brand color, CTAs, magical elements, hero sections
-  - Contrast: 4.5:1 on white backgrounds (WCAG AA compliant)
-  - Hover state: `#7C3AED` (Violet 600)
-  - Active state: `#6D28D9` (Violet 700)
-  - Personality: Magical, creative, imaginative
+- **Hot Pink**: `#f4258c`
+  - Usage: Primary brand color, CTAs, hero sections, logo background, key highlights
+  - Hover state: `#d91e7a`
+  - Active state: `#c01a6c`
+  - Personality: Bold, playful, magical
 
-- **Warm Orange**: `#F59E0B` (Amber 500)
-  - Usage: Accents, highlights, playful elements, secondary CTAs
-  - Contrast: 4.5:1 on white backgrounds
-  - Hover state: `#D97706` (Amber 600)
-  - Personality: Warm, friendly, energetic
+- **Indigo**: `#6366f1`
+  - Usage: Secondary CTAs, gradients, accent elements, navbar hover, links
+  - Hover state: `#4f46e5`
+  - Active state: `#4338ca`
+  - Personality: Trustworthy, modern, creative
 
-- **Sky Blue**: `#3B82F6` (Blue 500)
-  - Usage: Trust elements, informational content, links
-  - Contrast: 4.5:1 on white backgrounds
-  - Hover state: `#2563EB` (Blue 600)
-  - Personality: Trustworthy, calm, reliable
+- **Pink Secondary**: `#f472b6`
+  - Usage: Gradient endpoints, soft accents, secondary highlights
+  - Hover state: `#ec4899`
+  - Personality: Warm, friendly, approachable
 
 ### Neutral Scale
-- **Gray 900**: `#111827` - Headings, primary text
-- **Gray 700**: `#374151` - Body text
-- **Gray 500**: `#6B7280` - Secondary text, placeholders
+- **Dark Text**: `#1c0d14` - Headings, primary text (warm dark)
+- **Muted Pink**: `#9c4973` - Body text, secondary descriptions
+- **Gray 500**: `#6B7280` - Placeholders, disabled
 - **Gray 300**: `#D1D5DB` - Borders, dividers
-- **Gray 100**: `#F3F4F6` - Backgrounds, cards
-- **Gray 50**: `#F9FAFB` - Page backgrounds
-- **White**: `#FFFFFF` - Primary backgrounds
+- **Gray 100**: `#F3F4F6` - Card backgrounds
+- **Background Light**: `#f8f5f7` - Page background (warm off-white)
+- **Background Dark**: `#221019` - Dark mode page background
+- **White**: `#FFFFFF` - Card backgrounds, navbar glass
+- **Footer Dark**: `#0f172a` - Footer background (slate 900)
 
 ### Semantic Colors
 - **Success**: `#10B981` (Green 500) - Success messages, book completed
@@ -77,6 +77,12 @@
   - Pastel Green: `#86EFAC`
   - Pastel Yellow: `#FDE047`
 - **Usage**: AI-generated illustrations, book previews, decorative elements
+
+### Gradient Palette
+- **Primary Gradient**: `linear-gradient(90deg, #6366f1 0%, #f472b6 100%)` - CTA buttons
+- **Warm Gradient**: `linear-gradient(135deg, #fbbf24 0%, #f472b6 50%, #6366f1 100%)` - Decorative
+- **Cool Gradient**: `linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #a855f7 100%)` - Decorative
+- **FAB Gradient**: `linear-gradient(135deg, #6d5dfc 0%, #b24bf2 100%)` - Mobile floating action button
 
 ### UI State Colors
 - **Default**: Primary/Secondary as defined
@@ -96,16 +102,22 @@
 ## Typography
 
 ### Font Family
-- **Primary (UI)**: Inter (sans-serif)
-  - Usage: Website UI, buttons, navigation, forms
+- **Primary (Display & Body)**: Plus Jakarta Sans (sans-serif)
+  - Usage: Headlines, body text, navigation, general UI
+  - Weights: 400, 500, 600, 700, 800
+  - Fallback: sans-serif
+  - Personality: Modern, geometric, friendly
+
+- **Secondary (UI)**: Outfit (sans-serif)
+  - Usage: Navbar brand text, special UI elements
+  - Weights: 400, 600, 700, 800
+  - Personality: Clean, contemporary
+
+- **Body Fallback**: Inter (sans-serif)
+  - Usage: Fallback body text, forms
   - Fallback: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
 
-- **Display (Headlines)**: Poppins (sans-serif)
-  - Usage: Hero headlines, section titles, marketing materials
-  - Weights: 600 (Semibold), 700 (Bold)
-  - Personality: Friendly, modern, approachable
-
-- **Story Text (Books)**: Georgia or Merriweather (serif)
+- **Story Text (Books)**: Crimson Text / Playfair Display (serif)
   - Usage: Inside storybooks for readability
   - Personality: Classic, readable, timeless
 
@@ -232,19 +244,27 @@
 
 ### Buttons
 
-#### Primary Button
-- **Background**: Primary Blue (#2563EB)
-- **Text**: White, Semibold (600)
-- **Padding**: 12px 24px (md), 16px 32px (lg)
-- **Border radius**: 8px (rounded-lg)
-- **Hover**: Darker blue (#1D4ED8), lift effect (translate-y-1)
-- **Shadow**: Medium shadow, increases on hover
+#### Primary Button (Hero CTA)
+- **Background**: Hot Pink (`#f4258c`)
+- **Text**: White, Bold (700)
+- **Padding**: 20px 40px
+- **Border radius**: 9999px (rounded-full / pill)
+- **Hover**: scale(1.05) lift effect
+- **Shadow**: `0 25px 50px rgba(244, 37, 140, 0.4)`
+
+#### Gradient Button (Navbar CTA)
+- **Background**: `linear-gradient(90deg, #6366f1 0%, #f472b6 100%)`
+- **Text**: White, Bold (700)
+- **Padding**: 10px 22px
+- **Border radius**: 9999px (pill)
+- **Hover**: translateY(-1px), increased shadow
+- **Shadow**: `0 12px 24px rgba(99, 102, 241, 0.2)`
 
 #### Secondary Button
 - **Background**: Transparent
-- **Border**: 2px solid Primary Blue
-- **Text**: Primary Blue, Semibold (600)
-- **Hover**: Background Primary Blue, text White
+- **Border**: 2px solid Gray 200
+- **Text**: Gray 700, Semibold (600)
+- **Hover**: Background Gray 50, border Gray 300
 
 #### Disabled State
 - **Background**: Gray 300
@@ -274,14 +294,13 @@
 ## Brand Applications
 
 ### Homepage Hero
-- **Layout**: Centered text with book preview/animation below
-- **Headline**: H1, Poppins Bold, "Erstelle magische Geschichten, in denen dein Kind der Held ist"
-- **Subheadline**: H3, Inter Regular, "KI-gestützte personalisierte Kinderbücher in Minuten. Dein erstes Buch ist kostenlos."
+- **Layout**: Two-column grid (text left, book image right) on desktop; stacked on mobile
+- **Headline**: H1, Plus Jakarta Sans Black (900), "Make Your Child the Hero"
+- **Subheadline**: Body, Plus Jakarta Sans Regular, muted pink text (`#9c4973`)
 - **CTAs**: 
-  - Primary: "Jetzt kostenlos erstellen" (Magical Purple button)
-  - Secondary: "Beispiele ansehen" (Outline button)
-- **Trust elements**: "Sicher für Kinder" | "Hochwertige Druckqualität" | "Versand in 5-10 Tagen"
-- **Background**: Soft gradient (white to pastel purple/blue)
+  - Primary: "Create a Book" (Hot Pink pill button with deep shadow)
+- **Trust elements**: "Easy to Use" | "Print & Ship" | "Perfect Gift" with material icons
+- **Background**: Warm off-white (`#f8f5f7`)
 
 ### Book Type Cards
 - **Layout**: 3-column grid desktop, 1-column mobile
@@ -327,18 +346,21 @@
 {
   "color": {
     "brand": {
-      "primary": "#2563EB",
-      "secondary": "#7C3AED"
+      "primary": "#f4258c",
+      "secondary": "#6366f1",
+      "accent": "#f472b6"
     },
     "text": {
-      "primary": "#111827",
-      "secondary": "#374151",
-      "tertiary": "#6B7280"
+      "primary": "#1c0d14",
+      "secondary": "#9c4973",
+      "tertiary": "#6B7280",
+      "navLink": "#94a3b8"
     },
     "background": {
-      "canvas": "#FFFFFF",
-      "subtle": "#F9FAFB",
-      "muted": "#F3F4F6"
+      "canvas": "#f8f5f7",
+      "card": "#FFFFFF",
+      "dark": "#221019",
+      "footer": "#0f172a"
     },
     "semantic": {
       "success": "#10B981",
@@ -348,14 +370,17 @@
   },
   "typography": {
     "font": {
-      "family": "Inter",
-      "weights": [400, 500, 600, 700]
+      "display": "Plus Jakarta Sans",
+      "secondary": "Outfit",
+      "body": "Inter",
+      "weights": [400, 500, 600, 700, 800]
     },
     "size": {
       "h1": "48px",
       "h2": "36px",
       "h3": "30px",
-      "body": "16px"
+      "body": "16px",
+      "navLink": "13px"
     }
   },
   "spacing": {
@@ -367,7 +392,8 @@
   "radius": {
     "sm": "6px",
     "md": "8px",
-    "lg": "12px"
+    "lg": "12px",
+    "pill": "9999px"
   }
 }
 ```
@@ -391,6 +417,6 @@
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: January 6, 2025  
-**Status**: Ready for implementation
+**Document Version**: 2.0  
+**Last Updated**: February 6, 2026  
+**Status**: Updated to reflect current app design
