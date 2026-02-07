@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendShippingNotification, sendDeliveryConfirmation, OrderEmailData, ShippingEmailData } from '@/lib/email/client';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ orderId: string }>;
@@ -33,6 +34,13 @@ export async function GET(
 
         if (!profile?.is_admin) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Rate limit admin API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            console.log(`[Rate Limit] admin/orders/[orderId] GET blocked for user ${user.id}`);
+            return rateLimitResponse(rateResult);
         }
 
         const { data: order, error } = await supabase
@@ -79,6 +87,13 @@ export async function PUT(
 
         if (!profile?.is_admin) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Rate limit admin API calls
+        const rateResultPut = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultPut.allowed) {
+            console.log(`[Rate Limit] admin/orders/[orderId] PUT blocked for user ${user.id}`);
+            return rateLimitResponse(rateResultPut);
         }
 
         const body = await request.json();
