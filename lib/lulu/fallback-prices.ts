@@ -12,7 +12,10 @@
 
 // Duplicated from pricing.ts to avoid circular dependency
 const MARKUP_MULTIPLIER = 3;
-const MIN_SUBTOTAL_PER_BOOK = 4000; // $40.00 in cents
+const MIN_SUBTOTAL_PER_BOOK: Record<string, number> = {
+    softcover: 4000, // $40.00
+    hardcover: 4500, // $45.00
+};
 const ROUND_TO = 100;
 
 export type BookFormat = 'softcover' | 'hardcover';
@@ -53,10 +56,11 @@ export function getFallbackWholesale(format: BookFormat, size: BookSize, pageCou
  * Apply the same markup rules used in calculateRetailPricing.
  * @returns retail price in cents (after markup, rounding, floor)
  */
-function applyRetailMarkup(wholesalePerUnit: number): number {
+function applyRetailMarkup(wholesalePerUnit: number, format: BookFormat): number {
     const markedUp = wholesalePerUnit * MARKUP_MULTIPLIER;
     const rounded = Math.ceil(markedUp / ROUND_TO) * ROUND_TO;
-    return Math.max(rounded, MIN_SUBTOTAL_PER_BOOK);
+    const floor = MIN_SUBTOTAL_PER_BOOK[format] ?? 4000;
+    return Math.max(rounded, floor);
 }
 
 /**
@@ -70,7 +74,7 @@ export function getStartingRetailPrice(format: BookFormat): number {
 
     for (const size of sizes) {
         const wholesale = getFallbackWholesale(format, size, DEFAULT_PAGE_COUNT);
-        const retail = applyRetailMarkup(wholesale);
+        const retail = applyRetailMarkup(wholesale, format);
         if (retail < minRetail) minRetail = retail;
     }
 

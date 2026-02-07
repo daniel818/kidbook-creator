@@ -7,9 +7,9 @@ import { Navbar } from '@/components/Navbar';
 import styles from './page.module.css';
 
 const PRICING = {
-  USD: { symbol: '$', digital: 15, printed: 40 },
-  EUR: { symbol: '€', digital: 14, printed: 37 },
-  ILS: { symbol: '₪', digital: 55, printed: 150 }
+  USD: { symbol: '$', digital: 15, softcover: 40, hardcover: 45 },
+  EUR: { symbol: '€', digital: 14, softcover: 37, hardcover: 42 },
+  ILS: { symbol: '₪', digital: 55, softcover: 150, hardcover: 165 }
 };
 
 export default function PricingPage() {
@@ -54,55 +54,7 @@ export default function PricingPage() {
 
         <section className={styles.gridSection}>
           <div className={styles.grid}>
-            <div className={`${styles.card} ${styles.cardMagic}`}>
-              <div className={styles.iconBadge}>
-                <span className="material-symbols-outlined">magic_button</span>
-              </div>
-              <h3 className={styles.cardTitle}>Magic Wand AI</h3>
-              <p className={styles.cardCopy}>
-                Every package includes our AI storytelling engine that turns your child's favorite things into a personalized adventure.
-              </p>
-            </div>
-
-            <div className={`${styles.card} ${styles.cardPopular}`}>
-              <div className={styles.popularBadge}>MOST POPULAR</div>
-              <div className={styles.popularContent}>
-                <div className={styles.popularHeader}>
-                  <h3 className={styles.popularTitle}>{t('matrix.printed') || 'Printed'}</h3>
-                  <p className={styles.popularSubtitle}>Premium Hardcover Book</p>
-                </div>
-                <div className={styles.priceRow}>
-                  <span className={styles.priceAmount}>{pricing.symbol}{pricing.printed}</span>
-                  <span className={styles.priceUnit}>/book</span>
-                </div>
-                <ul className={styles.featureList}>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature1') || 'Professional printing'}
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature2') || 'Premium paper quality'}
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature4') || 'Includes digital copy'}
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature3') || 'Heirloom quality finish'}
-                  </li>
-                  <li>
-                    <span className="material-symbols-outlined">check_circle</span>
-                    {t('features.printedFeature5') || 'Shipping to your door'}
-                  </li>
-                </ul>
-                <button className={styles.heroButton} onClick={handleCreateBook}>
-                  {t('cta.primary') || 'Start Creating'}
-                </button>
-              </div>
-            </div>
-
+            {/* Digital — small card */}
             <div className={`${styles.card} ${styles.cardDigital}`}>
               <h3 className={styles.cardTitle}>{t('matrix.digital') || 'Digital'}</h3>
               <p className={styles.cardSubtitle}>PDF Download</p>
@@ -129,6 +81,89 @@ export default function PricingPage() {
               </button>
             </div>
 
+            {/* Hardcover — MOST POPULAR hero card */}
+            <div className={`${styles.card} ${styles.cardPopular}`}>
+              <div className={styles.popularBadge}>MOST POPULAR</div>
+              <div className={styles.popularContent}>
+                <div className={styles.popularHeader}>
+                  <h3 className={styles.popularTitle}>Hardcover</h3>
+                  <p className={styles.popularSubtitle}>Premium Hardcover Book</p>
+                </div>
+                <div className={styles.priceRow}>
+                  <span className={styles.priceAmount}>{pricing.symbol}{pricing.hardcover}</span>
+                  <span className={styles.priceUnit}>/book</span>
+                </div>
+                <ul className={styles.featureList}>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature1') || 'Professional printing'}
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature2') || 'Premium paper quality'}
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    Hardcover binding
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature4') || 'Includes digital copy'}
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {t('features.printedFeature5') || 'Shipping to your door'}
+                  </li>
+                </ul>
+                <button className={styles.heroButton} onClick={handleCreateBook}>
+                  {t('cta.primary') || 'Start Creating'}
+                </button>
+              </div>
+            </div>
+
+            {/* Magic Wand AI — info card */}
+            <div className={`${styles.card} ${styles.cardMagic}`}>
+              <div className={styles.iconBadge}>
+                <span className="material-symbols-outlined">magic_button</span>
+              </div>
+              <h3 className={styles.cardTitle}>Magic Wand AI</h3>
+              <p className={styles.cardCopy}>
+                Every package includes our AI storytelling engine that turns your child's favorite things into a personalized adventure.
+              </p>
+            </div>
+
+            {/* Softcover — small card */}
+            <div className={`${styles.card} ${styles.cardSoftcover}`}>
+              <h3 className={styles.cardTitle}>Softcover</h3>
+              <p className={styles.cardSubtitle}>Printed Softcover Book</p>
+              <div className={styles.digitalPrice}>
+                <span className={styles.digitalAmount}>{pricing.symbol}{pricing.softcover}</span>
+                <span className={styles.digitalUnit}>/book</span>
+              </div>
+              <ul className={styles.featureListSmall}>
+                <li>
+                  <span className="material-symbols-outlined">check</span>
+                  {t('features.printedFeature1') || 'Professional printing'}
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check</span>
+                  Quality paper
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check</span>
+                  {t('features.printedFeature4') || 'Includes digital copy'}
+                </li>
+                <li>
+                  <span className="material-symbols-outlined">check</span>
+                  {t('features.printedFeature5') || 'Shipping to your door'}
+                </li>
+              </ul>
+              <button className={styles.secondaryButton} onClick={handleCreateBook}>
+                Choose Softcover
+              </button>
+            </div>
+
+            {/* Features strip */}
             <div className={`${styles.card} ${styles.cardFeatures}`}>
               <div className={styles.featureItem}>
                 <span className="material-symbols-outlined">verified_user</span>
@@ -146,6 +181,7 @@ export default function PricingPage() {
               </div>
             </div>
 
+            {/* Rating */}
             <div className={`${styles.card} ${styles.cardRating}`}>
               <div className={styles.ratingHeader}>
                 <span className="material-symbols-outlined">star</span>

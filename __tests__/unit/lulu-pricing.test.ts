@@ -130,6 +130,38 @@ describe('calculateRetailPricing', () => {
             // 600 * 3 = 1800 → round up to 1800 → floor $80 (2 books) → 8000
             expect(result.subtotal).toBe(8000);
         });
+
+        it('should enforce $45 minimum for hardcover', async () => {
+            // Very cheap hardcover book
+            mockCalculateCost.mockResolvedValue({
+                ...luluApiResponse,
+                productCost: 300, // $3.00 wholesale
+            });
+
+            const result = await calculateRetailPricing({
+                ...baseInput,
+                format: 'hardcover' as const,
+            });
+
+            // 300 * 3 = 900 → round up to 900 → floor $45 → 4500
+            expect(result.subtotal).toBe(4500);
+        });
+
+        it('should enforce $45 minimum per hardcover book for multiple quantity', async () => {
+            mockCalculateCost.mockResolvedValue({
+                ...luluApiResponse,
+                productCost: 600, // $6.00 total for 2 books
+            });
+
+            const result = await calculateRetailPricing({
+                ...baseInput,
+                format: 'hardcover' as const,
+                quantity: 2,
+            });
+
+            // 600 * 3 = 1800 → round up to 1800 → floor $90 (2 × $45) → 9000
+            expect(result.subtotal).toBe(9000);
+        });
     });
 
     describe('Caching', () => {

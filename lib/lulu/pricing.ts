@@ -39,14 +39,17 @@ export interface RetailPricingResult {
 // --- Pricing Rules ---
 
 const MARKUP_MULTIPLIER = 3; // 200% margin => wholesale * 3
-const MIN_SUBTOTAL_PER_BOOK = 4000; // $40.00 in cents
+const MIN_SUBTOTAL_PER_BOOK: Record<string, number> = {
+    softcover: 4000, // $40.00
+    hardcover: 4500, // $45.00
+};
 const ROUND_TO = 100; // round up to nearest $1
 
-function applyPricingRules(wholesale: number, quantity: number): number {
+function applyPricingRules(wholesale: number, quantity: number, format: string): number {
     const markedUp = wholesale * MARKUP_MULTIPLIER;
     const rounded = Math.ceil(markedUp / ROUND_TO) * ROUND_TO;
-    const minSubtotal = MIN_SUBTOTAL_PER_BOOK * Math.max(1, quantity);
-    return Math.max(rounded, minSubtotal);
+    const floor = (MIN_SUBTOTAL_PER_BOOK[format] ?? 4000) * Math.max(1, quantity);
+    return Math.max(rounded, floor);
 }
 
 // --- Product Cost Cache ---
@@ -175,7 +178,7 @@ export async function calculateRetailPricing(input: RetailPricingInput): Promise
         isEstimate = true;
     }
 
-    const subtotal = applyPricingRules(wholesale, input.quantity);
+    const subtotal = applyPricingRules(wholesale, input.quantity, input.format);
     const total = subtotal + shipping;
 
     return {

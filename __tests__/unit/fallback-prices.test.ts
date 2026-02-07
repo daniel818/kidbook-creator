@@ -58,15 +58,15 @@ describe('Fallback Pricing', () => {
             expect(price).toBeGreaterThanOrEqual(4000);
         });
 
-        it('should return a value >= $40 (4000 cents) for hardcover', () => {
+        it('should return a value >= $45 (4500 cents) for hardcover', () => {
             const price = getStartingRetailPrice('hardcover');
-            expect(price).toBeGreaterThanOrEqual(4000);
+            expect(price).toBeGreaterThanOrEqual(4500);
         });
 
-        it('should return hardcover price >= softcover price', () => {
+        it('should return hardcover price > softcover price', () => {
             const softcover = getStartingRetailPrice('softcover');
             const hardcover = getStartingRetailPrice('hardcover');
-            expect(hardcover).toBeGreaterThanOrEqual(softcover);
+            expect(hardcover).toBeGreaterThan(softcover);
         });
 
         it('should be rounded to nearest dollar', () => {
@@ -76,7 +76,7 @@ describe('Fallback Pricing', () => {
             expect(hardcover % 100).toBe(0);
         });
 
-        it('should apply 3x markup on wholesale', () => {
+        it('should apply 3x markup on wholesale for softcover', () => {
             // For the cheapest softcover (7.5x7.5 at 32 pages)
             const wholesale = getFallbackWholesale('softcover', '7.5x7.5', 32);
             const markedUp = wholesale * 3;
@@ -84,6 +84,18 @@ describe('Fallback Pricing', () => {
             const expected = Math.max(rounded, 4000);
 
             const result = getStartingRetailPrice('softcover');
+            // Starting price should be <= expected (since it picks minimum across sizes)
+            expect(result).toBeLessThanOrEqual(expected);
+        });
+
+        it('should apply 3x markup on wholesale for hardcover with $45 floor', () => {
+            // For the cheapest hardcover (7.5x7.5 at 32 pages)
+            const wholesale = getFallbackWholesale('hardcover', '7.5x7.5', 32);
+            const markedUp = wholesale * 3;
+            const rounded = Math.ceil(markedUp / 100) * 100;
+            const expected = Math.max(rounded, 4500);
+
+            const result = getStartingRetailPrice('hardcover');
             // Starting price should be <= expected (since it picks minimum across sizes)
             expect(result).toBeLessThanOrEqual(expected);
         });
