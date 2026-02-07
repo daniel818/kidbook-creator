@@ -1360,6 +1360,48 @@
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
+/* ============================================
+   Paragraph Editor (contentEditable)
+   Matches .storyParagraph display styling
+   ============================================ */
+.paragraphEditor {
+    width: 100%;
+    min-height: 150px;
+    background: transparent;
+    border: 1px dashed rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem;
+    outline: none;
+    transition: all 0.2s ease;
+    cursor: text;
+}
+
+.paragraphEditor:focus {
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+.paragraphEditor p {
+    font-family: 'Crimson Text', 'Crimson Pro', 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 2rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    text-indent: 2rem;
+    hyphens: auto;
+    -webkit-font-smoothing: antialiased;
+}
+
+.paragraphEditor p:first-child {
+    text-indent: 0;
+}
+
+.paragraphEditor p:last-child {
+    margin-bottom: 0;
+}
+
 .imageOverlay {
     position: absolute;
     inset: 0;

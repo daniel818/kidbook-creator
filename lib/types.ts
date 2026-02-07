@@ -58,6 +58,12 @@ export interface BookPage {
   updatedAt: Date;
 }
 
+export interface IllustrationProgress {
+  completed: number;
+  total: number;
+  isGenerating: boolean;
+}
+
 export interface Book {
   id: string;
   settings: BookSettings;
@@ -73,6 +79,7 @@ export interface Book {
   totalPageCount?: number;
   referenceImageUrl?: string;
   digitalUnlockPaid?: boolean;
+  illustrationProgress?: IllustrationProgress;
 }
 
 export interface OrderDetails {
@@ -182,6 +189,18 @@ export const BookThemeInfo: Record<BookTheme, {
     colors: ['#6366f1', '#ec4899']
   }
 };
+
+// Book Display State (for UI card rendering)
+export type BookDisplayState = 'draft' | 'preview' | 'ordered' | 'delivered';
+
+export function getBookDisplayState(book: Book, orderStatus?: string): BookDisplayState {
+  if (book.status === 'ordered') {
+    if (orderStatus === 'delivered') return 'delivered';
+    return 'ordered';
+  }
+  if (book.status === 'preview') return 'preview';
+  return 'draft';
+}
 
 // Helper to get age group from age
 export function getAgeGroup(age: number): AgeGroup {

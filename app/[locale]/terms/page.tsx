@@ -2,6 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import styles from './page.module.css';
 
 interface TermsData {
@@ -88,6 +89,7 @@ export default function TermsPage() {
           </footer>
         </div>
       </main>
+      <Footer />
     </>
   );
 }

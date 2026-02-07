@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 // Helper function for logging with timestamps
 const log = (message: string, data?: unknown) => {
@@ -46,6 +47,13 @@ export async function GET(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         log(`User authenticated: ${user.id}`);
+
+        // Rate limit standard API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            log('Rate limited', { userId: user.id });
+            return rateLimitResponse(rateResult);
+        }
 
         log('Step 3: Fetching book from database...');
         const dbStartTime = Date.now();
@@ -95,7 +103,7 @@ export async function GET(
             }));
 
         const maskedPages = isPreview && !digitalUnlockPaid && previewPageCount > 0
-            ? responsePages.map((page) => {
+            ? responsePages.map((page: { pageNumber: number; textElements: unknown[]; imageElements: unknown[]; [key: string]: unknown }) => {
                 if (page.pageNumber > previewPageCount) {
                     return {
                         ...page,
@@ -106,6 +114,25 @@ export async function GET(
                 return page;
             })
             : responsePages;
+
+        // Compute illustration progress from page data
+        const insidePagesForProgress = responsePages.filter((p: { type: string }) => p.type === 'inside');
+        const pagesWithImages = insidePagesForProgress.filter((p: { imageElements: unknown[] }) => {
+            const imgs = Array.isArray(p.imageElements) ? p.imageElements : [];
+            return imgs.length > 0 && (imgs[0] as { src?: string })?.src;
+        }).length;
+        const totalInsidePages = insidePagesForProgress.length;
+
+        // Consider generation "still running" only if the book was created recently (within 15 min)
+        const bookCreatedAt = new Date(book.created_at || book.updated_at).getTime();
+        const fifteenMinutesAgo = Date.now() - 15 * 60 * 1000;
+        const isRecentBook = Number.isFinite(bookCreatedAt) && bookCreatedAt > fifteenMinutesAgo;
+
+        const illustrationProgress = {
+            completed: pagesWithImages,
+            total: totalInsidePages,
+            isGenerating: totalInsidePages > 0 && pagesWithImages < totalInsidePages && isRecentBook,
+        };
 
         const response = {
             id: book.id,
@@ -129,6 +156,7 @@ export async function GET(
             previewPageCount,
             totalPageCount,
             digitalUnlockPaid,
+            illustrationProgress,
         };
         log(`Transform completed in ${Date.now() - transformStartTime}ms`);
 
@@ -159,6 +187,13 @@ export async function PUT(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        // Rate limit standard API calls
+        const rateResultPut = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultPut.allowed) {
+            console.log(`[Rate Limit] books PUT blocked for user ${user.id}`);
+            return rateLimitResponse(rateResultPut);
+        }
+
         const { data: bookAccess, error: accessError } = await supabase
             .from('books')
             .select('id, is_preview, status, digital_unlock_paid, user_id')
@@ -177,7 +212,7 @@ export async function PUT(
         }
 
         const body = await request.json();
-        const { settings, pages, status } = body;
+        const { settings, pages, pageEdits, status } = body;
 
         // Validate settings if provided
         if (settings) {
@@ -263,6 +298,61 @@ export async function PUT(
             }
         }
 
+        // Surgical page edits — update only specific fields on specific pages
+        // Safe to use during background generation since it reads current DB state first
+        if (pageEdits && Array.isArray(pageEdits) && pageEdits.length > 0) {
+            for (const edit of pageEdits) {
+                if (!edit.pageId) continue;
+
+                // Fetch current page data from DB (not from client)
+                const { data: currentPage, error: fetchError } = await supabase
+                    .from('pages')
+                    .select('id, text_elements, image_elements')
+                    .eq('id', edit.pageId)
+                    .eq('book_id', bookId)
+                    .single();
+
+                if (fetchError || !currentPage) {
+                    console.error('Page not found for edit:', edit.pageId);
+                    continue;
+                }
+
+                const updates: Record<string, unknown> = {};
+
+                if (edit.text !== undefined) {
+                    const textElements = Array.isArray(currentPage.text_elements)
+                        ? [...currentPage.text_elements] as Record<string, unknown>[]
+                        : [];
+                    if (textElements.length > 0) {
+                        textElements[0] = { ...textElements[0], content: edit.text };
+                    }
+                    updates.text_elements = textElements;
+                }
+
+                if (edit.image !== undefined) {
+                    const imageElements = Array.isArray(currentPage.image_elements)
+                        ? [...currentPage.image_elements] as Record<string, unknown>[]
+                        : [];
+                    if (imageElements.length > 0) {
+                        imageElements[0] = { ...imageElements[0], src: edit.image };
+                    }
+                    updates.image_elements = imageElements;
+                }
+
+                if (Object.keys(updates).length > 0) {
+                    const { error: updateError } = await supabase
+                        .from('pages')
+                        .update(updates)
+                        .eq('id', edit.pageId)
+                        .eq('book_id', bookId);
+
+                    if (updateError) {
+                        console.error('Error updating page:', edit.pageId, updateError);
+                    }
+                }
+            }
+        }
+
         // Return updated book
         const { data: updatedBook } = await supabase
             .from('books')
@@ -330,6 +420,13 @@ export async function DELETE(
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit standard API calls
+        const rateResultDel = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultDel.allowed) {
+            console.log(`[Rate Limit] books DELETE blocked for user ${user.id}`);
+            return rateLimitResponse(rateResultDel);
         }
 
         // Delete images from Storage first (clean up assets)

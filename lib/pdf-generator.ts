@@ -121,39 +121,51 @@ async function renderDigitalPage(
             backdrop-filter: blur(6px);
         `;
 
-        const firstLetter = text.charAt(0);
-        const rest = text.slice(1);
         const bodyFont = Math.round(widthPx * 0.04);
         const dropFont = Math.round(bodyFont * 2.4);
-        const safeRest = escapeHtml(rest).replace(/\n\n/g, '<br/><br/>');
 
-        const paragraph = document.createElement('p');
-        paragraph.style.cssText = `
-            margin: 0;
-            font-size: ${bodyFont}px;
-            line-height: 1.6;
-            color: #1f2937;
-            text-align: ${isRTL ? 'right' : 'left'};
-        `;
+        // Split into paragraphs using \n\n breaks
+        const paragraphs = text.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
 
-        const dropCap = document.createElement('span');
-        dropCap.style.cssText = `
-            font-family: 'Playfair Display', 'Georgia', serif;
-            font-size: ${dropFont}px;
-            font-weight: 700;
-            float: ${isRTL ? 'right' : 'left'};
-            line-height: 0.8;
-            margin-${isRTL ? 'left' : 'right'}: ${Math.round(widthPx * 0.02)}px;
-            color: #6366f1;
-        `;
-        dropCap.textContent = firstLetter;
+        paragraphs.forEach((paraText, i) => {
+            const paragraph = document.createElement('p');
+            paragraph.style.cssText = `
+                margin: 0 0 ${i < paragraphs.length - 1 ? '0.8em' : '0'} 0;
+                font-size: ${bodyFont}px;
+                line-height: 1.6;
+                color: #1f2937;
+                text-align: ${isRTL ? 'right' : 'left'};
+                ${i > 0 ? 'text-indent: 2em;' : ''}
+            `;
 
-        const restSpan = document.createElement('span');
-        restSpan.innerHTML = safeRest;
+            if (i === 0) {
+                // Drop cap for first paragraph
+                const firstLetter = paraText.charAt(0);
+                const rest = paraText.slice(1);
 
-        paragraph.appendChild(dropCap);
-        paragraph.appendChild(restSpan);
-        overlay.appendChild(paragraph);
+                const dropCap = document.createElement('span');
+                dropCap.style.cssText = `
+                    font-family: 'Playfair Display', 'Georgia', serif;
+                    font-size: ${dropFont}px;
+                    font-weight: 700;
+                    float: ${isRTL ? 'right' : 'left'};
+                    line-height: 0.8;
+                    margin-${isRTL ? 'left' : 'right'}: ${Math.round(widthPx * 0.02)}px;
+                    color: #6366f1;
+                `;
+                dropCap.textContent = firstLetter;
+
+                const restSpan = document.createElement('span');
+                restSpan.textContent = rest;
+
+                paragraph.appendChild(dropCap);
+                paragraph.appendChild(restSpan);
+            } else {
+                paragraph.textContent = paraText;
+            }
+
+            overlay.appendChild(paragraph);
+        });
         container.appendChild(overlay);
     }
 
