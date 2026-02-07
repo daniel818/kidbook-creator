@@ -7,6 +7,8 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { requireAuth } from '@/lib/auth/api-guard';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
@@ -38,6 +40,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
         if (!hasUser && !sessionIdFromQuery) {
             logUnlock('Unauthorized: no user and no session id');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit by user ID or session ID (this route generates AI images)
+        const rateLimitKey = hasUser ? `ai:${user!.id}` : `ai:session:${sessionIdFromQuery}`;
+        const rateResult = checkRateLimit(rateLimitKey, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            logUnlock('Rate limited', { key: rateLimitKey, retryAfter: rateResult.retryAfterSeconds });
+            return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
         // When unauthenticated with a session_id, verify Stripe session first

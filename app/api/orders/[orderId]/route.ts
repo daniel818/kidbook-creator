@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth/api-guard';
+import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ orderId: string }>;
@@ -17,6 +18,14 @@ export async function GET(
         const { orderId } = await context.params;
         const { user, supabase, error: authError } = await requireAuth();
         if (authError) return authError;
+
+        // Rate limit by IP
+        const ip = getClientIp(request);
+        const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            console.log(`[Rate Limit] orders/[orderId] GET blocked for IP ${ip}`);
+            return rateLimitResponse(rateResult);
+        }
 
         // Explicit ownership check + RLS for defense in depth
         const { data: order, error } = await supabase
