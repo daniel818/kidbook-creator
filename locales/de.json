@@ -390,13 +390,38 @@
   "mybooks": {
     "header": {
       "title": "Meine Bücher",
+      "createNew": "Neues Buch erstellen",
       "booksCount": "{{count}} Buch erstellt",
       "booksCount_other": "{{count}} Bücher erstellt"
+    },
+    "filters": {
+      "all": "Alle",
+      "draft": "Meine Bücher",
+      "preview": "Vorschau",
+      "ordered": "Bestellt"
+    },
+    "status": {
+      "draft": "Digital",
+      "preview": "Vorschau",
+      "ordered": "Bestellt",
+      "delivered": "Zugestellt"
+    },
+    "cta": {
+      "orderPrint": "Drucken bestellen",
+      "unlockFullBook": "Vollständiges Buch freischalten",
+      "arriving": "Lieferung {{dateRange}}",
+      "orderProcessing": "Bestellung wird bearbeitet...",
+      "orderAnother": "Erneut bestellen"
+    },
+    "progress": {
+      "stepOf": "Schritt {{current}} von {{total}}"
     },
     "empty": {
       "title": "Noch keine Bücher",
       "subtitle": "Erstelle dein erstes personalisiertes Kinderbuch und erlebe die Magie",
-      "button": "✨ Dein erstes Buch erstellen"
+      "button": "✨ Dein erstes Buch erstellen",
+      "filteredTitle": "Keine Bücher in dieser Kategorie",
+      "filteredSubtitle": "Versuche einen anderen Filter oder erstelle ein neues Buch"
     },
     "deleteModal": {
       "title": "Buch löschen",
@@ -404,6 +429,7 @@
       "confirmText": "Löschen"
     },
     "bookCard": {
+      "untitled": "Unbenannte Geschichte",
       "pages": "{{count}} S.",
       "forChild": "Für {{childName}}, {{age}} Jahre alt",
       "status": {

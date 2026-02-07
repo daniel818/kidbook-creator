@@ -190,6 +190,18 @@ export const BookThemeInfo: Record<BookTheme, {
   }
 };
 
+// Book Display State (for UI card rendering)
+export type BookDisplayState = 'draft' | 'preview' | 'ordered' | 'delivered';
+
+export function getBookDisplayState(book: Book, orderStatus?: string): BookDisplayState {
+  if (book.status === 'ordered') {
+    if (orderStatus === 'delivered') return 'delivered';
+    return 'ordered';
+  }
+  if (book.status === 'preview') return 'preview';
+  return 'draft';
+}
+
 // Helper to get age group from age
 export function getAgeGroup(age: number): AgeGroup {
   if (age <= 2) return '0-2';

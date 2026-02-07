@@ -391,13 +391,38 @@
   "mybooks": {
     "header": {
       "title": "הספרים שלי",
+      "createNew": "צור ספר חדש",
       "booksCount": "ספר אחד נוצר",
       "booksCount_other": "{{count}} ספרים נוצרו"
+    },
+    "filters": {
+      "all": "הכל",
+      "draft": "הספרים שלי",
+      "preview": "תצוגה מקדימה",
+      "ordered": "הוזמן"
+    },
+    "status": {
+      "draft": "דיגיטלי",
+      "preview": "תצוגה מקדימה",
+      "ordered": "הוזמן",
+      "delivered": "נמסר"
+    },
+    "cta": {
+      "orderPrint": "הזמן הדפסה",
+      "unlockFullBook": "פתח ספר מלא",
+      "arriving": "מגיע {{dateRange}}",
+      "orderProcessing": "ההזמנה בעיבוד...",
+      "orderAnother": "הזמן שוב"
+    },
+    "progress": {
+      "stepOf": "שלב {{current}} מתוך {{total}}"
     },
     "empty": {
       "title": "אין עדיין ספרים",
       "subtitle": "צור את ספר הילדים המותאם אישית הראשון שלך וצפה בקסם קורה",
-      "button": "✨ צור את הספר הראשון שלך"
+      "button": "✨ צור את הספר הראשון שלך",
+      "filteredTitle": "אין ספרים בקטגוריה זו",
+      "filteredSubtitle": "נסה מסנן אחר או צור ספר חדש"
     },
     "deleteModal": {
       "title": "מחק ספר",
@@ -405,6 +430,7 @@
       "confirmText": "מחק"
     },
     "bookCard": {
+      "untitled": "סיפור ללא כותרת",
       "pages": "{{count}} עמ'",
       "forChild": "עבור {{childName}}, גיל {{age}}",
       "status": {
