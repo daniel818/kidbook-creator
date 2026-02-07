@@ -34,7 +34,9 @@ interface OrderUpdateData {
 
 export async function POST(req: Request) {
     try {
-        const signature = req.headers.get('x-lulu-signature') || req.headers.get('lulu-hmac-sha256');
+        // Lulu sends the HMAC in the "Lulu-HMAC-SHA256" header (case-insensitive).
+        // We also check the legacy "x-lulu-signature" header as a fallback.
+        const signature = req.headers.get('lulu-hmac-sha256') || req.headers.get('x-lulu-signature');
 
         // Require webhook secret — reject all webhooks if not configured
         const secret = process.env.LULU_WEBHOOK_SECRET;
@@ -99,7 +101,10 @@ export async function POST(req: Request) {
         };
 
         // Estimated delivery window (if provided by Lulu)
-        const estimatedDates = payload?.estimated_shipping_dates as Record<string, string> | undefined;
+        const rawEstimatedDates = payload?.estimated_shipping_dates;
+        const estimatedDates = (rawEstimatedDates && typeof rawEstimatedDates === 'object' && !Array.isArray(rawEstimatedDates))
+            ? rawEstimatedDates as Record<string, string>
+            : undefined;
         if (estimatedDates?.arrival_min) {
             updateData.estimated_delivery_min = estimatedDates.arrival_min;
         }
@@ -108,7 +113,8 @@ export async function POST(req: Request) {
         }
 
         // Extract tracking info from line_item_statuses (Lulu API format)
-        const lineItemStatuses = (payload?.line_item_statuses || payload?.line_items || payload?.lineItems || []) as Record<string, unknown>[];
+        const rawLineItems = payload?.line_item_statuses || payload?.line_items || payload?.lineItems;
+        const lineItemStatuses: Record<string, unknown>[] = Array.isArray(rawLineItems) ? rawLineItems : [];
         if (lineItemStatuses.length > 0) {
             const firstItem = lineItemStatuses[0];
 
@@ -160,23 +166,32 @@ export async function POST(req: Request) {
     }
 }
 
+/** Regex for a valid lowercase hex-encoded SHA-256 digest (64 hex chars). */
+const HEX_SHA256_RE = /^[0-9a-f]{64}$/;
+
 /**
  * Verify Lulu Webhook Signature (HMAC-SHA256)
  * Uses crypto.timingSafeEqual to prevent timing attacks.
+ * Compares raw hex bytes rather than UTF-8 strings for robustness.
  */
 function verifyLuluSignature(payload: string, signature: string | null, secret: string): boolean {
     if (!signature) return false;
 
-    // Strip common HMAC prefixes (e.g., "sha256=") that some providers include
-    const cleanSignature = signature.replace(/^sha256=/, '');
+    // Strip common HMAC prefixes (e.g., "sha256=") and normalize
+    const cleanSignature = signature.replace(/^sha256=/, '').trim().toLowerCase();
+
+    // Validate the incoming signature looks like a hex SHA-256 digest
+    if (!HEX_SHA256_RE.test(cleanSignature)) return false;
 
     const hmac = crypto.createHmac('sha256', secret);
     const digest = hmac.update(payload).digest('hex');
 
-    // Both buffers must be the same length for timingSafeEqual
-    const sigBuffer = Buffer.from(cleanSignature, 'utf8');
-    const digestBuffer = Buffer.from(digest, 'utf8');
+    // Compare as hex-decoded byte buffers for a proper timing-safe comparison
+    const sigBuffer = Buffer.from(cleanSignature, 'hex');
+    const digestBuffer = Buffer.from(digest, 'hex');
 
+    // Both buffers are 32 bytes (SHA-256), so lengths always match after validation above.
+    // Guard anyway in case of future changes.
     if (sigBuffer.length !== digestBuffer.length) return false;
 
     return crypto.timingSafeEqual(sigBuffer, digestBuffer);
