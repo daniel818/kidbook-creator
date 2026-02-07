@@ -392,6 +392,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
     const previewPageCount = liveBook.previewPageCount || 0;
     const isPaidAccess = !isPreview || !!liveBook.digitalUnlockPaid;
     const isSquare = liveBook.settings.printFormat === 'square';
+    const isGeneratingIllustrations = liveBook.illustrationProgress?.isGenerating ?? false;
 
     // Get total page count for progress indicator
     // Cover + (inner pages * 2 for spreads) + Back cover
@@ -921,7 +922,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 content
             }));
             const isLocked = isPreview && !liveBook.digitalUnlockPaid && index >= unlockedInnerCount;
-            const isGenerating = unlockState === 'generating' && !displayImage && !isLocked;
+            const isGenerating = (unlockState === 'generating' || isGeneratingIllustrations) && !displayImage && !isLocked;
 
             // For RTL books, flip the page numbering
             // Right page should be lower number in RTL
@@ -1131,16 +1132,23 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 </div>
             )}
 
-            {unlockState === 'generating' && (
+            {(unlockState === 'generating' || isGeneratingIllustrations) && (
                 <div className={styles.generationBanner}>
                     <div className={styles.generationMeta}>
                         <span className={styles.generationLabel}>Pages ready</span>
-                        <span className={styles.generationCount}>{readyPhysicalPages}/{totalFlipPages}</span>
+                        <span className={styles.generationCount}>
+                            {liveBook.illustrationProgress
+                                ? `${liveBook.illustrationProgress.completed}/${liveBook.illustrationProgress.total}`
+                                : `${readyPhysicalPages}/${totalFlipPages}`
+                            }
+                        </span>
                     </div>
                     <div className={styles.generationBar}>
                         <div
                             className={styles.generationFill}
-                            style={{ width: `${generationPercent}%` }}
+                            style={{ width: `${liveBook.illustrationProgress
+                                ? Math.round((liveBook.illustrationProgress.completed / Math.max(1, liveBook.illustrationProgress.total)) * 100)
+                                : generationPercent}%` }}
                         />
                     </div>
                     <p className={styles.generationHint}>Text is ready. We&apos;re painting the remaining illustrations.</p>

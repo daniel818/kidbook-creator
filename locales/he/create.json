@@ -126,6 +126,10 @@
     "extractingCharacter": "מנתח תמונה...",
     "generatingPreview": "יוצר תצוגה מקדימה...",
     "generatingStory": "יוצר את הסיפור שלך...",
-    "openingBook": "פותח את הספר שלך..."
+    "openingBook": "פותח את הספר שלך...",
+    "gatheringMagic": "...אוספים קסם",
+    "writingStory": "...כותבים את הסיפור שלך",
+    "paintingCover": "...מציירים את העטיפה",
+    "creatingAdventure": "...יוצרים את ההרפתקה של {{childName}}"
   }
 }

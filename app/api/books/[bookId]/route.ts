@@ -107,6 +107,25 @@ export async function GET(
             })
             : responsePages;
 
+        // Compute illustration progress from page data
+        const insidePagesForProgress = responsePages.filter((p: { type: string }) => p.type === 'inside');
+        const pagesWithImages = insidePagesForProgress.filter((p: { imageElements: unknown[] }) => {
+            const imgs = Array.isArray(p.imageElements) ? p.imageElements : [];
+            return imgs.length > 0 && (imgs[0] as { src?: string })?.src;
+        }).length;
+        const totalInsidePages = insidePagesForProgress.length;
+
+        // Consider generation "still running" only if the book was created recently (within 15 min)
+        const bookCreatedAt = new Date(book.created_at || book.updated_at).getTime();
+        const fifteenMinutesAgo = Date.now() - 15 * 60 * 1000;
+        const isRecentBook = Number.isFinite(bookCreatedAt) && bookCreatedAt > fifteenMinutesAgo;
+
+        const illustrationProgress = {
+            completed: pagesWithImages,
+            total: totalInsidePages,
+            isGenerating: totalInsidePages > 0 && pagesWithImages < totalInsidePages && isRecentBook,
+        };
+
         const response = {
             id: book.id,
             settings: {
@@ -129,6 +148,7 @@ export async function GET(
             previewPageCount,
             totalPageCount,
             digitalUnlockPaid,
+            illustrationProgress,
         };
         log(`Transform completed in ${Date.now() - transformStartTime}ms`);
 
