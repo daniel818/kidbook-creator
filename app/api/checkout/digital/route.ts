@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
 import { createRequestLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
@@ -17,6 +18,14 @@ export async function POST(request: NextRequest) {
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit checkout attempts
+        const rateResult = checkRateLimit(`checkout:${user.id}`, RATE_LIMITS.checkout);
+        if (!rateResult.allowed) {
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ userId: user.id }, 'Rate limited: checkout/digital');
+            return rateLimitResponse(rateResult, 'Too many checkout attempts. Please wait before trying again.');
         }
 
         const body = await request.json();

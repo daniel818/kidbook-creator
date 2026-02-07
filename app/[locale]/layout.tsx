@@ -2,16 +2,17 @@
 // The root layout (app/layout.tsx) handles that
 import LocaleSync from './LocaleSync';
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
   return (
     <>
-      <LocaleSync locale={params.locale} />
+      <LocaleSync locale={locale} />
       {children}
     </>
   );

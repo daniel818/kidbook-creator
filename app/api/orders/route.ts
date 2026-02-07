@@ -5,6 +5,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createModuleLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 const logger = createModuleLogger('orders-api');
 
@@ -17,6 +18,13 @@ export async function GET() {
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit standard API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            logger.info({ userId: user.id }, 'Rate limited: orders GET');
+            return rateLimitResponse(rateResult);
         }
 
         const { data: orders, error } = await supabase

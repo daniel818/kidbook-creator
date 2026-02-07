@@ -7,10 +7,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
 import { createRequestLogger } from '@/lib/logger';
+import { requireAdmin } from '@/lib/auth/api-guard';
+import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     const logger = createRequestLogger(request);
     try {
+        const { error: authError } = await requireAdmin();
+        if (authError) return authError;
+
+        // Rate limit by IP (admin-only route)
+        const ip = getClientIp(request);
+        const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            logger.info({ ip }, 'Rate limited: fulfillment/trigger');
+            return rateLimitResponse(rateResult);
+        }
+
         const { orderId, force } = await request.json();
 
         if (!orderId) {

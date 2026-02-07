@@ -5,6 +5,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createModuleLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 const logger = createModuleLogger('admin-stats');
 
@@ -27,6 +28,13 @@ export async function GET() {
 
         if (!profile?.is_admin) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Rate limit admin API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            logger.info({ userId: user.id }, 'Rate limited: admin/stats');
+            return rateLimitResponse(rateResult);
         }
 
         // Get order statistics

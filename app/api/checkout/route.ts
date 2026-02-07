@@ -8,6 +8,7 @@ import { stripe, formatPrice } from '@/lib/stripe/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 import { createRequestLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     const logger = createRequestLogger(request);
@@ -20,6 +21,13 @@ export async function POST(request: NextRequest) {
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit checkout attempts
+        const rateResult = checkRateLimit(`checkout:${user.id}`, RATE_LIMITS.checkout);
+        if (!rateResult.allowed) {
+            logger.info({ userId: user.id }, 'Rate limited: checkout');
+            return rateLimitResponse(rateResult, 'Too many checkout attempts. Please wait before trying again.');
         }
 
         const body = await request.json();

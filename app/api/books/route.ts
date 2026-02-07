@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createModuleLogger, createRequestLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 const moduleLogger = createModuleLogger('books-api');
 
@@ -21,6 +22,13 @@ export async function GET() {
                 { error: 'Unauthorized' },
                 { status: 401 }
             );
+        }
+
+        // Rate limit standard API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            moduleLogger.info({ userId: user.id }, 'Rate limited: books GET');
+            return rateLimitResponse(rateResult);
         }
 
         // Get all books with their pages
@@ -158,6 +166,14 @@ export async function POST(request: NextRequest) {
                 { error: 'Unauthorized' },
                 { status: 401 }
             );
+        }
+
+        // Rate limit standard API calls
+        const rateResultPost = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultPost.allowed) {
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ userId: user.id }, 'Rate limited: books POST');
+            return rateLimitResponse(rateResultPost);
         }
 
         const body = await request.json();

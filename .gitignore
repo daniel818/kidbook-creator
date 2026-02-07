@@ -32,6 +32,14 @@ yarn-error.log*
 
 # application logs
 *.log
+*.debug
+api_debug.log
+regeneration_debug.log
+lulu_debug.log
+
+# test artifacts
+temp_ids.txt
+curl-test.txt
 
 # env files
 .env

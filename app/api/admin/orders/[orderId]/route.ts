@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendShippingNotification, sendDeliveryConfirmation, OrderEmailData, ShippingEmailData } from '@/lib/email/client';
 import { createRequestLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ orderId: string }>;
@@ -34,6 +35,14 @@ export async function GET(
 
         if (!profile?.is_admin) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Rate limit admin API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            const loggerGet = createRequestLogger(request);
+            loggerGet.info({ userId: user.id }, 'Rate limited: admin/orders/[orderId] GET');
+            return rateLimitResponse(rateResult);
         }
 
         const { data: order, error } = await supabase
@@ -81,6 +90,14 @@ export async function PUT(
 
         if (!profile?.is_admin) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Rate limit admin API calls
+        const rateResultPut = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultPut.allowed) {
+            const loggerPut = createRequestLogger(request);
+            loggerPut.info({ userId: user.id }, 'Rate limited: admin/orders/[orderId] PUT');
+            return rateLimitResponse(rateResultPut);
         }
 
         const body = await request.json();

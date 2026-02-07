@@ -8,10 +8,12 @@ import { stripe } from '@/lib/stripe/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createRequestLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
 }
+
 
 export async function POST(request: NextRequest, context: RouteContext) {
     const logger = createRequestLogger(request);
@@ -24,28 +26,64 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         const hasUser = !authError && !!user;
-        const db = hasUser ? supabase : adminDb;
         logger.debug({ hasUser, userId: user?.id || null }, 'Auth status');
 
-        const bookQuery = db
-            .from('books')
-            .select('*, pages (*)')
-            .eq('id', bookId);
-        if (hasUser && user) {
-            bookQuery.eq('user_id', user.id);
+        // Require either a logged-in user or a valid Stripe session ID
+        if (!hasUser && !sessionIdFromQuery) {
+            logger.info('Unauthorized: no user and no session id');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { data: book, error: bookError } = await bookQuery.single();
+        // Rate limit by user ID or session ID (this route generates AI images)
+        const rateLimitKey = hasUser && user ? `ai:${user.id}` : `ai:session:${sessionIdFromQuery}`;
+        const rateResult = checkRateLimit(rateLimitKey, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            logger.info({ key: rateLimitKey, retryAfter: rateResult.retryAfterSeconds }, 'Rate limited: books/[bookId]/unlock');
+            return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
+        }
+
+        // When unauthenticated with a session_id, verify Stripe session first
+        // to extract userId for ownership-scoped book lookup
+        let sessionUserId: string | null = null;
+        if (!hasUser && sessionIdFromQuery) {
+            try {
+                const session = await stripe.checkout.sessions.retrieve(sessionIdFromQuery);
+                const isPaid = session.payment_status === 'paid' || session.status === 'complete';
+                sessionUserId = session.metadata?.userId || null;
+                const sessionBookId = session.metadata?.bookId;
+
+                if (!isPaid || sessionBookId !== bookId || !sessionUserId) {
+                    logger.info({
+                        isPaid, sessionBookId, sessionUserId, bookId,
+                    }, 'Stripe session validation failed for unauthenticated request');
+                    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+                }
+            } catch (err) {
+                logger.error({ err }, 'Stripe session verification failed');
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            }
+        }
+
+        // Always use ownership-scoped query: user_id from session or authenticated user
+        const ownerId = hasUser && user ? user.id : sessionUserId;
+        if (!ownerId) {
+            logger.info('No owner ID resolved; rejecting');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        const db = hasUser ? supabase : adminDb;
+
+        const { data: book, error: bookError } = await db
+            .from('books')
+            .select('*, pages (*)')
+            .eq('id', bookId)
+            .eq('user_id', ownerId)
+            .single();
 
         if (bookError || !book) {
             logger.info({ err: bookError }, 'Book not found');
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
 
-        if (!hasUser && !sessionIdFromQuery) {
-            logger.info('Unauthorized: no user and no session id');
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
 
         const isPreview = book.is_preview || book.status === 'preview';
         logger.debug({
@@ -63,14 +101,15 @@ export async function POST(request: NextRequest, context: RouteContext) {
                     const session = await stripe.checkout.sessions.retrieve(sessionIdFromQuery);
                     const isPaid = session.payment_status === 'paid' || session.status === 'complete';
                     const sessionBookId = session.metadata?.bookId;
-                    const sessionUserId = session.metadata?.userId;
+                    const metaUserId = session.metadata?.userId;
                     const bookUserId = (book.user_id as string | null) || null;
-                    const userMatches = sessionUserId ? sessionUserId === bookUserId : true;
+                    // Fail closed: if session has no userId in metadata, don't match
+                    const userMatches = metaUserId ? metaUserId === bookUserId : false;
                     logger.debug({
                         sessionId: session.id,
                         isPaid,
                         sessionBookId,
-                        sessionUserId,
+                        metaUserId,
                         bookUserId,
                         userMatches,
                     }, 'Stripe session verified');

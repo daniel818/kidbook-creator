@@ -29,6 +29,7 @@ function calculateImageCost(model: string): number {
     return rate;
 }
 
+
 export async function POST(request: NextRequest) {
     const logger = createRequestLogger(request);
     const startTime = Date.now();

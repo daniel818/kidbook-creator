@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createRequestLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     const logger = createRequestLogger(request);
@@ -16,6 +17,13 @@ export async function POST(request: NextRequest) {
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit uploads to prevent storage abuse
+        const rateResult = checkRateLimit(`upload:${user.id}`, RATE_LIMITS.upload);
+        if (!rateResult.allowed) {
+            logger.info({ userId: user.id }, 'Rate limited: upload');
+            return rateLimitResponse(rateResult, 'Too many upload requests. Please wait before trying again.');
         }
 
         const formData = await request.formData();

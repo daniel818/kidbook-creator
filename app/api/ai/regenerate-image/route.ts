@@ -4,6 +4,8 @@ import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createClient } from '@/lib/supabase/server';
 import { createRequestLogger } from '@/lib/logger';
+import { sanitizeInput } from '@/lib/sanitize';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
     const logger = createRequestLogger(req);
@@ -15,6 +17,13 @@ export async function POST(req: NextRequest) {
         if (authError || !user) {
             logger.info('Unauthorized regenerate attempt');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit by user ID
+        const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            logger.info({ userId: user.id, retryAfter: rateResult.retryAfterSeconds }, 'Rate limited: ai/regenerate-image');
+            return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
         const { data: profile, error: profileError } = await supabase
@@ -42,8 +51,8 @@ export async function POST(req: NextRequest) {
         // 1. Generate new image
         logger.debug('Calling generateIllustration');
         const imageResult = await generateIllustration({
-            scenePrompt: prompt,
-            characterDescription: style || 'A cute child character',
+            scenePrompt: sanitizeInput(prompt, 'storyDescription'),
+            characterDescription: sanitizeInput(style || 'A cute child character', 'characterDescription'),
             artStyle: currentImageContext || 'storybook_classic',
             quality: quality || 'fast',
         });

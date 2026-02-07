@@ -6,14 +6,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe/server';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendOrderConfirmation, sendDigitalUnlockEmail, OrderEmailData, DigitalUnlockEmailData } from '@/lib/email/client';
 import { createRequestLogger, createModuleLogger } from '@/lib/logger';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-02-24.acacia',
-});
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 

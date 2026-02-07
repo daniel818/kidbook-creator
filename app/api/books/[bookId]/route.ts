@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createRequestLogger } from '@/lib/logger';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
@@ -39,6 +40,13 @@ export async function GET(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         logger.debug({ userId: user.id }, 'User authenticated');
+
+        // Rate limit standard API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            logger.info({ userId: user.id }, 'Rate limited: books/[bookId] GET');
+            return rateLimitResponse(rateResult);
+        }
 
         logger.debug('Fetching book from database');
         const dbStartTime = Date.now();
@@ -88,7 +96,7 @@ export async function GET(
             }));
 
         const maskedPages = isPreview && !digitalUnlockPaid && previewPageCount > 0
-            ? responsePages.map((page) => {
+            ? responsePages.map((page: { pageNumber: number; textElements: unknown[]; imageElements: unknown[]; [key: string]: unknown }) => {
                 if (page.pageNumber > previewPageCount) {
                     return {
                         ...page,
@@ -171,6 +179,13 @@ export async function PUT(
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit standard API calls
+        const rateResultPut = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultPut.allowed) {
+            logger.info({ userId: user.id }, 'Rate limited: books/[bookId] PUT');
+            return rateLimitResponse(rateResultPut);
         }
 
         const { data: bookAccess, error: accessError } = await supabase
@@ -400,6 +415,13 @@ export async function DELETE(
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit standard API calls
+        const rateResultDel = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultDel.allowed) {
+            logger.info({ userId: user.id }, 'Rate limited: books/[bookId] DELETE');
+            return rateLimitResponse(rateResultDel);
         }
 
         // Delete images from Storage first (clean up assets)

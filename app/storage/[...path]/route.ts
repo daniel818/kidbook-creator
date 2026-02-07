@@ -44,30 +44,30 @@ async function proxyStorage(request: Request, params: { path?: string[] } | Prom
     }
 }
 
-export async function GET(request: Request, context: { params: { path: string[] } }) {
+export async function GET(request: Request, context: { params: Promise<{ path: string[] }> }) {
     return proxyStorage(request, context.params);
 }
 
-export async function HEAD(request: Request, context: { params: { path: string[] } }) {
+export async function HEAD(request: Request, context: { params: Promise<{ path: string[] }> }) {
     return proxyStorage(request, context.params);
 }
 
-export async function POST(request: Request, context: { params: { path: string[] } }) {
+export async function POST(request: Request, context: { params: Promise<{ path: string[] }> }) {
     return proxyStorage(request, context.params);
 }
 
-export async function PUT(request: Request, context: { params: { path: string[] } }) {
+export async function PUT(request: Request, context: { params: Promise<{ path: string[] }> }) {
     return proxyStorage(request, context.params);
 }
 
-export async function PATCH(request: Request, context: { params: { path: string[] } }) {
+export async function PATCH(request: Request, context: { params: Promise<{ path: string[] }> }) {
     return proxyStorage(request, context.params);
 }
 
-export async function DELETE(request: Request, context: { params: { path: string[] } }) {
+export async function DELETE(request: Request, context: { params: Promise<{ path: string[] }> }) {
     return proxyStorage(request, context.params);
 }
 
-export async function OPTIONS(request: Request, context: { params: { path: string[] } }) {
+export async function OPTIONS(request: Request, context: { params: Promise<{ path: string[] }> }) {
     return proxyStorage(request, context.params);
 }
