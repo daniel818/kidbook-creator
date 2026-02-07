@@ -15,6 +15,21 @@ import * as path from 'path';
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 
+// Pricing Constants (same as generate-book)
+const PRICING: Record<string, { input?: number; output?: number; image?: number }> = {
+    'gemini-3-flash-preview': { input: 0.10 / 1_000_000, output: 0.40 / 1_000_000 },
+    'gemini-3-pro-image-preview': { image: 0.04 },
+    'gemini-2.5-flash-image': { image: 0.039 },
+};
+
+function calculateImageCost(model: string): number {
+    let rate = 0.04;
+    if (model.includes('ultra') || model.includes('pro')) rate = 0.08;
+    const pricing = PRICING[model];
+    if (pricing?.image) rate = pricing.image;
+    return rate;
+}
+
 const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[API generate-illustrations ${timestamp}] ${message}`;
@@ -96,7 +111,9 @@ export async function POST(request: NextRequest) {
             if (firstPage) {
                 const imgSrc = (firstPage.image_elements[0] as { src: string }).src;
                 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-                const isAllowedOrigin = imgSrc.startsWith(supabaseUrl) || imgSrc.startsWith('data:');
+                // Guard against empty supabaseUrl to prevent SSRF
+                const isAllowedOrigin = imgSrc.startsWith('data:') ||
+                    (supabaseUrl.length > 0 && imgSrc.startsWith(supabaseUrl));
                 if (isAllowedOrigin) {
                     try {
                         const resp = await fetch(imgSrc);
@@ -124,6 +141,12 @@ export async function POST(request: NextRequest) {
         const SAFETY_DELAY_MS = 2000;
 
         for (const page of pages) {
+            // Enforce generation limit
+            if (generatedCount >= maxIllustrations) {
+                log(`Reached max illustrations limit (${maxIllustrations}), stopping`);
+                break;
+            }
+
             const pageType = page.page_type as string;
             if (pageType !== 'inside') continue;
 
@@ -167,7 +190,7 @@ export async function POST(request: NextRequest) {
                 const storedUrl = await uploadImageToStorage(bookId, page.page_number, imageBuffer);
 
                 // Update this page in DB immediately
-                await db
+                const { error: updateError } = await db
                     .from('pages')
                     .update({
                         image_elements: [{
@@ -182,6 +205,11 @@ export async function POST(request: NextRequest) {
                     })
                     .eq('id', page.id);
 
+                if (updateError) {
+                    log(`ERROR: DB update failed for page ${page.page_number}`, updateError);
+                    continue;
+                }
+
                 // Capture first generated image as style reference
                 if (generatedCount === 0 && !styleReferenceImage) {
                     styleReferenceImage = imageUrl;
@@ -189,6 +217,7 @@ export async function POST(request: NextRequest) {
                 }
 
                 // Log generation cost
+                const imageCost = calculateImageCost(usage.model);
                 await db.from('generation_logs').insert({
                     book_id: bookId,
                     step_name: `bg_illustration_page_${page.page_number}`,
@@ -196,7 +225,7 @@ export async function POST(request: NextRequest) {
                     input_tokens: 0,
                     output_tokens: 0,
                     image_count: 1,
-                    cost_usd: 0.04,
+                    cost_usd: imageCost,
                 });
 
                 generatedCount++;
@@ -225,7 +254,7 @@ export async function POST(request: NextRequest) {
                     if (matches && matches.length === 3) {
                         const imageBuffer = Buffer.from(matches[2], 'base64');
                         const storedUrl = await uploadImageToStorage(bookId, page.page_number, imageBuffer);
-                        await db
+                        const { error: retryUpdateError } = await db
                             .from('pages')
                             .update({
                                 image_elements: [{
@@ -235,8 +264,12 @@ export async function POST(request: NextRequest) {
                                 }]
                             })
                             .eq('id', page.id);
-                        generatedCount++;
-                        log(`Retry succeeded for page ${page.page_number}`);
+                        if (retryUpdateError) {
+                            log(`ERROR: DB update failed on retry for page ${page.page_number}`, retryUpdateError);
+                        } else {
+                            generatedCount++;
+                            log(`Retry succeeded for page ${page.page_number}`);
+                        }
                     }
                 } catch (retryErr) {
                     log(`Retry also failed for page ${page.page_number}`, retryErr);

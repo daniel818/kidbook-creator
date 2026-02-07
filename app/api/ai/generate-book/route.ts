@@ -254,6 +254,8 @@ export async function POST(request: NextRequest) {
                 } catch (err) {
                     log('Reference image upload failed', err);
                 }
+            } else {
+                log('WARNING: childPhoto provided but is not a valid data URL, skipping reference image upload');
             }
         }
 
@@ -381,7 +383,8 @@ export async function POST(request: NextRequest) {
         // =========================================================
         const internalKey = process.env.INTERNAL_API_KEY;
         if (internalKey) {
-            const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            // Use server-only INTERNAL_API_BASE_URL if set, fall back to NEXT_PUBLIC_APP_URL for dev
+            const baseUrl = process.env.INTERNAL_API_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
             log('Triggering background illustration generation...');
 
             fetch(`${baseUrl}/api/ai/generate-illustrations`, {

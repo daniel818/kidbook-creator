@@ -115,10 +115,15 @@ export async function GET(
         }).length;
         const totalInsidePages = insidePagesForProgress.length;
 
+        // Consider generation "still running" only if the book was created recently (within 15 min)
+        const bookCreatedAt = new Date(book.created_at).getTime();
+        const fifteenMinutesAgo = Date.now() - 15 * 60 * 1000;
+        const isRecentBook = bookCreatedAt > fifteenMinutesAgo;
+
         const illustrationProgress = {
             completed: pagesWithImages,
             total: totalInsidePages,
-            isGenerating: totalInsidePages > 0 && pagesWithImages < totalInsidePages,
+            isGenerating: totalInsidePages > 0 && pagesWithImages < totalInsidePages && isRecentBook,
         };
 
         const response = {
