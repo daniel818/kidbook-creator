@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
-import { checkRateLimit, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,12 +19,8 @@ export async function POST(request: NextRequest) {
         // Rate limit by user ID
         const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
         if (!rateResult.allowed) {
-            const response = NextResponse.json(
-                { error: 'Too many AI requests. Please wait before trying again.' },
-                { status: 429 }
-            );
-            addRateLimitHeaders(response.headers, rateResult);
-            return response;
+            console.log(`[Rate Limit] ai/generate-image blocked for user ${user.id}`);
+            return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
         const body = await request.json();

@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 // Helper function for logging with timestamps
 const log = (message: string, data?: unknown) => {
@@ -46,6 +47,13 @@ export async function GET(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         log(`User authenticated: ${user.id}`);
+
+        // Rate limit standard API calls
+        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            log('Rate limited', { userId: user.id });
+            return rateLimitResponse(rateResult);
+        }
 
         log('Step 3: Fetching book from database...');
         const dbStartTime = Date.now();
@@ -177,6 +185,13 @@ export async function PUT(
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit standard API calls
+        const rateResultPut = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultPut.allowed) {
+            console.log(`[Rate Limit] books PUT blocked for user ${user.id}`);
+            return rateLimitResponse(rateResultPut);
         }
 
         const { data: bookAccess, error: accessError } = await supabase
@@ -405,6 +420,13 @@ export async function DELETE(
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit standard API calls
+        const rateResultDel = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        if (!rateResultDel.allowed) {
+            console.log(`[Rate Limit] books DELETE blocked for user ${user.id}`);
+            return rateLimitResponse(rateResultDel);
         }
 
         // Delete images from Storage first (clean up assets)

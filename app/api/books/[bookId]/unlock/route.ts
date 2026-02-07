@@ -7,6 +7,7 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
@@ -34,6 +35,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
         const hasUser = !authError && !!user;
         const db = hasUser ? supabase : adminDb;
         logUnlock('Auth status', { hasUser, userId: user?.id || null });
+
+        // Rate limit by user ID or session ID (this route generates AI images)
+        const rateLimitKey = hasUser ? `ai:${user!.id}` : `ai:session:${sessionIdFromQuery}`;
+        const rateResult = checkRateLimit(rateLimitKey, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            logUnlock('Rate limited', { key: rateLimitKey, retryAfter: rateResult.retryAfterSeconds });
+            return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
+        }
 
         const bookQuery = db
             .from('books')

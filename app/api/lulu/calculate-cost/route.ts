@@ -5,9 +5,18 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
+import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
+        // Rate limit by IP (public endpoint)
+        const ip = getClientIp(request);
+        const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            console.log(`[Rate Limit] lulu/calculate-cost blocked for IP ${ip}`);
+            return rateLimitResponse(rateResult);
+        }
+
         const body = await request.json();
         const { format, size, pageCount, quantity, countryCode, postalCode, stateCode, shippingOption, shipping: shippingAddress } = body;
 

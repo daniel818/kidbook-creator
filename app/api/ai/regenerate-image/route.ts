@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createClient } from '@/lib/supabase/server';
-import { checkRateLimit, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 function log(msg: string, data?: unknown) {
     console.log(`[Regenerate] ${msg}`, data || '');
@@ -23,12 +23,8 @@ export async function POST(req: NextRequest) {
         // Rate limit by user ID
         const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
         if (!rateResult.allowed) {
-            const response = NextResponse.json(
-                { error: 'Too many AI requests. Please wait before trying again.' },
-                { status: 429 }
-            );
-            addRateLimitHeaders(response.headers, rateResult);
-            return response;
+            log('Rate limited', { userId: user.id, retryAfter: rateResult.retryAfterSeconds });
+            return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
         const { data: profile, error: profileError } = await supabase

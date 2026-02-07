@@ -15,20 +15,6 @@ const store = new Map<string, RateLimitEntry>();
 const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
 let lastCleanup = Date.now();
 
-function cleanup(windowMs: number) {
-    const now = Date.now();
-    if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
-    lastCleanup = now;
-
-    const cutoff = now - windowMs;
-    for (const [key, entry] of store.entries()) {
-        entry.timestamps = entry.timestamps.filter(t => t > cutoff);
-        if (entry.timestamps.length === 0) {
-            store.delete(key);
-        }
-    }
-}
-
 export interface RateLimitConfig {
     /** Time window in milliseconds */
     windowMs: number;
@@ -40,6 +26,7 @@ export interface RateLimitResult {
     allowed: boolean;
     remaining: number;
     resetAt: number;
+    retryAfterSeconds: number;
     limit: number;
 }
 
@@ -63,6 +50,24 @@ export const RATE_LIMITS = {
     upload: { windowMs: 60_000, maxRequests: 10 } as RateLimitConfig,
 } as const;
 
+// Use the largest configured window for cleanup so we never
+// prematurely evict entries that belong to a longer window.
+const MAX_WINDOW_MS = Math.max(...Object.values(RATE_LIMITS).map(r => r.windowMs));
+
+function cleanup() {
+    const now = Date.now();
+    if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+    lastCleanup = now;
+
+    const cutoff = now - MAX_WINDOW_MS;
+    for (const [key, entry] of store.entries()) {
+        entry.timestamps = entry.timestamps.filter(t => t > cutoff);
+        if (entry.timestamps.length === 0) {
+            store.delete(key);
+        }
+    }
+}
+
 /**
  * Check rate limit for a given identifier (typically user ID or IP).
  *
@@ -75,7 +80,7 @@ export function checkRateLimit(identifier: string, config: RateLimitConfig): Rat
     const windowStart = now - config.windowMs;
 
     // Periodic cleanup
-    cleanup(config.windowMs);
+    cleanup();
 
     let entry = store.get(identifier);
     if (!entry) {
@@ -89,10 +94,13 @@ export function checkRateLimit(identifier: string, config: RateLimitConfig): Rat
     if (entry.timestamps.length >= config.maxRequests) {
         // Rate limited
         const oldestInWindow = entry.timestamps[0];
+        const resetAt = oldestInWindow + config.windowMs;
+        const retryAfterSeconds = Math.ceil((resetAt - now) / 1000);
         return {
             allowed: false,
             remaining: 0,
-            resetAt: oldestInWindow + config.windowMs,
+            resetAt,
+            retryAfterSeconds: Math.max(1, retryAfterSeconds),
             limit: config.maxRequests,
         };
     }
@@ -102,19 +110,53 @@ export function checkRateLimit(identifier: string, config: RateLimitConfig): Rat
 
     // resetAt = when the oldest request in the window will expire (consistent with blocked path)
     const oldestTimestamp = entry.timestamps[0];
+    const resetAt = oldestTimestamp + config.windowMs;
     return {
         allowed: true,
         remaining: config.maxRequests - entry.timestamps.length,
-        resetAt: oldestTimestamp + config.windowMs,
+        resetAt,
+        retryAfterSeconds: 0,
         limit: config.maxRequests,
     };
 }
 
 /**
  * Helper to add rate limit headers to a Response.
+ * Includes standard X-RateLimit-* headers and Retry-After (on 429).
  */
 export function addRateLimitHeaders(headers: Headers, result: RateLimitResult): void {
     headers.set('X-RateLimit-Limit', String(result.limit));
     headers.set('X-RateLimit-Remaining', String(result.remaining));
     headers.set('X-RateLimit-Reset', String(Math.ceil(result.resetAt / 1000)));
+    if (!result.allowed) {
+        headers.set('Retry-After', String(result.retryAfterSeconds));
+    }
+}
+
+/**
+ * Extract a client identifier from a request (IP address or fallback).
+ * Uses standard proxy headers (X-Forwarded-For, X-Real-IP) for deployments behind a reverse proxy.
+ */
+export function getClientIp(request: { headers: { get(name: string): string | null } }): string {
+    const forwarded = request.headers.get('x-forwarded-for');
+    if (forwarded) {
+        // x-forwarded-for can be comma-separated; take the first (client) IP
+        return forwarded.split(',')[0].trim();
+    }
+    return request.headers.get('x-real-ip') || 'unknown';
+}
+
+/**
+ * Helper to create a standard 429 rate limit response with proper headers and logging.
+ */
+export function rateLimitResponse(
+    rateResult: RateLimitResult,
+    message = 'Too many requests. Please wait before trying again.'
+): Response {
+    const response = Response.json(
+        { error: message },
+        { status: 429 }
+    );
+    addRateLimitHeaders(response.headers, rateResult);
+    return response;
 }
