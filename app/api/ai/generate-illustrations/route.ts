@@ -10,8 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
-import * as fs from 'fs';
-import * as path from 'path';
+import { createRequestLogger } from '@/lib/logger';
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 
@@ -30,29 +29,16 @@ function calculateImageCost(model: string): number {
     return rate;
 }
 
-const log = (message: string, data?: unknown) => {
-    const timestamp = new Date().toISOString();
-    const logMsg = `[API generate-illustrations ${timestamp}] ${message}`;
-    console.log(logMsg);
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : JSON.stringify(data, null, 2)) : '';
-        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
-    } catch { /* ignore */ }
-    if (data !== undefined) {
-        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 500));
-    }
-};
-
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     const startTime = Date.now();
-    log('=== BACKGROUND ILLUSTRATION GENERATION STARTED ===');
+    logger.info('Background illustration generation started');
 
     try {
         // Authenticate via internal API key
         const internalKey = request.headers.get('x-internal-key');
         if (!INTERNAL_API_KEY || !internalKey || internalKey !== INTERNAL_API_KEY) {
-            log('ERROR: Unauthorized - invalid or missing internal key');
+            logger.error('Unauthorized - invalid or missing internal key');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -72,11 +58,11 @@ export async function POST(request: NextRequest) {
         } = body;
 
         if (!bookId || !userId) {
-            log('ERROR: Missing required fields');
+            logger.error('Missing required fields');
             return NextResponse.json({ error: 'Missing bookId or userId' }, { status: 400 });
         }
 
-        log('Request params', { bookId, userId, artStyle, isPreview, previewPageCount });
+        logger.debug({ bookId, userId, artStyle, isPreview, previewPageCount }, 'Request params');
 
         const db = await createAdminClient();
 
@@ -89,7 +75,7 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (bookError || !book) {
-            log('ERROR: Book not found', bookError);
+            logger.error({ err: bookError }, 'Book not found');
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
 
@@ -123,11 +109,11 @@ export async function POST(request: NextRequest) {
                             if (contentLength <= 10 * 1024 * 1024) {
                                 const buffer = Buffer.from(await resp.arrayBuffer());
                                 styleReferenceImage = `data:${contentType};base64,${buffer.toString('base64')}`;
-                                log('Loaded page 1 image as style reference from DB');
+                                logger.debug('Loaded page 1 image as style reference from DB');
                             }
                         }
                     } catch (err) {
-                        log('Failed to load style reference from DB', err);
+                        logger.warn({ err }, 'Failed to load style reference from DB');
                     }
                 }
             }
@@ -151,7 +137,7 @@ export async function POST(request: NextRequest) {
         for (const page of pages) {
             // Enforce generation limit
             if (generatedCount >= maxIllustrations) {
-                log(`Reached max illustrations limit (${maxIllustrations}), stopping`);
+                logger.info({ maxIllustrations }, 'Reached max illustrations limit, stopping');
                 break;
             }
 
@@ -170,7 +156,7 @@ export async function POST(request: NextRequest) {
             const prompt = page.image_prompt as string | undefined;
             if (!prompt) continue;
 
-            log(`Generating illustration for page ${page.page_number}...`);
+            logger.debug({ pageNumber: page.page_number }, 'Generating illustration for page');
             const pageStartTime = Date.now();
 
             try {
@@ -191,7 +177,7 @@ export async function POST(request: NextRequest) {
                 // Extract base64 and upload to storage
                 const matches = imageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
                 if (!matches || matches.length !== 3) {
-                    log(`ERROR: Invalid image data for page ${page.page_number}`);
+                    logger.error({ pageNumber: page.page_number }, 'Invalid image data for page');
                     continue;
                 }
                 const imageBuffer = Buffer.from(matches[2], 'base64');
@@ -214,14 +200,14 @@ export async function POST(request: NextRequest) {
                     .eq('id', page.id);
 
                 if (updateError) {
-                    log(`ERROR: DB update failed for page ${page.page_number}`, updateError);
+                    logger.error({ err: updateError, pageNumber: page.page_number }, 'DB update failed for page');
                     continue;
                 }
 
                 // Capture first generated image as style reference
                 if (generatedCount === 0 && !styleReferenceImage) {
                     styleReferenceImage = imageUrl;
-                    log('Captured first generated image as style reference');
+                    logger.debug('Captured first generated image as style reference');
                 }
 
                 // Log generation cost
@@ -237,13 +223,13 @@ export async function POST(request: NextRequest) {
                 });
 
                 generatedCount++;
-                log(`Page ${page.page_number} completed in ${Date.now() - pageStartTime}ms (${generatedCount} total)`);
+                logger.info({ pageNumber: page.page_number, durationMs: Date.now() - pageStartTime, generatedCount }, 'Page completed');
 
             } catch (err) {
-                log(`ERROR generating page ${page.page_number}`, err);
+                logger.error({ err, pageNumber: page.page_number }, 'Error generating page');
                 // Retry once
                 try {
-                    log(`Retrying page ${page.page_number}...`);
+                    logger.info({ pageNumber: page.page_number }, 'Retrying page');
                     await new Promise(r => setTimeout(r, SAFETY_DELAY_MS));
                     const { imageUrl } = await generateIllustration({
                         scenePrompt: prompt,
@@ -273,14 +259,14 @@ export async function POST(request: NextRequest) {
                             })
                             .eq('id', page.id);
                         if (retryUpdateError) {
-                            log(`ERROR: DB update failed on retry for page ${page.page_number}`, retryUpdateError);
+                            logger.error({ err: retryUpdateError, pageNumber: page.page_number }, 'DB update failed on retry for page');
                         } else {
                             generatedCount++;
-                            log(`Retry succeeded for page ${page.page_number}`);
+                            logger.info({ pageNumber: page.page_number }, 'Retry succeeded for page');
                         }
                     }
                 } catch (retryErr) {
-                    log(`Retry also failed for page ${page.page_number}`, retryErr);
+                    logger.error({ err: retryErr, pageNumber: page.page_number }, 'Retry also failed for page');
                 }
             }
 
@@ -288,12 +274,11 @@ export async function POST(request: NextRequest) {
             await new Promise(r => setTimeout(r, SAFETY_DELAY_MS));
         }
 
-        log(`=== BACKGROUND ILLUSTRATION GENERATION COMPLETE: ${generatedCount} images in ${Date.now() - startTime}ms ===`);
+        logger.info({ generatedCount, durationMs: Date.now() - startTime }, 'Background illustration generation complete');
         return NextResponse.json({ success: true, generatedCount });
 
     } catch (error) {
-        log('=== BACKGROUND ILLUSTRATION GENERATION FAILED ===', error);
-        console.error('[generate-illustrations ERROR]', error);
+        logger.error({ err: error, durationMs: Date.now() - startTime }, 'Background illustration generation failed');
         return NextResponse.json({ error: 'Failed to generate illustrations' }, { status: 500 });
     }
 }

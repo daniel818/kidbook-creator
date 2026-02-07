@@ -4,7 +4,10 @@ import { useRef, useEffect, useState } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './StoryBookViewer.module.css';
+
+const logger = createClientModuleLogger('print-generator');
 
 interface PrintGeneratorProps {
     book: Book;
@@ -81,7 +84,7 @@ export default function PrintGenerator({ book, onComplete, onProgress }: PrintGe
                     });
 
                 } catch (e) {
-                    console.error("Page snapshot failed:", e);
+                    logger.error({ err: e }, 'Page snapshot failed');
                 }
             }
 

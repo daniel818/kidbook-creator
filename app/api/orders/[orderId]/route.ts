@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createRequestLogger } from '@/lib/logger';
 
 interface RouteContext {
     params: Promise<{ orderId: string }>;
@@ -61,7 +62,8 @@ export async function GET(
             },
         });
     } catch (error) {
-        console.error('Error fetching order:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Error fetching order');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

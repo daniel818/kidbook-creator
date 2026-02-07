@@ -6,8 +6,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const { orderId, force } = await request.json();
 
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Trigger fulfillment
-        console.log(`[Fulfillment API] Triggering for order: ${orderId}`);
+        logger.info({ orderId }, 'Triggering fulfillment for order');
         const result = await fulfillOrder(orderId);
 
         if (result.status === FulfillmentStatus.SUCCESS) {
@@ -62,7 +64,7 @@ export async function POST(request: NextRequest) {
         }
 
     } catch (error) {
-        console.error('[Fulfillment API] Error:', error);
+        logger.error({ err: error }, 'Fulfillment API error');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

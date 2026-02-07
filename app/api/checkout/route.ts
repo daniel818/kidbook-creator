@@ -7,8 +7,10 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe, formatPrice } from '@/lib/stripe/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const supabase = await createClient();
         const adminDb = await createAdminClient();
@@ -23,12 +25,12 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { bookId, format, size, quantity, shipping, shippingLevel, pdfUrl, coverUrl } = body;
 
-        console.log('[Checkout API] Received request:', {
+        logger.info({
             bookId,
             hasPdf: !!pdfUrl,
             hasCover: !!coverUrl,
             pdfUrlLength: pdfUrl?.length
-        });
+        }, 'Received checkout request');
 
         // Validate required fields
         if (!bookId || !format || !size || !quantity || !shipping || !shippingLevel) {
@@ -112,7 +114,7 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (orderError || !order) {
-            console.error('Order creation error:', JSON.stringify(orderError, null, 2));
+            logger.error({ err: orderError }, 'Order creation error');
             return NextResponse.json({ error: 'Failed to initialize order.' }, { status: 500 });
         }
 
@@ -181,7 +183,7 @@ export async function POST(request: NextRequest) {
             .eq('id', order.id);
 
         if (updateError) {
-            console.error('Failed to link session to order:', updateError);
+            logger.error({ err: updateError }, 'Failed to link session to order');
             // We don't fail the request because the user can still pay, 
             // and the webhook needs to handle lookup by orderId from metadata anyway.
         }
@@ -198,7 +200,7 @@ export async function POST(request: NextRequest) {
         });
 
     } catch (error) {
-        console.error('Checkout error:', error);
+        logger.error({ err: error }, 'Checkout error');
         return NextResponse.json(
             { error: 'Failed to create checkout session' },
             { status: 500 }

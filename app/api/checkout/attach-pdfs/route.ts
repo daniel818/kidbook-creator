@@ -6,8 +6,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const supabase = await createClient();
         const adminDb = await createAdminClient();
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (updateError || !order) {
-            console.error('Attach PDFs error:', updateError);
+            logger.error({ err: updateError }, 'Attach PDFs error');
             return NextResponse.json(
                 { error: 'Failed to attach PDFs to order. Order may not exist, may not belong to you, or may already be paid.' },
                 { status: 400 }
@@ -54,7 +56,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true });
 
     } catch (error) {
-        console.error('Attach PDFs error:', error);
+        logger.error({ err: error }, 'Attach PDFs error');
         return NextResponse.json(
             { error: 'Failed to attach PDFs to order' },
             { status: 500 }

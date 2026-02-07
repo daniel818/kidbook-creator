@@ -7,6 +7,9 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { createLuluClient, ShippingLevel } from './client';
 import { Book } from '@/lib/types';
 import { getPrintableInteriorPageCount } from './page-count';
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('fulfillment');
 
 /**
  * Fulfillment status enum
@@ -109,7 +112,7 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
         await updateOrderStatus(supabase, orderId, FulfillmentStatus.UPLOADING); // Keep as initial status
 
         // 2. Generate Signed URLs
-        console.log(`[Fulfillment] Generating signed URLs for order ${orderId}...`);
+        logger.info({ orderId }, 'Generating signed URLs for order');
 
         const { data: interiorUrl, error: interiorError } = await supabase.storage.from('book-pdfs').createSignedUrl(interiorPath, 86400);
         const { data: coverUrl, error: coverError } = await supabase.storage.from('book-pdfs').createSignedUrl(coverPath, 86400);
@@ -135,7 +138,7 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
         const luluClient = createLuluClient();
         const podPackageId = getLuluProductId(orderData.format, orderData.size, interiorPageCount);
 
-        console.log(`[Fulfillment] Processing Job for SKU: ${podPackageId} (Pages: ${interiorPageCount})`);
+        logger.info({ podPackageId, interiorPageCount }, 'Processing job');
 
         // Skip explicit validation as per request - proceeding to job creation
         await updateOrderStatus(supabase, orderId, FulfillmentStatus.CREATING_JOB);
@@ -179,7 +182,7 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
                 shippingLevel = preferredOrder.find((level) => available.has(level)) || options[0]?.level;
             }
         } catch (error) {
-            console.warn('[Fulfillment] Failed to fetch shipping options, defaulting to MAIL', error);
+            logger.warn({ err: error }, 'Failed to fetch shipping options, defaulting to MAIL');
             shippingLevel = (orderData.shipping_level as ShippingLevel) || 'MAIL';
         }
 
@@ -216,7 +219,7 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
             fulfillment_status: FulfillmentStatus.SUCCESS,
         }).eq('id', orderId);
 
-        console.log(`[Fulfillment] Success! Job ID: ${printJob.id}`);
+        logger.info({ printJobId: printJob.id }, 'Fulfillment success');
 
         return {
             status: FulfillmentStatus.SUCCESS,
@@ -224,7 +227,7 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
         };
 
     } catch (error) {
-        console.error(`[Fulfillment] Error fulfilling order ${orderId}:`, error);
+        logger.error({ err: error, orderId }, 'Error fulfilling order');
 
         // Update order with error
         await supabase.from('orders').update({

@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
     try {
@@ -73,7 +74,8 @@ export async function POST(request: NextRequest) {
             paymentIntentId: paymentIntent.id,
         });
     } catch (error) {
-        console.error('Digital checkout error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Digital checkout error');
         return NextResponse.json({ error: 'Failed to create payment intent' }, { status: 500 });
     }
 }

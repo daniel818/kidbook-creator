@@ -5,6 +5,9 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('middleware');
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -61,8 +64,7 @@ export async function updateSession(request: NextRequest) {
     supabaseResponse.headers.set('Pragma', 'no-cache');
     supabaseResponse.headers.set('Expires', '0');
 
-    // Debug Log (Check server console to see if this runs!)
-    console.log('[Middleware] Applied CSP Headers');
+    logger.debug('Applied CSP headers');
 
     return supabaseResponse;
 }

@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth/AuthContext';
 import Link from 'next/link';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('admin');
 
 interface Stats {
     totalOrders: number;
@@ -79,7 +82,7 @@ export default function AdminDashboard() {
                 setOrders(ordersData.orders);
             }
         } catch (error) {
-            console.error('Admin load error:', error);
+            logger.error({ err: error }, 'Admin load error');
         } finally {
             setIsLoading(false);
         }

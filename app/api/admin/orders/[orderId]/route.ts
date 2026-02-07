@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendShippingNotification, sendDeliveryConfirmation, OrderEmailData, ShippingEmailData } from '@/lib/email/client';
+import { createRequestLogger } from '@/lib/logger';
 
 interface RouteContext {
     params: Promise<{ orderId: string }>;
@@ -51,7 +52,8 @@ export async function GET(
 
         return NextResponse.json(order);
     } catch (error) {
-        console.error('Error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Error fetching admin order');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -114,7 +116,8 @@ export async function PUT(
             .single();
 
         if (error) {
-            console.error('Update error:', error);
+            const logger = createRequestLogger(request);
+            logger.error({ err: error }, 'Update error');
             return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
         }
 
@@ -157,7 +160,8 @@ export async function PUT(
 
         return NextResponse.json(order);
     } catch (error) {
-        console.error('Error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Error updating admin order');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

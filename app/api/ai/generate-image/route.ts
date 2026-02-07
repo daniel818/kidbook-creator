@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
     try {
@@ -35,7 +36,8 @@ export async function POST(request: NextRequest) {
             image: imageData,
         });
     } catch (error) {
-        console.error('Image generation error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Image generation error');
         return NextResponse.json(
             { error: 'Failed to generate image' },
             { status: 500 }

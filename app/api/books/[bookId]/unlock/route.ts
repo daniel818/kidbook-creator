@@ -5,43 +5,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
-import * as fs from 'fs';
-import * as path from 'path';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
+import { createRequestLogger } from '@/lib/logger';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
 }
 
-const logUnlock = (message: string, data?: unknown) => {
-    const timestamp = new Date().toISOString();
-    const logMsg = `[API unlock-book ${timestamp}] ${message}`;
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        fs.appendFileSync(logPath, `${logMsg} ${data ? JSON.stringify(data) : ''}\n`);
-    } catch {
-        // ignore
-    }
-    if (data !== undefined) {
-        console.log(logMsg, data);
-    } else {
-        console.log(logMsg);
-    }
-};
-
 export async function POST(request: NextRequest, context: RouteContext) {
+    const logger = createRequestLogger(request);
     try {
         const { bookId } = await context.params;
         const supabase = await createClient();
         const adminDb = await createAdminClient();
         const sessionIdFromQuery = new URL(request.url).searchParams.get('session_id');
-        logUnlock('Unlock request received', { bookId, hasSessionId: !!sessionIdFromQuery });
+        logger.info({ bookId, hasSessionId: !!sessionIdFromQuery }, 'Unlock request received');
 
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         const hasUser = !authError && !!user;
         const db = hasUser ? supabase : adminDb;
-        logUnlock('Auth status', { hasUser, userId: user?.id || null });
+        logger.debug({ hasUser, userId: user?.id || null }, 'Auth status');
 
         const bookQuery = db
             .from('books')
@@ -54,22 +38,22 @@ export async function POST(request: NextRequest, context: RouteContext) {
         const { data: book, error: bookError } = await bookQuery.single();
 
         if (bookError || !book) {
-            logUnlock('Book not found', { bookError });
+            logger.info({ err: bookError }, 'Book not found');
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
 
         if (!hasUser && !sessionIdFromQuery) {
-            logUnlock('Unauthorized: no user and no session id');
+            logger.info('Unauthorized: no user and no session id');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const isPreview = book.is_preview || book.status === 'preview';
-        logUnlock('Book state', {
+        logger.debug({
             isPreview,
             status: book.status,
             digitalUnlockPaid: book.digital_unlock_paid,
             previewPageCount: book.preview_page_count,
-        });
+        }, 'Book state');
         if (!isPreview) {
             return NextResponse.json({ error: 'Book is already unlocked' }, { status: 400 });
         }
@@ -82,24 +66,23 @@ export async function POST(request: NextRequest, context: RouteContext) {
                     const sessionUserId = session.metadata?.userId;
                     const bookUserId = (book.user_id as string | null) || null;
                     const userMatches = sessionUserId ? sessionUserId === bookUserId : true;
-                    logUnlock('Stripe session verified', {
+                    logger.debug({
                         sessionId: session.id,
                         isPaid,
                         sessionBookId,
                         sessionUserId,
                         bookUserId,
                         userMatches,
-                    });
+                    }, 'Stripe session verified');
                     if (isPaid && sessionBookId === bookId && userMatches) {
                         await adminDb
                             .from('books')
                             .update({ digital_unlock_paid: true, digital_unlock_session_id: session.id })
                             .eq('id', bookId);
-                        logUnlock('Marked digital unlock paid via session');
+                        logger.info('Marked digital unlock paid via session');
                     }
                 } catch (err) {
-                    console.error('[unlock-book] Stripe session query failed', err);
-                    logUnlock('Stripe session query failed');
+                    logger.error({ err }, 'Stripe session query failed');
                 }
             }
 
@@ -129,7 +112,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
                                 .eq('id', bookId);
                         }
                     } catch (err) {
-                        console.error('[unlock-book] Stripe session check failed', err);
+                        logger.error({ err }, 'Stripe session check failed');
                     }
                 } else {
                     // 3) Check latest print session if any (fallback)
@@ -152,7 +135,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
                                     .eq('id', bookId);
                             }
                         } catch (err) {
-                            console.error('[unlock-book] Stripe print session check failed', err);
+                            logger.error({ err }, 'Stripe print session check failed');
                         }
                     }
                 }
@@ -164,7 +147,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
                     .single();
 
                 if (!refreshed?.digital_unlock_paid) {
-                    logUnlock('Payment not confirmed; returning 402');
+                    logger.info('Payment not confirmed; returning 402');
                     return NextResponse.json({ error: 'Payment not confirmed' }, { status: 402 });
                 }
             }
@@ -188,7 +171,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
                     referenceImage = `data:${contentType};base64,${buffer.toString('base64')}`;
                 }
             } catch (err) {
-                console.warn('Failed to load reference image', err);
+                logger.warn({ err }, 'Failed to load reference image');
             }
         }
 
@@ -207,7 +190,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
                 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
                 const isAllowedOrigin = imgSrc.startsWith(supabaseUrl) || imgSrc.startsWith('data:');
                 if (!isAllowedOrigin) {
-                    logUnlock('Skipping style reference: image URL not from allowed origin', { src: imgSrc.slice(0, 100) });
+                    logger.info({ src: imgSrc.slice(0, 100) }, 'Skipping style reference: image URL not from allowed origin');
                 } else {
                 try {
                     const resp = await fetch(imgSrc);
@@ -216,15 +199,15 @@ export async function POST(request: NextRequest, context: RouteContext) {
                         // Size guard: reject images over 10MB to prevent memory issues
                         const contentLength = parseInt(resp.headers.get('content-length') || '0', 10);
                         if (contentLength > 10 * 1024 * 1024) {
-                            logUnlock('Skipping style reference: image too large', { contentLength });
+                            logger.info({ contentLength }, 'Skipping style reference: image too large');
                         } else {
                         const buffer = Buffer.from(await resp.arrayBuffer());
                         styleReferenceImage = `data:${contentType};base64,${buffer.toString('base64')}`;
-                        logUnlock('Loaded page 1 image as style reference');
+                        logger.debug('Loaded page 1 image as style reference');
                         }
                     }
                 } catch (err) {
-                    console.warn('Failed to load page 1 image for style reference', err);
+                    logger.warn({ err }, 'Failed to load page 1 image for style reference');
                 }
                 }
             }
@@ -339,7 +322,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
         return NextResponse.json({ success: true, updatedImages: updatedCount });
     } catch (error) {
-        console.error('[unlock-book]', error);
+        logger.error({ err: error }, 'Failed to unlock book');
         return NextResponse.json({ error: 'Failed to unlock book' }, { status: 500 });
     }
 }

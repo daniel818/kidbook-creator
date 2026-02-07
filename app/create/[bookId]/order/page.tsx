@@ -14,7 +14,10 @@ import { generateCoverPDF } from '@/lib/lulu/cover-generator';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 import { createClient } from '@/lib/supabase/client';
 import PaymentForm from '@/components/PaymentForm/PaymentForm';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('order');
 
 type BookFormat = 'softcover' | 'hardcover';
 type BookSize = '7.5x7.5' | '8x8' | '8x10';
@@ -163,12 +166,12 @@ export default function OrderPage() {
                         setBook(data);
                     }
                 } else {
-                    console.error("Failed to fetch book from API", res.status);
+                    logger.error({ status: res.status }, 'Failed to fetch book from API');
                     // Use router.replace to avoid history stack issues on redirect
                     router.replace('/mybooks');
                 }
             } catch (error) {
-                console.error("Error fetching book:", error);
+                logger.error({ err: error }, 'Error fetching book');
                 router.replace('/mybooks');
             } finally {
                 setIsLoading(false);
@@ -195,7 +198,7 @@ export default function OrderPage() {
                 setUnlockClientSecret(data.clientSecret);
             }
         } catch (err) {
-            console.error('Unlock checkout error:', err);
+            logger.error({ err }, 'Unlock checkout error');
             setError(err instanceof Error ? err.message : 'Failed to start unlock checkout');
         } finally {
             setIsUnlockCheckout(false);
@@ -282,7 +285,7 @@ export default function OrderPage() {
                 setPriceError(message);
             }
         } catch (err) {
-            console.error('Price fetch error:', err);
+            logger.error({ err }, 'Price fetch error');
             setPriceData(null);
             setPriceError('Pricing unavailable. Please try again.');
         } finally {
@@ -340,7 +343,7 @@ export default function OrderPage() {
                 }
             } catch (err) {
                 if ((err as Error).name === 'AbortError') return;
-                console.error('Shipping options error:', err);
+                logger.error({ err }, 'Shipping options error');
                 setShippingOptions([]);
                 setShippingLevel('');
                 setShippingOptionsError('Failed to load shipping methods.');
@@ -509,14 +512,14 @@ export default function OrderPage() {
             const TIMEOUT_MS = 45000;
 
             // 1. Generate PDFs (Client-side)
-            console.log('Generating interior PDF...');
+            logger.info('Generating interior PDF');
             const interiorBlob = await withTimeout(
                 generateInteriorPDF(book!, format, size),
                 TIMEOUT_MS,
                 'Interior PDF generation timed out. Please check your internet connection or images.'
             );
 
-            console.log('Generating cover PDF...');
+            logger.info('Generating cover PDF');
             const coverBlob = await withTimeout(
                 generateCoverPDF(book!, format, size),
                 TIMEOUT_MS,
@@ -528,14 +531,14 @@ export default function OrderPage() {
             const interiorPath = `${user.id}/${bookId}/${timestamp}_interior_${format}_${size}.pdf`;
             const coverPath = `${user.id}/${bookId}/${timestamp}_cover_${format}_${size}.pdf`;
 
-            console.log('Uploading files...');
+            logger.info('Uploading files');
             await Promise.all([
                 uploadFile(interiorBlob, interiorPath),
                 uploadFile(coverBlob, coverPath)
             ]);
 
             // 3. Attach PDF paths to the order
-            console.log('Attaching PDFs to order...');
+            logger.info('Attaching PDFs to order');
             const attachResponse = await fetch('/api/checkout/attach-pdfs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -553,7 +556,7 @@ export default function OrderPage() {
 
             return true; // Ready for payment confirmation
         } catch (err) {
-            console.error('Prepare order error:', err);
+            logger.error({ err }, 'Prepare order error');
             const errorMessage = err instanceof Error ? err.message : String(err);
             setError(`Failed to prepare order: ${errorMessage}`);
             setIsProcessing(false);

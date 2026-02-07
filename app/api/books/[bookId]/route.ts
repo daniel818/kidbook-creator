@@ -4,15 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-
-// Helper function for logging with timestamps
-const log = (message: string, data?: unknown) => {
-    const timestamp = new Date().toISOString();
-    console.log(`[API books/${timestamp}] ${message}`);
-    if (data !== undefined) {
-        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : JSON.stringify(data, null, 2).slice(0, 300));
-    }
-};
+import { createRequestLogger } from '@/lib/logger';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
@@ -29,25 +21,26 @@ export async function GET(
     try {
         const params = await context.params;
         bookId = params.bookId;
-        log(`=== GET /api/books/${bookId} STARTED ===`);
+        const logger = createRequestLogger(request);
+        logger.debug({ bookId }, 'GET /api/books/[bookId] started');
 
-        log('Step 1: Creating Supabase client...');
+        logger.debug('Creating Supabase client');
         const supabaseStartTime = Date.now();
         const supabase = await createClient();
-        log(`Supabase client created in ${Date.now() - supabaseStartTime}ms`);
+        logger.debug({ durationMs: Date.now() - supabaseStartTime }, 'Supabase client created');
 
-        log('Step 2: Authenticating user...');
+        logger.debug('Authenticating user');
         const authStartTime = Date.now();
         const { data: { user }, error: authError } = await supabase.auth.getUser();
-        log(`Authentication completed in ${Date.now() - authStartTime}ms`);
+        logger.debug({ durationMs: Date.now() - authStartTime }, 'Authentication completed');
 
         if (authError || !user) {
-            log('ERROR: Unauthorized', authError?.message);
+            logger.debug({ error: authError?.message }, 'Unauthorized');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-        log(`User authenticated: ${user.id}`);
+        logger.debug({ userId: user.id }, 'User authenticated');
 
-        log('Step 3: Fetching book from database...');
+        logger.debug('Fetching book from database');
         const dbStartTime = Date.now();
         const { data: book, error } = await supabase
             .from('books')
@@ -55,15 +48,15 @@ export async function GET(
             .eq('id', bookId)
             .eq('user_id', user.id)
             .single();
-        log(`Database query completed in ${Date.now() - dbStartTime}ms`);
+        logger.debug({ durationMs: Date.now() - dbStartTime }, 'Database query completed');
 
         if (error || !book) {
-            log('ERROR: Book not found', error?.message);
+            logger.debug({ error: error?.message }, 'Book not found');
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
-        log(`Book found: "${book.title}", ${book.pages?.length || 0} pages`);
+        logger.debug({ title: book.title, pageCount: book.pages?.length || 0 }, 'Book found');
 
-        log('Step 4: Transforming response...');
+        logger.debug('Transforming response');
         const transformStartTime = Date.now();
         const isPreview = !!book.is_preview || book.status === 'preview';
         const previewPageCount = Number(book.preview_page_count || 0);
@@ -150,16 +143,16 @@ export async function GET(
             digitalUnlockPaid,
             illustrationProgress,
         };
-        log(`Transform completed in ${Date.now() - transformStartTime}ms`);
+        logger.debug({ durationMs: Date.now() - transformStartTime }, 'Transform completed');
 
         const totalDuration = Date.now() - requestStartTime;
-        log(`=== GET /api/books/${bookId} COMPLETE in ${totalDuration}ms ===`);
+        logger.debug({ bookId, durationMs: totalDuration }, 'GET /api/books/[bookId] complete');
 
         return NextResponse.json(response);
     } catch (error) {
         const totalDuration = Date.now() - requestStartTime;
-        log(`=== GET /api/books/${bookId} FAILED after ${totalDuration}ms ===`);
-        console.error('[API books ERROR]', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error, bookId, durationMs: totalDuration }, 'GET /api/books/[bookId] failed');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -169,6 +162,7 @@ export async function PUT(
     request: NextRequest,
     context: RouteContext
 ) {
+    const logger = createRequestLogger(request);
     try {
         const { bookId } = await context.params;
         const supabase = await createClient();
@@ -225,7 +219,7 @@ export async function PUT(
                 .eq('user_id', user.id);
 
             if (bookError) {
-                console.error('Error updating book:', bookError);
+                logger.error({ err: bookError }, 'Error updating book');
                 return NextResponse.json({ error: 'Failed to update book' }, { status: 500 });
             }
         }
@@ -278,7 +272,7 @@ export async function PUT(
                 .upsert(pageUpdates, { onConflict: 'id' });
 
             if (pagesError) {
-                console.error('Error updating pages:', pagesError);
+                logger.error({ err: pagesError }, 'Error updating pages');
                 return NextResponse.json({ error: 'Failed to update pages' }, { status: 500 });
             }
         }
@@ -298,7 +292,7 @@ export async function PUT(
                     .single();
 
                 if (fetchError || !currentPage) {
-                    console.error('Page not found for edit:', edit.pageId);
+                    logger.error({ pageId: edit.pageId }, 'Page not found for edit');
                     continue;
                 }
 
@@ -332,7 +326,7 @@ export async function PUT(
                         .eq('book_id', bookId);
 
                     if (updateError) {
-                        console.error('Error updating page:', edit.pageId, updateError);
+                        logger.error({ err: updateError, pageId: edit.pageId }, 'Error updating page');
                     }
                 }
             }
@@ -387,7 +381,7 @@ export async function PUT(
             updatedAt: new Date(updatedBook.updated_at),
         });
     } catch (error) {
-        console.error('Error:', error);
+        logger.error({ err: error }, 'Error updating book');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -397,6 +391,7 @@ export async function DELETE(
     request: NextRequest,
     context: RouteContext
 ) {
+    const logger = createRequestLogger(request);
     try {
         const { bookId } = await context.params;
         const supabase = await createClient();
@@ -420,7 +415,7 @@ export async function DELETE(
                 .remove(filesToRemove);
 
             if (removeError) {
-                console.error('Error removing book images:', removeError);
+                logger.error({ err: removeError }, 'Error removing book images');
             }
         }
 
@@ -432,13 +427,13 @@ export async function DELETE(
             .eq('user_id', user.id);
 
         if (error) {
-            console.error('Error deleting book:', error);
+            logger.error({ err: error }, 'Error deleting book');
             return NextResponse.json({ error: 'Failed to delete book' }, { status: 500 });
         }
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Error:', error);
+        logger.error({ err: error }, 'Error deleting book');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

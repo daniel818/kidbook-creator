@@ -4,6 +4,9 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('admin-stats');
 
 export async function GET() {
     try {
@@ -76,7 +79,7 @@ export async function GET() {
             ordersByStatus,
         });
     } catch (error) {
-        console.error('Stats error:', error);
+        logger.error({ err: error }, 'Stats error');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

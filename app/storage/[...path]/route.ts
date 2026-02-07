@@ -1,13 +1,16 @@
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('storage-proxy');
 const SUPABASE_STORAGE_ORIGIN = process.env.SUPABASE_STORAGE_ORIGIN || 'http://127.0.0.1:54321';
 
 async function proxyStorage(request: Request, params: { path?: string[] } | Promise<{ path?: string[] }>) {
     try {
         const resolvedParams = await Promise.resolve(params);
         const rawPath = resolvedParams?.path;
-        console.log('[Storage Proxy] Params:', resolvedParams);
+        logger.debug({ params: resolvedParams }, 'Storage proxy params');
         const path = Array.isArray(rawPath) ? rawPath.join('/') : rawPath;
         if (!path) {
             return new Response('Missing storage path', { status: 400 });
@@ -36,7 +39,7 @@ async function proxyStorage(request: Request, params: { path?: string[] } | Prom
             headers: upstream.headers,
         });
     } catch (error) {
-        console.error('[Storage Proxy] Error:', error);
+        logger.error({ err: error }, 'Storage proxy error');
         return new Response('Storage proxy error', { status: 502 });
     }
 }

@@ -8,6 +8,9 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
+import { createClientModuleLogger } from '@/lib/client-logger';
+
+const logger = createClientModuleLogger('pdf');
 
 type PdfLayout = {
     pageWidth: number;
@@ -312,7 +315,7 @@ async function addImagePage(pdf: jsPDF, imageUrl: string | null, layout: PdfLayo
                 pdf.addImage(base64, getImageFormat(base64), 0, 0, layout.pageWidth, layout.pageHeight);
                 return;
             } catch (e) {
-                console.error('Error adding image page:', e);
+                logger.error({ err: e }, 'Error adding image page');
             }
         }
     }

@@ -3,6 +3,9 @@
 // ============================================
 
 import { Book } from './types';
+import { createClientModuleLogger } from '@/lib/client-logger';
+
+const logger = createClientModuleLogger('storage');
 
 const STORAGE_KEY = 'kidbook_books';
 const CURRENT_BOOK_KEY = 'kidbook_current';
@@ -33,7 +36,7 @@ export function getBooks(): Book[] {
             }))
         }));
     } catch (error) {
-        console.error('Error loading books from storage:', error);
+        logger.error({ err: error }, 'Error loading books from storage');
         return [];
     }
 }
@@ -47,7 +50,7 @@ export function saveBooks(books: Book[]): void {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
     } catch (error) {
-        console.warn('Storage quota exceeded, could not save to local storage (ignoring in online mode):', error);
+        logger.warn({ err: error }, 'Storage quota exceeded, could not save to local storage (ignoring in online mode)');
     }
 }
 

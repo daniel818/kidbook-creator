@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLuluClient } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
     try {
@@ -53,7 +54,8 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ options });
     } catch (error) {
-        console.error('Shipping options error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Shipping options error');
         return NextResponse.json(
             { error: 'Failed to retrieve shipping options' },
             { status: 500 }

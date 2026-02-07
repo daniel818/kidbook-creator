@@ -4,6 +4,9 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('orders-api');
 
 // GET /api/orders - Get all orders for the current user
 export async function GET() {
@@ -38,7 +41,7 @@ export async function GET() {
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('Error fetching orders:', error);
+            logger.error({ err: error }, 'Error fetching orders');
             return NextResponse.json(
                 { error: 'Failed to fetch orders' },
                 { status: 500 }
@@ -135,7 +138,7 @@ export async function GET() {
 
         return NextResponse.json(transformedOrders);
     } catch (error) {
-        console.error('Unexpected error:', error);
+        logger.error({ err: error }, 'Unexpected error fetching orders');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

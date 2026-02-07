@@ -3,6 +3,10 @@
 // ============================================
 // Print-on-demand integration for book printing
 
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('lulu');
+
 export interface LuluCredentials {
     apiKey: string;
     apiSecret: string;
@@ -151,7 +155,7 @@ class LuluClient {
             { name: filename }
         );
 
-        console.log(`[Lulu] Uploading file ${filename} (Size: ${file.size}) to ${createResponse.upload_url}`);
+        logger.info({ filename, fileSize: file.size, uploadUrl: createResponse.upload_url }, 'Uploading file');
 
         // Convert Blob to ArrayBuffer for reliable Node fetch upload
         const arrayBuffer = await file.arrayBuffer();
@@ -167,7 +171,7 @@ class LuluClient {
 
         if (!uploadRes.ok) {
             const errText = await uploadRes.text();
-            console.error(`[Lulu] Upload PUT failed: ${uploadRes.status} - ${errText}`);
+            logger.error({ status: uploadRes.status, error: errText }, 'Upload PUT failed');
             throw new Error(`Failed to upload file content: ${uploadRes.status}`);
         }
 
@@ -206,7 +210,7 @@ class LuluClient {
             shipping_level: job.shippingLevel || 'MAIL',
         };
 
-        console.log('[LuluClient] Creating Print Job Payload:', JSON.stringify(payload, null, 2));
+        logger.info({ payload }, 'Creating print job');
         return this.request('POST', '/print-jobs/', payload);
     }
 
@@ -291,7 +295,7 @@ class LuluClient {
     }
     // Create a webhook subscription
     async createWebhook(url: string): Promise<any> {
-        console.log(`[LuluClient] Creating webhook for URL: ${url}`);
+        logger.info({ url }, 'Creating webhook');
         return this.request('POST', '/webhooks/', {
             topics: ['PRINT_JOB_STATUS_CHANGED'], // Array of topics
             url: url
@@ -313,7 +317,7 @@ class LuluClient {
 
     // Validate Interior PDF
     async validateInterior(url: string, podPackageId: string): Promise<string> {
-        console.log(`[Lulu] Validating Interior: ${podPackageId}`);
+        logger.info({ podPackageId }, 'Validating interior');
         const response: any = await this.request('POST', '/printable-normalization/', {
             pod_package_id: podPackageId,
             source_url: url,
@@ -323,7 +327,7 @@ class LuluClient {
 
     // Validate Cover PDF
     async validateCover(url: string, podPackageId: string, pageCount: number): Promise<string> {
-        console.log(`[Lulu] Validating Cover: ${podPackageId} (${pageCount} pages)`);
+        logger.info({ podPackageId, pageCount }, 'Validating cover');
         const response: any = await this.request('POST', '/printable-normalization/', {
             pod_package_id: podPackageId,
             source_url: url,
@@ -340,7 +344,7 @@ class LuluClient {
             const response: any = await this.request('GET', `/printable-normalization/${id}/`);
             const status = response.status.name;
 
-            console.log(`[Lulu] Validation Job ${id}: ${status}`);
+            logger.info({ jobId: id, status }, 'Validation job status');
 
             if (status === 'VALIDATED' || status === 'NORMALIZED') {
                 return response;

@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateStory, StoryGenerationInput } from '@/lib/gemini/client';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
     try {
@@ -43,7 +44,8 @@ export async function POST(request: NextRequest) {
             story,
         });
     } catch (error) {
-        console.error('Story generation error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Story generation error');
         return NextResponse.json(
             { error: 'Failed to generate story' },
             { status: 500 }

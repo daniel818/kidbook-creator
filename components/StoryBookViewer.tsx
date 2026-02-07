@@ -11,7 +11,10 @@ import { Elements } from '@stripe/react-stripe-js';
 import { getStripe } from '@/lib/stripe/client';
 import PaymentForm from '@/components/PaymentForm/PaymentForm';
 import PrintGenerator from './PrintGenerator';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './StoryBookViewer.module.css';
+
+const logger = createClientModuleLogger('viewer');
 
 const stripeAppearance = {
     theme: 'stripe' as const,
@@ -458,7 +461,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 setIsFullScreen(false);
             }
         } catch (error) {
-            console.error('Fullscreen error:', error);
+            logger.error({ err: error }, 'Fullscreen error');
         }
     }, []);
 
@@ -492,7 +495,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 setUnlockState('waiting');
             }
         } catch (error) {
-            console.error('Unlock error:', error);
+            logger.error({ err: error }, 'Unlock error');
             setUnlockError(error instanceof Error ? error.message : 'Failed to unlock');
         } finally {
             setIsUnlocking(false);
@@ -526,7 +529,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 unlockStartedRef.current = false;
             }
         } catch (error) {
-            console.error('Polling error:', error);
+            logger.error({ err: error }, 'Polling error');
         }
     }, [book.id, unlockState, closePaywall]);
 
@@ -548,7 +551,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         unlockStartedRef.current = true;
         const piParam = unlockPaymentIntentRef.current ? `?payment_intent=${unlockPaymentIntentRef.current}` : '';
         fetch(`/api/books/${book.id}/unlock${piParam}`, { method: 'POST' })
-            .catch((err) => console.error('Unlock request failed', err));
+            .catch((err) => logger.error({ err }, 'Unlock request failed'));
     }, [book.id, unlockState]);
 
     useEffect(() => {
@@ -571,7 +574,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
         setUnlockState('generating');
         // Trigger unlock immediately
         fetch(`/api/books/${book.id}/unlock?payment_intent=${paymentIntentId}`, { method: 'POST' })
-            .catch((err) => console.error('Unlock request failed', err));
+            .catch((err) => logger.error({ err }, 'Unlock request failed'));
         pollBookRef.current();
     }, [book.id]);
 
@@ -602,7 +605,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             const filename = `${liveBook.settings.title || 'story-book'}_digital.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             downloadPDF(blob, filename);
         } catch (error) {
-            console.error('Error generating PDF:', error);
+            logger.error({ err: error }, 'Error generating PDF');
             alert('Failed to generate PDF. Please try again.');
         } finally {
             setIsDownloading(false);
@@ -733,7 +736,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
                 }));
             }
         } catch (e) {
-            console.error(e);
+            logger.error({ err: e }, 'Failed to regenerate image');
             alert('Failed to regenerate');
         } finally {
             setRegeneratingPage(null);
@@ -834,7 +837,7 @@ export default function StoryBookViewer({ book, onClose, isFullScreen: isFullscr
             setEdits({});
             router.refresh();
         } catch (e) {
-            console.error(e);
+            logger.error({ err: e }, 'Failed to save book');
             alert('Failed to save');
         } finally {
             setIsSaving(false);

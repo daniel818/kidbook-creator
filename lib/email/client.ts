@@ -3,6 +3,9 @@
 // ============================================
 
 import { Resend } from 'resend';
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('email');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -55,14 +58,14 @@ export async function sendOrderConfirmation(data: OrderEmailData) {
     });
 
     if (error) {
-      console.error('Failed to send order confirmation:', error);
+      logger.error({ err: error }, 'Failed to send order confirmation');
       return { success: false, error };
     }
 
-    console.log('Order confirmation sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Order confirmation sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    logger.error({ err: error }, 'Email error sending order confirmation');
     return { success: false, error };
   }
 }
@@ -78,14 +81,14 @@ export async function sendShippingNotification(data: ShippingEmailData) {
     });
 
     if (error) {
-      console.error('Failed to send shipping notification:', error);
+      logger.error({ err: error }, 'Failed to send shipping notification');
       return { success: false, error };
     }
 
-    console.log('Shipping notification sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Shipping notification sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    logger.error({ err: error }, 'Email error sending shipping notification');
     return { success: false, error };
   }
 }
@@ -101,14 +104,14 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
     });
 
     if (error) {
-      console.error('Failed to send delivery confirmation:', error);
+      logger.error({ err: error }, 'Failed to send delivery confirmation');
       return { success: false, error };
     }
 
-    console.log('Delivery confirmation sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Delivery confirmation sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    logger.error({ err: error }, 'Email error sending delivery confirmation');
     return { success: false, error };
   }
 }
@@ -124,14 +127,14 @@ export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
     });
 
     if (error) {
-      console.error('Failed to send digital unlock email:', error);
+      logger.error({ err: error }, 'Failed to send digital unlock email');
       return { success: false, error };
     }
 
-    console.log('Digital unlock email sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Digital unlock email sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    logger.error({ err: error }, 'Email error sending digital unlock email');
     return { success: false, error };
   }
 }

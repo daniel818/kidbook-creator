@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import Link from 'next/link';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('admin-orders');
 
 interface Order {
     id: string;
@@ -61,7 +64,7 @@ export default function AdminOrdersPage() {
                 setOrders(data.orders);
             }
         } catch (error) {
-            console.error('Error loading orders:', error);
+            logger.error({ err: error }, 'Error loading orders');
         } finally {
             setIsLoading(false);
         }

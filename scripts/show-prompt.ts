@@ -1,4 +1,8 @@
 
+import { createModuleLogger } from '../lib/logger';
+
+const logger = createModuleLogger('script:show-prompt');
+
 interface StoryGenerationInput {
     childName: string;
     childAge: number;
@@ -51,6 +55,6 @@ const sampleInput: StoryGenerationInput = {
     characterDescription: "A boy with messy red hair, freckles, wearing a blue astronaut suit."
 };
 
-console.log("--- SIMULATED PROMPT TEST ---");
-console.log(generatePrompt(sampleInput));
-console.log("----------------------------");
+logger.info("--- SIMULATED PROMPT TEST ---");
+logger.info(generatePrompt(sampleInput));
+logger.info("----------------------------");

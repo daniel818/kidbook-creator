@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { extractCharacterFromPhoto } from '@/lib/gemini/client';
+import { createRequestLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
     try {
@@ -36,7 +37,8 @@ export async function POST(request: NextRequest) {
             characterDescription,
         });
     } catch (error) {
-        console.error('Character extraction error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Character extraction error');
         return NextResponse.json(
             { error: 'Failed to extract character from photo' },
             { status: 500 }
