@@ -39,16 +39,18 @@ export interface RetailPricingResult {
 // --- Pricing Rules ---
 
 const MARKUP_MULTIPLIER = 3; // 200% margin => wholesale * 3
-const MIN_SUBTOTAL_PER_BOOK: Record<string, number> = {
+type BookFormat = RetailPricingInput['format'];
+
+const MIN_SUBTOTAL_PER_BOOK: Record<BookFormat, number> = {
     softcover: 4000, // $40.00
     hardcover: 4500, // $45.00
 };
 const ROUND_TO = 100; // round up to nearest $1
 
-function applyPricingRules(wholesale: number, quantity: number, format: string): number {
+function applyPricingRules(wholesale: number, quantity: number, format: BookFormat): number {
     const markedUp = wholesale * MARKUP_MULTIPLIER;
     const rounded = Math.ceil(markedUp / ROUND_TO) * ROUND_TO;
-    const floor = (MIN_SUBTOTAL_PER_BOOK[format] ?? 4000) * Math.max(1, quantity);
+    const floor = MIN_SUBTOTAL_PER_BOOK[format] * Math.max(1, quantity);
     return Math.max(rounded, floor);
 }
 
@@ -167,7 +169,7 @@ export async function calculateRetailPricing(input: RetailPricingInput): Promise
             }
         } catch (error) {
             // Lulu API failed — fall back to hardcoded prices
-            console.warn('[Pricing] Lulu API failed, using fallback pricing:', error);
+            console.warn('[Pricing] Lulu API failed, using fallback:', error instanceof Error ? error.message : 'Unknown error');
             wholesale = getFallbackWholesale(input.format, input.size, input.pageCount) * input.quantity;
             isEstimate = true;
         }
