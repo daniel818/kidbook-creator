@@ -5,18 +5,7 @@ import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
-import * as fs from 'fs';
-import * as path from 'path';
-
-function log(msg: string, data?: any) {
-    const logPath = path.join(process.cwd(), 'regeneration_debug.log');
-    const time = new Date().toISOString();
-    const logMsg = `${time}: ${msg} ${data ? JSON.stringify(data) : ''}\n`;
-    try {
-        fs.appendFileSync(logPath, logMsg);
-    } catch (e) {
-        console.error('Failed to write log', e);
-    }
+function log(msg: string, data?: unknown) {
     console.log(`[Regenerate] ${msg}`, data || '');
 }
 
@@ -66,12 +55,12 @@ export async function POST(req: NextRequest) {
 
         // 1. Generate new image
         log('Calling generateIllustration...');
-        const imageResult = await generateIllustration(
-            prompt,
-            style || 'whimsical', // default style
-            currentImageContext,
-            quality || 'fast'
-        );
+        const imageResult = await generateIllustration({
+            scenePrompt: prompt,
+            characterDescription: style || 'A cute child character',
+            artStyle: currentImageContext || 'storybook_classic',
+            quality: quality || 'fast',
+        });
         log('generateIllustration returned', { imageUrl: imageResult?.imageUrl });
 
         if (!imageResult || !imageResult.imageUrl) {

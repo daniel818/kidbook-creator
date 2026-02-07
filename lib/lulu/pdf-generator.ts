@@ -289,19 +289,24 @@ function createTextPage(
             justify-content: center;
         `;
 
-        const textEl = document.createElement('p');
-        textEl.style.cssText = `
-            font-family: 'Crimson Text', 'Georgia', serif;
-            font-size: 16pt;
-            line-height: 1.8;
-            color: #2d3436;
-            text-align: justify;
-            text-indent: 2em;
-            margin: 0;
-            hyphens: auto;
-        `;
-        textEl.textContent = text;
-        textContainer.appendChild(textEl);
+        // Split into paragraphs using \n\n breaks
+        const paragraphs = text.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+
+        paragraphs.forEach((paraText, i) => {
+            const textEl = document.createElement('p');
+            textEl.style.cssText = `
+                font-family: 'Crimson Text', 'Georgia', serif;
+                font-size: 16pt;
+                line-height: 1.8;
+                color: #2d3436;
+                text-align: justify;
+                text-indent: ${i === 0 ? '0' : '2em'};
+                margin: 0 0 ${i < paragraphs.length - 1 ? '1em' : '0'} 0;
+                hyphens: auto;
+            `;
+            textEl.textContent = paraText;
+            textContainer.appendChild(textEl);
+        });
         pageEl.appendChild(textContainer);
     }
 
