@@ -10,9 +10,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 8px;
   cursor: pointer;
   z-index: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .bookItem:hover {
@@ -243,8 +245,10 @@
    ========================================= */
 .bookMeta {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 0;
   transition: opacity 0.3s;
+  width: 100%;
+  padding: 0 4px;
 }
 
 .metaTitle {
@@ -253,6 +257,9 @@
   color: #111827;
   margin: 0 0 4px 0;
   font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metaSubtitle {
@@ -262,27 +269,21 @@
 }
 
 .metaActions {
-  margin-top: 8px;
-  opacity: 0;
-  transform: translateY(5px);
-  transition: all 0.2s ease;
-  height: 24px;
-}
-
-.bookItem:hover .metaActions {
-  opacity: 1;
-  transform: translateY(0);
+  margin-top: 4px;
+  display: flex;
+  justify-content: center;
 }
 
 .deleteBtn {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
   padding: 4px;
   border-radius: 4px;
-  color: #9ca3af;
+  color: #d1d5db;
   transition: color 0.2s;
+  display: flex;
+  align-items: center;
 }
 
 .deleteBtn:hover {
@@ -346,6 +347,141 @@
 
 .addNewCard:hover .addNewText {
   color: #6366f1;
+}
+
+/* =========================================
+   Status Badges (overlaid on 3D container)
+   ========================================= */
+.statusBadge {
+  position: absolute;
+  z-index: 30;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.badgeIcon {
+  font-size: 13px !important;
+}
+
+/* Badge positioning: draft & ordered → top-left; preview, delivered → top-right */
+.statusBadge_draft,
+.statusBadge_ordered {
+  top: 16px;
+  left: 16px;
+}
+
+.statusBadge_preview,
+.statusBadge_delivered {
+  top: 16px;
+  right: 16px;
+}
+
+/* Badge colors */
+.statusBadge_draft { background: #dbeafe; color: #1e40af; }
+.statusBadge_preview { background: #fef3c7; color: #92400e; }
+.statusBadge_ordered { background: #dcfce7; color: #166534; }
+.statusBadge_delivered { background: #ccfbf1; color: #0f766e; }
+
+/* =========================================
+   CTA Section (below meta)
+   ========================================= */
+.bookCta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.ctaOrderPrint {
+  padding: 5px 14px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.ctaOrderPrint:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+.ctaUnlock {
+  padding: 5px 14px;
+  background: #f59e0b;
+  color: #1c1917;
+  border: none;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+.ctaUnlock:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+.ctaOrderedInfo {
+  font-size: 12px;
+  color: #166534;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+.ctaReorder {
+  font-size: 12px;
+  color: #0f766e;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  transition: opacity 0.2s;
+}
+
+.ctaReorder:hover {
+  opacity: 0.8;
+}
+
+/* =========================================
+   Draft card visual treatment (placeholder only for true drafts)
+   ========================================= */
+
+/* =========================================
+   RTL badge positioning
+   ========================================= */
+[dir="rtl"] .statusBadge_draft,
+[dir="rtl"] .statusBadge_ordered {
+  left: auto;
+  right: 16px;
+}
+
+[dir="rtl"] .statusBadge_preview,
+[dir="rtl"] .statusBadge_delivered {
+  right: auto;
+  left: 16px;
 }
 
 /* Tablet */
@@ -417,71 +553,113 @@
   }
 }
 
-/* Mobile phones */
+/* Mobile phones - 2 column grid matching Stitch design */
 @media (max-width: 480px) {
   .booksGrid {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 16px 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 12px;
+    padding: 12px 0;
   }
 
   .bookItem {
-    max-width: 280px;
+    max-width: none;
     width: 100%;
   }
 
   .book3DContainer {
-    height: 300px;
+    height: 220px;
   }
 
   .book3D {
-    width: 180px;
-    height: 252px;
-    transform: rotateY(-18deg) rotateX(6deg);
-    margin-left: 20px;
+    width: 120px;
+    height: 168px;
+    transform: rotateY(-15deg) rotateX(5deg);
+    margin-left: 12px;
   }
 
   .book3DSpine {
-    width: 30px;
-    transform: translateX(-15px) rotateY(-90deg);
+    width: 22px;
+    transform: translateX(-11px) rotateY(-90deg);
   }
 
   .book3DFront {
-    transform: translateZ(15px);
+    transform: translateZ(11px);
+    border-radius: 0 12px 12px 0;
   }
 
   .book3DBack {
-    transform: translateZ(-15px) rotateY(180deg);
+    transform: translateZ(-11px) rotateY(180deg);
+    border-radius: 12px 0 0 12px;
   }
 
   .bookPagesTop,
   .bookPagesBottom {
-    width: 174px;
-    height: 26px;
-    transform: translateY(2px) rotateX(90deg) translateZ(13px);
+    width: 114px;
+    height: 20px;
+    transform: translateY(2px) rotateX(90deg) translateZ(10px);
   }
 
   .bookPagesBottom {
-    transform: translateY(-2px) rotateX(-90deg) translateZ(13px);
+    transform: translateY(-2px) rotateX(-90deg) translateZ(10px);
   }
 
   .bookPagesRight {
-    width: 26px;
-    right: 5px;
-    top: 5px;
-    bottom: 5px;
-    transform: rotateY(90deg) translateZ(13px);
+    width: 20px;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+    transform: rotateY(90deg) translateZ(10px);
   }
 
   .book3DShadow {
-    width: 150px;
+    width: 100px;
+    height: 20px;
   }
 
   .book3DTitle {
-    font-size: 18px;
+    font-size: 14px;
+    padding: 0 10px;
   }
 
   .book3DEmoji {
-    font-size: 3rem;
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+
+  .statusBadge {
+    font-size: 9px;
+    padding: 3px 7px;
+    top: 10px;
+  }
+
+  .statusBadge_draft,
+  .statusBadge_ordered {
+    left: 10px;
+    top: 10px;
+  }
+
+  .statusBadge_preview,
+  .statusBadge_delivered {
+    right: 10px;
+    top: 10px;
+  }
+
+  .badgeIcon {
+    font-size: 11px !important;
+  }
+
+  .metaTitle {
+    font-size: 13px;
+  }
+
+  .ctaOrderPrint,
+  .ctaUnlock {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .ctaOrderedInfo,
+  .ctaReorder {
+    font-size: 11px;
   }
 }

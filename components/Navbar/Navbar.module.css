@@ -68,18 +68,35 @@
   letter-spacing: -0.02em;
 }
 
-.navLink {
+/* Center Navigation Links */
+.navCenter {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navLink,
+.navLinkDisabled {
   background: transparent;
   border: none;
-  color: #94a3b8;
   font-size: 13px;
   font-weight: 600;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.navLink {
+  color: #94a3b8;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .navLink:hover {
   color: #6366f1;
+}
+
+.navLinkDisabled {
+  color: #cbd5e1;
+  cursor: default;
 }
 
 /* Actions Section */
@@ -643,7 +660,7 @@
     font-size: 15px;
   }
 
-  .navLink,
+  .navCenter,
   .createButton,
   .languageDesktop {
     display: none;

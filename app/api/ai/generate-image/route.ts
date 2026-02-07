@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const imageData = await generateIllustration(prompt, style);
+        const imageData = await generateIllustration({
+            scenePrompt: prompt,
+            characterDescription: style || '',
+        });
 
         return NextResponse.json({
             success: true,

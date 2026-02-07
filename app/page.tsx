@@ -7,6 +7,7 @@ import { Book } from '@/lib/types';
 import { getBooks, deleteBook as deleteLocalBook } from '@/lib/storage';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import styles from './page.module.css';
 
@@ -270,6 +271,8 @@ export default function Home() {
           </div>
         </section>
         </main>
+
+        <Footer />
       </div>
 
       {bookToDelete && (

@@ -2,6 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
+import Footer from '@/components/Footer/Footer';
 import styles from './page.module.css';
 
 interface PrivacyData {
@@ -76,6 +77,7 @@ export default function PrivacyPage() {
           </footer>
         </div>
       </main>
+      <Footer />
     </>
   );
 }

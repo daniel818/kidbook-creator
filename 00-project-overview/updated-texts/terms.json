@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: January 27, 2026",
+    "version": "Version 1.0"
+  },
+  "sections": [
+    {
+      "title": "1. Introduction & Scope",
+      "content": "These Terms of Service ('Terms') govern your use of KidBook Creator ('the Service'), operated by KidBook Creator Ltd. ('we', 'us', 'our'). By accessing or using our Service, you agree to be bound by these Terms."
+    },
+    {
+      "title": "Acceptance of Terms",
+      "content": "By using our Service, you confirm that you are at least 16 years old (or 13 years old if in the United States) and have the legal capacity to enter into these Terms. If you are using the Service on behalf of someone else, you represent that you have the authority to bind that person to these Terms."
+    },
+    {
+      "title": "2. Account Terms & Eligibility",
+      "content": "To use our Service, you must create an account and provide accurate, complete, and current information."
+    },
+    {
+      "title": "Eligibility Requirements",
+      "content": "You must be at least 16 years old (or 13 years old in the United States) to create an account. You must provide a valid email address and other required information. You are responsible for maintaining the confidentiality of your account credentials."
+    },
+    {
+      "title": "Account Responsibilities",
+      "content": "You are responsible for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account. We reserve the right to suspend or terminate accounts that violate these Terms."
+    },
+    {
+      "title": "3. Ordering Process & Order Acceptance",
+      "content": "Our ordering process is designed to be simple and transparent."
+    },
+    {
+      "title": "Order Placement",
+      "content": "Orders are placed through our website interface. You will receive an order confirmation email once your order is successfully submitted. No order is accepted by us until we send you an order confirmation."
+    },
+    {
+      "title": "Order Acceptance",
+      "content": "We reserve the right to accept or decline any order for any reason, including but not limited to: pricing errors, insufficient inventory, or violation of these Terms. We may also require additional verification before accepting an order."
+    },
+    {
+      "title": "Order Review",
+      "content": "You are responsible for reviewing your order details immediately after receiving the confirmation email. You must notify us of any errors within 24 hours of receiving the confirmation."
+    },
+    {
+      "title": "4. Pricing & Payment Terms",
+      "content": "Our pricing is transparent and all-inclusive."
+    },
+    {
+      "title": "Product Pricing",
+      "content": "Prices are displayed in your local currency where applicable. All prices include applicable taxes for EU customers. Non-EU customers may be responsible for import duties and taxes in their country."
+    },
+    {
+      "title": "Payment Processing",
+      "content": "Payment is processed through secure third-party payment processors. We do not store your payment card information. Payment must be made in full at the time of order placement."
+    },
+    {
+      "title": "Pricing Errors",
+      "content": "We reserve the right to correct pricing errors. If we discover a pricing error after order placement, we will contact you to confirm the correct price or cancel the order if you prefer."
+    },
+    {
+      "title": "5. Cancellation & Refund Policy",
+      "content": "We understand that plans change, and we've designed our policies to be fair and transparent."
+    },
+    {
+      "title": "Cancellation Window",
+      "content": "You may cancel your order within 48 hours of placing it, provided that book generation has not yet begun. Once book generation starts, orders cannot be cancelled due to the personalized nature of our products."
+    },
+    {
+      "title": "Personalized Products Exclusion",
+      "content": "In accordance with EU Consumer Rights Directive Article 16(c) and similar laws in other jurisdictions, personalized products are excluded from standard return rights. Our products are manufactured to your specifications and are clearly personalized."
+    },
+    {
+      "title": "Defective Products",
+      "content": "If your book arrives with manufacturing defects (printing errors, binding issues, damage during shipping), please contact us within 14 days of receipt. We will arrange for a free replacement or full refund, including shipping costs."
+    },
+    {
+      "title": "Cancellation Process",
+      "content": "To cancel an order, please contact our customer service team with your order number. We will process cancellations within 24 hours during business days."
+    },
+    {
+      "title": "6. Delivery & Shipping",
+      "content": "We deliver worldwide with reliable shipping partners."
+    },
+    {
+      "title": "Delivery Timeframes",
+      "content": "Production typically takes 3-5 business days, plus shipping time. Shipping times vary by location: 3-5 days for domestic orders, 7-14 days for international orders. These are estimates and not guaranteed."
+    },
+    {
+      "title": "Risk and Title",
+      "content": "Risk of loss passes to you upon delivery to the shipping carrier. Title to the products passes to you upon full payment. You must be available to accept delivery or make arrangements for receipt."
+    },
+    {
+      "title": "Order Tracking",
+      "content": "You will receive tracking information once your order ships. We recommend monitoring your shipment and contacting the carrier directly for delivery issues."
+    },
+    {
+      "title": "7. Intellectual Property Rights",
+      "content": "We respect intellectual property rights and clearly define ownership."
+    },
+    {
+      "title": "Our Intellectual Property",
+      "content": "All content, features, and functionality of the Service are owned by KidBook Creator Ltd. and are protected by copyright, trademark, and other intellectual property laws."
+    },
+    {
+      "title": "Your Rights to Purchased Content",
+      "content": "Upon full payment, you receive a non-exclusive, non-transferable license to use your purchased book for personal, non-commercial purposes. You may not reproduce, distribute, or commercially exploit the content without our written consent."
+    },
+    {
+      "title": "Generated Content",
+      "content": "Generated illustrations and content are licensed to you for personal use only. We retain all rights to the underlying generation technology and algorithms."
+    },
+    {
+      "title": "8. User Content & Responsibilities",
+      "content": "You are responsible for the content you provide to our Service."
+    },
+    {
+      "title": "Your Warranties",
+      "content": "You warrant that you have all necessary rights to the content you provide, including photos and text. You confirm that you have permission from all individuals depicted in photos, or that you are their legal guardian."
+    },
+    {
+      "title": "Prohibited Content",
+      "content": "You may not upload content that: is illegal, threatening, defamatory, hateful, or discriminatory; infringes on intellectual property rights; contains copyrighted characters or protected brand logos; violates privacy rights; or is otherwise inappropriate."
+    },
+    {
+      "title": "Indemnification",
+      "content": "You agree to indemnify and hold us harmless from any claims, damages, or expenses arising from your violation of these warranties or your use of the Service."
+    },
+    {
+      "title": "9. Generated Content Terms",
+      "content": "Our Service uses advanced technology to create personalized content."
+    },
+    {
+      "title": "Quality Disclaimer",
+      "content": "Generated content may contain unexpected or imperfect results. Minor variations in style, color, or interpretation are not considered defects and are part of the creative process. Our system makes its best effort to match your specifications but cannot guarantee perfect results."
+    },
+    {
+      "title": "Preview and Editing",
+      "content": "You will have the opportunity to preview and edit generated content before finalizing your order. We recommend carefully reviewing all content before proceeding to payment."
+    },
+    {
+      "title": "System Limitations",
+      "content": "Our system cannot reproduce copyrighted characters, brand logos, or specific real people with perfect accuracy. Results are artistic interpretations based on your input."
+    },
+    {
+      "title": "10. Liability & Warranty Disclaimers",
+      "content": "Our liability is limited as described in this section."
+    },
+    {
+      "title": "Service Provided 'As Is'",
+      "content": "Our Service is provided on an 'as is' and 'as available' basis. We make no warranties, express or implied, about the operation of the Service or the information, content, or materials included."
+    },
+    {
+      "title": "Limitation of Liability",
+      "content": "To the maximum extent permitted by law, our total liability for any claim arising from these Terms or your use of the Service shall not exceed the purchase price of the product in question. We are not liable for indirect, consequential, or punitive damages."
+    },
+    {
+      "title": "Exceptions",
+      "content": "Some jurisdictions do not allow the exclusion or limitation of liability for consequential or incidental damages, so these limitations may not apply to you."
+    },
+    {
+      "title": "11. Force Majeure",
+      "content": "We are not liable for failures to perform due to circumstances beyond our reasonable control, including but not limited to: natural disasters, war, terrorism, labor disputes, government actions, or internet infrastructure failures. During such events, we may suspend or cancel services and provide refunds where appropriate."
+    },
+    {
+      "title": "12. Governing Law & Dispute Resolution",
+      "content": "These Terms are governed by the laws of Ireland, without regard to conflict of law principles."
+    },
+    {
+      "title": "Jurisdiction",
+      "content": "Any dispute arising from these Terms shall be resolved in the courts of Ireland. For EU consumers, additional protections under local consumer laws may apply."
+    },
+    {
+      "title": "Arbitration",
+      "content": "Most disputes can be resolved through our customer service process. For unresolved disputes, we offer binding arbitration as an alternative to court proceedings, except for claims that may be brought in small claims court."
+    },
+    {
+      "title": "13. Modifications to Terms",
+      "content": "We reserve the right to modify these Terms at any time."
+    },
+    {
+      "title": "Notification of Changes",
+      "content": "For significant changes, we will notify you by email or prominent website notice. Minor changes will be effective immediately upon posting. Your continued use of the Service after changes constitutes acceptance of the modified Terms."
+    },
+    {
+      "title": "Regular Review",
+      "content": "We encourage you to review these Terms periodically. The 'Last updated' date at the top of this page indicates when these Terms were last modified."
+    },
+    {
+      "title": "14. Contact Information",
+      "content": "If you have questions about these Terms, please contact us:"
+    }
+  ]
+}
