@@ -273,6 +273,7 @@
       "signInToCreate": "Anmelden zum Erstellen"
     },
     "errors": {
+      "creationFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
       "createFailed": "Bucherstellung fehlgeschlagen. Bitte versuche es erneut.",
       "photoUploadFailed": "Foto-Upload fehlgeschlagen. Bitte versuche es erneut.",
       "invalidSettings": "Bitte fülle alle erforderlichen Felder aus.",
@@ -517,19 +518,31 @@
   },
   "about": {
     "hero": {
-      "title": "Wir sind Geschichtenerzähler, Eltern & Träumer",
-      "subtitle": "Wir erschaffen magische Geschichten, die lehren, inspirieren und begeistern"
+      "titleStart": "Gemacht von ",
+      "titleHighlight": "Eltern",
+      "titleEnd": ", für Kinder",
+      "subtitle": "Wir sind Eltern, die glauben, dass jedes Kind der Held seiner eigenen Geschichte sein sollte."
     },
     "story": {
-      "heading": "Unsere Geschichte",
-      "paragraph1": "Wir sind ein Team junger Unternehmer, die Eltern sind und im Herzen selbst noch Kinder. Wir glauben an die Magie des Geschichtenerzählens und die Kraft einer guten Geschichte, junge Köpfe zu formen.",
-      "paragraph2": "Wir lieben Geschichten, die Kindern Bedeutung vermitteln – Geschichten, die die Fantasie anregen, Charakter aufbauen und bleibende Erinnerungen schaffen. Jedes auf unserer Plattform erstellte Buch ist eine Gelegenheit, Werte, Lektionen und Liebe zu teilen.",
-      "paragraph3": "Kreativität und Innovation treiben alles an, was wir tun. Wir erforschen ständig neue Wege, um das Geschichtenerzählen zugänglicher, persönlicher und bedeutungsvoller für Familien auf der ganzen Welt zu machen."
+      "heading": "Warum wir das gebaut haben",
+      "paragraph1": "Es begann zur Schlafenszeit. Wir wollten unseren Kindern Geschichten erzählen, in denen sie die Hauptfigur sind — Geschichten, die Freundlichkeit, Mut und Neugier lehren. Wir konnten nichts finden, das persönlich genug war, also haben wir es selbst gebaut.",
+      "paragraph2": "Wir sind ein kleines Team aus Eltern, Designern und Entwicklern, die glauben, dass eine gute Geschichte die Welt eines Kindes formen kann. Jedes Buch auf KidBook Creator wird mit der gleichen Liebe und Absicht gemacht, die wir in die Geschichten stecken, die wir unseren eigenen Kindern erzählen.",
+      "paragraph3": "Wir halten die Dinge bewusst einfach. Lade ein Foto hoch, wähle ein Thema, und in wenigen Minuten hast du ein wunderschönes, einzigartiges Buch — bereit zum Lesen auf dem Bildschirm oder zum in die Hand nehmen. Keine komplizierten Werkzeuge, kein Füllmaterial. Einfach echte Geschichten für echte Familien."
     },
-    "images": {
-      "placeholder1Alt": "KidBook Creator Team bei der Zusammenarbeit",
-      "placeholder2Alt": "KidBook Creator kreativer Arbeitsbereich",
-      "comingSoon": "Foto folgt in Kürze"
+    "values": {
+      "heading": "Was uns antreibt",
+      "love": {
+        "title": "Mit Liebe gemacht",
+        "description": "Jede Funktion wird mit der gleichen Sorgfalt gebaut, die wir in Gute-Nacht-Geschichten für unsere eigenen Kinder stecken."
+      },
+      "imagination": {
+        "title": "Fantasie wecken",
+        "description": "Wir glauben, dass Geschichten formen, wer Kinder werden. Jedes Buch ist ein Samen des Staunens, des Muts und der Freundlichkeit."
+      },
+      "family": {
+        "title": "Für jede Familie",
+        "description": "In mehreren Sprachen verfügbar, mit Geschichten, die jedes Kind feiern, egal woher es kommt."
+      }
     },
     "cta": {
       "heading": "Bereit, Magie zu erschaffen?",
