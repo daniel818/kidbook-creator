@@ -1,0 +1,60 @@
+{
+  "title": "Pricing",
+  "subtitle": "Choose the perfect package for your magical story",
+  "matrix": {
+    "package": "Package",
+    "digital": "Digital",
+    "printed": "Printed",
+    "single": "Single Book",
+    "book": "book",
+    "perBook": "per book",
+    "plusShipping": "+ shipping",
+    "total": "total"
+  },
+  "features": {
+    "digitalIncludes": "Digital includes:",
+    "digitalFeature1": "Instant download",
+    "digitalFeature2": "PDF format",
+    "digitalFeature3": "Print at home",
+    "printedIncludes": "Printed includes:",
+    "printedFeature1": "Professional printing",
+    "printedFeature2": "Premium paper quality",
+    "printedFeature3": "Shipping to your door"
+  },
+  "hero": {
+    "description": "Create magical personalized books for your little ones. Choose the perfect package for your story!"
+  },
+  "cta": {
+    "primary": "Start Creating",
+    "secondary": "Learn More",
+    "title": "Ready to create your magical story?",
+    "subtitle": "Start bringing your child's imagination to life today!"
+  },
+  "footer": {
+    "tagline": "Where every child becomes the hero of their own story"
+  },
+  "faq": {
+    "title": "Pricing Questions",
+    "q1": "What's included in the printed price?",
+    "a1": "The printed price includes professional printing on premium paper, hardcover binding, and shipping to your door.",
+    "q2": "Can I get a digital copy with my printed book?",
+    "a2": "Yes! Every printed book order includes a complimentary digital PDF version that you can download immediately.",
+    "q3": "What payment methods do you accept?",
+    "a3": "We accept all major credit cards, debit cards, and PayPal through our secure payment processor.",
+    "q4": "Are there any additional fees?",
+    "a4": "Taxes are calculated at checkout based on your location. Shipping costs vary by country and are shown before you complete your purchase.",
+    "q5": "What about print specifications?",
+    "a5": "Printed books are professionally bound with premium paper. Specific format options (size, binding type) are available during the book creation process.",
+    "q6": "Who prints my book?",
+    "a6": "We partner with a high-quality, professional printing provider to ensure your book is produced to the highest standards. While we handle all customer service, pricing, and delivery coordination, our trusted printing partner manufactures your book using premium materials and state-of-the-art printing technology. This partnership allows us to offer you exceptional quality at competitive prices.",
+    "q7": "Why don't you print in-house?",
+    "a7": "By partnering with specialized printing experts, we can focus on what we do best—creating magical, personalized stories for your child—while ensuring your book is printed with professional-grade quality, eco-friendly materials, and reliable delivery. Our printing partner has decades of experience and can handle orders worldwide.",
+    "q8": "Does this affect the quality of my book?",
+    "a8": "Absolutely not! Our printing partner is carefully selected for their commitment to quality. Every book is printed on premium paper with vibrant, fade-resistant inks and durable binding. We maintain strict quality control standards to ensure your book exceeds expectations."
+  },
+  "disclaimers": {
+    "shipping": "Shipping costs calculated at checkout based on country",
+    "tax": "Taxes calculated at checkout as per local regulations",
+    "currency": "Prices shown in"
+  }
+}

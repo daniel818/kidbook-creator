@@ -20,7 +20,7 @@
     }
   },
   "navbar": {
-    "communityBooks": "Unsere Bücher",
+    "ourBooks": "Unsere Bücher",
     "pricing": "Preise",
     "faq": "FAQ",
     "aboutUs": "Über uns",
@@ -28,10 +28,17 @@
     "privacy": "Datenschutz",
     "createBook": "Buch erstellen",
     "signIn": "Anmelden",
+    "signUp": "Registrieren",
     "myBooks": "Meine Bücher",
     "purchases": "Käufe",
+    "orders": "Meine Bestellungen",
     "profile": "Profil",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "home": "Startseite",
+    "more": "Mehr",
+    "create": "Erstellen",
+    "help": "FAQ & Support",
+    "signInSubtitle": "Zugriff auf deine Bücher"
   },
   "home": {
     "hero": {
@@ -175,7 +182,8 @@
       },
       "format": {
         "title": "Wähle ein Format",
-        "subtitle": "Bereite dein Buch für den professionellen Druck vor"
+        "subtitle": "Bereite dein Buch für den professionellen Druck vor",
+        "note": "Das Format bestimmt den Bildausschnitt für den Druck."
       },
       "theme": {
         "title": "Wähle ein Thema",
@@ -185,7 +193,8 @@
       },
       "style": {
         "title": "Wähle einen Kunststil",
-        "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?"
+        "subtitle": "Wie sollen die Illustrationen deines Buches aussehen?",
+        "advancedLabel": "Erweitert"
       },
       "title": {
         "title": "Benenne dein Buch",
@@ -271,8 +280,13 @@
     },
     "status": {
       "extractingCharacter": "Foto wird analysiert...",
+      "generatingPreview": "Vorschau wird erstellt...",
       "generatingStory": "Deine Geschichte wird erstellt...",
-      "openingBook": "Dein Buch wird geöffnet..."
+      "openingBook": "Dein Buch wird geöffnet...",
+      "gatheringMagic": "Magie sammeln...",
+      "writingStory": "Deine Geschichte wird geschrieben...",
+      "paintingCover": "Das Cover wird gemalt...",
+      "creatingAdventure": "{{childName}}s Abenteuer wird erstellt..."
     }
   },
   "profile": {
@@ -348,7 +362,8 @@
   "orders": {
     "header": {
       "backButton": "← Zurück zur Startseite",
-      "title": "Meine Bestellungen"
+      "title": "Meine Bestellungen",
+      "subtitle": "Verfolge deine gedruckten Bücher und den Bestellstatus"
     },
     "loading": "Bestellungen werden geladen...",
     "empty": {
@@ -390,6 +405,7 @@
   "mybooks": {
     "header": {
       "title": "Meine Bücher",
+      "subtitle": "Deine personalisierte Büchersammlung",
       "createNew": "Neues Buch erstellen",
       "booksCount": "{{count}} Buch erstellt",
       "booksCount_other": "{{count}} Bücher erstellt"

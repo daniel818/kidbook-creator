@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import styles from './LanguageSwitcher.module.css';
 
-export function LanguageSwitcher({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'navbar' }) {
+export function LanguageSwitcher({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'navbar' | 'footer' }) {
   const { i18n } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
@@ -50,6 +50,24 @@ export function LanguageSwitcher({ compact = false, variant = 'default' }: { com
     document.addEventListener('mousedown', handleOutside);
     return () => document.removeEventListener('mousedown', handleOutside);
   }, []);
+
+  if (variant === 'footer') {
+    return (
+      <div className={styles.footerVariant}>
+        {languages.map((lang, i) => (
+          <span key={lang.code}>
+            <button
+              className={`${styles.footerLangBtn} ${i18n.language === lang.code ? styles.footerLangActive : ''}`}
+              onClick={() => handleLanguageChange(lang.code)}
+            >
+              {lang.code.toUpperCase()}
+            </button>
+            {i < languages.length - 1 && <span className={styles.footerSep}>|</span>}
+          </span>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div
