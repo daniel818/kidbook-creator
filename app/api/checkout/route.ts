@@ -7,6 +7,7 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe, formatPrice } from '@/lib/stripe/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
@@ -18,6 +19,13 @@ export async function POST(request: NextRequest) {
 
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Rate limit checkout attempts
+        const rateResult = checkRateLimit(`checkout:${user.id}`, RATE_LIMITS.checkout);
+        if (!rateResult.allowed) {
+            console.log(`[Rate Limit] checkout blocked for user ${user.id}`);
+            return rateLimitResponse(rateResult, 'Too many checkout attempts. Please wait before trying again.');
         }
 
         const body = await request.json();
