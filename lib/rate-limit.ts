@@ -1,9 +1,16 @@
 // ============================================
 // In-Memory Rate Limiter (Sliding Window)
 // ============================================
-// Simple rate limiter for API routes. Uses in-memory storage,
-// suitable for single-instance deployments. For multi-instance,
-// replace with Redis-based implementation.
+// Simple rate limiter for API routes using in-memory storage.
+//
+// ⚠️  SERVERLESS LIMITATION: On Vercel/serverless platforms, each function
+// invocation may run in a separate instance with its own memory. The in-memory
+// store does NOT persist across cold starts or instances, so rate limiting is
+// best-effort in serverless environments. For strict enforcement, replace the
+// Map-based store with a shared store (e.g., Vercel KV / Upstash Redis).
+//
+// In single-instance deployments (Docker, VPS, long-running Node server),
+// this works reliably as all requests share the same process memory.
 
 interface RateLimitEntry {
     timestamps: number[];
