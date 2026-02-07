@@ -19,7 +19,7 @@ Sentry.init({
     // Environment
     environment: process.env.NODE_ENV,
 
-    // Only enable in production or when DSN is set
+    // Only enable when DSN is configured
     enabled: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
 
     // Filter out noisy errors
