@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
     params: Promise<{ sessionId: string }>;
@@ -15,6 +16,15 @@ export async function GET(
 ) {
     try {
         const { sessionId } = await context.params;
+
+        // Rate limit by IP (RLS-protected route)
+        const ip = getClientIp(request);
+        const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
+        if (!rateResult.allowed) {
+            console.log(`[Rate Limit] orders/session/[sessionId] GET blocked for IP ${ip}`);
+            return rateLimitResponse(rateResult);
+        }
+
         const supabase = await createClient();
 
         // Get order by Stripe session ID
