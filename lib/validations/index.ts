@@ -127,7 +127,7 @@ export const calculateCostSchema = z.object({
     size: z.string().min(1).max(20),
     pageCount: z.number().int().min(4).max(200),
     quantity: z.number().int().min(1).max(100),
-    countryCode: z.string().max(2).optional(),
+    countryCode: z.string().length(2).optional(),
     postalCode: z.string().max(20).optional(),
     stateCode: z.string().max(10).optional(),
     shippingOption: z.string().optional(),
@@ -138,7 +138,7 @@ export const calculateCostSchema = z.object({
         city: z.string().max(100).optional(),
         state: z.string().max(100).optional(),
         postalCode: z.string().max(20).optional(),
-        country: z.string().max(2).optional(),
+        country: z.string().length(2).optional(),
         phone: z.string().max(20).optional(),
     }).optional(),
 });
