@@ -27,22 +27,22 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
 
         // Validate request body with Zod
-        const { data, error: validationError } = parseBody(generateStorySchema, body);
-        if (validationError) {
+        const result = parseBody(generateStorySchema, body);
+        if (result.error) {
             return NextResponse.json(
-                { error: validationError },
+                { error: result.error },
                 { status: 400 }
             );
         }
 
         const input: StoryGenerationInput = {
-            childName: data.childName,
-            childAge: data.childAge,
-            childGender: data.childGender,
-            bookTheme: data.bookTheme,
-            bookType: data.bookType,
-            pageCount: data.pageCount,
-            characterDescription: data.characterDescription,
+            childName: result.data.childName,
+            childAge: result.data.childAge,
+            childGender: result.data.childGender,
+            bookTheme: result.data.bookTheme,
+            bookType: result.data.bookType,
+            pageCount: result.data.pageCount,
+            characterDescription: result.data.characterDescription,
         };
 
         const story = await generateStory(input);

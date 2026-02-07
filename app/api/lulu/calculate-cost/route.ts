@@ -25,24 +25,24 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
 
         // Validate request body with Zod
-        const { data, error: validationError } = parseBody(calculateCostSchema, body);
-        if (validationError) {
+        const result = parseBody(calculateCostSchema, body);
+        if (result.error) {
             return NextResponse.json(
-                { error: validationError },
+                { error: result.error },
                 { status: 400 }
             );
         }
 
         const pricing = await calculateRetailPricing({
-            format: data.format,
-            size: data.size,
-            pageCount: data.pageCount,
-            quantity: data.quantity,
-            shippingOption: data.shippingOption,
-            shipping: data.shipping,
-            countryCode: data.countryCode,
-            postalCode: data.postalCode,
-            stateCode: data.stateCode,
+            format: result.data.format,
+            size: result.data.size,
+            pageCount: result.data.pageCount,
+            quantity: result.data.quantity,
+            shippingOption: result.data.shippingOption,
+            shipping: result.data.shipping,
+            countryCode: result.data.countryCode,
+            postalCode: result.data.postalCode,
+            stateCode: result.data.stateCode,
         });
 
         return NextResponse.json({
