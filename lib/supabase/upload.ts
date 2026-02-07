@@ -1,14 +1,8 @@
 
 import { createClient } from '@supabase/supabase-js';
-import * as fs from 'fs';
-import * as path from 'path';
 import { env } from '@/lib/env';
 
 function log(msg: string) {
-    const logPath = path.join(process.cwd(), 'regeneration_debug.log');
-    try {
-        fs.appendFileSync(logPath, `${new Date().toISOString()} [Upload]: ${msg}\n`);
-    } catch { }
     console.log(`[Upload] ${msg}`);
 }
 

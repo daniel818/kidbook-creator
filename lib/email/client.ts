@@ -5,7 +5,13 @@
 import { Resend } from 'resend';
 import { env } from '@/lib/env';
 
-const resend = new Resend(env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 const FROM_EMAIL = env.EMAIL_FROM;
 
@@ -48,7 +54,7 @@ export interface DigitalUnlockEmailData {
 // Send order confirmation email
 export async function sendOrderConfirmation(data: OrderEmailData) {
   try {
-    const { data: result, error } = await resend.emails.send({
+    const { data: result, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: data.customerEmail,
       subject: `Order Confirmed! Your "${data.bookTitle}" is being prepared 📚`,
@@ -71,7 +77,7 @@ export async function sendOrderConfirmation(data: OrderEmailData) {
 // Send shipping notification email
 export async function sendShippingNotification(data: ShippingEmailData) {
   try {
-    const { data: result, error } = await resend.emails.send({
+    const { data: result, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: data.customerEmail,
       subject: `Your book is on its way! 🚚 Track your "${data.bookTitle}"`,
@@ -94,7 +100,7 @@ export async function sendShippingNotification(data: ShippingEmailData) {
 // Send delivery confirmation email
 export async function sendDeliveryConfirmation(data: OrderEmailData) {
   try {
-    const { data: result, error } = await resend.emails.send({
+    const { data: result, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: data.customerEmail,
       subject: `Your "${data.bookTitle}" has been delivered! 🎉`,
@@ -117,7 +123,7 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
 // Send digital unlock email
 export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
   try {
-    const { data: result, error } = await resend.emails.send({
+    const { data: result, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: data.customerEmail,
       subject: `Your digital book "${data.bookTitle}" is ready ✨`,

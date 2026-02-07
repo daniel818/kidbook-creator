@@ -9,8 +9,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib/gemini/client';
 import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
 import { env } from '@/lib/env';
-import * as fs from 'fs';
-import * as path from 'path';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 const safeStringify = (value: unknown) => {
     try {
@@ -25,15 +24,6 @@ const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[API generate-book ${timestamp}] ${message}`;
     console.log(logMsg);
-
-    // Also write to file for deeper debugging
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : safeStringify(data)) : '';
-        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
-    } catch (e) {
-        // ignore write error
-    }
 
     if (data !== undefined) {
         console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : safeStringify(data).slice(0, 500));
@@ -126,6 +116,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         log(`User authenticated: ${user.id}`);
+
+        // Rate limit by user ID (AI generation is expensive)
+        const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
+        if (!rateResult.allowed) {
+            log('Rate limited', { userId: user.id, retryAfter: rateResult.retryAfterSeconds });
+            return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
+        }
 
         // Determine aspect ratio from print format
         let aspectRatio: '1:1' | '3:4' = '3:4';
