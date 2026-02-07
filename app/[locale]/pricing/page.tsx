@@ -7,9 +7,9 @@ import { Navbar } from '@/components/Navbar';
 import styles from './page.module.css';
 
 const PRICING = {
-  USD: { symbol: '$', digital: 15, printed: 45 },
-  EUR: { symbol: '€', digital: 14, printed: 42 },
-  ILS: { symbol: '₪', digital: 55, printed: 165 }
+  USD: { symbol: '$', digital: 15, printed: 40 },
+  EUR: { symbol: '€', digital: 14, printed: 37 },
+  ILS: { symbol: '₪', digital: 55, printed: 150 }
 };
 
 export default function PricingPage() {
