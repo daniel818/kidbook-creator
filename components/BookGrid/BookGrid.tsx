@@ -108,16 +108,6 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true, orderMap = {}
                 )}
                 {t(`status.${displayState}`, displayState)}
               </div>
-
-              {/* Progress Bar for Draft */}
-              {displayState === 'draft' && (
-                <div className={styles.progressBarContainer}>
-                  <div
-                    className={`${styles.progressBar} ${styles.progressBar_draft}`}
-                    style={{ width: `${getDraftProgress(book)}%` }}
-                  />
-                </div>
-              )}
             </div>
 
             {/* Meta (Below Book) */}
@@ -126,7 +116,7 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true, orderMap = {}
 
               {/* Status-specific CTA / info */}
               <div className={styles.bookCta}>
-                {displayState === 'ready' && (
+                {(displayState === 'ready' || displayState === 'draft') && (
                   <button
                     className={styles.ctaOrderPrint}
                     onClick={(e) => { e.stopPropagation(); router.push(`/create/${book.id}/order`); }}
@@ -146,10 +136,8 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true, orderMap = {}
                 )}
 
                 {displayState === 'ordered' && (
-                  <span className={styles.ctaDeliveryDate}>
-                    {orderInfo?.estimatedDelivery
-                      ? t('cta.arriving', { dateRange: orderInfo.estimatedDelivery, defaultValue: `Arriving ${orderInfo.estimatedDelivery}` })
-                      : t('cta.orderProcessing', 'Processing order...')}
+                  <span className={styles.ctaOrderedInfo}>
+                    {t('cta.orderProcessing', 'Processing order...')}
                   </span>
                 )}
 
@@ -160,12 +148,6 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true, orderMap = {}
                   >
                     {t('cta.orderAnother', 'Order Another')} &rarr;
                   </button>
-                )}
-
-                {displayState === 'draft' && (
-                  <span className={styles.ctaDraftInfo}>
-                    {t('progress.stepOf', { current: getDraftStep(book), total: 5, defaultValue: `Step ${getDraftStep(book)} of 5` })}
-                  </span>
                 )}
               </div>
 
@@ -251,23 +233,4 @@ function getBookCoverImage(book: Book) {
   return null;
 }
 
-function getDraftProgress(book: Book): number {
-  let filled = 0;
-  const s = book.settings;
-  if (s.childName) filled++;
-  if (s.bookTheme) filled++;
-  if (s.printFormat) filled++;
-  if (s.artStyle) filled++;
-  if (s.storyDescription) filled++;
-  return Math.round((filled / 5) * 100);
-}
 
-function getDraftStep(book: Book): number {
-  const s = book.settings;
-  if (s.storyDescription) return 5;
-  if (s.artStyle) return 4;
-  if (s.printFormat) return 3;
-  if (s.bookTheme) return 2;
-  if (s.childName) return 1;
-  return 1;
-}
