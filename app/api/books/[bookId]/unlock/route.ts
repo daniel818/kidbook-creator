@@ -5,8 +5,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
-import * as fs from 'fs';
-import * as path from 'path';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 
@@ -17,12 +15,6 @@ interface RouteContext {
 const logUnlock = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[API unlock-book ${timestamp}] ${message}`;
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        fs.appendFileSync(logPath, `${logMsg} ${data ? JSON.stringify(data) : ''}\n`);
-    } catch {
-        // ignore
-    }
     if (data !== undefined) {
         console.log(logMsg, data);
     } else {

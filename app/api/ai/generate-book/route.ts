@@ -8,8 +8,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib/gemini/client';
 import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
-import * as fs from 'fs';
-import * as path from 'path';
 
 const safeStringify = (value: unknown) => {
     try {
@@ -24,15 +22,6 @@ const log = (message: string, data?: unknown) => {
     const timestamp = new Date().toISOString();
     const logMsg = `[API generate-book ${timestamp}] ${message}`;
     console.log(logMsg);
-
-    // Also write to file for deeper debugging
-    try {
-        const logPath = path.join(process.cwd(), 'api_debug.log');
-        const dataStr = data !== undefined ? (typeof data === 'string' ? data : safeStringify(data)) : '';
-        fs.appendFileSync(logPath, `${logMsg} ${dataStr}\n`);
-    } catch (e) {
-        // ignore write error
-    }
 
     if (data !== undefined) {
         console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : safeStringify(data).slice(0, 500));
