@@ -60,7 +60,6 @@ function mockAuthenticated(user = MOCK_USER) {
 describe('requireAuth-protected routes', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.resetModules();
     });
 
     describe('GET /api/orders/[orderId]', () => {
@@ -164,7 +163,6 @@ describe('requireAuth-protected routes', () => {
 describe('requireAdmin-protected routes', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.resetModules();
     });
 
     describe('POST /api/fulfillment/trigger', () => {
@@ -208,7 +206,6 @@ describe('requireAdmin-protected routes', () => {
 describe('api-guard helpers', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.resetModules();
     });
 
     describe('requireAuth()', () => {

@@ -18,6 +18,9 @@ export async function GET(
         const { orderId } = await context.params;
         const { user, supabase, error: authError } = await requireAuth();
         if (authError) return authError;
+        if (!user || !supabase) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         // Rate limit by IP
         const ip = getClientIp(request);
@@ -40,7 +43,7 @@ export async function GET(
                 )
             `)
             .eq('id', orderId)
-            .eq('user_id', user!.id)
+            .eq('user_id', user.id)
             .single();
 
         if (error || !order) {

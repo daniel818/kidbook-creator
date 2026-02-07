@@ -8,7 +8,6 @@ import { stripe } from '@/lib/stripe/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
-import { requireAuth } from '@/lib/auth/api-guard';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         }
 
         // Rate limit by user ID or session ID (this route generates AI images)
-        const rateLimitKey = hasUser ? `ai:${user!.id}` : `ai:session:${sessionIdFromQuery}`;
+        const rateLimitKey = hasUser && user ? `ai:${user.id}` : `ai:session:${sessionIdFromQuery}`;
         const rateResult = checkRateLimit(rateLimitKey, RATE_LIMITS.ai);
         if (!rateResult.allowed) {
             logUnlock('Rate limited', { key: rateLimitKey, retryAfter: rateResult.retryAfterSeconds });
@@ -73,7 +72,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
         }
 
         // Always use ownership-scoped query: user_id from session or authenticated user
-        const ownerId = hasUser ? user!.id : sessionUserId!;
+        const ownerId = hasUser && user ? user.id : sessionUserId;
+        if (!ownerId) {
+            logUnlock('No owner ID resolved; rejecting');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         const db = hasUser ? supabase : adminDb;
 
         const { data: book, error: bookError } = await db
