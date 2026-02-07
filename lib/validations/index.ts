@@ -9,6 +9,8 @@ import { z } from 'zod';
 // ---- Common Fields ----
 
 const childGenderSchema = z.enum(['boy', 'girl', 'other']).optional();
+const artStyleSchema = z.enum(['storybook_classic', 'watercolor', 'digital_art', 'cartoon', 'pixel_art', 'coloring_book']);
+const imageQualitySchema = z.enum(['fast', 'pro']);
 
 // ---- AI Generation Schemas ----
 
@@ -28,22 +30,19 @@ export const generateImageSchema = z.object({
     pageIndex: z.number().int().min(0),
     scenePrompt: z.string().min(1).max(1000),
     characterDescription: z.string().max(500).optional().default(''),
-    artStyle: z.string().max(50).optional().default('storybook_classic'),
-    quality: z.enum(['fast', 'quality']).optional().default('fast'),
+    artStyle: artStyleSchema.optional().default('storybook_classic'),
+    quality: imageQualitySchema.optional().default('fast'),
     childPhoto: z.string().optional(),
     aspectRatio: z.enum(['1:1', '3:4']).optional().default('3:4'),
 });
 
 export const regenerateImageSchema = z.object({
-    bookId: z.string().uuid(),
-    pageId: z.string().uuid(),
+    bookId: z.string().min(1),
     pageNumber: z.number().int().min(1),
-    imagePrompt: z.string().min(1).max(1000),
-    characterDescription: z.string().max(500).optional().default(''),
-    artStyle: z.string().max(50).optional().default('storybook_classic'),
-    quality: z.enum(['fast', 'quality']).optional().default('fast'),
-    childPhoto: z.string().optional(),
-    aspectRatio: z.enum(['1:1', '3:4']).optional().default('3:4'),
+    prompt: z.string().min(1).max(1000),
+    currentImageContext: artStyleSchema.optional(),
+    style: z.string().max(500).optional(),
+    quality: imageQualitySchema.optional(),
 });
 
 export const generateBookSchema = z.object({
@@ -55,30 +54,54 @@ export const generateBookSchema = z.object({
     pageCount: z.number().int().min(4).max(30).optional().default(10),
     characterDescription: z.string().max(500).optional(),
     storyDescription: z.string().max(1000).optional(),
-    artStyle: z.string().max(50).optional().default('storybook_classic'),
-    imageQuality: z.enum(['fast', 'quality']).optional().default('fast'),
+    artStyle: artStyleSchema.optional().default('storybook_classic'),
+    imageQuality: imageQualitySchema.optional().default('fast'),
     childPhoto: z.string().optional(),
-    aspectRatio: z.enum(['1:1', '3:4']).optional().default('3:4'),
+    printFormat: z.string().max(50).optional(),
     language: z.enum(['en', 'de', 'he']).optional().default('en'),
+    preview: z.boolean().optional(),
+    previewPageCount: z.number().int().min(1).max(10).optional(),
 });
 
 // ---- Book Schemas ----
 
-export const createBookSchema = z.object({
+const bookSettingsSchema = z.object({
     title: z.string().min(1).max(200),
     childName: z.string().min(1).max(50),
     childAge: z.number().int().min(0).max(18).optional(),
     childGender: childGenderSchema,
+    ageGroup: z.string().max(20).optional(),
     bookTheme: z.string().max(200).optional(),
     bookType: z.string().max(100).optional(),
     artStyle: z.string().max(50).optional(),
     language: z.enum(['en', 'de', 'he']).optional(),
 });
 
+export const createBookSchema = z.object({
+    settings: bookSettingsSchema,
+});
+
+const pageEditSchema = z.object({
+    pageId: z.string().min(1),
+    text: z.string().optional(),
+    image: z.string().optional(),
+});
+
+const pageSchema = z.object({
+    id: z.string().min(1),
+    pageNumber: z.number().int().min(0),
+    type: z.string().max(50),
+    backgroundColor: z.string().max(50).optional().default('#ffffff'),
+    backgroundImage: z.string().optional(),
+    textElements: z.array(z.record(z.string(), z.unknown())),
+    imageElements: z.array(z.record(z.string(), z.unknown())),
+});
+
 export const updateBookSchema = z.object({
-    title: z.string().min(1).max(200).optional(),
+    settings: bookSettingsSchema.partial().optional(),
+    pages: z.array(pageSchema).min(1).optional(),
+    pageEdits: z.array(pageEditSchema).optional(),
     status: z.enum(['preview', 'draft', 'completed', 'ordered']).optional(),
-    thumbnail_url: z.string().url().optional(),
 });
 
 // ---- Checkout Schemas ----
@@ -86,7 +109,7 @@ export const updateBookSchema = z.object({
 export const checkoutSchema = z.object({
     bookId: z.string().uuid(),
     format: z.enum(['softcover', 'hardcover']),
-    size: z.string().min(1).max(20),
+    size: z.enum(['7.5x7.5', '8x8', '8x10']),
     quantity: z.number().int().min(1).max(100),
     shipping: z.object({
         fullName: z.string().min(1).max(100),
@@ -98,15 +121,16 @@ export const checkoutSchema = z.object({
         country: z.string().min(2).max(2),
         phone: z.string().max(20).optional(),
     }),
-    shippingOption: z.string().optional(),
+    shippingLevel: z.enum(['MAIL', 'PRIORITY_MAIL', 'GROUND_HD', 'GROUND', 'EXPEDITED', 'EXPRESS']),
+    pdfUrl: z.string().min(1),
+    coverUrl: z.string().min(1),
 });
 
 export const createPaymentIntentSchema = z.object({
     bookId: z.string().uuid(),
     format: z.enum(['softcover', 'hardcover']),
-    size: z.string().min(1).max(20),
+    size: z.enum(['7.5x7.5', '8x8', '8x10']),
     quantity: z.number().int().min(1).max(100),
-    total: z.number().int().min(1), // cents
     shipping: z.object({
         fullName: z.string().min(1).max(100),
         addressLine1: z.string().min(1).max(200),
@@ -117,7 +141,7 @@ export const createPaymentIntentSchema = z.object({
         country: z.string().min(2).max(2),
         phone: z.string().max(20).optional(),
     }),
-    shippingOption: z.string().optional(),
+    shippingLevel: z.enum(['MAIL', 'PRIORITY_MAIL', 'GROUND_HD', 'GROUND', 'EXPEDITED', 'EXPRESS']),
 });
 
 // ---- Lulu Schemas ----
@@ -145,7 +169,7 @@ export const calculateCostSchema = z.object({
 
 export const shippingOptionsSchema = z.object({
     format: z.enum(['softcover', 'hardcover']),
-    size: z.string().min(1).max(20),
+    size: z.enum(['7.5x7.5', '8x8', '8x10']),
     pageCount: z.number().int().min(4).max(200),
     quantity: z.number().int().min(1).max(100),
     shipping: z.object({
