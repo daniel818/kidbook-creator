@@ -1,5 +1,6 @@
 import { createLuluClient, CostCalculationOptions } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { env } from '@/lib/env';
 
 export interface RetailPricingInput {
     format: 'softcover' | 'hardcover';
@@ -43,7 +44,7 @@ function applyPricingRules(wholesale: number, quantity: number) {
 }
 
 export async function calculateRetailPricing(input: RetailPricingInput): Promise<RetailPricingResult> {
-    const hasLuluCredentials = process.env.LULU_API_KEY && process.env.LULU_API_SECRET;
+    const hasLuluCredentials = env.LULU_API_KEY && env.LULU_API_SECRET;
 
     if (!hasLuluCredentials) {
         throw new Error('Lulu credentials not configured');

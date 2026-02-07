@@ -3,6 +3,8 @@
 // ============================================
 // Print-on-demand integration for book printing
 
+import { env } from '@/lib/env';
+
 export interface LuluCredentials {
     apiKey: string;
     apiSecret: string;
@@ -440,9 +442,9 @@ interface LuluCostResponse {
 // Factory function to create client
 export function createLuluClient(): LuluClient {
     return new LuluClient({
-        apiKey: process.env.LULU_API_KEY!,
-        apiSecret: process.env.LULU_API_SECRET!,
-        sandbox: process.env.LULU_SANDBOX === 'true',
+        apiKey: env.LULU_API_KEY,
+        apiSecret: env.LULU_API_SECRET,
+        sandbox: env.LULU_SANDBOX === 'true',
     });
 }
 

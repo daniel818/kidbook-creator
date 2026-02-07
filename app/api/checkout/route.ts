@@ -7,6 +7,7 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe, formatPrice } from '@/lib/stripe/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
+import { env } from '@/lib/env';
 
 export async function POST(request: NextRequest) {
     try {
@@ -170,8 +171,8 @@ export async function POST(request: NextRequest) {
                 userId: user.id,
                 isUnlockBundled: needsUnlock ? 'true' : 'false',
             },
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL}/order/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/create/${bookId}/order`,
+            success_url: `${env.NEXT_PUBLIC_APP_URL}/order/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${env.NEXT_PUBLIC_APP_URL}/create/${bookId}/order`,
         });
 
         // 3. Update Order with Session ID

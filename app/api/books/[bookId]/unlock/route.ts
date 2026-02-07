@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
+import { env } from '@/lib/env';
 
 interface RouteContext {
     params: Promise<{ bookId: string }>;
@@ -204,7 +205,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
             if (firstPageImages.length > 0 && firstPageImages[0]?.src) {
                 const imgSrc = firstPageImages[0].src as string;
                 // SSRF mitigation: only fetch from our own Supabase storage domain
-                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
                 const isAllowedOrigin = imgSrc.startsWith(supabaseUrl) || imgSrc.startsWith('data:');
                 if (!isAllowedOrigin) {
                     logUnlock('Skipping style reference: image URL not from allowed origin', { src: imgSrc.slice(0, 100) });

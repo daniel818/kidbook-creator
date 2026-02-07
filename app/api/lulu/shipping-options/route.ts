@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLuluClient } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { env } from '@/lib/env';
 
 export async function POST(request: NextRequest) {
     try {
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (!process.env.LULU_API_KEY || !process.env.LULU_API_SECRET) {
+        if (!env.LULU_API_KEY || !env.LULU_API_SECRET) {
             return NextResponse.json({ error: 'Lulu credentials not configured' }, { status: 500 });
         }
 

@@ -11,12 +11,13 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { sendOrderConfirmation, sendDigitalUnlockEmail, OrderEmailData, DigitalUnlockEmailData } from '@/lib/email/client';
 import * as fs from 'fs';
 import * as path from 'path';
+import { env } from '@/lib/env';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     apiVersion: '2025-02-24.acacia',
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
 
 /** Supabase order row shape used throughout webhook handlers */
 interface OrderRow {
@@ -74,8 +75,8 @@ export async function POST(request: NextRequest) {
     const headersList = await headers();
     const signature = headersList.get('stripe-signature');
     logWebhook('Webhook env', {
-        hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-        hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasServiceKey: !!env.SUPABASE_SERVICE_ROLE_KEY,
+        hasSupabaseUrl: !!env.NEXT_PUBLIC_SUPABASE_URL,
     });
 
     if (!signature) {

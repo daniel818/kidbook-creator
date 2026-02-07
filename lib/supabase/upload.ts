@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 import * as path from 'path';
+import { env } from '@/lib/env';
 
 function log(msg: string) {
     const logPath = path.join(process.cwd(), 'regeneration_debug.log');
@@ -11,23 +12,10 @@ function log(msg: string) {
     console.log(`[Upload] ${msg}`);
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseServiceKey) {
-    log('CRITICAL: SUPABASE_SERVICE_ROLE_KEY is missing!');
-}
-
-// Create a direct client with service key for admin access (uploads)
-// We handle the case where key is missing by not creating client immediately or handling error later?
-// But top-level await isn't allowed here easily.
-// const supabase = createClient(supabaseUrl, supabaseServiceKey || '');
+const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function uploadImageToStorage(bookId: string, pageNumber: number, imageBuffer: Buffer): Promise<string> {
-    if (!supabaseServiceKey) {
-        throw new Error('Server misconfiguration: Missing SUPABASE_SERVICE_ROLE_KEY');
-    }
-
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const fileName = `${bookId}/page_${pageNumber}_${Date.now()}.png`;
@@ -56,10 +44,6 @@ export async function uploadReferenceImage(
     imageBuffer: Buffer,
     contentType: string
 ): Promise<string> {
-    if (!supabaseServiceKey) {
-        throw new Error('Server misconfiguration: Missing SUPABASE_SERVICE_ROLE_KEY');
-    }
-
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const safeType = contentType || 'image/jpeg';
     const ext = safeType.includes('png') ? 'png'

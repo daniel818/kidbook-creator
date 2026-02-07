@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
+import { env } from '@/lib/env';
 
 // Lulu Webhook Handler
 // Receives updates for print job status changes throughout the lifecycle:
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
         const payload = body?.data || body;
 
         // Verify Signature
-        const secret = process.env.LULU_WEBHOOK_SECRET;
+        const secret = env.LULU_WEBHOOK_SECRET;
         if (secret) {
             const isValid = verifyLuluSignature(JSON.stringify(body), signature, secret);
             if (!isValid) {
