@@ -396,15 +396,13 @@
     },
     "filters": {
       "all": "Alle",
-      "draft": "Entwürfe",
+      "draft": "Meine Bücher",
       "preview": "Vorschau",
-      "ready": "Bereit",
       "ordered": "Bestellt"
     },
     "status": {
-      "draft": "Entwurf",
+      "draft": "Digital",
       "preview": "Vorschau",
-      "ready": "Bereit",
       "ordered": "Bestellt",
       "delivered": "Zugestellt"
     },

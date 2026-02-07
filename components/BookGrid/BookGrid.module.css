@@ -372,7 +372,7 @@
   font-size: 13px !important;
 }
 
-/* Badge positioning: draft & ordered → top-left; preview, ready, delivered → top-right */
+/* Badge positioning: draft & ordered → top-left; preview, delivered → top-right */
 .statusBadge_draft,
 .statusBadge_ordered {
   top: 16px;
@@ -380,16 +380,14 @@
 }
 
 .statusBadge_preview,
-.statusBadge_ready,
 .statusBadge_delivered {
   top: 16px;
   right: 16px;
 }
 
 /* Badge colors */
-.statusBadge_draft { background: #ffedd5; color: #c2410c; }
+.statusBadge_draft { background: #dbeafe; color: #1e40af; }
 .statusBadge_preview { background: #fef3c7; color: #92400e; }
-.statusBadge_ready { background: #dcfce7; color: #166534; }
 .statusBadge_ordered { background: #dcfce7; color: #166534; }
 .statusBadge_delivered { background: #ccfbf1; color: #0f766e; }
 
@@ -468,16 +466,8 @@
 }
 
 /* =========================================
-   Draft card visual treatment
+   Draft card visual treatment (placeholder only for true drafts)
    ========================================= */
-.bookItem_draft .book3DFront {
-  box-shadow:
-    rgba(0, 0, 0, 0.2) 0px 3px 3px -2px,
-    rgba(0, 0, 0, 0.14) 0px 3px 4px 0px,
-    rgba(0, 0, 0, 0.12) 0px 1px 8px 0px,
-    inset 2px 0 2px rgba(255, 255, 255, 0.3),
-    inset 0 0 0 2px rgba(245, 158, 11, 0.3);
-}
 
 /* =========================================
    RTL badge positioning
@@ -489,7 +479,6 @@
 }
 
 [dir="rtl"] .statusBadge_preview,
-[dir="rtl"] .statusBadge_ready,
 [dir="rtl"] .statusBadge_delivered {
   right: auto;
   left: 16px;
@@ -650,7 +639,6 @@
   }
 
   .statusBadge_preview,
-  .statusBadge_ready,
   .statusBadge_delivered {
     right: 10px;
     top: 10px;

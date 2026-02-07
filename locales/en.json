@@ -397,15 +397,13 @@
     },
     "filters": {
       "all": "All",
-      "draft": "Drafts",
+      "draft": "My Books",
       "preview": "Preview",
-      "ready": "Ready",
       "ordered": "Ordered"
     },
     "status": {
-      "draft": "Draft",
+      "draft": "Digital",
       "preview": "Preview",
-      "ready": "Ready",
       "ordered": "Ordered",
       "delivered": "Delivered"
     },

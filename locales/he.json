@@ -397,15 +397,13 @@
     },
     "filters": {
       "all": "הכל",
-      "draft": "טיוטות",
+      "draft": "הספרים שלי",
       "preview": "תצוגה מקדימה",
-      "ready": "מוכן",
       "ordered": "הוזמן"
     },
     "status": {
-      "draft": "טיוטה",
+      "draft": "דיגיטלי",
       "preview": "תצוגה מקדימה",
-      "ready": "מוכן",
       "ordered": "הוזמן",
       "delivered": "נמסר"
     },

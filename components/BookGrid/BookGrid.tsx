@@ -14,7 +14,7 @@ interface BookGridProps {
 }
 
 const STATUS_BADGE_ICONS: Partial<Record<BookDisplayState, string>> = {
-  ready: 'check_circle',
+  draft: 'auto_stories',
   ordered: 'local_shipping',
   delivered: 'verified',
 };
@@ -116,7 +116,7 @@ export function BookGrid({ books, onDeleteBook, showAddNew = true, orderMap = {}
 
               {/* Status-specific CTA / info */}
               <div className={styles.bookCta}>
-                {(displayState === 'ready' || displayState === 'draft') && (
+                {displayState === 'draft' && (
                   <button
                     className={styles.ctaOrderPrint}
                     onClick={(e) => { e.stopPropagation(); router.push(`/create/${book.id}/order`); }}

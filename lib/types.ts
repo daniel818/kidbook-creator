@@ -184,14 +184,13 @@ export const BookThemeInfo: Record<BookTheme, {
 };
 
 // Book Display State (for UI card rendering)
-export type BookDisplayState = 'draft' | 'preview' | 'ready' | 'ordered' | 'delivered';
+export type BookDisplayState = 'draft' | 'preview' | 'ordered' | 'delivered';
 
 export function getBookDisplayState(book: Book, orderStatus?: string): BookDisplayState {
   if (book.status === 'ordered') {
     if (orderStatus === 'delivered') return 'delivered';
     return 'ordered';
   }
-  if (book.status === 'completed') return 'ready';
   if (book.status === 'preview') return 'preview';
   return 'draft';
 }

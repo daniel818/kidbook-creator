@@ -10,13 +10,12 @@ import { BookGrid } from '@/components/BookGrid';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import styles from './mybooks.module.css';
 
-type FilterTab = 'all' | 'draft' | 'preview' | 'ready' | 'ordered';
+type FilterTab = 'all' | 'draft' | 'preview' | 'ordered';
 
 const FILTER_STATUS_MAP: Record<FilterTab, Book['status'][]> = {
   all: [],
-  draft: ['draft'],
+  draft: ['draft', 'completed'],
   preview: ['preview'],
-  ready: ['completed'],
   ordered: ['ordered'],
 };
 
@@ -94,9 +93,8 @@ export default function MyBooksPage() {
   const filterCounts = useMemo(() => {
     return {
       all: books.length,
-      draft: books.filter(b => b.status === 'draft').length,
+      draft: books.filter(b => b.status === 'draft' || b.status === 'completed').length,
       preview: books.filter(b => b.status === 'preview').length,
-      ready: books.filter(b => b.status === 'completed').length,
       ordered: books.filter(b => b.status === 'ordered').length,
     };
   }, [books]);
@@ -140,7 +138,7 @@ export default function MyBooksPage() {
     return null;
   }
 
-  const filters: FilterTab[] = ['all', 'draft', 'preview', 'ready', 'ordered'];
+  const filters: FilterTab[] = ['all', 'draft', 'preview', 'ordered'];
 
   return (
     <>
