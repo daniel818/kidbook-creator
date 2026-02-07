@@ -234,48 +234,7 @@ export async function POST(request: NextRequest) {
                 log(`Page ${page.page_number} completed in ${Date.now() - pageStartTime}ms (${generatedCount} total)`);
 
             } catch (err) {
-                log(`ERROR generating page ${page.page_number}`, err);
-                // Retry once
-                try {
-                    log(`Retrying page ${page.page_number}...`);
-                    await new Promise(r => setTimeout(r, SAFETY_DELAY_MS));
-                    const { imageUrl } = await generateIllustration({
-                        scenePrompt: prompt,
-                        characterDescription: characterDescription || `A cute child named ${book.child_name}`,
-                        artStyle,
-                        quality: imageQuality,
-                        referenceImage: childPhoto,
-                        aspectRatio,
-                        language,
-                        styleReferenceImage: page.page_number > 1 ? styleReferenceImage : undefined,
-                        pageNumber: page.page_number,
-                        totalPages: totalInsidePages,
-                        bookTitle,
-                    });
-                    const matches = imageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-                    if (matches && matches.length === 3) {
-                        const imageBuffer = Buffer.from(matches[2], 'base64');
-                        const storedUrl = await uploadImageToStorage(bookId, page.page_number, imageBuffer);
-                        const { error: retryUpdateError } = await db
-                            .from('pages')
-                            .update({
-                                image_elements: [{
-                                    id: crypto.randomUUID(),
-                                    src: storedUrl,
-                                    x: 0, y: 0, width: 100, height: 100, rotation: 0,
-                                }]
-                            })
-                            .eq('id', page.id);
-                        if (retryUpdateError) {
-                            log(`ERROR: DB update failed on retry for page ${page.page_number}`, retryUpdateError);
-                        } else {
-                            generatedCount++;
-                            log(`Retry succeeded for page ${page.page_number}`);
-                        }
-                    }
-                } catch (retryErr) {
-                    log(`Retry also failed for page ${page.page_number}`, retryErr);
-                }
+                log(`ERROR generating page ${page.page_number} (after retries)`, err);
             }
 
             // Delay between generations for rate limits

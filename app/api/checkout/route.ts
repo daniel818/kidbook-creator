@@ -9,6 +9,7 @@ import { calculateRetailPricing } from '@/lib/lulu/pricing';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 import { env } from '@/lib/env';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkoutSchema, parseBody } from '@/lib/validations';
 
 export async function POST(request: NextRequest) {
     try {
@@ -30,7 +31,14 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { bookId, format, size, quantity, shipping, shippingLevel, pdfUrl, coverUrl } = body;
+
+        // Validate request body with Zod
+        const result = parseBody(checkoutSchema, body);
+        if (!result.success) {
+            return NextResponse.json({ error: result.error }, { status: 400 });
+        }
+
+        const { bookId, format, size, quantity, shipping, shippingLevel, pdfUrl, coverUrl } = result.data;
 
         console.log('[Checkout API] Received request:', {
             bookId,
@@ -38,22 +46,6 @@ export async function POST(request: NextRequest) {
             hasCover: !!coverUrl,
             pdfUrlLength: pdfUrl?.length
         });
-
-        // Validate required fields
-        if (!bookId || !format || !size || !quantity || !shipping || !shippingLevel) {
-            return NextResponse.json(
-                { error: 'Missing required fields' },
-                { status: 400 }
-            );
-        }
-
-        // Validate PDF paths (CRITICAL: Do not allow payment without files)
-        if (!pdfUrl || typeof pdfUrl !== 'string') {
-            return NextResponse.json({ error: 'Missing Interior PDF. Please try again.' }, { status: 400 });
-        }
-        if (!coverUrl || typeof coverUrl !== 'string') {
-            return NextResponse.json({ error: 'Missing Cover PDF. Please try again.' }, { status: 400 });
-        }
 
         const { data: book, error: bookError } = await adminDb
             .from('books')
@@ -71,11 +63,6 @@ export async function POST(request: NextRequest) {
         const isPreview = book.is_preview || book.status === 'preview';
         const needsUnlock = isPreview && !book.digital_unlock_paid;
         const unlockFee = needsUnlock ? 1500 : 0; // $15.00 in cents
-
-        // Validate quantity
-        if (!Number.isInteger(quantity) || quantity < 1) {
-            return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
-        }
 
         // Calculate pricing (includes profit margin)
         const interiorPageCount = getPrintableInteriorPageCount(book, format, size);

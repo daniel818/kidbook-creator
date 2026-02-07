@@ -10,6 +10,7 @@ import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib
 import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
 import { env } from '@/lib/env';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+import { generateBookSchema, parseBody } from '@/lib/validations';
 
 const safeStringify = (value: unknown) => {
     try {
@@ -92,17 +93,17 @@ export async function POST(request: NextRequest) {
     try {
         log('Step 1: Parsing request body...');
         const body = await request.json();
-        const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = body;
+
+        // Validate request body with Zod
+        const validation = parseBody(generateBookSchema, body);
+        if (!validation.success) {
+            log('ERROR: Validation failed', validation.error);
+            return NextResponse.json({ error: validation.error }, { status: 400 });
+        }
+
+        const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = validation.data;
         const resolvedBookType = bookType || 'story';
         log('Request body parsed', { childName, childAge, childGender, bookTheme, bookType: resolvedBookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
-
-        if (!childName || !bookTheme) {
-            log('ERROR: Missing required fields');
-            return NextResponse.json(
-                { error: 'Missing required fields: childName, bookTheme' },
-                { status: 400 }
-            );
-        }
 
         // Authenticate User
         log('Step 2: Authenticating user...');
