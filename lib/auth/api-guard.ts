@@ -41,11 +41,20 @@ export async function requireAdmin() {
         };
     }
 
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('is_admin')
         .eq('id', user.id)
         .single();
+
+    if (profileError) {
+        console.error('[requireAdmin] Failed to fetch profile:', profileError.message);
+        return {
+            user: null,
+            supabase: null,
+            error: NextResponse.json({ error: 'Failed to verify admin status' }, { status: 500 }),
+        };
+    }
 
     if (!profile?.is_admin) {
         return {
