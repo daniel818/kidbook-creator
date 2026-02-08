@@ -17,7 +17,10 @@ import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
 import { AlertModal } from '@/components/AlertModal';
 import { BookCreationLoader, CreationPhase } from '@/components/BookCreationLoader';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('create');
 
 type WizardStep = 'child' | 'format' | 'theme' | 'preview';
 
@@ -156,17 +159,17 @@ export default function CreateBookPage() {
     };
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('[PHOTO] File input changed', e.target.files);
+        logger.debug({ files: e.target.files }, 'File input changed');
         const file = e.target.files?.[0];
         if (file) {
-            console.log('[PHOTO] File selected:', file.name, file.size, file.type);
+            logger.debug({ name: file.name, size: file.size, type: file.type }, 'File selected');
             setChildPhoto(file);
             // Use createObjectURL for better performance and reliability
             const objectUrl = URL.createObjectURL(file);
-            console.log('[PHOTO] Object URL created:', objectUrl);
+            logger.debug({ objectUrl }, 'Object URL created');
             setPhotoPreview(objectUrl);
         } else {
-            console.log('[PHOTO] No file selected');
+            logger.debug('No file selected');
         }
     };
 
@@ -197,10 +200,7 @@ export default function CreateBookPage() {
 
     const handleCreate = async () => {
         const startTime = Date.now();
-        console.log('[CLIENT] ========================================');
-        console.log('[CLIENT] === BOOK CREATION STARTED ===');
-        console.log('[CLIENT] ========================================');
-        console.log('[CLIENT] Settings:', settings);
+        logger.info({ settings }, 'Book creation started');
 
         setIsCreating(true);
         setCreatingPhase('extracting');
@@ -209,7 +209,7 @@ export default function CreateBookPage() {
             // Step 1: Extract character from photo if provided
             let characterDescription = '';
             if (childPhoto) {
-                console.log('[CLIENT] Step 1: Extracting character from photo...');
+                logger.debug('Step 1: Extracting character from photo');
                 const extractStart = Date.now();
                 setCreatingStatus(t('status.extractingCharacter'));
                 const formData = new FormData();
@@ -219,21 +219,21 @@ export default function CreateBookPage() {
                     method: 'POST',
                     body: formData,
                 });
-                console.log(`[CLIENT] Photo extraction response status: ${extractRes.status} in ${Date.now() - extractStart}ms`);
+                logger.debug({ status: extractRes.status, durationMs: Date.now() - extractStart }, 'Photo extraction response');
 
                 if (extractRes.ok) {
                     const extractData = await extractRes.json();
                     characterDescription = extractData.characterDescription;
-                    console.log('[CLIENT] Character description:', characterDescription?.slice(0, 100));
+                    logger.debug({ characterDescription: characterDescription?.slice(0, 100) }, 'Character description extracted');
                 } else {
-                    console.log('[CLIENT] Photo extraction failed:', await extractRes.text());
+                    logger.warn({ responseText: await extractRes.text() }, 'Photo extraction failed');
                 }
             } else {
-                console.log('[CLIENT] Step 1: No photo provided, skipping extraction');
+                logger.debug('Step 1: No photo provided, skipping extraction');
             }
 
             // Step 2: Generate story + cover illustration (remaining illustrations generate in background)
-            console.log('[CLIENT] Step 2: Generating story and cover...');
+            logger.debug('Step 2: Generating story and cover');
             const genStart = Date.now();
             setCreatingPhase('writing');
             setCreatingStatus(t('status.writingStory', 'Writing your story...'));
@@ -265,7 +265,7 @@ export default function CreateBookPage() {
                 preview: true,
                 previewPageCount: 3,
             };
-            console.log('[CLIENT] Request body:', requestBody);
+            logger.debug({ requestBody }, 'Request body');
 
             const response = await fetch('/api/ai/generate-book', {
                 method: 'POST',
@@ -273,18 +273,18 @@ export default function CreateBookPage() {
                 body: JSON.stringify(requestBody),
             });
 
-            console.log(`[CLIENT] API response status: ${response.status} in ${Date.now() - genStart}ms`);
+            logger.debug({ status: response.status, durationMs: Date.now() - genStart }, 'API response');
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.log('[CLIENT] API error response:', errorText);
+                logger.error({ errorText }, 'API error response');
                 throw new Error('Failed to generate book');
             }
 
             const data = await response.json();
-            console.log('[CLIENT] API response data:', data);
+            logger.debug({ data }, 'API response data');
 
-            console.log('[CLIENT] Step 3: Navigating to book viewer...');
+            logger.debug('Step 3: Navigating to book viewer');
             setCreatingPhase('opening');
             setCreatingStatus(t('status.openingBook'));
             // Brief pause to show "Opening your book..." then navigate.
@@ -292,17 +292,12 @@ export default function CreateBookPage() {
             await new Promise(resolve => setTimeout(resolve, 600));
 
             const totalDuration = Date.now() - startTime;
-            console.log('[CLIENT] ========================================');
-            console.log(`[CLIENT] === BOOK CREATION COMPLETE in ${totalDuration}ms ===`);
-            console.log('[CLIENT] ========================================');
+            logger.info({ durationMs: totalDuration }, 'Book creation complete');
 
             router.push(`/book/${data.bookId}`);
         } catch (error) {
             const totalDuration = Date.now() - startTime;
-            console.log('[CLIENT] ========================================');
-            console.log(`[CLIENT] === BOOK CREATION FAILED after ${totalDuration}ms ===`);
-            console.log('[CLIENT] ========================================');
-            console.error('[CLIENT] Error:', error);
+            logger.error({ err: error, durationMs: totalDuration }, 'Book creation failed');
             setCreatingStatus('');
             setCreatingPhase('');
             setIsCreating(false);

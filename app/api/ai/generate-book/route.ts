@@ -8,28 +8,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib/gemini/client';
 import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
+import { createRequestLogger } from '@/lib/logger';
 import { env } from '@/lib/env';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 import { generateBookSchema, parseBody } from '@/lib/validations';
-
-const safeStringify = (value: unknown) => {
-    try {
-        return JSON.stringify(value, null, 2);
-    } catch {
-        return String(value);
-    }
-};
-
-// Helper function for logging with timestamps
-const log = (message: string, data?: unknown) => {
-    const timestamp = new Date().toISOString();
-    const logMsg = `[API generate-book ${timestamp}] ${message}`;
-    console.log(logMsg);
-
-    if (data !== undefined) {
-        console.log(`[API ${timestamp}] Data:`, typeof data === 'string' ? data : safeStringify(data).slice(0, 500));
-    }
-};
 
 // Pricing Constants (as per Plan)
 const PRICING = {
@@ -85,43 +67,42 @@ function calculateCost(gLog: { model: string; inputTokens?: number; outputTokens
 }
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     const requestStartTime = Date.now();
-    log('========================================');
-    log('=== GENERATE-BOOK API REQUEST STARTED (Progressive Mode) ===');
-    log('========================================');
+    logger.info('Generate-book API request started (Progressive Mode)');
 
     try {
-        log('Step 1: Parsing request body...');
+        logger.debug('Parsing request body');
         const body = await request.json();
 
         // Validate request body with Zod
         const validation = parseBody(generateBookSchema, body);
         if (!validation.success) {
-            log('ERROR: Validation failed', validation.error);
+            logger.warn({ error: validation.error }, 'Validation failed');
             return NextResponse.json({ error: validation.error }, { status: 400 });
         }
 
         const { childName, childAge, childGender, bookTheme, bookType, pageCount, characterDescription, storyDescription, artStyle, imageQuality, childPhoto, printFormat, language, preview, previewPageCount } = validation.data;
         const resolvedBookType = bookType || 'story';
-        log('Request body parsed', { childName, childAge, childGender, bookTheme, bookType: resolvedBookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount });
+        logger.debug({ childName, childAge, childGender, bookTheme, bookType: resolvedBookType, artStyle, imageQuality, hasPhoto: !!childPhoto, printFormat, language, preview, previewPageCount }, 'Request body parsed');
 
         // Authenticate User
-        log('Step 2: Authenticating user...');
+        logger.debug('Authenticating user');
         const authStartTime = Date.now();
         const supabase = await createClient();
         const { data: { user }, error: authError } = await supabase.auth.getUser();
-        log(`Authentication completed in ${Date.now() - authStartTime}ms`);
+        logger.debug({ durationMs: Date.now() - authStartTime }, 'Authentication completed');
 
         if (authError || !user) {
-            log('ERROR: Unauthorized', authError);
+            logger.info({ err: authError }, 'Unauthorized');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-        log(`User authenticated: ${user.id}`);
+        logger.debug({ userId: user.id }, 'User authenticated');
 
         // Rate limit by user ID (AI generation is expensive)
         const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
         if (!rateResult.allowed) {
-            log('Rate limited', { userId: user.id, retryAfter: rateResult.retryAfterSeconds });
+            logger.info({ userId: user.id, retryAfter: rateResult.retryAfterSeconds }, 'Rate limited: ai/generate-book');
             return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
@@ -130,7 +111,7 @@ export async function POST(request: NextRequest) {
         if (printFormat === 'square' || printFormat?.includes('square')) {
             aspectRatio = '1:1';
         }
-        log(`Selected Aspect Ratio: ${aspectRatio} (Format: ${printFormat})`);
+        logger.debug({ aspectRatio, printFormat }, 'Selected aspect ratio');
 
         const input: StoryGenerationInput = {
             childName,
@@ -159,17 +140,17 @@ export async function POST(request: NextRequest) {
         // =========================================================
         // PHASE 1: Generate story text (fast, ~5 seconds)
         // =========================================================
-        log('Step 3a: Generating story text only...');
+        logger.debug('Generating story text only');
         const storyStartTime = Date.now();
         const { story, usage: storyUsage } = await generateStory(input);
-        log(`Story generated in ${Date.now() - storyStartTime}ms: "${story.title}", ${story.pages.length} pages`);
+        logger.info({ durationMs: Date.now() - storyStartTime, title: story.title, pageCount: story.pages.length }, 'Story generated');
 
         const resolvedCharacterDescription = input.characterDescription || story.characterDescription || `A cute child named ${input.childName}`;
 
         // =========================================================
         // PHASE 1b: Generate cover illustration (first page only)
         // =========================================================
-        log('Step 3b: Generating cover illustration...');
+        logger.debug('Generating cover illustration');
         const coverStartTime = Date.now();
         let coverImageUrl: string | null = null;
         let coverStoredUrl: string | null = null;
@@ -177,7 +158,7 @@ export async function POST(request: NextRequest) {
 
         const userId = user.id;
         const bookId = crypto.randomUUID();
-        log(`Created bookId: ${bookId}`);
+        logger.debug({ bookId }, 'Created bookId');
 
         if (story.pages.length > 0) {
             try {
@@ -205,9 +186,9 @@ export async function POST(request: NextRequest) {
                     coverStoredUrl = await uploadImageToStorage(bookId, 1, buffer);
                 }
 
-                log(`Cover illustration generated in ${Date.now() - coverStartTime}ms`);
+                logger.info({ durationMs: Date.now() - coverStartTime }, 'Cover illustration generated');
             } catch (err) {
-                log('Cover illustration generation failed, continuing without it', err);
+                logger.warn({ err }, 'Cover illustration generation failed, continuing without it');
             }
         }
 
@@ -251,10 +232,10 @@ export async function POST(request: NextRequest) {
                 try {
                     referenceImageUrl = await uploadReferenceImage(userId, bookId, buffer, parsed.contentType);
                 } catch (err) {
-                    log('Reference image upload failed', err);
+                    logger.warn({ err }, 'Reference image upload failed');
                 }
             } else {
-                log('WARNING: childPhoto provided but is not a valid data URL, skipping reference image upload');
+                logger.warn('childPhoto provided but is not a valid data URL, skipping reference image upload');
             }
         }
 
@@ -273,7 +254,7 @@ export async function POST(request: NextRequest) {
         // =========================================================
         // Save book to database
         // =========================================================
-        log('Step 4: Saving to database...');
+        logger.debug('Saving to database');
         const dbStartTime = Date.now();
 
         const { error: dbError } = await supabase.from('books').insert({
@@ -301,7 +282,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (dbError) {
-            log('ERROR: Database insert failed', dbError);
+            logger.error({ err: dbError }, 'Database insert failed');
             throw dbError;
         }
 
@@ -317,7 +298,7 @@ export async function POST(request: NextRequest) {
         }));
 
         const { error: logError } = await supabase.from('generation_logs').insert(logInserts);
-        if (logError) log('ERROR: Failed to save generation logs', logError);
+        if (logError) logger.error({ err: logError }, 'Failed to save generation logs');
 
         // =========================================================
         // Save pages - cover has image, rest have empty image_elements
@@ -361,21 +342,19 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        log(`Saving ${pagesData.length} pages to database...`);
+        logger.debug({ pageCount: pagesData.length }, 'Saving pages to database');
         const pagesStartTime = Date.now();
         const { error: pagesError } = await supabase.from('pages').insert(pagesData);
 
         if (pagesError) {
-            log('ERROR: Pages insert failed', pagesError);
+            logger.error({ err: pagesError }, 'Pages insert failed');
             throw pagesError;
         }
-        log(`Pages saved in ${Date.now() - pagesStartTime}ms`);
-        log(`Book record & logs saved in ${Date.now() - dbStartTime}ms`);
+        logger.debug({ durationMs: Date.now() - pagesStartTime }, 'Pages saved');
+        logger.debug({ durationMs: Date.now() - dbStartTime }, 'Book record & logs saved');
 
         const totalDuration = Date.now() - requestStartTime;
-        log('========================================');
-        log(`=== PHASE 1 COMPLETE in ${totalDuration}ms - Story + Cover saved ===`);
-        log('========================================');
+        logger.info({ durationMs: totalDuration }, 'Phase 1 complete - Story + Cover saved');
 
         // =========================================================
         // PHASE 2: Fire-and-forget background illustration generation
@@ -384,7 +363,7 @@ export async function POST(request: NextRequest) {
         if (internalKey) {
             // Use server-only INTERNAL_API_BASE_URL if set, fall back to NEXT_PUBLIC_APP_URL for dev
             const baseUrl = env.INTERNAL_API_BASE_URL || env.NEXT_PUBLIC_APP_URL;
-            log('Triggering background illustration generation...');
+            logger.info('Triggering background illustration generation');
 
             fetch(`${baseUrl}/api/ai/generate-illustrations`, {
                 method: 'POST',
@@ -405,9 +384,9 @@ export async function POST(request: NextRequest) {
                     previewPageCount: effectivePreviewCount,
                     styleReferenceImage: coverStyleRef,
                 }),
-            }).catch(err => log('Background illustration trigger failed (non-blocking)', err));
+            }).catch(err => logger.warn({ err }, 'Background illustration trigger failed (non-blocking)'));
         } else {
-            log('WARNING: INTERNAL_API_KEY not set, skipping background illustration generation');
+            logger.warn('INTERNAL_API_KEY not set, skipping background illustration generation');
         }
 
         return NextResponse.json({
@@ -417,10 +396,7 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         const totalDuration = Date.now() - requestStartTime;
-        log('========================================');
-        log(`=== GENERATE-BOOK API REQUEST FAILED after ${totalDuration}ms ===`);
-        log('========================================');
-        console.error('[API generate-book ERROR]', error);
+        logger.error({ err: error, durationMs: totalDuration }, 'Generate-book API request failed');
         return NextResponse.json(
             { error: 'Failed to generate book' },
             { status: 500 }

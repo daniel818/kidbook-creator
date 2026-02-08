@@ -6,10 +6,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
+import { createRequestLogger } from '@/lib/logger';
 import { requireAdmin } from '@/lib/auth/api-guard';
 import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const { error: authError } = await requireAdmin();
         if (authError) return authError;
@@ -18,7 +20,7 @@ export async function POST(request: NextRequest) {
         const ip = getClientIp(request);
         const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] fulfillment/trigger blocked for IP ${ip}`);
+            logger.info({ ip }, 'Rate limited: fulfillment/trigger');
             return rateLimitResponse(rateResult);
         }
 
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Trigger fulfillment
-        console.log(`[Fulfillment API] Triggering for order: ${orderId}`);
+        logger.info({ orderId }, 'Triggering fulfillment for order');
         const result = await fulfillOrder(orderId);
 
         if (result.status === FulfillmentStatus.SUCCESS) {
@@ -75,7 +77,7 @@ export async function POST(request: NextRequest) {
         }
 
     } catch (error) {
-        console.error('[Fulfillment API] Error:', error);
+        logger.error({ err: error }, 'Fulfillment API error');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

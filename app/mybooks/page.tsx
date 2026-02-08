@@ -9,7 +9,10 @@ import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { BookGrid } from '@/components/BookGrid';
 import { ConfirmModal } from '@/components/ConfirmModal';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './mybooks.module.css';
+
+const logger = createClientModuleLogger('mybooks');
 
 type FilterTab = 'all' | 'draft' | 'preview' | 'ordered';
 
@@ -65,7 +68,7 @@ export default function MyBooksPage() {
           setOrderMap(map);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        logger.error({ err: error }, 'Error fetching data');
         setBooks([]);
       }
     } else {
@@ -118,7 +121,7 @@ export default function MyBooksPage() {
           setBooks(books.filter(b => b.id !== bookToDelete));
         }
       } catch (error) {
-        console.error('Error deleting book:', error);
+        logger.error({ err: error }, 'Error deleting book');
       }
     }
 

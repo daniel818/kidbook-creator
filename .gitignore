@@ -30,7 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# application debug logs
+# application logs
 *.log
 *.debug
 api_debug.log

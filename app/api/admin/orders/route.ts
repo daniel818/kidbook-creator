@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 // GET /api/admin/orders - Get all orders with filtering
@@ -31,7 +32,8 @@ export async function GET(request: NextRequest) {
         // Rate limit admin API calls
         const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] admin/orders GET blocked for user ${user.id}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ userId: user.id }, 'Rate limited: admin/orders GET');
             return rateLimitResponse(rateResult);
         }
 
@@ -59,7 +61,8 @@ export async function GET(request: NextRequest) {
         const { data: orders, error, count } = await query;
 
         if (error) {
-            console.error('Error fetching orders:', error);
+            const logger = createRequestLogger(request);
+            logger.error({ err: error }, 'Error fetching orders');
             return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
         }
 
@@ -70,7 +73,8 @@ export async function GET(request: NextRequest) {
             offset,
         });
     } catch (error) {
-        console.error('Admin orders error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Admin orders error');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

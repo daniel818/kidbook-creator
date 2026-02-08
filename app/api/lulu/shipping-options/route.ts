@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLuluClient } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { createRequestLogger } from '@/lib/logger';
 import { env } from '@/lib/env';
 import { requireAuth } from '@/lib/auth/api-guard';
 import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
@@ -20,7 +21,8 @@ export async function POST(request: NextRequest) {
         const ip = getClientIp(request);
         const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] lulu/shipping-options blocked for IP ${ip}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ ip }, 'Rate limited: lulu/shipping-options');
             return rateLimitResponse(rateResult);
         }
 
@@ -61,7 +63,8 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ options });
     } catch (error) {
-        console.error('Shipping options error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Shipping options error');
         return NextResponse.json(
             { error: 'Failed to retrieve shipping options' },
             { status: 500 }

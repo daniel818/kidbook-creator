@@ -6,7 +6,10 @@ import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Book, BookPage, TextElement, ImageElement, createNewPage, BookTypeInfo, BookThemeInfo } from '@/lib/types';
 import { getBookById, saveBook } from '@/lib/storage';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('editor');
 
 export default function BookEditorPage() {
     const router = useRouter();
@@ -28,40 +31,35 @@ export default function BookEditorPage() {
     useEffect(() => {
         const loadBook = async () => {
             const startTime = Date.now();
-            console.log('[EDITOR] ========================================');
-            console.log(`[EDITOR] === BOOK EDITOR LOADING STARTED (bookId: ${bookId}) ===`);
-            console.log('[EDITOR] ========================================');
+            logger.debug({ bookId }, 'Book editor loading started');
 
             // Try to fetch from API first (for logged-in users)
             try {
-                console.log('[EDITOR] Step 1: Fetching from API...');
+                logger.debug('Step 1: Fetching from API');
                 const apiStartTime = Date.now();
                 const response = await fetch(`/api/books/${bookId}`);
-                console.log(`[EDITOR] API response status: ${response.status} in ${Date.now() - apiStartTime}ms`);
+                logger.debug({ status: response.status, durationMs: Date.now() - apiStartTime }, 'API response');
 
                 if (response.ok) {
-                    console.log('[EDITOR] Step 2: Parsing API response...');
+                    logger.debug('Step 2: Parsing API response');
                     const parseStartTime = Date.now();
                     const data = await response.json();
-                    console.log(`[EDITOR] Response parsed in ${Date.now() - parseStartTime}ms`);
-                    console.log(`[EDITOR] Book data: title="${data.settings?.title}", pages=${data.pages?.length || 0}`);
+                    logger.debug({ durationMs: Date.now() - parseStartTime, title: data.settings?.title, pageCount: data.pages?.length || 0 }, 'Response parsed');
 
                     setBook(data);
                     setIsLoading(false);
 
                     const totalDuration = Date.now() - startTime;
-                    console.log('[EDITOR] ========================================');
-                    console.log(`[EDITOR] === BOOK LOADED in ${totalDuration}ms ===`);
-                    console.log('[EDITOR] ========================================');
+                    logger.info({ durationMs: totalDuration }, 'Book loaded');
                     return;
                 }
 
-                console.log('[EDITOR] API request failed, response not ok');
+                logger.warn('API request failed, response not ok');
             } catch (error) {
-                console.error('[EDITOR] Error fetching book from API:', error);
+                logger.error({ err: error }, 'Error fetching book from API');
             }
 
-            console.log('[EDITOR] Redirecting to home page...');
+            logger.debug('Redirecting to home page');
             router.push('/');
             setIsLoading(false);
         };

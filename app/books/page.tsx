@@ -8,7 +8,10 @@ import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { BookGrid } from '@/components/BookGrid';
 import { ConfirmModal } from '@/components/ConfirmModal';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './books.module.css';
+
+const logger = createClientModuleLogger('books');
 
 export default function BooksPage() {
   const router = useRouter();
@@ -31,11 +34,11 @@ export default function BooksPage() {
           const data = await response.json();
           setBooks(data);
         } else {
-          console.error('Failed to fetch books');
+          logger.error('Failed to fetch books');
           setBooks([]);
         }
       } catch (error) {
-        console.error('Error fetching books:', error);
+        logger.error({ err: error }, 'Error fetching books');
         setBooks([]);
       }
     } else {
@@ -73,7 +76,7 @@ export default function BooksPage() {
           setBooks(books.filter(b => b.id !== bookToDelete));
         }
       } catch (error) {
-        console.error('Error deleting book:', error);
+        logger.error({ err: error }, 'Error deleting book');
       }
     }
 

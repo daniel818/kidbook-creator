@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendShippingNotification, sendDeliveryConfirmation, OrderEmailData, ShippingEmailData } from '@/lib/email/client';
+import { createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
@@ -39,7 +40,8 @@ export async function GET(
         // Rate limit admin API calls
         const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] admin/orders/[orderId] GET blocked for user ${user.id}`);
+            const loggerGet = createRequestLogger(request);
+            loggerGet.info({ userId: user.id }, 'Rate limited: admin/orders/[orderId] GET');
             return rateLimitResponse(rateResult);
         }
 
@@ -59,7 +61,8 @@ export async function GET(
 
         return NextResponse.json(order);
     } catch (error) {
-        console.error('Error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Error fetching admin order');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -92,7 +95,8 @@ export async function PUT(
         // Rate limit admin API calls
         const rateResultPut = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
         if (!rateResultPut.allowed) {
-            console.log(`[Rate Limit] admin/orders/[orderId] PUT blocked for user ${user.id}`);
+            const loggerPut = createRequestLogger(request);
+            loggerPut.info({ userId: user.id }, 'Rate limited: admin/orders/[orderId] PUT');
             return rateLimitResponse(rateResultPut);
         }
 
@@ -129,7 +133,8 @@ export async function PUT(
             .single();
 
         if (error) {
-            console.error('Update error:', error);
+            const logger = createRequestLogger(request);
+            logger.error({ err: error }, 'Update error');
             return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
         }
 
@@ -172,7 +177,8 @@ export async function PUT(
 
         return NextResponse.json(order);
     } catch (error) {
-        console.error('Error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Error updating admin order');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

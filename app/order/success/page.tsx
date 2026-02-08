@@ -3,7 +3,10 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('order-success');
 
 interface OrderDetails {
     id: string;
@@ -86,7 +89,7 @@ function OrderSuccessContent() {
                     setOrder(data);
                 }
             } catch (error) {
-                console.error('Failed to fetch order:', error);
+                logger.error({ err: error }, 'Failed to fetch order');
             } finally {
                 setIsLoading(false);
             }

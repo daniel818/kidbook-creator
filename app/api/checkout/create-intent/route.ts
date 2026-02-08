@@ -10,10 +10,12 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
+import { createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 import { createPaymentIntentSchema, parseBody } from '@/lib/validations';
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const supabase = await createClient();
         const adminDb = await createAdminClient();
@@ -28,7 +30,7 @@ export async function POST(request: NextRequest) {
         // Rate limit checkout attempts
         const rateResult = checkRateLimit(`checkout:${user.id}`, RATE_LIMITS.checkout);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] checkout/create-intent blocked for user ${user.id}`);
+            logger.info({ userId: user.id }, 'Rate limited: checkout/create-intent');
             return rateLimitResponse(rateResult, 'Too many checkout attempts. Please wait before trying again.');
         }
 
@@ -85,7 +87,7 @@ export async function POST(request: NextRequest) {
                 // Cancel old PaymentIntent if it exists
                 if (old.stripe_payment_intent_id) {
                     await stripe.paymentIntents.cancel(old.stripe_payment_intent_id).catch((err) => {
-                        console.error(`[create-intent] Failed to cancel stale PI ${old.stripe_payment_intent_id}:`, err);
+                        logger.error({ err, paymentIntentId: old.stripe_payment_intent_id }, 'Failed to cancel stale payment intent');
                     });
                 }
                 // Delete the stale pending order
@@ -120,7 +122,7 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (orderError || !order) {
-            console.error('Order creation error:', JSON.stringify(orderError, null, 2));
+            logger.error({ err: orderError }, 'Order creation error');
             return NextResponse.json({ error: 'Failed to initialize order.' }, { status: 500 });
         }
 
@@ -150,10 +152,10 @@ export async function POST(request: NextRequest) {
             .eq('id', order.id);
 
         if (updateError) {
-            console.error('Failed to link payment intent to order:', updateError);
+            logger.error({ err: updateError }, 'Failed to link payment intent to order');
             // Cancel the orphaned PaymentIntent so the user isn't charged
             await stripe.paymentIntents.cancel(paymentIntent.id).catch((err) => {
-                console.error(`[create-intent] Failed to cancel orphaned PI ${paymentIntent.id}:`, err);
+                logger.error({ err, paymentIntentId: paymentIntent.id }, 'Failed to cancel orphaned payment intent');
             });
             return NextResponse.json(
                 { error: 'Failed to finalize order setup. Please try again.' },
@@ -173,7 +175,7 @@ export async function POST(request: NextRequest) {
         });
 
     } catch (error) {
-        console.error('Create intent error:', error);
+        logger.error({ err: error }, 'Create intent error');
         return NextResponse.json(
             { error: 'Failed to create payment intent' },
             { status: 500 }

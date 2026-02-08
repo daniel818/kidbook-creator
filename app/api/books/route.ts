@@ -4,8 +4,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createModuleLogger, createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 import { createBookSchema, parseBody } from '@/lib/validations';
+
+const moduleLogger = createModuleLogger('books-api');
 
 // GET /api/books - Get all books for the current user
 export async function GET() {
@@ -25,7 +28,7 @@ export async function GET() {
         // Rate limit standard API calls
         const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] books GET blocked for user ${user.id}`);
+            moduleLogger.info({ userId: user.id }, 'Rate limited: books GET');
             return rateLimitResponse(rateResult);
         }
 
@@ -40,7 +43,7 @@ export async function GET() {
             .order('updated_at', { ascending: false });
 
         if (error) {
-            console.error('Error fetching books:', error);
+            moduleLogger.error({ err: error }, 'Error fetching books');
             return NextResponse.json(
                 { error: 'Failed to fetch books' },
                 { status: 500 }
@@ -142,7 +145,7 @@ export async function GET() {
 
         return NextResponse.json(sanitized);
     } catch (error) {
-        console.error('Unexpected error:', error);
+        moduleLogger.error({ err: error }, 'Unexpected error fetching books');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }
@@ -152,6 +155,7 @@ export async function GET() {
 
 // POST /api/books - Create a new book
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const supabase = await createClient();
 
@@ -168,7 +172,8 @@ export async function POST(request: NextRequest) {
         // Rate limit standard API calls
         const rateResultPost = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
         if (!rateResultPost.allowed) {
-            console.log(`[Rate Limit] books POST blocked for user ${user.id}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ userId: user.id }, 'Rate limited: books POST');
             return rateLimitResponse(rateResultPost);
         }
 
@@ -200,7 +205,7 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (bookError) {
-            console.error('Error creating book:', bookError);
+            logger.error({ err: bookError }, 'Error creating book');
             return NextResponse.json(
                 { error: 'Failed to create book' },
                 { status: 500 }
@@ -234,7 +239,7 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (pageError) {
-            console.error('Error creating page:', pageError);
+            logger.error({ err: pageError }, 'Error creating page');
             // Clean up the book if page creation failed
             await supabase.from('books').delete().eq('id', book.id);
             return NextResponse.json(
@@ -270,7 +275,7 @@ export async function POST(request: NextRequest) {
             updatedAt: new Date(book.updated_at),
         }, { status: 201 });
     } catch (error) {
-        console.error('Unexpected error:', error);
+        logger.error({ err: error }, 'Unexpected error creating book');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

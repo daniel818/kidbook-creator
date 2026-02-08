@@ -6,31 +6,23 @@
 import { GoogleGenAI } from '@google/genai';
 import { ART_STYLES, ArtStyle, ImageQuality } from '../art-styles';
 import { getPrompts, Language } from './prompts';
+import { createModuleLogger } from '@/lib/logger';
 import { withRetry, RETRY_CONFIGS } from '../retry';
 import { sanitizeStoryInput, sanitizeInput } from '../sanitize';
 import { env } from '@/lib/env';
 
+const logger = createModuleLogger('gemini');
+
 // Re-export art styles for convenience
 export { ART_STYLES, type ArtStyle } from '../art-styles';
-
-// Helper function for logging with timestamps
-const logWithTime = (message: string, data?: unknown) => {
-    const timestamp = new Date().toISOString();
-    const logMsg = `[GEMINI ${timestamp}] ${message}`;
-    console.log(logMsg);
-
-    if (data !== undefined) {
-        console.log(`[GEMINI ${timestamp}] Data:`, JSON.stringify(data, null, 2).slice(0, 500));
-    }
-};
 
 // Initialize Gemini client lazily (server-side only)
 let _genAI: GoogleGenAI | null = null;
 function getGenAI(): GoogleGenAI {
     if (!_genAI) {
-        logWithTime('Initializing Gemini Unified client (@google/genai)...');
+        logger.info('Initializing Gemini Unified client (@google/genai)...');
         _genAI = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
-        logWithTime('Gemini client initialized');
+        logger.info('Gemini client initialized');
     }
     return _genAI;
 }
@@ -98,11 +90,11 @@ export interface GenerationLogItem {
 // Generate a story script
 export async function generateStory(input: StoryGenerationInput): Promise<{ story: GeneratedStory; usage: UsageMetadata }> {
     const startTime = Date.now();
-    logWithTime('=== STORY GENERATION STARTED ===');
+    logger.info('Story generation started');
 
     const language = input.language || 'en';
     const textModel = env.GEMINI_TEXT_MODEL;
-    logWithTime(`Using model: ${textModel}, language: ${language}`);
+    logger.info({ model: textModel, language }, 'Using model for story generation');
 
     const prompts = getPrompts(language);
 
@@ -121,10 +113,10 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
 
     const prompt = prompts.getStoryPrompt(sanitizedInput);
 
-    logWithTime('--- STORY PROMPT SENT TO MODEL ---', prompt);
+    logger.debug({ prompt }, 'Story prompt sent to model');
 
     try {
-        logWithTime('Sending request to Gemini API...');
+        logger.debug('Sending request to Gemini API');
 
         const response = await withRetry(
             () => getGenAI().models.generateContent({
@@ -157,13 +149,13 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
         };
 
         const totalDuration = Date.now() - startTime;
-        logWithTime(`=== STORY GENERATION COMPLETED in ${totalDuration}ms ===`);
-        logWithTime(`Usage: ${usage.totalTokens} tokens`);
+        logger.info({ durationMs: totalDuration }, 'Story generation completed');
+        logger.info({ totalTokens: usage.totalTokens }, 'Token usage');
 
         return { story: storyData, usage };
 
     } catch (error) {
-        console.error('[GEMINI ERROR]', error);
+        logger.error({ err: error }, 'Story generation failed');
         throw error;
     }
 }
@@ -187,7 +179,7 @@ export async function generateIllustration(
     } = options;
 
     const startTime = Date.now();
-    logWithTime(`=== IMAGE GENERATION STARTED (page ${pageNumber || '?'}/${totalPages || '?'}) ===`);
+    logger.info({ pageNumber: pageNumber || '?', totalPages: totalPages || '?' }, 'Image generation started');
 
     const styleInfo = ART_STYLES[artStyle] || ART_STYLES.storybook_classic;
 
@@ -197,7 +189,7 @@ export async function generateIllustration(
         ? env.GEMINI_REF_IMAGE_MODEL
         : env.GEMINI_IMAGE_MODEL;
 
-    logWithTime(`Using Gemini Image Mode with model: ${modelName}`);
+    logger.info({ model: modelName }, 'Using Gemini Image Mode');
 
     const parts: any[] = [];
 
@@ -224,14 +216,14 @@ export async function generateIllustration(
 
     // Add child's Reference Image if available (for facial likeness)
     if (referenceImage) {
-        logWithTime('Including Reference Image in prompt...');
+        logger.debug('Including reference image in prompt');
         const base64Image = referenceImage.replace(/^data:image\/\w+;base64,/, '');
         parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Image } });
     }
 
     // Add Style Reference Image if available (for visual consistency)
     if (styleReferenceImage) {
-        logWithTime('Including Style Reference Image (page 1) in prompt...');
+        logger.debug('Including style reference image (page 1) in prompt');
         const base64Style = styleReferenceImage.replace(/^data:image\/\w+;base64,/, '');
         parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Style } });
     }
@@ -251,7 +243,7 @@ export async function generateIllustration(
         const part = response.candidates?.[0]?.content?.parts?.[0];
         if (part?.inlineData?.data) {
             const totalDuration = Date.now() - startTime;
-            logWithTime(`=== GEMINI IMAGE GENERATION COMPLETED in ${totalDuration}ms ===`);
+            logger.info({ durationMs: totalDuration }, 'Image generation completed');
             return {
                 imageUrl: `data:${part.inlineData.mimeType || 'image/jpeg'};base64,${part.inlineData.data}`,
                 usage: {
@@ -266,7 +258,7 @@ export async function generateIllustration(
             throw new Error('No image returned from Gemini');
         }
     } catch (e: any) {
-        console.error('[GEMINI IMAGE ERROR]', e);
+        logger.error({ err: e }, 'Image generation failed');
         throw e;
     }
 }
@@ -306,7 +298,7 @@ export async function extractCharacterFromPhoto(photoBase64: string, language: L
         // Ideally we should refactor this too, but for now we'll skip logging this minor step cost or treat as negligible.
         return text || "A happy child";
     } catch (error) {
-        console.error("[GEMINI VISION ERROR]", error);
+        logger.error({ err: error }, 'Character extraction from photo failed');
         return "A happy child";
     }
 }
@@ -326,7 +318,7 @@ export async function generateCompleteBook(
     generationLogs: GenerationLogItem[]; // Use specific type
 }> {
     const bookStartTime = Date.now();
-    logWithTime('=== COMPLETE BOOK GENERATION STARTED ===');
+    logger.info('Complete book generation started');
     const generationLogs: GenerationLogItem[] = [];
 
     onProgress?.('Generating story...', 10);
@@ -373,7 +365,7 @@ export async function generateCompleteBook(
             // Capture first page as style reference for subsequent pages
             if (pageIndex === 0 && imageUrl) {
                 styleReferenceImage = imageUrl;
-                logWithTime('Captured page 1 as style reference for subsequent pages');
+                logger.info('Captured page 1 as style reference for subsequent pages');
             }
 
             generationLogs.push({
@@ -384,7 +376,7 @@ export async function generateCompleteBook(
                 imageCount: 1
             });
         } catch (e) {
-            console.error(`Failed to generate page ${pageIndex + 1}`, e);
+            logger.error({ err: e, pageNumber: pageIndex + 1 }, 'Failed to generate page');
             illustrations[pageIndex] = ''; // Keep empty on failure
         }
     };
@@ -395,7 +387,7 @@ export async function generateCompleteBook(
         const batchEnd = Math.min(i + CONCURRENCY_LIMIT, maxIllustrations);
         const batchPromises: Promise<void>[] = [];
 
-        logWithTime(`Starting batch ${Math.ceil((i + 1) / CONCURRENCY_LIMIT)}: Pages ${batchStart + 1} to ${batchEnd}`);
+        logger.info({ batch: Math.ceil((i + 1) / CONCURRENCY_LIMIT), pagesFrom: batchStart + 1, pagesTo: batchEnd }, 'Starting batch');
         onProgress?.(`Painting pages ${batchStart + 1}-${batchEnd} of ${maxIllustrations}...`, 20 + (70 * (i + 1) / maxIllustrations));
 
         for (let j = batchStart; j < batchEnd; j++) {
@@ -406,7 +398,7 @@ export async function generateCompleteBook(
 
         // Delay between batches (unless it's the last one)
         if (batchEnd < maxIllustrations) {
-            logWithTime(`Batch complete. Waiting ${SAFETY_DELAY_MS}ms safely...`);
+            logger.debug({ delayMs: SAFETY_DELAY_MS }, 'Batch complete, waiting for rate limit safety');
             await new Promise(r => setTimeout(r, SAFETY_DELAY_MS));
         }
     }
@@ -436,10 +428,10 @@ export async function generateCompleteBook(
                 imageCount: 1
             });
         } catch (e) {
-            logWithTime('Failed to generate back cover', e);
+            logger.error({ err: e }, 'Failed to generate back cover');
         }
     }
 
-    logWithTime(`=== FINISHED ===`);
+    logger.info('Complete book generation finished');
     return { story, illustrations, backCoverImage, generationLogs };
 }

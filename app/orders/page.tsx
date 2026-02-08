@@ -8,7 +8,10 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import Link from 'next/link';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('orders');
 
 interface Order {
     id: string;
@@ -94,7 +97,7 @@ export default function OrdersPage() {
                 setOrders(data);
             }
         } catch (error) {
-            console.error('Failed to load orders:', error);
+            logger.error({ err: error }, 'Failed to load orders');
         } finally {
             setIsLoading(false);
         }

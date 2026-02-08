@@ -5,7 +5,10 @@ import { Flipbook } from 'react-3d-flipbook';
 import 'react-3d-flipbook/dist/styles.css';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { generateBookPDF, downloadPDF } from '@/lib/pdf-generator';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './StoryBookViewer3D.module.css';
+
+const logger = createClientModuleLogger('viewer-3d');
 
 interface StoryBookViewer3DProps {
     book: Book;
@@ -126,7 +129,7 @@ export default function StoryBookViewer3D({ book, onClose, isFullScreen = false 
             const filename = `${book.settings.title || 'story-book'}.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             downloadPDF(blob, filename);
         } catch (error) {
-            console.error('Error generating PDF:', error);
+            logger.error({ err: error }, 'Error generating PDF');
             alert('Failed to generate PDF. Please try again.');
         } finally {
             setIsDownloading(false);
@@ -145,7 +148,7 @@ export default function StoryBookViewer3D({ book, onClose, isFullScreen = false 
                 setIsFullscreen(false);
             }
         } catch (error) {
-            console.error('Fullscreen error:', error);
+            logger.error({ err: error }, 'Fullscreen error');
         }
     }, []);
 

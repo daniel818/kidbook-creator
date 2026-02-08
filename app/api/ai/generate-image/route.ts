@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
+import { createRequestLogger } from '@/lib/logger';
 import { sanitizeInput } from '@/lib/sanitize';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
@@ -20,7 +21,8 @@ export async function POST(request: NextRequest) {
         // Rate limit by user ID
         const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] ai/generate-image blocked for user ${user.id}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ userId: user.id }, 'Rate limited: ai/generate-image');
             return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
@@ -44,7 +46,8 @@ export async function POST(request: NextRequest) {
             image: imageData,
         });
     } catch (error) {
-        console.error('Image generation error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Image generation error');
         return NextResponse.json(
             { error: 'Failed to generate image' },
             { status: 500 }
