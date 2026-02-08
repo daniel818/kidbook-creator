@@ -343,6 +343,15 @@
       "writingStory": "Deine Geschichte wird geschrieben...",
       "paintingCover": "Das Cover wird gemalt...",
       "creatingAdventure": "{{childName}}s Abenteuer wird erstellt..."
+    },
+    "quota": {
+      "remaining": "{{count}} kostenlose Vorschauen verbleibend",
+      "none": "Keine kostenlosen Vorschauen mehr",
+      "exceeded": {
+        "title": "Vorschaulimit erreicht",
+        "message": "Du hast alle kostenlosen Vorschauen aufgebraucht. Kaufe oder schalte eines deiner bestehenden Bücher frei, um 2 weitere Vorschauen zu erhalten!",
+        "viewBooks": "Meine Bücher anzeigen"
+      }
     }
   },
   "profile": {

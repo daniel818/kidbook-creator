@@ -12,6 +12,7 @@ import {
     BookThemeInfo,
 } from '@/lib/types';
 import { ART_STYLES, ArtStyle } from '@/lib/art-styles';
+import { QuotaInfo } from '@/lib/quota';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
@@ -53,6 +54,8 @@ export default function CreateBookPage() {
     const [pendingLanguage, setPendingLanguage] = useState<string | null>(null);
     const previousLanguageRef = useRef<string>(i18n.language);
     const [showAdvancedStyle, setShowAdvancedStyle] = useState(false);
+    const [quota, setQuota] = useState<QuotaInfo | null>(null);
+    const [showQuotaModal, setShowQuotaModal] = useState(false);
 
     // Track unsaved changes
     useEffect(() => {
@@ -127,6 +130,15 @@ export default function CreateBookPage() {
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [hasUnsavedChanges]);
+
+    // Fetch quota when user is authenticated
+    useEffect(() => {
+        if (!user || isAuthLoading) return;
+        fetch('/api/quota')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => { if (data?.quota) setQuota(data.quota); })
+            .catch(() => { /* quota fetch failed - server enforces anyway */ });
+    }, [user, isAuthLoading]);
 
     const handleBack = () => {
         if (currentStepIndex === 0) {
@@ -278,6 +290,23 @@ export default function CreateBookPage() {
             if (!response.ok) {
                 const errorText = await response.text();
                 logger.error({ errorText }, 'API error response');
+
+                // Handle quota exceeded (429 with QUOTA_EXCEEDED code)
+                if (response.status === 429) {
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        if (errorData.code === 'QUOTA_EXCEEDED') {
+                            if (errorData.quota) setQuota(errorData.quota);
+                            setCreatingStatus('');
+                            setCreatingPhase('');
+                            setIsCreating(false);
+                            setShowQuotaModal(true);
+                            return;
+                        }
+                    } catch { /* ignore parse error */ }
+                    // Rate limit or other 429 — fall through to generic error
+                }
+
                 throw new Error('Failed to generate book');
             }
 
@@ -920,10 +949,18 @@ export default function CreateBookPage() {
                             </div>
                         </div>
 
+                        {currentStepIndex === steps.length - 1 && quota && (
+                            <div className={`${styles.quotaIndicator} ${quota.remaining === 0 ? styles.quotaIndicatorDanger : quota.remaining <= 1 ? styles.quotaIndicatorWarning : ''}`}>
+                                {quota.remaining > 0
+                                    ? t('quota.remaining', { count: quota.remaining })
+                                    : t('quota.none')}
+                            </div>
+                        )}
+
                         <button
-                            className={`${styles.primaryButton} ${!canProceed() ? styles.disabled : ''} ${styles.stitchContinueButton}`}
+                            className={`${styles.primaryButton} ${!canProceed() || (currentStepIndex === steps.length - 1 && quota?.remaining === 0) ? styles.disabled : ''} ${styles.stitchContinueButton}`}
                             onClick={handleNext}
-                            disabled={!canProceed() || isCreating}
+                            disabled={!canProceed() || isCreating || (currentStepIndex === steps.length - 1 && quota?.remaining === 0)}
                         >
                             {isCreating ? (
                                 <>
@@ -992,6 +1029,22 @@ export default function CreateBookPage() {
                     message={t('alerts.unsavedChanges.message', { ns: 'common' })}
                     confirmText={t('alerts.ok', { ns: 'common' })}
                     cancelText={t('alerts.cancel', { ns: 'common' })}
+                />
+
+                {/* Quota Exceeded Modal */}
+                <AlertModal
+                    isOpen={showQuotaModal}
+                    onClose={() => setShowQuotaModal(false)}
+                    onConfirm={() => {
+                        setShowQuotaModal(false);
+                        router.push('/mybooks');
+                    }}
+                    type="info"
+                    title={t('quota.exceeded.title')}
+                    message={t('quota.exceeded.message')}
+                    confirmText={t('quota.exceeded.viewBooks')}
+                    cancelText={t('alerts.cancel', { ns: 'common' })}
+                    showCancel={true}
                 />
             </main>
         </>

@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
         }
         return null;
     };
-    
+
     // Check if the pathname already has a locale
     const pathnameHasLocale = locales.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
     // Only redirect to locale path if it's a locale-aware route and doesn't have a locale
     if (!pathnameHasLocale) {
         const shouldUseLocale = localeRoutes.some(route => pathname.startsWith(route));
-        
+
         if (shouldUseLocale) {
             // Try to get locale from cookie or browser, validate against allowed locales
             const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
