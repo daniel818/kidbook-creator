@@ -13,6 +13,7 @@ import {
 } from '@/lib/types';
 import { ART_STYLES, ArtStyle } from '@/lib/art-styles';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { track, EVENTS, getEntryPoint } from '@/lib/analytics';
 import { Navbar } from '@/components/Navbar';
 import { AuthModal } from '@/components/AuthModal';
 import { AlertModal } from '@/components/AlertModal';
@@ -206,6 +207,24 @@ export default function CreateBookPage() {
         setIsCreating(true);
         setCreatingPhase('extracting');
 
+        // Generate a unique request ID for this generation (for eval correlation)
+        const generationRequestId = `gen-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+        // Track book creation started with all inputs
+        track(EVENTS.BOOK_CREATION_STARTED, {
+            child_name: settings.childName || '',
+            child_age: settings.childAge || 3,
+            child_gender: settings.childGender || null,
+            has_photo: !!childPhoto,
+            book_theme: settings.bookTheme || '',
+            story_prompt: (settings.storyDescription || '').slice(0, 1000),
+            story_prompt_length: (settings.storyDescription || '').length,
+            book_format: settings.printFormat || 'portrait',
+            art_style: settings.artStyle || 'storybook_classic',
+            language: i18n.language || 'en',
+            entry_point: getEntryPoint(),
+        });
+
         try {
             // Step 1: Extract character from photo if provided
             let characterDescription = '';
@@ -297,6 +316,32 @@ export default function CreateBookPage() {
             console.log(`[CLIENT] === BOOK CREATION COMPLETE in ${totalDuration}ms ===`);
             console.log('[CLIENT] ========================================');
 
+            // Track successful book creation
+            track(EVENTS.BOOK_CREATED, {
+                // Inputs
+                child_name: settings.childName || '',
+                child_age: settings.childAge || 3,
+                child_gender: settings.childGender || null,
+                has_photo: !!childPhoto,
+                book_theme: settings.bookTheme || '',
+                story_prompt: (settings.storyDescription || '').slice(0, 1000),
+                story_prompt_length: (settings.storyDescription || '').length,
+                book_format: settings.printFormat || 'portrait',
+                art_style: settings.artStyle || 'storybook_classic',
+                language: i18n.language || 'en',
+                entry_point: getEntryPoint(),
+                // Outputs
+                book_id: data.bookId,
+                book_title: data.title || '',
+                page_count: data.pageCount || 0,
+                is_preview: true,
+                preview_page_count: 3,
+                // Metadata
+                generation_time_ms: totalDuration,
+                character_extraction_time_ms: childPhoto ? Date.now() - startTime : 0,
+                generation_request_id: generationRequestId,
+            });
+
             router.push(`/book/${data.bookId}`);
         } catch (error) {
             const totalDuration = Date.now() - startTime;
@@ -304,6 +349,27 @@ export default function CreateBookPage() {
             console.log(`[CLIENT] === BOOK CREATION FAILED after ${totalDuration}ms ===`);
             console.log('[CLIENT] ========================================');
             console.error('[CLIENT] Error:', error);
+
+            // Track failed book creation
+            track(EVENTS.BOOK_CREATION_FAILED, {
+                // Inputs
+                child_name: settings.childName || '',
+                child_age: settings.childAge || 3,
+                child_gender: settings.childGender || null,
+                has_photo: !!childPhoto,
+                book_theme: settings.bookTheme || '',
+                story_prompt: (settings.storyDescription || '').slice(0, 1000),
+                story_prompt_length: (settings.storyDescription || '').length,
+                book_format: settings.printFormat || 'portrait',
+                art_style: settings.artStyle || 'storybook_classic',
+                language: i18n.language || 'en',
+                entry_point: getEntryPoint(),
+                // Error details
+                error_phase: creatingPhase || 'unknown',
+                error_message: error instanceof Error ? error.message : 'Unknown error',
+                generation_time_ms: totalDuration,
+            });
+
             setCreatingStatus('');
             setCreatingPhase('');
             setIsCreating(false);

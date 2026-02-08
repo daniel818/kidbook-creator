@@ -4,8 +4,33 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthProvider } from "@/lib/auth/AuthContext";
 import { I18nProvider } from "@/lib/i18n/provider";
+import { useAnalyticsInit, useIdentify } from "@/lib/analytics";
 import "./globals.css";
 import "./rtl.css";
+
+// Component to initialize analytics and identify users
+function AnalyticsController() {
+  useAnalyticsInit();
+  useIdentify();
+  return null;
+}
+
+// Component to handle RTL/LTR direction changes
+function DirectionController() {
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    const locale = i18n.language || 'en';
+    const dir = locale === 'he' ? 'rtl' : 'ltr';
+    const lang = locale;
+
+    // Update html attributes
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', lang);
+  }, [i18n.language]);
+
+  return null;
+}
 
 export default function RootLayout({
   children,
@@ -37,6 +62,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <I18nProvider>
           <AuthProvider>
+            <AnalyticsController />
             <DirectionController />
             {children}
           </AuthProvider>
@@ -44,21 +70,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
-
-// Component to handle RTL/LTR direction changes
-function DirectionController() {
-  const { i18n } = useTranslation();
-
-  useEffect(() => {
-    const locale = i18n.language || 'en';
-    const dir = locale === 'he' ? 'rtl' : 'ltr';
-    const lang = locale;
-
-    // Update html attributes
-    document.documentElement.setAttribute('dir', dir);
-    document.documentElement.setAttribute('lang', lang);
-  }, [i18n.language]);
-
-  return null;
 }

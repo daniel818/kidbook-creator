@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Book } from '@/lib/types';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { track, EVENTS } from '@/lib/analytics';
 import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { BookGrid } from '@/components/BookGrid';
@@ -31,6 +32,7 @@ export default function MyBooksPage() {
   const [bookToDelete, setBookToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
+  const hasTrackedView = useRef(false);
 
   const loadBooks = useCallback(async () => {
     if (authLoading) return;
@@ -47,6 +49,12 @@ export default function MyBooksPage() {
         if (booksRes.ok) {
           const data = await booksRes.json();
           setBooks(data);
+
+          // Track page view once on first successful load
+          if (!hasTrackedView.current) {
+            hasTrackedView.current = true;
+            track(EVENTS.MYBOOKS_VIEWED, { book_count: data.length });
+          }
         } else {
           setBooks([]);
         }

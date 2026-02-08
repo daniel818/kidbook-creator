@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Book } from '@/lib/types';
+import { track, EVENTS } from '@/lib/analytics';
+import { useAuth } from '@/lib/auth/AuthContext';
 import StoryBookViewer from '@/components/StoryBookViewer';
 
 const POLL_INTERVAL_MS = 3000;
@@ -11,7 +13,9 @@ const POLL_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes safety timeout
 export default function BookViewerPage() {
     const params = useParams();
     const router = useRouter();
+    const { user } = useAuth();
     const bookId = params.bookId as string;
+    const hasTrackedView = useRef(false);
 
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
@@ -46,6 +50,25 @@ export default function BookViewerPage() {
             const data = await fetchBook();
             if (data) {
                 setBook(data);
+
+                // Track book viewed (only once per page load)
+                if (!hasTrackedView.current) {
+                    hasTrackedView.current = true;
+                    // Determine view source from referrer or session
+                    let viewSource: 'creation' | 'mybooks' | 'direct_link' = 'direct_link';
+                    const referrer = document.referrer;
+                    if (referrer.includes('/create/')) viewSource = 'creation';
+                    else if (referrer.includes('/mybooks')) viewSource = 'mybooks';
+
+                    track(EVENTS.BOOK_VIEWED, {
+                        book_id: data.id,
+                        book_title: data.title || '',
+                        is_owner: user?.id === data.userId,
+                        is_preview: !data.digitalUnlockPaid,
+                        view_source: viewSource,
+                    });
+                }
+
                 if (data.illustrationProgress?.isGenerating) {
                     pollStartRef.current = Date.now();
                 }

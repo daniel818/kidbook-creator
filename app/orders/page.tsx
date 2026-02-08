@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { track, EVENTS } from '@/lib/analytics';
 import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import Link from 'next/link';
@@ -74,6 +75,7 @@ export default function OrdersPage() {
     const { user, isLoading: authLoading } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const hasTrackedView = useRef(false);
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -92,6 +94,12 @@ export default function OrdersPage() {
             if (res.ok) {
                 const data = await res.json();
                 setOrders(data);
+
+                // Track page view once on first successful load
+                if (!hasTrackedView.current) {
+                    hasTrackedView.current = true;
+                    track(EVENTS.ORDERS_VIEWED, { order_count: data.length });
+                }
             }
         } catch (error) {
             console.error('Failed to load orders:', error);

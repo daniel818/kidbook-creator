@@ -9,6 +9,7 @@ import Stripe from 'stripe';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendOrderConfirmation, sendDigitalUnlockEmail, OrderEmailData, DigitalUnlockEmailData } from '@/lib/email/client';
+import { trackPaymentCompleted, trackPaymentFailed, trackBookUnlocked, trackOrderPlaced } from '@/lib/analytics/server';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -432,6 +433,27 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
         book = bookData as BookRow | null;
     }
 
+    // Track payment completed
+    if (book?.user_id) {
+        trackPaymentCompleted(book.user_id, {
+            book_id: bookId || '',
+            payment_type: 'print_order',
+            amount_usd: order.total / 100, // Convert cents to dollars
+            payment_method: paymentIntent.payment_method_types?.[0] || 'unknown',
+            stripe_payment_intent_id: paymentIntent.id,
+        });
+
+        trackOrderPlaced(book.user_id, {
+            book_id: bookId || '',
+            order_id: orderId,
+            format: order.format,
+            size: order.size,
+            quantity: order.quantity,
+            total_usd: order.total / 100,
+            shipping_country: order.shipping_country || '',
+        });
+    }
+
     // Send order confirmation email
     const customerEmail = paymentIntent.receipt_email;
     if (customerEmail && order && book) {
@@ -532,6 +554,18 @@ async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.Payment
     }
 
     logWebhook('Digital unlock marked paid (PI)', { bookId, piId: paymentIntent.id });
+
+    // Track digital payment completed
+    trackPaymentCompleted(book.user_id, {
+        book_id: bookId,
+        payment_type: 'digital_unlock',
+        amount_usd: (paymentIntent.amount || 0) / 100,
+        payment_method: paymentIntent.payment_method_types?.[0] || 'unknown',
+        stripe_payment_intent_id: paymentIntent.id,
+    });
+
+    // TODO: trackBookUnlocked will be called when full illustrations are generated
+    // since the unlock happens asynchronously after payment
 
     // Get customer email
     let recipientEmail = paymentIntent.receipt_email || '';

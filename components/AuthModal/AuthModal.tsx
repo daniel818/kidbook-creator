@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { AuthError } from '@supabase/supabase-js';
+import { track, EVENTS } from '@/lib/analytics';
 import styles from './AuthModal.module.css';
 
 interface AuthModalProps {
@@ -67,6 +68,11 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                     console.error('Login error:', result.error);
                     setError(result.error.message);
                 } else {
+                    // Track successful login
+                    track(EVENTS.USER_SIGNED_IN, {
+                        method: 'email',
+                        referrer_page: typeof window !== 'undefined' ? window.location.pathname : '',
+                    });
                     onClose();
                 }
             } else if (mode === 'signup') {
@@ -79,6 +85,11 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                     console.error('Signup error:', result.error);
                     setError(result.error.message);
                 } else {
+                    // Track successful signup
+                    track(EVENTS.USER_SIGNED_UP, {
+                        method: 'email',
+                        referrer_page: typeof window !== 'undefined' ? window.location.pathname : '',
+                    });
                     setSuccess(t('signup.successMessage'));
                 }
             } else if (mode === 'forgot') {
@@ -107,6 +118,12 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
         const { error } = await signInWithGoogle();
         if (error) {
             setError(error.message);
+        } else {
+            // Track Google auth (we track as sign_in since Google handles both)
+            track(EVENTS.USER_SIGNED_IN, {
+                method: 'google',
+                referrer_page: typeof window !== 'undefined' ? window.location.pathname : '',
+            });
         }
     };
 

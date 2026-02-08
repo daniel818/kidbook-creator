@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Elements } from '@stripe/react-stripe-js';
@@ -13,6 +13,7 @@ import { generateInteriorPDF } from '@/lib/lulu/pdf-generator';
 import { generateCoverPDF } from '@/lib/lulu/cover-generator';
 import { getPrintableInteriorPageCount } from '@/lib/lulu/page-count';
 import { createClient } from '@/lib/supabase/client';
+import { track, EVENTS } from '@/lib/analytics';
 import PaymentForm from '@/components/PaymentForm/PaymentForm';
 import styles from './page.module.css';
 
@@ -139,6 +140,8 @@ export default function OrderPage() {
         shipping.country,
         shipping.phone
     ].join('|');
+    // Track if checkout has been tracked for this page load
+    const hasTrackedCheckout = useRef(false);
 
     // Load book on mount
     useEffect(() => {
@@ -147,6 +150,15 @@ export default function OrderPage() {
             const localBook = getBookById(bookId);
             if (localBook) {
                 setBook(localBook);
+                // Track checkout started
+                if (!hasTrackedCheckout.current) {
+                    hasTrackedCheckout.current = true;
+                    track(EVENTS.CHECKOUT_STARTED, {
+                        book_id: localBook.id,
+                        checkout_type: localBook.digitalUnlockPaid ? 'print' : 'digital',
+                        price_usd: localBook.digitalUnlockPaid ? FORMAT_STARTING_PRICES.softcover : 4.99,
+                    });
+                }
                 setIsLoading(false);
                 return;
             }
@@ -156,11 +168,16 @@ export default function OrderPage() {
                 const res = await fetch(`/api/books/${bookId}`);
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.book) {
-                        setBook(data.book);
-                    } else {
-                        // Handle potential direct return or wrapped
-                        setBook(data);
+                    const bookData = data.book || data;
+                    setBook(bookData);
+                    // Track checkout started
+                    if (!hasTrackedCheckout.current) {
+                        hasTrackedCheckout.current = true;
+                        track(EVENTS.CHECKOUT_STARTED, {
+                            book_id: bookData.id,
+                            checkout_type: bookData.digitalUnlockPaid ? 'print' : 'digital',
+                            price_usd: bookData.digitalUnlockPaid ? FORMAT_STARTING_PRICES.softcover : 4.99,
+                        });
                     }
                 } else {
                     console.error("Failed to fetch book from API", res.status);
