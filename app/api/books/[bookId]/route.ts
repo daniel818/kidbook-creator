@@ -42,8 +42,8 @@ export async function GET(
         }
         logger.debug({ userId: user.id }, 'User authenticated');
 
-        // Rate limit standard API calls
-        const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
+        // Rate limit — use polling tier since this endpoint is polled during illustration generation
+        const rateResult = checkRateLimit(`polling:${user.id}`, RATE_LIMITS.polling);
         if (!rateResult.allowed) {
             logger.info({ userId: user.id }, 'Rate limited: books/[bookId] GET');
             return rateLimitResponse(rateResult);

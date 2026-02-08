@@ -47,6 +47,9 @@ export const RATE_LIMITS = {
     /** Standard API routes — 30 requests per minute */
     standard: { windowMs: 60_000, maxRequests: 30 } as RateLimitConfig,
 
+    /** Polling routes (book status checks) — 120 requests per minute */
+    polling: { windowMs: 60_000, maxRequests: 120 } as RateLimitConfig,
+
     /** Auth-related routes — 10 requests per minute */
     auth: { windowMs: 60_000, maxRequests: 10 } as RateLimitConfig,
 
