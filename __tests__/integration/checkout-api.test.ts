@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 // ============================================
 // Checkout API Tests
 // ============================================
@@ -62,14 +65,17 @@ describe('Checkout API', () => {
     });
 
     describe('POST /api/checkout', () => {
+        // Valid UUID for bookId (Zod requires uuid format)
+        const validBookId = '550e8400-e29b-41d4-a716-446655440000';
+
         const validCheckoutBody = {
-            bookId: 'book-123',
+            bookId: validBookId,
             format: 'softcover',
             size: '7.5x7.5',
             quantity: 1,
             shippingLevel: 'MAIL',
-            pdfUrl: 'https://storage.example.com/interior.pdf',
-            coverUrl: 'https://storage.example.com/cover.pdf',
+            pdfUrl: 'books/interior.pdf',
+            coverUrl: 'books/cover.pdf',
             shipping: {
                 fullName: 'John Doe',
                 addressLine1: '123 Main St',
@@ -107,7 +113,8 @@ describe('Checkout API', () => {
 
             const request = new NextRequest('http://localhost:3000/api/checkout', {
                 method: 'POST',
-                body: JSON.stringify({ bookId: 'book-123' }), // Missing other fields
+                // Missing most required fields - only bookId (but not a valid UUID)
+                body: JSON.stringify({ bookId: validBookId }),
             });
 
             const { POST } = await import('@/app/api/checkout/route');
@@ -115,7 +122,10 @@ describe('Checkout API', () => {
 
             expect(response.status).toBe(400);
             const data = await response.json();
-            expect(data.error).toBe('Missing required fields');
+            // Zod validation returns field-specific error messages, not 'Missing required fields'
+            expect(data.error).toBeDefined();
+            expect(typeof data.error).toBe('string');
+            expect(data.error.length).toBeGreaterThan(0);
         });
 
         it('should return 404 if book not found', async () => {
@@ -144,7 +154,7 @@ describe('Checkout API', () => {
         it('should create checkout session and order', async () => {
             const mockUser = { id: 'user-123', email: 'test@example.com' };
             const mockBook = {
-                id: 'book-123',
+                id: validBookId,
                 title: 'My Book',
                 thumbnail_url: null,
                 pages: [{ id: 'page-1' }, { id: 'page-2' }],

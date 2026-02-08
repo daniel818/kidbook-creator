@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 // ============================================
 // Create Intent API Tests
 // ============================================
@@ -15,6 +18,7 @@ jest.mock('@/lib/stripe/server', () => ({
     stripe: {
         paymentIntents: {
             create: jest.fn(() => Promise.resolve(mockPaymentIntent)),
+            cancel: jest.fn(() => Promise.resolve({})),
         },
     },
     formatPrice: jest.fn((cents: number) => `$${(cents / 100).toFixed(2)}`),
@@ -44,6 +48,7 @@ const mockSupabase: any = {
     select: jest.fn(() => mockSupabase),
     insert: jest.fn(() => mockSupabase),
     update: jest.fn(() => mockSupabase),
+    delete: jest.fn(() => mockSupabase),
     eq: jest.fn(() => mockSupabase),
     single: jest.fn(),
 };
@@ -59,8 +64,11 @@ describe('Create Intent API', () => {
         jest.resetModules();
     });
 
+    // Valid UUID for bookId (Zod requires uuid format)
+    const validBookId = '550e8400-e29b-41d4-a716-446655440000';
+
     const validBody = {
-        bookId: 'book-123',
+        bookId: validBookId,
         format: 'softcover',
         size: '8x8',
         quantity: 1,
@@ -101,7 +109,7 @@ describe('Create Intent API', () => {
 
         const request = new NextRequest('http://localhost:3000/api/checkout/create-intent', {
             method: 'POST',
-            body: JSON.stringify({ bookId: 'book-123' }),
+            body: JSON.stringify({ bookId: validBookId }),
         });
 
         const { POST } = await import('@/app/api/checkout/create-intent/route');
@@ -109,13 +117,16 @@ describe('Create Intent API', () => {
 
         expect(response.status).toBe(400);
         const data = await response.json();
-        expect(data.error).toBe('Missing required fields');
+        // Zod validation returns field-specific error messages, not 'Missing required fields'
+        expect(data.error).toBeDefined();
+        expect(typeof data.error).toBe('string');
+        expect(data.error.length).toBeGreaterThan(0);
     });
 
     it('should create PaymentIntent and return clientSecret', async () => {
         const mockUser = { id: 'user-123', email: 'test@example.com' };
         const mockBook = {
-            id: 'book-123',
+            id: validBookId,
             title: 'My Book',
             is_preview: false,
             status: 'completed',

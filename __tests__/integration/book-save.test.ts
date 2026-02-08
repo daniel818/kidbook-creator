@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 // ============================================
 // Book Save API Integration Tests
 // Tests surgical pageEdits vs full page replacement
@@ -5,20 +8,51 @@
 
 import { NextRequest } from 'next/server';
 
-// Mock Supabase
-const mockSupabase = {
+// Mock Supabase - use a factory that creates fresh mocks for each call chain
+// The key challenge is that the route handler makes multiple queries with different
+// chain structures (e.g., select().eq().eq().single() vs select().eq() vs upsert()).
+// We track calls to handle each chain correctly.
+
+let fromCallIndex = 0;
+let singleCallIndex = 0;
+let singleMocks: Array<{ data: unknown; error: unknown }> = [];
+let selectReturnOverride: null | ((callIndex: number) => unknown) = null;
+let upsertCalled = false;
+let updateCalls: unknown[] = [];
+
+const mockSupabase: Record<string, jest.Mock | Record<string, jest.Mock>> = {
     auth: {
         getUser: jest.fn(),
     },
     from: jest.fn(() => mockSupabase),
-    select: jest.fn(() => mockSupabase),
+    select: jest.fn((...args: unknown[]) => {
+        if (selectReturnOverride) {
+            const result = selectReturnOverride(fromCallIndex);
+            if (result !== null) return result;
+        }
+        return mockSupabase;
+    }),
     insert: jest.fn(() => mockSupabase),
-    update: jest.fn(() => mockSupabase),
+    update: jest.fn((...args: unknown[]) => {
+        updateCalls.push(args);
+        return {
+            eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockResolvedValue({ error: null }),
+            }),
+        };
+    }),
     delete: jest.fn(() => mockSupabase),
-    upsert: jest.fn(() => mockSupabase),
+    upsert: jest.fn((...args: unknown[]) => {
+        upsertCalled = true;
+        return Promise.resolve({ error: null });
+    }),
     eq: jest.fn(() => mockSupabase),
     in: jest.fn(() => mockSupabase),
-    single: jest.fn(() => mockSupabase),
+    single: jest.fn(() => {
+        const mock = singleMocks[singleCallIndex] || { data: null, error: { message: 'No mock' } };
+        singleCallIndex++;
+        return Promise.resolve(mock);
+    }),
     order: jest.fn(() => mockSupabase),
 };
 
@@ -48,26 +82,45 @@ function createPutRequest(bookId: string, body: Record<string, unknown>) {
 describe('Book Save API - PUT /api/books/[bookId]', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        fromCallIndex = 0;
+        singleCallIndex = 0;
+        singleMocks = [];
+        selectReturnOverride = null;
+        upsertCalled = false;
+        updateCalls = [];
+
         // Default: authenticated user
-        mockSupabase.auth.getUser.mockResolvedValue({
+        (mockSupabase.auth as Record<string, jest.Mock>).getUser.mockResolvedValue({
             data: { user: mockUser },
             error: null,
         });
-        // Default: book exists and is accessible
-        mockSupabase.single.mockResolvedValue({
-            data: mockBook,
-            error: null,
+
+        // Reset mock implementations
+        (mockSupabase.select as jest.Mock).mockImplementation(() => mockSupabase);
+        (mockSupabase.single as jest.Mock).mockImplementation(() => {
+            const mock = singleMocks[singleCallIndex] || { data: null, error: { message: 'No mock' } };
+            singleCallIndex++;
+            return Promise.resolve(mock);
         });
-        // Default: update succeeds
-        mockSupabase.update.mockReturnValue({
+        (mockSupabase.update as jest.Mock).mockImplementation(() => ({
             eq: jest.fn().mockReturnValue({
                 eq: jest.fn().mockResolvedValue({ error: null }),
             }),
+        }));
+        (mockSupabase.upsert as jest.Mock).mockImplementation((...args: unknown[]) => {
+            upsertCalled = true;
+            return Promise.resolve({ error: null });
         });
     });
 
     describe('settings-only save (no pages)', () => {
         it('should update title without touching pages', async () => {
+            // single() calls: 1) book access check, 2) final book fetch
+            singleMocks = [
+                { data: mockBook, error: null },                          // access check
+                { data: { ...mockBook, title: 'Updated Title', pages: [] }, error: null }, // final fetch
+            ];
+
             const { PUT } = await import('@/app/api/books/[bookId]/route');
             const request = createPutRequest('book-abc', {
                 settings: {
@@ -79,15 +132,6 @@ describe('Book Save API - PUT /api/books/[bookId]', () => {
                 },
             });
 
-            // Mock the final book fetch
-            mockSupabase.single.mockResolvedValueOnce({
-                data: mockBook,
-                error: null,
-            }).mockResolvedValueOnce({
-                data: { ...mockBook, title: 'Updated Title' },
-                error: null,
-            });
-
             const response = await PUT(request, {
                 params: Promise.resolve({ bookId: 'book-abc' }),
             });
@@ -95,30 +139,24 @@ describe('Book Save API - PUT /api/books/[bookId]', () => {
             // Verify update was called with settings
             expect(mockSupabase.update).toHaveBeenCalled();
             // Verify upsert was NOT called (no pages sent)
-            expect(mockSupabase.upsert).not.toHaveBeenCalled();
+            expect(upsertCalled).toBe(false);
         });
     });
 
     describe('pageEdits (surgical save)', () => {
         it('should update only the text of the specified page', async () => {
-            // Mock: fetch current page from DB
             const currentPage = {
                 id: 'page-1',
                 text_elements: [{ id: 'te-1', content: 'Original text', x: 10, y: 70 }],
                 image_elements: [{ id: 'ie-1', src: 'http://example.com/img.png' }],
             };
 
-            // Reset single mock for this test
-            mockSupabase.single
-                .mockResolvedValueOnce({ data: mockBook, error: null })   // book access check
-                .mockResolvedValueOnce({ data: currentPage, error: null }); // page fetch
-
-            // Mock update chain
-            const updateEq2 = jest.fn().mockResolvedValue({ error: null });
-            const updateEq1 = jest.fn().mockReturnValue({ eq: updateEq2 });
-            mockSupabase.update
-                .mockReturnValueOnce({ eq: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }) }) // settings update
-                .mockReturnValueOnce({ eq: updateEq1 }); // page update
+            // single() calls: 1) book access check, 2) page fetch for edit, 3) final book fetch
+            singleMocks = [
+                { data: mockBook, error: null },           // access check
+                { data: currentPage, error: null },        // page fetch for edit
+                { data: { ...mockBook, pages: [] }, error: null }, // final book fetch
+            ];
 
             const { PUT } = await import('@/app/api/books/[bookId]/route');
             const request = createPutRequest('book-abc', {
@@ -138,16 +176,10 @@ describe('Book Save API - PUT /api/books/[bookId]', () => {
         });
 
         it('should not update pages when pageEdits is empty', async () => {
-            mockSupabase.single.mockResolvedValueOnce({
-                data: mockBook,
-                error: null,
-            });
-
-            mockSupabase.update.mockReturnValue({
-                eq: jest.fn().mockReturnValue({
-                    eq: jest.fn().mockResolvedValue({ error: null }),
-                }),
-            });
+            singleMocks = [
+                { data: mockBook, error: null },           // access check
+                { data: { ...mockBook, pages: [] }, error: null }, // final book fetch
+            ];
 
             const { PUT } = await import('@/app/api/books/[bookId]/route');
             const request = createPutRequest('book-abc', {
@@ -160,20 +192,16 @@ describe('Book Save API - PUT /api/books/[bookId]', () => {
             });
 
             // select for page data should NOT have been called with text_elements
-            const selectCalls = mockSupabase.select.mock.calls.map((c: unknown[]) => c[0]);
+            const selectCalls = (mockSupabase.select as jest.Mock).mock.calls.map((c: unknown[]) => c[0]);
             expect(selectCalls).not.toContain('id, text_elements, image_elements');
         });
 
         it('should skip edits for non-existent pages', async () => {
-            mockSupabase.single
-                .mockResolvedValueOnce({ data: mockBook, error: null })   // book access
-                .mockResolvedValueOnce({ data: null, error: { message: 'Not found' } }); // page not found
-
-            mockSupabase.update.mockReturnValue({
-                eq: jest.fn().mockReturnValue({
-                    eq: jest.fn().mockResolvedValue({ error: null }),
-                }),
-            });
+            singleMocks = [
+                { data: mockBook, error: null },                    // access check
+                { data: null, error: { message: 'Not found' } },   // page not found
+                { data: { ...mockBook, pages: [] }, error: null },  // final book fetch
+            ];
 
             const { PUT } = await import('@/app/api/books/[bookId]/route');
             const request = createPutRequest('book-abc', {
@@ -183,7 +211,7 @@ describe('Book Save API - PUT /api/books/[bookId]', () => {
                 ],
             });
 
-            // Should not throw — just skip the bad edit
+            // Should not throw -- just skip the bad edit
             const response = await PUT(request, {
                 params: Promise.resolve({ bookId: 'book-abc' }),
             });
@@ -195,26 +223,33 @@ describe('Book Save API - PUT /api/books/[bookId]', () => {
 
     describe('full page replacement (legacy)', () => {
         it('should still support full pages array for backward compat', async () => {
-            mockSupabase.single.mockResolvedValueOnce({
-                data: mockBook,
-                error: null,
-            });
+            // single() calls: 1) book access check, 2) final book fetch
+            singleMocks = [
+                { data: mockBook, error: null },           // access check
+                { data: { ...mockBook, pages: [] }, error: null }, // final book fetch
+            ];
 
-            // Mock for existing pages fetch
-            mockSupabase.select.mockReturnValue({
-                eq: jest.fn().mockResolvedValue({
-                    data: [{ id: 'page-1' }, { id: 'page-2' }],
-                    error: null,
-                }),
+            // For the existing pages query: from('pages').select('id').eq('book_id', bookId)
+            // This is awaited directly (not .single()). We need select to return mockSupabase
+            // for the access check chain, but return { data: [...], error: null } for the
+            // pages query. We'll track the table being queried.
+            let selectCallIdx = 0;
+            (mockSupabase.select as jest.Mock).mockImplementation((...args: unknown[]) => {
+                selectCallIdx++;
+                // Call 1: access check - select('id, is_preview, ...') - needs chaining
+                // Call 2: existing pages - select('id') - returns eq chain that resolves
+                // Call 3: final book fetch - select('*, pages (*)') - needs chaining
+                if (selectCallIdx === 2) {
+                    // This is the existing pages query: from('pages').select('id').eq('book_id', bookId)
+                    return {
+                        eq: jest.fn().mockResolvedValue({
+                            data: [{ id: 'page-1' }, { id: 'page-2' }],
+                            error: null,
+                        }),
+                    };
+                }
+                return mockSupabase;
             });
-
-            mockSupabase.update.mockReturnValue({
-                eq: jest.fn().mockReturnValue({
-                    eq: jest.fn().mockResolvedValue({ error: null }),
-                }),
-            });
-
-            mockSupabase.upsert.mockResolvedValue({ error: null });
 
             const { PUT } = await import('@/app/api/books/[bookId]/route');
             const request = createPutRequest('book-abc', {
@@ -236,7 +271,7 @@ describe('Book Save API - PUT /api/books/[bookId]', () => {
             });
 
             // Verify upsert was called (legacy path)
-            expect(mockSupabase.upsert).toHaveBeenCalled();
+            expect(upsertCalled).toBe(true);
         });
     });
 });

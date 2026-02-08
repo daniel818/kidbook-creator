@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 // ============================================
 // Admin Authorization Tests
 // ============================================
@@ -26,6 +29,8 @@ describe('Admin Authorization', () => {
         jest.clearAllMocks();
         // Reset module cache to ensure fresh imports
         jest.resetModules();
+        // Reset select to default behavior (returns mockSupabase for chaining)
+        mockSupabase.select.mockImplementation(() => mockSupabase);
     });
 
     describe('GET /api/admin/stats', () => {
@@ -72,14 +77,29 @@ describe('Admin Authorization', () => {
                 error: null,
             });
 
-            // Mock profile check
+            // Mock profile check - first call to single()
             mockSupabase.single.mockResolvedValueOnce({
                 data: { is_admin: true },
                 error: null,
             });
 
-            // Mock orders/users/books queries
-            mockSupabase.select.mockResolvedValue({ data: [], error: null });
+            // After profile check, the stats route calls:
+            //   supabase.from('orders').select('id, total, status, created_at')
+            //   supabase.from('profiles').select('id, created_at')
+            //   supabase.from('books').select('id, status, created_at')
+            // These are awaited directly (no .single() or .eq() after .select()).
+            // We need select() to return mockSupabase for the first call (profile chain),
+            // then return { data: [], error: null } for the subsequent stats queries.
+            let selectCallCount = 0;
+            mockSupabase.select.mockImplementation(() => {
+                selectCallCount++;
+                // First call is from the profile check chain (select -> eq -> single)
+                if (selectCallCount === 1) {
+                    return mockSupabase;
+                }
+                // Subsequent calls are stats queries that are awaited directly
+                return Promise.resolve({ data: [], error: null });
+            });
 
             const { GET } = await import('@/app/api/admin/stats/route');
             const response = await GET();
