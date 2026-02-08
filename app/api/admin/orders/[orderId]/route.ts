@@ -120,7 +120,7 @@ export async function PUT(
 
         // Build update object
         const updateData: Record<string, unknown> = {};
-        if (status) updateData.status = status;
+        if (status) updateData.payment_status = status;
         if (trackingNumber) updateData.tracking_number = trackingNumber;
         if (luluOrderId) updateData.lulu_order_id = luluOrderId;
 

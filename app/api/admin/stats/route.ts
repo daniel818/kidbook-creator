@@ -40,7 +40,7 @@ export async function GET() {
         // Get order statistics
         const { data: orders } = await supabase
             .from('orders')
-            .select('id, total, status, created_at');
+            .select('id, total, payment_status, created_at');
 
         const { data: users } = await supabase
             .from('profiles')
@@ -59,7 +59,7 @@ export async function GET() {
         // Orders by status
         const ordersByStatus: Record<string, number> = {};
         orders?.forEach(o => {
-            ordersByStatus[o.status] = (ordersByStatus[o.status] || 0) + 1;
+            ordersByStatus[o.payment_status] = (ordersByStatus[o.payment_status] || 0) + 1;
         });
 
         // Recent orders (last 7 days)
