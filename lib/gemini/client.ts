@@ -9,6 +9,7 @@ import { getPrompts, Language } from './prompts';
 import { createModuleLogger } from '@/lib/logger';
 import { withRetry, RETRY_CONFIGS } from '../retry';
 import { sanitizeStoryInput, sanitizeInput } from '../sanitize';
+import { env } from '@/lib/env';
 
 const logger = createModuleLogger('gemini');
 
@@ -20,7 +21,7 @@ let _genAI: GoogleGenAI | null = null;
 function getGenAI(): GoogleGenAI {
     if (!_genAI) {
         logger.info('Initializing Gemini Unified client (@google/genai)...');
-        _genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        _genAI = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
         logger.info('Gemini client initialized');
     }
     return _genAI;
@@ -92,7 +93,7 @@ export async function generateStory(input: StoryGenerationInput): Promise<{ stor
     logger.info('Story generation started');
 
     const language = input.language || 'en';
-    const textModel = process.env.GEMINI_TEXT_MODEL || 'gemini-3-flash-preview';
+    const textModel = env.GEMINI_TEXT_MODEL;
     logger.info({ model: textModel, language }, 'Using model for story generation');
 
     const prompts = getPrompts(language);
@@ -185,8 +186,8 @@ export async function generateIllustration(
     // --- MODE: Unified Gemini Generation ---
     // Use Reference Model if reference image exists, otherwise Standard Model
     const modelName = referenceImage
-        ? (process.env.GEMINI_REF_IMAGE_MODEL || 'gemini-3-pro-image-preview')
-        : (process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview');
+        ? env.GEMINI_REF_IMAGE_MODEL
+        : env.GEMINI_IMAGE_MODEL;
 
     logger.info({ model: modelName }, 'Using Gemini Image Mode');
 
@@ -265,7 +266,7 @@ export async function generateIllustration(
 // Extract character description
 export async function extractCharacterFromPhoto(photoBase64: string, language: Language = 'en'): Promise<string> {
     const startTime = Date.now();
-    const model = process.env.GEMINI_TEXT_MODEL || 'gemini-3-flash-preview';
+    const model = env.GEMINI_TEXT_MODEL;
 
     try {
         const prompts = getPrompts(language);

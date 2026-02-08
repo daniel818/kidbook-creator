@@ -11,8 +11,9 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createRequestLogger } from '@/lib/logger';
+import { env } from '@/lib/env';
 
-const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
+const INTERNAL_API_KEY = env.INTERNAL_API_KEY || '';
 
 // Pricing Constants (same as generate-book)
 const PRICING: Record<string, { input?: number; output?: number; image?: number }> = {
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
             });
             if (firstPage) {
                 const imgSrc = (firstPage.image_elements[0] as { src: string }).src;
-                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
                 // Guard against empty supabaseUrl to prevent SSRF
                 const isAllowedOrigin = imgSrc.startsWith('data:') ||
                     (supabaseUrl.length > 0 && imgSrc.startsWith(supabaseUrl));

@@ -2,9 +2,10 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import { createModuleLogger } from '@/lib/logger';
+import { env } from '@/lib/env';
 
 const logger = createModuleLogger('storage-proxy');
-const SUPABASE_STORAGE_ORIGIN = process.env.SUPABASE_STORAGE_ORIGIN || 'http://127.0.0.1:54321';
+const SUPABASE_STORAGE_ORIGIN = env.SUPABASE_STORAGE_ORIGIN;
 
 async function proxyStorage(request: Request, params: { path?: string[] } | Promise<{ path?: string[] }>) {
     try {

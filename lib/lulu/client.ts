@@ -4,6 +4,7 @@
 // Print-on-demand integration for book printing
 
 import { createModuleLogger } from '@/lib/logger';
+import { env } from '@/lib/env';
 import { withRetry, HttpError, RETRY_CONFIGS } from '../retry';
 
 const logger = createModuleLogger('lulu');
@@ -461,15 +462,10 @@ let _luluClientSingleton: LuluClient | null = null;
 
 export function createLuluClient(): LuluClient {
     if (!_luluClientSingleton) {
-        const apiKey = process.env.LULU_API_KEY;
-        const apiSecret = process.env.LULU_API_SECRET;
-        if (!apiKey || !apiSecret) {
-            throw new Error('Lulu API credentials not configured (LULU_API_KEY / LULU_API_SECRET)');
-        }
         _luluClientSingleton = new LuluClient({
-            apiKey,
-            apiSecret,
-            sandbox: process.env.LULU_SANDBOX === 'true',
+            apiKey: env.LULU_API_KEY,
+            apiSecret: env.LULU_API_SECRET,
+            sandbox: env.LULU_SANDBOX === 'true',
         });
     }
     return _luluClientSingleton;

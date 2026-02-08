@@ -8,6 +8,7 @@ import { stripe } from '@/lib/stripe/server';
 import { generateIllustration } from '@/lib/gemini/client';
 import { uploadImageToStorage } from '@/lib/supabase/upload';
 import { createRequestLogger } from '@/lib/logger';
+import { env } from '@/lib/env';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface RouteContext {
@@ -226,7 +227,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
             if (firstPageImages.length > 0 && firstPageImages[0]?.src) {
                 const imgSrc = firstPageImages[0].src as string;
                 // SSRF mitigation: only fetch from our own Supabase storage domain
-                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
                 const isAllowedOrigin = imgSrc.startsWith(supabaseUrl) || imgSrc.startsWith('data:');
                 if (!isAllowedOrigin) {
                     logger.info({ src: imgSrc.slice(0, 100) }, 'Skipping style reference: image URL not from allowed origin');

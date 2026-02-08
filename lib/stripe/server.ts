@@ -3,15 +3,12 @@
 // ============================================
 
 import Stripe from 'stripe';
+import { env } from '@/lib/env';
 
 let _stripe: Stripe | null = null;
 function getStripe(): Stripe {
     if (!_stripe) {
-        const key = process.env.STRIPE_SECRET_KEY;
-        if (!key) {
-            throw new Error('Missing STRIPE_SECRET_KEY environment variable');
-        }
-        _stripe = new Stripe(key, {
+        _stripe = new Stripe(env.STRIPE_SECRET_KEY, {
             apiVersion: '2025-02-24.acacia',
             typescript: true,
             maxNetworkRetries: 2,

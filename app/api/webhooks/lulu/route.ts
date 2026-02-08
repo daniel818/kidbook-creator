@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
 import { createModuleLogger } from '@/lib/logger';
+import { env } from '@/lib/env';
 
 const logger = createModuleLogger('lulu-webhook');
 
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
         const signature = req.headers.get('lulu-hmac-sha256') || req.headers.get('x-lulu-signature');
 
         // Require webhook secret — reject all webhooks if not configured
-        const secret = process.env.LULU_WEBHOOK_SECRET;
+        const secret = env.LULU_WEBHOOK_SECRET;
         if (!secret) {
             logger.error('CRITICAL: LULU_WEBHOOK_SECRET is not configured. Rejecting webhook.');
             return NextResponse.json(

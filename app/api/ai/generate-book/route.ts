@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generateStory, generateIllustration, StoryGenerationInput } from '@/lib/gemini/client';
 import { uploadReferenceImage, uploadImageToStorage } from '@/lib/supabase/upload';
 import { createRequestLogger } from '@/lib/logger';
+import { env } from '@/lib/env';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 import { generateBookSchema, parseBody } from '@/lib/validations';
 
@@ -206,7 +207,7 @@ export async function POST(request: NextRequest) {
         if (coverImageUrl) {
             generationLogs.push({
                 stepName: 'cover_illustration',
-                model: process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview',
+                model: env.GEMINI_IMAGE_MODEL,
                 inputTokens: 0,
                 outputTokens: 0,
                 imageCount: 1,
@@ -358,10 +359,10 @@ export async function POST(request: NextRequest) {
         // =========================================================
         // PHASE 2: Fire-and-forget background illustration generation
         // =========================================================
-        const internalKey = process.env.INTERNAL_API_KEY;
+        const internalKey = env.INTERNAL_API_KEY;
         if (internalKey) {
             // Use server-only INTERNAL_API_BASE_URL if set, fall back to NEXT_PUBLIC_APP_URL for dev
-            const baseUrl = process.env.INTERNAL_API_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            const baseUrl = env.INTERNAL_API_BASE_URL || env.NEXT_PUBLIC_APP_URL;
             logger.info('Triggering background illustration generation');
 
             fetch(`${baseUrl}/api/ai/generate-illustrations`, {
