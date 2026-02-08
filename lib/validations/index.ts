@@ -21,15 +21,15 @@ export const generateStorySchema = z.object({
     bookTheme: z.string().min(1, 'Book theme is required').max(200),
     bookType: z.string().max(100).optional().default('story'),
     pageCount: z.number().int().min(4).max(30).optional().default(10),
-    characterDescription: z.string().max(500).optional(),
+    characterDescription: z.string().optional(),
     storyDescription: z.string().max(1000).optional(),
 });
 
 export const generateImageSchema = z.object({
     bookId: z.string().uuid(),
     pageIndex: z.number().int().min(0),
-    scenePrompt: z.string().min(1).max(1000),
-    characterDescription: z.string().max(500).optional().default(''),
+    scenePrompt: z.string().min(1),
+    characterDescription: z.string().optional().default(''),
     artStyle: artStyleSchema.optional().default('storybook_classic'),
     quality: imageQualitySchema.optional().default('fast'),
     childPhoto: z.string().optional(),
@@ -39,9 +39,9 @@ export const generateImageSchema = z.object({
 export const regenerateImageSchema = z.object({
     bookId: z.string().uuid(),
     pageNumber: z.number().int().min(1),
-    prompt: z.string().min(1).max(1000),
-    currentImageContext: z.string().max(500).optional(),
-    style: z.string().max(500).optional(),
+    prompt: z.string().min(1),
+    currentImageContext: z.string().optional(),
+    style: z.string().optional(),
     quality: imageQualitySchema.optional(),
 });
 
@@ -52,7 +52,7 @@ export const generateBookSchema = z.object({
     bookTheme: z.string().min(1).max(200),
     bookType: z.string().max(100).optional().default('story'),
     pageCount: z.number().int().min(4).max(30).optional().default(10),
-    characterDescription: z.string().max(500).optional(),
+    characterDescription: z.string().optional(),
     storyDescription: z.string().max(1000).optional(),
     artStyle: artStyleSchema.optional().default('storybook_classic'),
     imageQuality: imageQualitySchema.optional().default('fast'),

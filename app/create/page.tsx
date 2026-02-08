@@ -235,7 +235,7 @@ export default function CreateBookPage() {
 
                 if (extractRes.ok) {
                     const extractData = await extractRes.json();
-                    characterDescription = extractData.characterDescription;
+                    characterDescription = extractData.characterDescription || '';
                     logger.debug({ characterDescription: characterDescription?.slice(0, 100) }, 'Character description extracted');
                 } else {
                     logger.warn({ responseText: await extractRes.text() }, 'Photo extraction failed');
