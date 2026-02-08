@@ -41,7 +41,12 @@ export async function GET(
                     title,
                     child_name,
                     thumbnail_url,
-                    pages (id)
+                    pages (
+                        id,
+                        page_type,
+                        image_elements,
+                        background_image
+                    )
                 )
             `)
             .eq('id', orderId)
@@ -51,6 +56,12 @@ export async function GET(
         if (error || !order) {
             return NextResponse.json({ error: 'Order not found' }, { status: 404 });
         }
+
+        const getCoverThumbnail = (book: typeof order.books): string | null => {
+            const coverPage = book?.pages?.find((p: { page_type: string }) => p.page_type === 'cover');
+            const imageElements = Array.isArray(coverPage?.image_elements) ? coverPage.image_elements : [];
+            return (imageElements as Array<{ src?: string }>)?.[0]?.src || coverPage?.background_image || book?.thumbnail_url || null;
+        };
 
         return NextResponse.json({
             id: order.id,
@@ -63,7 +74,7 @@ export async function GET(
             status: order.payment_status,
             fulfillmentStatus: order.fulfillment_status,
             estimatedDelivery: getEstimatedDelivery(),
-            thumbnailUrl: order.books?.thumbnail_url || null,
+            thumbnailUrl: getCoverThumbnail(order.books),
             childName: order.books?.child_name || null,
             pageCount: order.books?.pages?.length ?? null,
             shippingAddress: {
