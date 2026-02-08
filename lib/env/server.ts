@@ -71,8 +71,13 @@ export function getServerEnv(): ServerEnv {
 
 // Proxy-based export for convenient `env.VAR` access.
 // Validation triggers lazily on first property access.
+// During build phase, falls back to raw process.env to avoid crashes
+// when env vars aren't available (runtime validation happens via instrumentation.ts).
 export const env = new Proxy({} as ServerEnv, {
     get(_target, prop: string) {
+        if (process.env.NEXT_PHASE === 'phase-production-build') {
+            return process.env[prop];
+        }
         return getServerEnv()[prop as keyof ServerEnv];
     },
 });
