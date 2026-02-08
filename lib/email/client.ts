@@ -3,16 +3,18 @@
 // ============================================
 
 import { Resend } from 'resend';
+import { env } from '@/lib/env';
+import { withRetry, RETRY_CONFIGS } from '../retry';
 
 let _resend: Resend | null = null;
 function getResend(): Resend {
   if (!_resend) {
-    _resend = new Resend(process.env.RESEND_API_KEY);
+    _resend = new Resend(env.RESEND_API_KEY);
   }
   return _resend;
 }
 
-const FROM_EMAIL = process.env.EMAIL_FROM || 'KidBook Creator <orders@kidbookcreator.com>';
+const FROM_EMAIL = env.EMAIL_FROM;
 
 export interface OrderEmailData {
   orderId: string;
@@ -53,12 +55,15 @@ export interface DigitalUnlockEmailData {
 // Send order confirmation email
 export async function sendOrderConfirmation(data: OrderEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Order Confirmed! Your "${data.bookTitle}" is being prepared 📚`,
-      html: generateOrderConfirmationHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Order Confirmed! Your "${data.bookTitle}" is being prepared 📚`,
+        html: generateOrderConfirmationHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       console.error('Failed to send order confirmation:', error);
@@ -68,7 +73,7 @@ export async function sendOrderConfirmation(data: OrderEmailData) {
     console.log('Order confirmation sent:', result?.id);
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('Email error (after retries):', error);
     return { success: false, error };
   }
 }
@@ -76,12 +81,15 @@ export async function sendOrderConfirmation(data: OrderEmailData) {
 // Send shipping notification email
 export async function sendShippingNotification(data: ShippingEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Your book is on its way! 🚚 Track your "${data.bookTitle}"`,
-      html: generateShippingNotificationHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Your book is on its way! 🚚 Track your "${data.bookTitle}"`,
+        html: generateShippingNotificationHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       console.error('Failed to send shipping notification:', error);
@@ -91,7 +99,7 @@ export async function sendShippingNotification(data: ShippingEmailData) {
     console.log('Shipping notification sent:', result?.id);
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('Email error (after retries):', error);
     return { success: false, error };
   }
 }
@@ -99,12 +107,15 @@ export async function sendShippingNotification(data: ShippingEmailData) {
 // Send delivery confirmation email
 export async function sendDeliveryConfirmation(data: OrderEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Your "${data.bookTitle}" has been delivered! 🎉`,
-      html: generateDeliveryConfirmationHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Your "${data.bookTitle}" has been delivered! 🎉`,
+        html: generateDeliveryConfirmationHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       console.error('Failed to send delivery confirmation:', error);
@@ -114,7 +125,7 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
     console.log('Delivery confirmation sent:', result?.id);
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('Email error (after retries):', error);
     return { success: false, error };
   }
 }
@@ -122,12 +133,15 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
 // Send digital unlock email
 export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
   try {
-    const { data: result, error } = await getResend().emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Your digital book "${data.bookTitle}" is ready ✨`,
-      html: generateDigitalUnlockHtml(data),
-    });
+    const { data: result, error } = await withRetry(
+      () => getResend().emails.send({
+        from: FROM_EMAIL,
+        to: data.customerEmail,
+        subject: `Your digital book "${data.bookTitle}" is ready ✨`,
+        html: generateDigitalUnlockHtml(data),
+      }),
+      RETRY_CONFIGS.resend
+    );
 
     if (error) {
       console.error('Failed to send digital unlock email:', error);
@@ -137,7 +151,7 @@ export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
     console.log('Digital unlock email sent:', result?.id);
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('Email error (after retries):', error);
     return { success: false, error };
   }
 }
@@ -234,7 +248,7 @@ function generateOrderConfirmationHtml(data: OrderEmailData): string {
 
               <!-- CTA -->
               <div style="text-align: center; margin: 32px 0 16px 0;">
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/orders" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px;">Track Your Order</a>
+                <a href="${env.NEXT_PUBLIC_APP_URL}/orders" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px;">Track Your Order</a>
               </div>
             </td>
           </tr>
@@ -258,7 +272,7 @@ function generateOrderConfirmationHtml(data: OrderEmailData): string {
 }
 
 function generateDigitalUnlockHtml(data: DigitalUnlockEmailData): string {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  const appUrl = env.NEXT_PUBLIC_APP_URL || '';
   const bookUrl = `${appUrl}/book/${data.bookId}`;
   return `
 <!DOCTYPE html>
@@ -450,8 +464,8 @@ function generateDeliveryConfirmationHtml(data: OrderEmailData): string {
 
               <!-- CTA Buttons -->
               <div style="text-align: center; margin: 24px 0;">
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/create" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; margin: 0 8px 8px 0;">Create Another Book</a>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/create/${data.orderId}/order" style="display: inline-block; padding: 14px 32px; background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; margin: 0 0 8px 8px;">Order Another Copy</a>
+                <a href="${env.NEXT_PUBLIC_APP_URL}/create" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; margin: 0 8px 8px 0;">Create Another Book</a>
+                <a href="${env.NEXT_PUBLIC_APP_URL}/create/${data.orderId}/order" style="display: inline-block; padding: 14px 32px; background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; margin: 0 0 8px 8px;">Order Another Copy</a>
               </div>
 
               <!-- Feedback -->

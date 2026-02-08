@@ -41,7 +41,8 @@
     "react-pageflip": "^2.0.3",
     "resend": "^4.0.0",
     "stripe": "^17.5.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

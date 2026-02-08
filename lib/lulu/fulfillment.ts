@@ -7,6 +7,7 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { createLuluClient, ShippingLevel } from './client';
 import { Book } from '@/lib/types';
 import { getPrintableInteriorPageCount } from './page-count';
+import { env } from '@/lib/env';
 
 /**
  * Fulfillment status enum
@@ -120,7 +121,7 @@ export async function fulfillOrder(orderId: string, interiorPathOverride?: strin
 
         // Tunnel Rewrite Logic for Supabase Storage
         // Use STORAGE_TUNNEL_URL to expose local Supabase storage to Lulu
-        const storageTunnelUrl = process.env.STORAGE_TUNNEL_URL || process.env.TUNNEL_URL;
+        const storageTunnelUrl = env.STORAGE_TUNNEL_URL || env.TUNNEL_URL;
         const rewriteUrl = (url: string) => {
             if (storageTunnelUrl && (url.includes('127.0.0.1') || url.includes('localhost'))) {
                 return url.replace(/http:\/\/(127\.0\.0\.1|localhost):\d+/, storageTunnelUrl);

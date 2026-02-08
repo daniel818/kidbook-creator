@@ -1,5 +1,6 @@
 import { createLuluClient, CostCalculationOptions } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { env } from '@/lib/env';
 import { getFallbackWholesale } from '@/lib/lulu/fallback-prices';
 
 // ============================================
@@ -107,7 +108,7 @@ function buildBaseOptions(input: RetailPricingInput): CostCalculationOptions {
 // --- Main Pricing Function ---
 
 export async function calculateRetailPricing(input: RetailPricingInput): Promise<RetailPricingResult> {
-    const hasLuluCredentials = Boolean(process.env.LULU_API_KEY && process.env.LULU_API_SECRET);
+    const hasLuluCredentials = Boolean(env.LULU_API_KEY && env.LULU_API_SECRET);
     const shouldCalculateShipping = Boolean(input.shippingOption && input.shipping);
 
     let wholesale: number;

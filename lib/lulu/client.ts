@@ -3,6 +3,9 @@
 // ============================================
 // Print-on-demand integration for book printing
 
+import { env } from '@/lib/env';
+import { withRetry, HttpError, RETRY_CONFIGS } from '../retry';
+
 export interface LuluCredentials {
     apiKey: string;
     apiSecret: string;
@@ -92,24 +95,27 @@ class LuluClient {
             return this.accessToken;
         }
 
-        // Request new token
-        const response = await fetch(`${this.baseUrl}/auth/realms/glasstree/protocol/openid-connect/token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                grant_type: 'client_credentials',
-                client_id: this.credentials.apiKey,
-                client_secret: this.credentials.apiSecret,
-            }),
-        });
+        // Request new token with retry
+        const data = await withRetry(async () => {
+            const response = await fetch(`${this.baseUrl}/auth/realms/glasstree/protocol/openid-connect/token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    grant_type: 'client_credentials',
+                    client_id: this.credentials.apiKey,
+                    client_secret: this.credentials.apiSecret,
+                }),
+            });
 
-        if (!response.ok) {
-            throw new Error(`Failed to authenticate with Lulu: ${response.statusText}`);
-        }
+            if (!response.ok) {
+                throw new HttpError(`Failed to authenticate with Lulu: ${response.statusText}`, response.status);
+            }
 
-        const data = await response.json();
+            return response.json();
+        }, { ...RETRY_CONFIGS.lulu, maxRetries: 2, serviceLabel: 'Lulu Auth' });
+
         this.accessToken = data.access_token;
         this.tokenExpiry = new Date(Date.now() + (data.expires_in - 60) * 1000);
 
@@ -119,27 +125,36 @@ class LuluClient {
     private async request<T>(
         method: string,
         endpoint: string,
-        body?: unknown
+        body?: unknown,
+        options?: { skipRetry?: boolean }
     ): Promise<T> {
         const token = await this.getAccessToken();
         const url = `${this.baseUrl}${endpoint}`;
 
-        const response = await fetch(url, {
-            method,
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'User-Agent': 'KidBookCreator/1.0',
-            },
-            body: body ? JSON.stringify(body) : undefined,
-        });
+        const doFetch = async () => {
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'KidBookCreator/1.0',
+                },
+                body: body ? JSON.stringify(body) : undefined,
+            });
 
-        if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Lulu API error: ${response.status} - ${error}`);
+            if (!response.ok) {
+                const error = await response.text();
+                throw new HttpError(`Lulu API error: ${response.status} - ${error}`, response.status);
+            }
+
+            return response.json() as Promise<T>;
+        };
+
+        if (options?.skipRetry) {
+            return doFetch();
         }
 
-        return response.json();
+        return withRetry(doFetch, RETRY_CONFIGS.lulu);
     }
 
     // Upload a print-ready file
@@ -156,20 +171,22 @@ class LuluClient {
         // Convert Blob to ArrayBuffer for reliable Node fetch upload
         const arrayBuffer = await file.arrayBuffer();
 
-        // Upload the actual file
-        const uploadRes = await fetch(createResponse.upload_url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/pdf',
-            },
-            body: arrayBuffer,
-        });
+        // Upload the actual file with retry
+        await withRetry(async () => {
+            const uploadRes = await fetch(createResponse.upload_url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/pdf',
+                },
+                body: arrayBuffer,
+            });
 
-        if (!uploadRes.ok) {
-            const errText = await uploadRes.text();
-            console.error(`[Lulu] Upload PUT failed: ${uploadRes.status} - ${errText}`);
-            throw new Error(`Failed to upload file content: ${uploadRes.status}`);
-        }
+            if (!uploadRes.ok) {
+                const errText = await uploadRes.text();
+                console.error(`[Lulu] Upload PUT failed: ${uploadRes.status} - ${errText}`);
+                throw new HttpError(`Failed to upload file content: ${uploadRes.status}`, uploadRes.status);
+            }
+        }, { ...RETRY_CONFIGS.lulu, serviceLabel: 'Lulu Upload' });
 
         // Notify Lulu that upload is complete
         await this.request(
@@ -337,7 +354,7 @@ class LuluClient {
         const startTime = Date.now();
 
         while (Date.now() - startTime < timeoutMs) {
-            const response: any = await this.request('GET', `/printable-normalization/${id}/`);
+            const response: any = await this.request('GET', `/printable-normalization/${id}/`, undefined, { skipRetry: true });
             const status = response.status.name;
 
             console.log(`[Lulu] Validation Job ${id}: ${status}`);
@@ -378,7 +395,7 @@ export interface CostCalculationOptions {
     stateCode?: string;
     postalCode?: string;
     shippingCity?: string;
-    shippingOption?: 'MAIL' | 'PRIORITY_MAIL' | 'GROUND' | 'EXPEDITED' | 'EXPRESS';
+    shippingOption?: ShippingLevel;
 }
 
 export interface ShippingOptionRequest {
@@ -442,15 +459,10 @@ let _luluClientSingleton: LuluClient | null = null;
 
 export function createLuluClient(): LuluClient {
     if (!_luluClientSingleton) {
-        const apiKey = process.env.LULU_API_KEY;
-        const apiSecret = process.env.LULU_API_SECRET;
-        if (!apiKey || !apiSecret) {
-            throw new Error('Lulu API credentials not configured (LULU_API_KEY / LULU_API_SECRET)');
-        }
         _luluClientSingleton = new LuluClient({
-            apiKey,
-            apiSecret,
-            sandbox: process.env.LULU_SANDBOX === 'true',
+            apiKey: env.LULU_API_KEY,
+            apiSecret: env.LULU_API_SECRET,
+            sandbox: env.LULU_SANDBOX === 'true',
         });
     }
     return _luluClientSingleton;

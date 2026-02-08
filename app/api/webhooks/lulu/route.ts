@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
+import { env } from '@/lib/env';
 
 // Lulu Webhook Handler
 // Receives updates for print job status changes throughout the lifecycle:
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
         const signature = req.headers.get('lulu-hmac-sha256') || req.headers.get('x-lulu-signature');
 
         // Require webhook secret — reject all webhooks if not configured
-        const secret = process.env.LULU_WEBHOOK_SECRET;
+        const secret = env.LULU_WEBHOOK_SECRET;
         if (!secret) {
             console.error('[Lulu Webhook] CRITICAL: LULU_WEBHOOK_SECRET is not configured. Rejecting webhook.');
             return NextResponse.json(

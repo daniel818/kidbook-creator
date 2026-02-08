@@ -6,8 +6,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLuluClient } from '@/lib/lulu/client';
 import { getLuluProductId } from '@/lib/lulu/fulfillment';
+import { env } from '@/lib/env';
 import { requireAuth } from '@/lib/auth/api-guard';
 import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
+import { shippingOptionsSchema, parseBody } from '@/lib/validations';
 
 export async function POST(request: NextRequest) {
     try {
@@ -23,23 +25,16 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const {
-            format,
-            size,
-            pageCount,
-            quantity,
-            shipping,
-            currency,
-        } = body;
 
-        if (!format || !size || !pageCount || !quantity || !shipping) {
-            return NextResponse.json(
-                { error: 'Missing required fields: format, size, pageCount, quantity, shipping' },
-                { status: 400 }
-            );
+        // Validate request body with Zod
+        const result = parseBody(shippingOptionsSchema, body);
+        if (!result.success) {
+            return NextResponse.json({ error: result.error }, { status: 400 });
         }
 
-        if (!process.env.LULU_API_KEY || !process.env.LULU_API_SECRET) {
+        const { format, size, pageCount, quantity, shipping, currency } = result.data;
+
+        if (!env.LULU_API_KEY || !env.LULU_API_SECRET) {
             return NextResponse.json({ error: 'Lulu credentials not configured' }, { status: 500 });
         }
 

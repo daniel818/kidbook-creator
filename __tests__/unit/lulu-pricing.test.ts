@@ -231,15 +231,15 @@ describe('calculateRetailPricing', () => {
             expect(result.total).toBe(result.subtotal); // no shipping on fallback
         });
 
-        it('should use fallback when no Lulu credentials', async () => {
-            delete process.env.LULU_API_KEY;
-            delete process.env.LULU_API_SECRET;
+        it('should use fallback when Lulu API fails', async () => {
+            // With env validation, Lulu credentials are always present.
+            // Test the fallback path by simulating an API failure instead.
+            mockCalculateCost.mockRejectedValue(new Error('Lulu API unavailable'));
 
             const result = await calculateRetailPricing(baseInput);
 
             expect(result.isEstimate).toBe(true);
             expect(result.subtotal).toBeGreaterThanOrEqual(4000);
-            expect(mockCalculateCost).not.toHaveBeenCalled();
         });
     });
 

@@ -125,22 +125,3 @@ export function clearAllData(): void {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(CURRENT_BOOK_KEY);
 }
-
-/**
- * Generate a thumbnail from the cover page (placeholder for now)
- */
-export function generateThumbnail(book: Book): string {
-    // This would be replaced with actual canvas-to-image conversion
-    // For now, return a placeholder based on book theme
-    const themeColors: Record<string, string> = {
-        adventure: 'f97316',
-        bedtime: '6366f1',
-        learning: '10b981',
-        fantasy: 'ec4899',
-        animals: 'f59e0b',
-        custom: '6366f1'
-    };
-
-    const color = themeColors[book.settings.bookTheme] || '6366f1';
-    return `https://via.placeholder.com/300x300/${color}/ffffff?text=${encodeURIComponent(book.settings.title || 'My Book')}`;
-}
