@@ -2,6 +2,9 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import path from 'path';
+import { createModuleLogger } from '../lib/logger';
+
+const logger = createModuleLogger('script:test-image-consistency');
 
 // Load env
 const envPath = path.resolve(__dirname, '../.env.local');
@@ -21,7 +24,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-    console.error("Missing Supabase credentials");
+    logger.error("Missing Supabase credentials");
     process.exit(1);
 }
 
@@ -31,7 +34,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const VALID_STYLES = ['storybook_classic', 'watercolor', 'digital_art', 'cartoon', 'pixel_art', 'coloring_book'];
 
 async function regenerateBookImages(bookId: string, forceStyle?: string) {
-    console.log(`\n=== REGENERATING IMAGES FOR BOOK: ${bookId} ===`);
+    logger.info({ bookId }, '=== REGENERATING IMAGES FOR BOOK ===');
 
     const { data: book, error } = await supabase
         .from('books')
@@ -40,12 +43,11 @@ async function regenerateBookImages(bookId: string, forceStyle?: string) {
         .single();
 
     if (!book) {
-        console.error("Book not found");
+        logger.error("Book not found");
         return;
     }
 
-    console.log(`Title: ${book.title}`);
-    console.log(`Current Style (inferred/default): ${forceStyle || 'storybook_classic'}`);
+    logger.info({ title: book.title, style: forceStyle || 'storybook_classic' }, 'Book details');
 
     // Dynamic import
     const { generateIllustration } = await import('../lib/gemini/client');
@@ -79,8 +81,7 @@ async function regenerateBookImages(bookId: string, forceStyle?: string) {
         const sceneText = page.text_elements?.[0]?.content || "Scene description unavailable";
         const scenePrompt = `Illustration matching the story text: "${sceneText}"`;
 
-        console.log(`\nGenerating Page ${page.page_number}...`);
-        console.log(`Scene: ${scenePrompt}`);
+        logger.info({ pageNumber: page.page_number, scenePrompt }, 'Generating page');
 
         try {
             const { imageUrl, usage } = await generateIllustration({
@@ -91,7 +92,7 @@ async function regenerateBookImages(bookId: string, forceStyle?: string) {
                 aspectRatio: book.print_format === 'square' ? '1:1' : '3:4',
             });
 
-            console.log(`Generated URL: ${imageUrl.substring(0, 30)}...`);
+            logger.info({ imageUrl: imageUrl.substring(0, 30) }, 'Generated URL');
 
             // Should we update the DB? 
             // The user asked to "check" if they are correct. 
@@ -100,7 +101,7 @@ async function regenerateBookImages(bookId: string, forceStyle?: string) {
             // I'll just dry-run the generation logic validation.
 
         } catch (e) {
-            console.error("Generation failed", e);
+            logger.error({ err: e }, "Generation failed");
         }
     }
 }

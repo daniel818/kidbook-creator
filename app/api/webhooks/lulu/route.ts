@@ -2,7 +2,10 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
+import { createModuleLogger } from '@/lib/logger';
 import { env } from '@/lib/env';
+
+const logger = createModuleLogger('lulu-webhook');
 
 // Lulu Webhook Handler
 // Receives updates for print job status changes throughout the lifecycle:
@@ -42,7 +45,7 @@ export async function POST(req: Request) {
         // Require webhook secret — reject all webhooks if not configured
         const secret = env.LULU_WEBHOOK_SECRET;
         if (!secret) {
-            console.error('[Lulu Webhook] CRITICAL: LULU_WEBHOOK_SECRET is not configured. Rejecting webhook.');
+            logger.error('CRITICAL: LULU_WEBHOOK_SECRET is not configured. Rejecting webhook.');
             return NextResponse.json(
                 { error: 'Webhook verification not configured' },
                 { status: 500 }
@@ -55,7 +58,7 @@ export async function POST(req: Request) {
         // Verify signature against raw body
         const isValid = verifyLuluSignature(rawBody, signature, secret);
         if (!isValid) {
-            console.error('[Lulu Webhook] Invalid Signature');
+            logger.error('Invalid Signature');
             return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
         }
 
@@ -72,7 +75,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
         }
 
-        console.log('[Lulu Webhook] Received update:', JSON.stringify(body, null, 2));
+        logger.debug({ body }, 'Received update');
 
         const supabase = await createAdminClient();
 
@@ -138,13 +141,7 @@ export async function POST(req: Request) {
         }
 
         // Log the mapped status for debugging
-        console.log(`[Lulu Webhook] Status mapping: ${status} -> ${updateData.fulfillment_status}`);
-        if (updateData.carrier_name) {
-            console.log(`[Lulu Webhook] Carrier: ${updateData.carrier_name}`);
-        }
-        if (updateData.tracking_url) {
-            console.log(`[Lulu Webhook] Tracking URL: ${updateData.tracking_url}`);
-        }
+        logger.info({ luluStatus: status, fulfillmentStatus: updateData.fulfillment_status, carrierName: updateData.carrier_name, trackingUrl: updateData.tracking_url }, 'Status mapping');
 
         // Update Order in DB
         const { error } = await supabase
@@ -153,16 +150,16 @@ export async function POST(req: Request) {
             .eq('lulu_print_job_id', printJobId);
 
         if (error) {
-            console.error('[Lulu Webhook] DB Update Error:', error);
+            logger.error({ err: error }, 'DB update error');
             return NextResponse.json({ error: 'DB Update Failed' }, { status: 500 });
         }
 
-        console.log(`[Lulu Webhook] Updated Order with Job ${printJobId} to status ${status} (${updateData.fulfillment_status})`);
+        logger.info({ printJobId, luluStatus: status, fulfillmentStatus: updateData.fulfillment_status }, 'Updated order');
 
         return NextResponse.json({ success: true });
 
     } catch (error) {
-        console.error('[Lulu Webhook] Error:', error);
+        logger.error({ err: error }, 'Webhook handler error');
         return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
     }
 }

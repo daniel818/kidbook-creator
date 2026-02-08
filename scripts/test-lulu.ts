@@ -4,6 +4,10 @@
 // Load env vars first
 require('dotenv').config({ path: '.env.local' });
 
+import { createModuleLogger } from '../lib/logger';
+
+const logger = createModuleLogger('script:test-lulu');
+
 async function testLuluConnection() {
     // Dynamic import for fetch (works in Node 18+)
     const fetch = (await import('node-fetch')).default;
@@ -15,10 +19,7 @@ async function testLuluConnection() {
         ? 'https://api.sandbox.lulu.com'
         : 'https://api.lulu.com';
 
-    console.log('🔍 Testing Lulu API connection...');
-    console.log(`   Environment: ${isSandbox ? 'SANDBOX' : 'PRODUCTION'}`);
-    console.log(`   Base URL: ${baseUrl}`);
-    console.log(`   API Key: ${apiKey?.substring(0, 8)}...`);
+    logger.info({ environment: isSandbox ? 'SANDBOX' : 'PRODUCTION', baseUrl, apiKeyPrefix: apiKey?.substring(0, 8) }, 'Testing Lulu API connection');
 
     try {
         // Get OAuth token
@@ -43,12 +44,11 @@ async function testLuluConnection() {
         }
 
         const tokenData = await tokenResponse.json() as { expires_in: number; access_token: string };
-        console.log('✅ Successfully authenticated with Lulu!');
-        console.log(`   Token expires in: ${tokenData.expires_in} seconds`);
+        logger.info({ expiresIn: tokenData.expires_in }, 'Successfully authenticated with Lulu');
 
         // Test API by getting pod packages (no-op, just checking connection)
         const packagesUrl = `${baseUrl}/print-job-cost-calculations/`;
-        console.log('\n🔍 Testing cost calculation API...');
+        logger.info('Testing cost calculation API...');
 
         const costResponse = await fetch(packagesUrl, {
             method: 'POST',
@@ -75,18 +75,16 @@ async function testLuluConnection() {
 
         if (!costResponse.ok) {
             const error = await costResponse.text();
-            console.log(`⚠️  Cost API returned error: ${costResponse.status}`);
-            console.log(`   This may be normal for sandbox - connection works!`);
+            logger.info({ status: costResponse.status }, 'Cost API returned error (may be normal for sandbox - connection works)');
         } else {
             const costData = await costResponse.json() as { total_cost_incl_tax?: string };
-            console.log('✅ Cost calculation API works!');
-            console.log(`   Sample cost: $${costData.total_cost_incl_tax || 'N/A'}`);
+            logger.info({ sampleCost: costData.total_cost_incl_tax || 'N/A' }, 'Cost calculation API works');
         }
 
-        console.log('\n✅ Lulu Sandbox connection verified!');
+        logger.info('Lulu Sandbox connection verified');
 
     } catch (error) {
-        console.error('❌ Error connecting to Lulu:', error);
+        logger.error({ err: error }, 'Error connecting to Lulu');
         process.exit(1);
     }
 }

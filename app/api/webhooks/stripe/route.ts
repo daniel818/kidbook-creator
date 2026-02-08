@@ -10,6 +10,7 @@ import { stripe } from '@/lib/stripe/server';
 import { fulfillOrder, FulfillmentStatus } from '@/lib/lulu/fulfillment';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendOrderConfirmation, sendDigitalUnlockEmail, OrderEmailData, DigitalUnlockEmailData } from '@/lib/email/client';
+import { createRequestLogger, createModuleLogger } from '@/lib/logger';
 import { env } from '@/lib/env';
 
 const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
@@ -49,28 +50,20 @@ interface BookRow {
     digital_unlock_email_sent?: boolean;
 }
 
-const logWebhook = (message: string, data?: unknown) => {
-    const timestamp = new Date().toISOString();
-    const logMsg = `[Webhook ${timestamp}] ${message}`;
-    if (data !== undefined) {
-        console.log(logMsg, data);
-    } else {
-        console.log(logMsg);
-    }
-};
+const moduleLogger = createModuleLogger('stripe-webhook');
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     const body = await request.text();
     const headersList = await headers();
     const signature = headersList.get('stripe-signature');
-    logWebhook('Webhook env', {
+    logger.info({
         hasServiceKey: !!env.SUPABASE_SERVICE_ROLE_KEY,
         hasSupabaseUrl: !!env.NEXT_PUBLIC_SUPABASE_URL,
-    });
+    }, 'Webhook env');
 
     if (!signature) {
-        console.error('[Webhook] Missing stripe-signature header');
-        logWebhook('Missing stripe-signature header');
+        logger.error('Missing stripe-signature header');
         return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
     }
 
@@ -79,26 +72,24 @@ export async function POST(request: NextRequest) {
     try {
         event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
-        console.error('[Webhook] Signature verification failed:', err);
-        logWebhook('Signature verification failed');
+        logger.error({ err }, 'Signature verification failed');
         return NextResponse.json(
             { error: 'Webhook signature verification failed' },
             { status: 400 }
         );
     }
 
-    console.log(`[Webhook] Received event: ${event.type}`);
-    logWebhook('Received event', { type: event.type, id: event.id });
+    logger.info({ type: event.type, id: event.id }, 'Received event');
 
     try {
         switch (event.type) {
             case 'checkout.session.completed': {
                 const session = event.data.object as Stripe.Checkout.Session;
                 if (session.metadata?.unlockType === 'digital') {
-                    logWebhook('Handling digital unlock', { sessionId: session.id, bookId: session.metadata?.bookId });
+                    logger.info({ sessionId: session.id, bookId: session.metadata?.bookId }, 'Handling digital unlock');
                     await handleDigitalUnlock(session);
                 } else {
-                    logWebhook('Handling print checkout', { sessionId: session.id, orderId: session.metadata?.orderId });
+                    logger.info({ sessionId: session.id, orderId: session.metadata?.orderId }, 'Handling print checkout');
                     await handleCheckoutComplete(session);
                 }
                 break;
@@ -109,21 +100,20 @@ export async function POST(request: NextRequest) {
                 const piMetadata = paymentIntent.metadata;
 
                 if (piMetadata?.flow === 'embedded_print') {
-                    logWebhook('Handling embedded print payment', {
+                    logger.info({
                         id: paymentIntent.id,
                         orderId: piMetadata?.orderId,
-                    });
+                    }, 'Handling embedded print payment');
                     await handlePaymentIntentSucceeded(paymentIntent);
                 } else if (piMetadata?.flow === 'embedded_digital') {
-                    logWebhook('Handling embedded digital payment', {
+                    logger.info({
                         id: paymentIntent.id,
                         bookId: piMetadata?.bookId,
-                    });
+                    }, 'Handling embedded digital payment');
                     await handleDigitalPaymentIntentSucceeded(paymentIntent);
                 } else {
                     // Legacy Checkout Session flow — handled by checkout.session.completed
-                    console.log('[Webhook] Payment succeeded (legacy):', paymentIntent.id);
-                    logWebhook('payment_intent.succeeded (legacy)', { id: paymentIntent.id });
+                    logger.info({ id: paymentIntent.id }, 'Payment succeeded (legacy)');
                 }
                 break;
             }
@@ -135,13 +125,12 @@ export async function POST(request: NextRequest) {
             }
 
             default:
-                console.log(`[Webhook] Unhandled event type: ${event.type}`);
+                logger.info({ eventType: event.type }, 'Unhandled event type');
         }
 
         return NextResponse.json({ received: true });
     } catch (error) {
-        console.error('[Webhook] Handler error:', error);
-        logWebhook('Handler error');
+        logger.error({ err: error }, 'Handler error');
         return NextResponse.json(
             { error: 'Webhook handler failed' },
             { status: 500 }
@@ -157,7 +146,8 @@ export async function POST(request: NextRequest) {
  * 4. Trigger Lulu fulfillment
  */
 async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise<void> {
-    console.log(`[Webhook] Processing checkout session: ${session.id}`);
+    const logger = moduleLogger.child({ handler: 'checkoutComplete', sessionId: session.id });
+    logger.info('Processing checkout session');
 
     const supabase = await createAdminClient();
     const metadata = session.metadata;
@@ -175,7 +165,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
             .single();
 
         if (error || !data) {
-            console.error('[Webhook] Could not find order for session:', session.id);
+            logger.error({ err: error }, 'Could not find order for session');
             return;
         }
         order = data as OrderRow;
@@ -194,12 +184,12 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
         .single();
 
     if (updateError) {
-        console.error('[Webhook] Failed to update order:', updateError);
+        logger.error({ err: updateError, orderId }, 'Failed to update order');
         return;
     }
 
     order = updatedOrder as OrderRow;
-    console.log(`[Webhook] Order ${orderId} marked as paid`);
+    logger.info({ orderId }, 'Order marked as paid');
 
     // Update book status to 'ordered'
     let book: BookRow | null = null;
@@ -247,37 +237,37 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session): Promise
 
             const emailResult = await sendOrderConfirmation(emailData);
             if (emailResult.success) {
-                console.log('[Webhook] Order confirmation email sent:', emailResult.id);
+                logger.info({ emailId: emailResult.id }, 'Order confirmation email sent');
             } else {
-                console.error('[Webhook] Failed to send order confirmation email');
+                logger.error('Failed to send order confirmation email');
             }
         } catch (emailError) {
             // Don't fail the webhook if email fails
-            console.error('[Webhook] Email sending error:', emailError);
+            logger.error({ err: emailError }, 'Email sending error');
         }
     }
 
     // Trigger Lulu fulfillment
-    console.log(`[Webhook] Triggering fulfillment for order: ${orderId}`);
+    logger.info({ orderId }, 'Triggering fulfillment for order');
     try {
         const result = await fulfillOrder(orderId);
 
         if (result.status === FulfillmentStatus.SUCCESS) {
-            console.log(`[Webhook] Fulfillment successful for order ${orderId}`);
+            logger.info({ orderId }, 'Fulfillment successful');
         } else {
-            console.error(`[Webhook] Fulfillment failed for order ${orderId}:`, result.error);
+            logger.error({ orderId, error: result.error }, 'Fulfillment failed');
         }
     } catch (fulfillError) {
-        console.error(`[Webhook] Fulfillment error for order ${orderId}:`, fulfillError);
+        logger.error({ err: fulfillError, orderId }, 'Fulfillment error');
     }
 }
 
 async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<void> {
     const supabase = await createAdminClient();
     const bookId = session.metadata?.bookId;
+    const logger = moduleLogger.child({ handler: 'digitalUnlock', sessionId: session.id, bookId });
     if (!bookId) {
-        console.error('[Webhook] Digital unlock missing bookId');
-        logWebhook('Digital unlock missing bookId');
+        logger.error('Digital unlock missing bookId');
         return;
     }
 
@@ -293,7 +283,7 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
         existingBook?.digital_unlock_paid &&
         existingBook.digital_unlock_session_id === session.id
     ) {
-        logWebhook('Digital unlock already processed', { bookId, sessionId: session.id });
+        logger.info('Digital unlock already processed');
         return;
     }
 
@@ -310,13 +300,12 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
         .single();
 
     if (error || !book) {
-        console.error('[Webhook] Failed to mark digital unlock paid', error);
-        logWebhook('Failed to mark digital unlock paid', { error, bookId, sessionId: session.id });
+        logger.error({ err: error }, 'Failed to mark digital unlock paid');
         // Return 500 so Stripe retries the webhook (idempotency guard above prevents duplicates).
         throw new Error(`Failed to mark digital unlock paid for book ${bookId}`);
     }
 
-    logWebhook('Digital unlock marked paid', { bookId, sessionId: session.id });
+    logger.info('Digital unlock marked paid');
 
     const customerEmail = session.customer_email || session.customer_details?.email;
     let recipientEmail = customerEmail || '';
@@ -325,7 +314,7 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
     if (!recipientEmail) {
         const { data: userResult, error: userError } = await supabase.auth.admin.getUserById(book.user_id);
         if (userError) {
-            console.error('[Webhook] Failed to load user email', userError);
+            logger.error({ err: userError }, 'Failed to load user email');
         } else {
             recipientEmail = userResult?.user?.email || '';
             recipientName = userResult?.user?.user_metadata?.full_name || recipientName;
@@ -333,7 +322,7 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
     }
 
     if (!recipientEmail) {
-        console.error('[Webhook] Missing recipient email for digital unlock');
+        logger.error('Missing recipient email for digital unlock');
         return;
     }
 
@@ -353,11 +342,11 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
                 .update({ digital_unlock_email_sent: true })
                 .eq('id', book.id);
             if (emailSentError) {
-                logWebhook('Failed to mark digital unlock email sent (non-fatal)', { error: emailSentError, bookId: book.id });
+                logger.warn({ err: emailSentError, bookId: book.id }, 'Failed to mark digital unlock email sent (non-fatal)');
             }
         }
     } catch (emailError) {
-        console.error('[Webhook] Digital unlock email error:', emailError);
+        logger.error({ err: emailError }, 'Digital unlock email error');
     }
 }
 
@@ -366,7 +355,8 @@ async function handleDigitalUnlock(session: Stripe.Checkout.Session): Promise<vo
  * Mirrors handleCheckoutComplete but works with PaymentIntent metadata.
  */
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    console.log(`[Webhook] Processing payment intent: ${paymentIntent.id}`);
+    const logger = moduleLogger.child({ handler: 'paymentIntentSucceeded', paymentIntentId: paymentIntent.id });
+    logger.info('Processing payment intent');
 
     const supabase = await createAdminClient();
     const metadata = paymentIntent.metadata;
@@ -383,7 +373,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
             .single();
 
         if (error || !data) {
-            console.error('[Webhook] Could not find order for PI:', paymentIntent.id);
+            logger.error({ err: error }, 'Could not find order for payment intent');
             return;
         }
         order = data as OrderRow;
@@ -402,12 +392,12 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
         .single();
 
     if (updateError) {
-        console.error('[Webhook] Failed to update order:', updateError);
+        logger.error({ err: updateError, orderId }, 'Failed to update order');
         return;
     }
 
     order = updatedOrder as OrderRow;
-    console.log(`[Webhook] Order ${orderId} marked as paid (embedded flow)`);
+    logger.info({ orderId }, 'Order marked as paid (embedded flow)');
 
     // Update book status to 'ordered'
     const bookId = metadata?.bookId || order.book_id;
@@ -449,31 +439,31 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 
             const emailResult = await sendOrderConfirmation(emailData);
             if (emailResult.success) {
-                console.log('[Webhook] Order confirmation email sent:', emailResult.id);
+                logger.info({ emailId: emailResult.id }, 'Order confirmation email sent');
             } else {
-                console.error('[Webhook] Failed to send order confirmation email');
+                logger.error('Failed to send order confirmation email');
             }
         } catch (emailError) {
-            console.error('[Webhook] Email sending error:', emailError);
+            logger.error({ err: emailError }, 'Email sending error');
         }
     }
 
     // Trigger Lulu fulfillment
     if (!orderId) {
-        console.error('[Webhook] Cannot trigger fulfillment: missing orderId');
+        logger.error('Cannot trigger fulfillment: missing orderId');
         return;
     }
-    console.log(`[Webhook] Triggering fulfillment for order: ${orderId}`);
+    logger.info({ orderId }, 'Triggering fulfillment for order');
     try {
         const result = await fulfillOrder(orderId);
 
         if (result.status === FulfillmentStatus.SUCCESS) {
-            console.log(`[Webhook] Fulfillment successful for order ${orderId}`);
+            logger.info({ orderId }, 'Fulfillment successful');
         } else {
-            console.error(`[Webhook] Fulfillment failed for order ${orderId}:`, result.error);
+            logger.error({ orderId, error: result.error }, 'Fulfillment failed');
         }
     } catch (fulfillError) {
-        console.error(`[Webhook] Fulfillment error for order ${orderId}:`, fulfillError);
+        logger.error({ err: fulfillError, orderId }, 'Fulfillment error');
     }
 }
 
@@ -484,9 +474,9 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     const supabase = await createAdminClient();
     const bookId = paymentIntent.metadata?.bookId;
+    const logger = moduleLogger.child({ handler: 'digitalPaymentIntentSucceeded', paymentIntentId: paymentIntent.id, bookId });
     if (!bookId) {
-        console.error('[Webhook] Digital unlock PI missing bookId');
-        logWebhook('Digital unlock PI missing bookId');
+        logger.error('Digital unlock PI missing bookId');
         return;
     }
 
@@ -501,7 +491,7 @@ async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.Payment
         existingBook?.digital_unlock_paid &&
         existingBook.digital_unlock_session_id === paymentIntent.id
     ) {
-        logWebhook('Digital unlock already processed (PI)', { bookId, piId: paymentIntent.id });
+        logger.info('Digital unlock already processed (PI)');
         return;
     }
 
@@ -516,12 +506,11 @@ async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.Payment
         .single();
 
     if (error || !book) {
-        console.error('[Webhook] Failed to mark digital unlock paid (PI)', error);
-        logWebhook('Failed to mark digital unlock paid (PI)', { error, bookId, piId: paymentIntent.id });
+        logger.error({ err: error }, 'Failed to mark digital unlock paid (PI)');
         throw new Error(`Failed to mark digital unlock paid for book ${bookId}`);
     }
 
-    logWebhook('Digital unlock marked paid (PI)', { bookId, piId: paymentIntent.id });
+    logger.info('Digital unlock marked paid (PI)');
 
     // Get customer email
     let recipientEmail = paymentIntent.receipt_email || '';
@@ -530,7 +519,7 @@ async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.Payment
     if (!recipientEmail) {
         const { data: userResult, error: userError } = await supabase.auth.admin.getUserById(book.user_id);
         if (userError) {
-            console.error('[Webhook] Failed to load user email', userError);
+            logger.error({ err: userError }, 'Failed to load user email');
         } else {
             recipientEmail = userResult?.user?.email || '';
             recipientName = userResult?.user?.user_metadata?.full_name || recipientName;
@@ -538,7 +527,7 @@ async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.Payment
     }
 
     if (!recipientEmail) {
-        console.error('[Webhook] Missing recipient email for digital unlock');
+        logger.error('Missing recipient email for digital unlock');
         return;
     }
 
@@ -557,11 +546,11 @@ async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.Payment
                 .update({ digital_unlock_email_sent: true })
                 .eq('id', book.id);
             if (emailSentError) {
-                logWebhook('Failed to mark digital unlock email sent (non-fatal)', { error: emailSentError, bookId: book.id });
+                logger.warn({ err: emailSentError, bookId: book.id }, 'Failed to mark digital unlock email sent (non-fatal)');
             }
         }
     } catch (emailError) {
-        console.error('[Webhook] Digital unlock email error:', emailError);
+        logger.error({ err: emailError }, 'Digital unlock email error');
     }
 }
 
@@ -569,7 +558,8 @@ async function handleDigitalPaymentIntentSucceeded(paymentIntent: Stripe.Payment
  * Handle failed payment
  */
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    console.log(`[Webhook] Payment failed: ${paymentIntent.id}`);
+    const logger = moduleLogger.child({ handler: 'paymentFailed', paymentIntentId: paymentIntent.id });
+    logger.info('Payment failed');
 
     const supabase = await createAdminClient();
 
@@ -583,6 +573,6 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise
         .eq('stripe_payment_intent_id', paymentIntent.id);
 
     if (error) {
-        console.error('[Webhook] Failed to update order after payment failure:', error);
+        logger.error({ err: error }, 'Failed to update order after payment failure');
     }
 }

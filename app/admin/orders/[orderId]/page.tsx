@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import Link from 'next/link';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('admin-order-detail');
 
 interface Order {
     id: string;
@@ -89,7 +92,7 @@ export default function AdminOrderDetailPage() {
                 setTrackingNumber(data.tracking_number || '');
             }
         } catch (error) {
-            console.error('Error loading order:', error);
+            logger.error({ err: error }, 'Error loading order');
         } finally {
             setIsLoading(false);
         }

@@ -6,7 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { AuthError } from '@supabase/supabase-js';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './AuthModal.module.css';
+
+const logger = createClientModuleLogger('auth-modal');
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -64,7 +67,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                 ]) as { error: AuthError | null };
 
                 if (result.error) {
-                    console.error('Login error:', result.error);
+                    logger.error({ err: result.error }, 'Login error');
                     setError(result.error.message);
                 } else {
                     onClose();
@@ -76,7 +79,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                 ]) as { error: AuthError | null };
 
                 if (result.error) {
-                    console.error('Signup error:', result.error);
+                    logger.error({ err: result.error }, 'Signup error');
                     setError(result.error.message);
                 } else {
                     setSuccess(t('signup.successMessage'));
@@ -88,14 +91,14 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', customTitle,
                 ]) as { error: AuthError | null };
 
                 if (result.error) {
-                    console.error('Reset password error:', result.error);
+                    logger.error({ err: result.error }, 'Reset password error');
                     setError(result.error.message);
                 } else {
                     setSuccess(t('forgot.successMessage'));
                 }
             }
         } catch (err: any) {
-            console.error('Auth unexpected error:', err);
+            logger.error({ err }, 'Auth unexpected error');
             setError(err.message || t('errors.unexpected'));
         } finally {
             setIsLoading(false);

@@ -1,11 +1,10 @@
 
 import { createClient } from '@supabase/supabase-js';
+import { createModuleLogger } from '@/lib/logger';
 import { env } from '@/lib/env';
 import { withRetry, RETRY_CONFIGS } from '../retry';
 
-function log(msg: string) {
-    console.log(`[Upload] ${msg}`);
-}
+const logger = createModuleLogger('upload');
 
 const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = env.SUPABASE_SERVICE_ROLE_KEY;
@@ -14,7 +13,7 @@ export async function uploadImageToStorage(bookId: string, pageNumber: number, i
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const fileName = `${bookId}/page_${pageNumber}_${Date.now()}.png`;
-    log(`Uploading ${fileName}, size: ${imageBuffer.length}`);
+    logger.info({ fileName, size: imageBuffer.length }, 'Uploading image');
 
     return withRetry(async () => {
         const { data, error } = await supabase.storage
@@ -25,7 +24,7 @@ export async function uploadImageToStorage(bookId: string, pageNumber: number, i
             });
 
         if (error) {
-            log(`Upload error: ${JSON.stringify(error)}`);
+            logger.error({ err: error }, 'Upload error');
             throw error;
         }
 
@@ -47,7 +46,7 @@ export async function uploadReferenceImage(
             : safeType.includes('gif') ? 'gif'
                 : 'jpg';
     const fileName = `${userId}/${bookId}/reference.${ext}`;
-    log(`Uploading reference image ${fileName}, size: ${imageBuffer.length}`);
+    logger.info({ fileName, size: imageBuffer.length }, 'Uploading reference image');
 
     return withRetry(async () => {
         const { error } = await supabase.storage
@@ -58,7 +57,7 @@ export async function uploadReferenceImage(
             });
 
         if (error) {
-            log(`Reference upload error: ${JSON.stringify(error)}`);
+            logger.error({ err: error }, 'Reference upload error');
             throw error;
         }
 

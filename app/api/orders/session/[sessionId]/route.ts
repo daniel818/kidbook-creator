@@ -3,6 +3,7 @@
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
+import { createRequestLogger } from '@/lib/logger';
 import { requireAuth } from '@/lib/auth/api-guard';
 import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
@@ -26,7 +27,8 @@ export async function GET(
         const ip = getClientIp(request);
         const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] orders/session/[sessionId] GET blocked for IP ${ip}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ ip }, 'Rate limited: orders/session/[sessionId] GET');
             return rateLimitResponse(rateResult);
         }
 
@@ -76,7 +78,8 @@ export async function GET(
             },
         });
     } catch (error) {
-        console.error('Error fetching order:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Error fetching order by session');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

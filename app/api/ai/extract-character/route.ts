@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { extractCharacterFromPhoto } from '@/lib/gemini/client';
+import { createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
@@ -19,7 +20,8 @@ export async function POST(request: NextRequest) {
         // Rate limit by user ID (AI extraction is expensive)
         const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] ai/extract-character blocked for user ${user.id}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ userId: user.id }, 'Rate limited: ai/extract-character');
             return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
@@ -44,7 +46,8 @@ export async function POST(request: NextRequest) {
             characterDescription,
         });
     } catch (error) {
-        console.error('Character extraction error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Character extraction error');
         return NextResponse.json(
             { error: 'Failed to extract character from photo' },
             { status: 500 }

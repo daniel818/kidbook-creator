@@ -9,7 +9,10 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { ConfirmModal } from '@/components/ConfirmModal';
+import { createClientModuleLogger } from '@/lib/client-logger';
 import styles from './page.module.css';
+
+const logger = createClientModuleLogger('home');
 
 export default function Home() {
   const router = useRouter();
@@ -40,11 +43,11 @@ export default function Home() {
           const data = await response.json();
           setBooks(data);
         } else {
-          console.error('Failed to fetch books');
+          logger.error('Failed to fetch books');
           setBooks([]);
         }
       } catch (error) {
-        console.error('Error fetching books:', error);
+        logger.error({ err: error }, 'Error fetching books');
         setBooks([]);
       }
     } else {
@@ -94,7 +97,7 @@ export default function Home() {
           setBooks(books.filter(b => b.id !== bookToDelete));
         }
       } catch (error) {
-        console.error('Error deleting book:', error);
+        logger.error({ err: error }, 'Error deleting book');
       }
     } else {
       // Delete from local storage

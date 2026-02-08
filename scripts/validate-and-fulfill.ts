@@ -5,6 +5,9 @@ import { createAdminClient } from '../lib/supabase/server';
 import { createLuluClient } from '../lib/lulu/client';
 import { getLuluProductId } from '../lib/lulu/fulfillment';
 import { ShippingAddress, PrintJob } from '../lib/lulu/client';
+import { createModuleLogger } from '../lib/logger';
+
+const logger = createModuleLogger('script:validate-and-fulfill');
 
 const TUNNEL_URL = process.env.TUNNEL_URL;
 
@@ -30,7 +33,7 @@ function mapShippingAddress(orderAddr: any): ShippingAddress {
 }
 
 async function main() {
-    console.log('--- Validate & Fulfill Order ---');
+    logger.info('--- Validate & Fulfill Order ---');
     const supabase = await createAdminClient();
     const client = createLuluClient();
 
@@ -47,12 +50,11 @@ async function main() {
     }
 
     if (!order) {
-        console.error('No pending/specified order found.');
+        logger.error('No pending/specified order found.');
         return;
     }
 
-    console.log(`Processing Order: ${order.id}`);
-    console.log(`Book: ${order.size} ${order.format}`);
+    logger.info({ orderId: order.id, size: order.size, format: order.format }, 'Processing Order');
 
     // 2. Generate Signed URLs based on stored paths (from DB)
     // Assuming DB has 'pdf_url' and 'cover_pdf_url' storing the relative storage path (e.g., 'book-pdfs/...')
@@ -61,48 +63,47 @@ async function main() {
     const coverPath = order.cover_pdf_url;
 
     if (!interiorPath || !coverPath) {
-        console.error('Order missing PDF paths (pdf_url, cover_pdf_url). Cannot fulfill.');
+        logger.error('Order missing PDF paths (pdf_url, cover_pdf_url). Cannot fulfill.');
         return;
     }
 
-    console.log('Generating signed URLs...');
+    logger.info('Generating signed URLs...');
 
     // Create signed URLs
     const { data: interiorData } = await supabase.storage.from('book-pdfs').createSignedUrl(interiorPath, 3600);
     const { data: coverData } = await supabase.storage.from('book-pdfs').createSignedUrl(coverPath, 3600);
 
     if (!interiorData?.signedUrl || !coverData?.signedUrl) {
-        console.error('Failed to sign URLs');
+        logger.error('Failed to sign URLs');
         return;
     }
 
     const interiorUrl = rewriteUrl(interiorData.signedUrl);
     const coverUrl = rewriteUrl(coverData.signedUrl);
 
-    console.log(`Interior URL: ${interiorUrl.substring(0, 50)}...`);
-    console.log(`Cover URL: ${coverUrl.substring(0, 50)}...`);
+    logger.info({ interiorUrl: interiorUrl.substring(0, 50), coverUrl: coverUrl.substring(0, 50) }, 'Signed URLs generated');
 
     // 3. Determine Product Spec (SKU)
     // Assuming 32 pages for now, or fetch from book if needed
     const pageCount = 32;
     const podPackageId = getLuluProductId(order.format, order.size, pageCount);
-    console.log(`SKU: ${podPackageId}`);
+    logger.info({ sku: podPackageId }, 'SKU');
 
     try {
         // 4. Validate Interior
-        console.log('\n--- Validating Interior ---');
+        logger.info('--- Validating Interior ---');
         const interiorJobId = await client.validateInterior(interiorUrl, podPackageId);
         await client.pollValidationStatus(interiorJobId);
-        console.log('✅ Interior Validated');
+        logger.info('Interior Validated');
 
         // 5. Validate Cover (Needs page count)
-        console.log(`\n--- Validating Cover (Pages: ${pageCount}) ---`);
+        logger.info({ pageCount }, '--- Validating Cover ---');
         const coverJobId = await client.validateCover(coverUrl, podPackageId, pageCount);
         await client.pollValidationStatus(coverJobId);
-        console.log('✅ Cover Validated');
+        logger.info('Cover Validated');
 
         // 6. Create Print Job (If success)
-        console.log('\n--- Creating Print Job ---');
+        logger.info('--- Creating Print Job ---');
 
         const printJob: PrintJob = {
             externalId: order.id,
@@ -120,8 +121,7 @@ async function main() {
         };
 
         const result = await client.createPrintJob(printJob);
-        console.log('🎉 Order Created Successfully!');
-        console.log(`Print Job ID: ${result.id}`);
+        logger.info({ printJobId: result.id }, 'Order Created Successfully');
 
         // Update DB
         await supabase.from('orders').update({
@@ -129,13 +129,12 @@ async function main() {
             print_job_id: result.id, // Ensure this column matches your DB schema
             lulu_print_job_id: result.id
         }).eq('id', order.id);
-        console.log('DB Updated.');
+        logger.info('DB Updated.');
 
     } catch (err: any) {
-        console.error('\n❌ VALIDATION / FULFILLMENT FAILED');
-        console.error(err.message || err);
+        logger.error({ err }, 'VALIDATION / FULFILLMENT FAILED');
         // Don't update DB status to Failed yet, let user retry.
     }
 }
 
-main().catch(console.error);
+main().catch((err) => logger.error({ err }, 'Unhandled error'));

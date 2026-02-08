@@ -5,6 +5,9 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { createModuleLogger } from '@/lib/logger';
+
+const logger = createModuleLogger('middleware');
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -95,6 +98,8 @@ export async function updateSession(request: NextRequest) {
             'max-age=31536000; includeSubDomains; preload'
         );
     }
+
+    logger.debug('Applied CSP and security headers');
 
     return supabaseResponse;
 }

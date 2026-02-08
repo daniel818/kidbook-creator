@@ -4,9 +4,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createRequestLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const supabase = await createClient();
 
@@ -20,7 +22,7 @@ export async function POST(request: NextRequest) {
         // Rate limit uploads to prevent storage abuse
         const rateResult = checkRateLimit(`upload:${user.id}`, RATE_LIMITS.upload);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] upload blocked for user ${user.id}`);
+            logger.info({ userId: user.id }, 'Rate limited: upload');
             return rateLimitResponse(rateResult, 'Too many upload requests. Please wait before trying again.');
         }
 
@@ -65,7 +67,7 @@ export async function POST(request: NextRequest) {
             });
 
         if (error) {
-            console.error('Upload error:', error);
+            logger.error({ err: error }, 'Upload error');
             return NextResponse.json(
                 { error: 'Failed to upload image' },
                 { status: 500 }
@@ -78,7 +80,7 @@ export async function POST(request: NextRequest) {
             .createSignedUrl(data.path, 60 * 60); // 1 hour expiry
 
         if (signedUrlError) {
-            console.error('Signed URL error:', signedUrlError);
+            logger.error({ err: signedUrlError }, 'Signed URL error');
             return NextResponse.json(
                 { error: 'Failed to generate image URL' },
                 { status: 500 }
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
             path: data.path,
         });
     } catch (error) {
-        console.error('Unexpected error:', error);
+        logger.error({ err: error }, 'Unexpected error');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }
@@ -100,6 +102,7 @@ export async function POST(request: NextRequest) {
 
 // DELETE image
 export async function DELETE(request: NextRequest) {
+    const logger = createRequestLogger(request);
     try {
         const supabase = await createClient();
 
@@ -125,7 +128,7 @@ export async function DELETE(request: NextRequest) {
             .remove([path]);
 
         if (error) {
-            console.error('Delete error:', error);
+            logger.error({ err: error }, 'Delete error');
             return NextResponse.json(
                 { error: 'Failed to delete image' },
                 { status: 500 }
@@ -134,7 +137,7 @@ export async function DELETE(request: NextRequest) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Unexpected error:', error);
+        logger.error({ err: error }, 'Unexpected error');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

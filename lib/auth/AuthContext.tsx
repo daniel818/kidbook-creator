@@ -3,6 +3,9 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { createClientModuleLogger } from '@/lib/client-logger';
+
+const logger = createClientModuleLogger('auth');
 
 interface AuthContextType {
     user: User | null;
@@ -40,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setSession(session);
                 setUser(session?.user ?? null);
             } catch (error) {
-                console.warn('Auth session check failed or timed out:', error);
+                logger.warn({ err: error }, 'Auth session check failed or timed out');
                 // Fallback to logged out state so app can render
                 setSession(null);
                 setUser(null);

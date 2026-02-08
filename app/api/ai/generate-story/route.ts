@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateStory, StoryGenerationInput } from '@/lib/gemini/client';
+import { createRequestLogger } from '@/lib/logger';
 import { generateStorySchema, parseBody } from '@/lib/validations';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
@@ -20,7 +21,8 @@ export async function POST(request: NextRequest) {
         // Rate limit by user ID
         const rateResult = checkRateLimit(`ai:${user.id}`, RATE_LIMITS.ai);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] ai/generate-story blocked for user ${user.id}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ userId: user.id }, 'Rate limited: ai/generate-story');
             return rateLimitResponse(rateResult, 'Too many AI requests. Please wait before trying again.');
         }
 
@@ -52,7 +54,8 @@ export async function POST(request: NextRequest) {
             story,
         });
     } catch (error) {
-        console.error('Story generation error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Story generation error');
         return NextResponse.json(
             { error: 'Failed to generate story' },
             { status: 500 }

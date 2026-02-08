@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRetailPricing } from '@/lib/lulu/pricing';
+import { createRequestLogger } from '@/lib/logger';
 import { calculateCostSchema, parseBody } from '@/lib/validations';
 import { requireAuth } from '@/lib/auth/api-guard';
 import { checkRateLimit, rateLimitResponse, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
@@ -18,7 +19,8 @@ export async function POST(request: NextRequest) {
         const ip = getClientIp(request);
         const rateResult = checkRateLimit(`standard:ip:${ip}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] lulu/calculate-cost blocked for IP ${ip}`);
+            const loggerRL = createRequestLogger(request);
+            loggerRL.info({ ip }, 'Rate limited: lulu/calculate-cost');
             return rateLimitResponse(rateResult);
         }
 
@@ -58,7 +60,8 @@ export async function POST(request: NextRequest) {
         });
 
     } catch (error) {
-        console.error('Cost calculation error:', error);
+        const logger = createRequestLogger(request);
+        logger.error({ err: error }, 'Cost calculation error');
         const message = error instanceof Error ? error.message : 'Failed to calculate cost';
         return NextResponse.json(
             { error: message },

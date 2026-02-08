@@ -3,8 +3,11 @@
 // ============================================
 
 import { Resend } from 'resend';
+import { createModuleLogger } from '@/lib/logger';
 import { env } from '@/lib/env';
 import { withRetry, RETRY_CONFIGS } from '../retry';
+
+const logger = createModuleLogger('email');
 
 let _resend: Resend | null = null;
 function getResend(): Resend {
@@ -66,14 +69,14 @@ export async function sendOrderConfirmation(data: OrderEmailData) {
     );
 
     if (error) {
-      console.error('Failed to send order confirmation:', error);
+      logger.error({ err: error }, 'Failed to send order confirmation');
       return { success: false, error };
     }
 
-    console.log('Order confirmation sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Order confirmation sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error (after retries):', error);
+    logger.error({ err: error }, 'Email error sending order confirmation (after retries)');
     return { success: false, error };
   }
 }
@@ -92,14 +95,14 @@ export async function sendShippingNotification(data: ShippingEmailData) {
     );
 
     if (error) {
-      console.error('Failed to send shipping notification:', error);
+      logger.error({ err: error }, 'Failed to send shipping notification');
       return { success: false, error };
     }
 
-    console.log('Shipping notification sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Shipping notification sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error (after retries):', error);
+    logger.error({ err: error }, 'Email error sending shipping notification (after retries)');
     return { success: false, error };
   }
 }
@@ -118,14 +121,14 @@ export async function sendDeliveryConfirmation(data: OrderEmailData) {
     );
 
     if (error) {
-      console.error('Failed to send delivery confirmation:', error);
+      logger.error({ err: error }, 'Failed to send delivery confirmation');
       return { success: false, error };
     }
 
-    console.log('Delivery confirmation sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Delivery confirmation sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error (after retries):', error);
+    logger.error({ err: error }, 'Email error sending delivery confirmation (after retries)');
     return { success: false, error };
   }
 }
@@ -144,14 +147,14 @@ export async function sendDigitalUnlockEmail(data: DigitalUnlockEmailData) {
     );
 
     if (error) {
-      console.error('Failed to send digital unlock email:', error);
+      logger.error({ err: error }, 'Failed to send digital unlock email');
       return { success: false, error };
     }
 
-    console.log('Digital unlock email sent:', result?.id);
+    logger.info({ emailId: result?.id }, 'Digital unlock email sent');
     return { success: true, id: result?.id };
   } catch (error) {
-    console.error('Email error (after retries):', error);
+    logger.error({ err: error }, 'Email error sending digital unlock email (after retries)');
     return { success: false, error };
   }
 }

@@ -11,6 +11,9 @@ import html2canvas from 'html2canvas';
 import { Book, BookPage, BookThemeInfo } from '@/lib/types';
 import { calculateSpineWidth, MINIMUM_SPINE_WIDTH, PaperType } from './spine-calculator';
 import { getPrintableInteriorPageCount } from './page-count';
+import { createClientModuleLogger } from '@/lib/client-logger';
+
+const logger = createClientModuleLogger('cover-generator');
 
 /**
  * Trim sizes in inches
@@ -368,7 +371,7 @@ export async function generateCoverPDF(
 
     // Calculate dimensions
     const dims = calculateCoverDimensions(bookSize, interiorPageCount, format, paperType);
-    console.log('[Lulu Cover] Dimensions:', {
+    logger.info({
         format,
         size: bookSize,
         pageCount: interiorPageCount,
@@ -377,7 +380,7 @@ export async function generateCoverPDF(
         totalHeight: dims.totalHeight,
         spineWidth: dims.spineWidth,
         bleed: dims.bleed,
-    });
+    }, 'Cover dimensions calculated');
 
     // Get theme colors
     const themeColors = book.settings.bookTheme

@@ -4,7 +4,10 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createModuleLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+
+const logger = createModuleLogger('orders-api');
 
 // GET /api/orders - Get all orders for the current user
 export async function GET() {
@@ -20,7 +23,7 @@ export async function GET() {
         // Rate limit standard API calls
         const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] orders GET blocked for user ${user.id}`);
+            logger.info({ userId: user.id }, 'Rate limited: orders GET');
             return rateLimitResponse(rateResult);
         }
 
@@ -46,7 +49,7 @@ export async function GET() {
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('Error fetching orders:', error);
+            logger.error({ err: error }, 'Error fetching orders');
             return NextResponse.json(
                 { error: 'Failed to fetch orders' },
                 { status: 500 }
@@ -143,7 +146,7 @@ export async function GET() {
 
         return NextResponse.json(transformedOrders);
     } catch (error) {
-        console.error('Unexpected error:', error);
+        logger.error({ err: error }, 'Unexpected error fetching orders');
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

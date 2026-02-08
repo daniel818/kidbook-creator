@@ -4,6 +4,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Book } from '@/lib/types';
 import StoryBookViewer from '@/components/StoryBookViewer';
+import { createClientModuleLogger } from '@/lib/client-logger';
+
+const logger = createClientModuleLogger('book-viewer');
 
 const POLL_INTERVAL_MS = 3000;
 const POLL_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes safety timeout
@@ -42,7 +45,7 @@ export default function BookViewerPage() {
     // Initial fetch
     useEffect(() => {
         const loadBook = async () => {
-            console.log(`[VIEWER] Loading book ${bookId}...`);
+            logger.debug({ bookId }, 'Loading book');
             const data = await fetchBook();
             if (data) {
                 setBook(data);
@@ -64,7 +67,7 @@ export default function BookViewerPage() {
 
         // Safety timeout
         if (pollStartRef.current && Date.now() - pollStartRef.current > POLL_TIMEOUT_MS) {
-            console.log('[VIEWER] Polling timeout reached, stopping');
+            logger.warn('Polling timeout reached, stopping');
             return;
         }
 
@@ -79,7 +82,7 @@ export default function BookViewerPage() {
             if (data) {
                 setBook(data);
                 if (!data.illustrationProgress?.isGenerating) {
-                    console.log('[VIEWER] All illustrations complete, stopping polling');
+                    logger.info('All illustrations complete, stopping polling');
                     clearInterval(interval);
                 }
             }

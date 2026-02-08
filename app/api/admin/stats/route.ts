@@ -4,7 +4,10 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createModuleLogger } from '@/lib/logger';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
+
+const logger = createModuleLogger('admin-stats');
 
 export async function GET() {
     try {
@@ -30,7 +33,7 @@ export async function GET() {
         // Rate limit admin API calls
         const rateResult = checkRateLimit(`standard:${user.id}`, RATE_LIMITS.standard);
         if (!rateResult.allowed) {
-            console.log(`[Rate Limit] admin/stats blocked for user ${user.id}`);
+            logger.info({ userId: user.id }, 'Rate limited: admin/stats');
             return rateLimitResponse(rateResult);
         }
 
@@ -84,7 +87,7 @@ export async function GET() {
             ordersByStatus,
         });
     } catch (error) {
-        console.error('Stats error:', error);
+        logger.error({ err: error }, 'Stats error');
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
